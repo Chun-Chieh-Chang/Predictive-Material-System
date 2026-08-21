@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -39,8 +39,8 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
   const [selectedSku, setSelectedSku] = useState<string>(initialSku);
   const [activeMoldId, setActiveMoldId] = useState<string | null>(null);
 
-  // Available finished goods SKUs
-  const availableSkus = db.item_master.filter((i) => i.category === 'FinishedGoods');
+  // Available finished goods SKUs (SET 類成品)
+  const availableSkus = db.item_master.filter((i) => i.material_class === 'SET');
 
   // Related molds for this SKU
   const relatedBoms = db.product_mold_bom.filter((b) => b.sku === selectedSku);

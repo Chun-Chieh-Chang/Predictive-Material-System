@@ -172,7 +172,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const simOrderDateObj = new Date(simTargetDateObj.getTime() - simLeadTime * 86400000);
   const simSuggestedOrderDate = simOrderDateObj.toISOString().split('T')[0];
 
-  const now = new Date('2026-08-20T00:00:00Z');
+  const now = new Date();
   const simDaysUntilLatestOrder = Math.ceil((simOrderDateObj.getTime() - now.getTime()) / (1000 * 3600 * 24));
 
   // Delta calculations against baseline

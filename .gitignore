@@ -30,3 +30,8 @@ bun.lock
 
 # AI Studio / editor temp
 assets/.aistudio/
+
+# IDE settings
+.vscode/
+.idea/
+*.tsbuildinfo

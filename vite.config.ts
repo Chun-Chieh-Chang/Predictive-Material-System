@@ -23,7 +23,7 @@ export default defineConfig(() => {
           // 將第三方庫拆分為獨立 chunk，改善瀏覽器快取效率
           manualChunks: {
             'vendor-react':  ['react', 'react-dom'],
-            'vendor-ui':     ['lucide-react', 'motion'],
+            'vendor-ui':     ['lucide-react'],
             'vendor-xlsx':   ['xlsx'],
           },
         },

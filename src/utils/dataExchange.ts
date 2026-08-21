@@ -759,7 +759,7 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
 }
 
 // 6. Deep Relational Chain Integrity Audit (水平展開數據鏈條防呆健檢)
-export function runRelationalAudit(db: SystemDatabase, report: ValidationReport) {
+function runRelationalAudit(db: SystemDatabase, report: ValidationReport) {
   const itemMap = new Set(db.item_master.map((i) => i.sku));
   const moldMap = new Set(db.mold_master.map((m) => m.mold_id));
   const supplierRuleMap = new Set(db.supplier_rule_master.map((s) => s.rm_sku));

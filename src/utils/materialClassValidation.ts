@@ -71,7 +71,7 @@ export function inferClassFromSku(sku: string, customPrefixRules?: Partial<Recor
 
 // ─── 匯入資料批量驗證 ────────────────────────────────────────────────────────
 
-export interface ImportValidationResult {
+interface ImportValidationResult {
   valid: boolean;
   errors: string[];
   warnings: string[];
@@ -79,7 +79,7 @@ export interface ImportValidationResult {
   unclassifiedSkus: string[];
 }
 
-export function validateImportRows(
+function validateImportRows(
   rows: Record<string, unknown>[],
   existingClasses: MaterialClass[],
   existingSkus: Set<string>,
@@ -207,7 +207,7 @@ export function migrateItemMasterClasses(items: ItemMaster[], classes: MaterialC
  * @param itemMaster   料號主檔資料
  * @returns { valid, hint }  validity 與錯誤提示
  */
-export function validateSkuClass(
+function validateSkuClass(
   sku: string,
   expected: MaterialClassCode[],
   itemMaster: ItemMaster[]
@@ -221,7 +221,7 @@ export function validateSkuClass(
 }
 
 /** H-01：product_mold_bom.rm_sku 僅接受 RAW 類 */
-export function validateRmSkuAsRaw(
+function validateRmSkuAsRaw(
   rm_sku: string, itemMaster: ItemMaster[]
 ): { valid: boolean; hint: string } {
   return validateSkuClass(rm_sku, ['RAW'], itemMaster);
@@ -229,14 +229,14 @@ export function validateRmSkuAsRaw(
 
 /** H-02：yield_master.sku 僅接受 PART / COMP / SET 類（不含 RAW/MAT）*/
 /** 說明：SET 可直接由 PART 一次組裝，無需經 COMP 入庫，故 PART/COMP/SET 均可作為良率標準品號。*/
-export function validateYieldSku(
+function validateYieldSku(
   sku: string, itemMaster: ItemMaster[]
 ): { valid: boolean; hint: string } {
   return validateSkuClass(sku, ['PART', 'COMP', 'SET'], itemMaster);
 }
 
 /** H-03：supplier_rule_master.rm_sku 僅接受 RAW 類 */
-export function validateSupplierRmSku(
+function validateSupplierRmSku(
   rm_sku: string, itemMaster: ItemMaster[]
 ): { valid: boolean; hint: string } {
   return validateSkuClass(rm_sku, ['RAW'], itemMaster);
@@ -253,7 +253,7 @@ export function computeEtaVarianceDays(
 }
 
 /** M-05：檢查 BOM 有效期區間是否有重疊（同一 sku+mold_id 不允許同時有效）*/
-export function checkBomValidityOverlap(
+function checkBomValidityOverlap(
   bomEntries: ProductMoldBOM[],
   testEntry: ProductMoldBOM,
   excludeId?: { sku: string; mold_id: string }

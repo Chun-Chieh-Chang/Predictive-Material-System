@@ -1,7 +1,7 @@
 # 料事如神系統 — Predictive Material System (PMS)
 
 > **QCC 料事如神圈 · 射出成型智能備料與產能排程推估平台**  
-> Baseline Version：`V-20260820-12` | Developed by Wesley Chang @Mouldex, Aug-2026
+> Baseline Version：`V-20260821-22` | Developed by Wesley Chang @Mouldex, Aug-2026
 
 ---
 
@@ -26,7 +26,6 @@
 | 樣式 | Tailwind CSS v4 (JIT) |
 | UI 字體 | Plus Jakarta Sans / JetBrains Mono / Noto Sans TC |
 | 圖示 | lucide-react |
-| 動畫 | motion (Framer Motion) |
 | Excel 匯出入 | xlsx (SheetJS) |
 | 資料持久化 | Browser LocalStorage |
 | 佈景主題 | Light / Dark 雙主題（系統偏好 + 手動切換）|
@@ -50,35 +49,39 @@ npm run dev
 
 ---
 
-## 系統架構 — 6 大功能模組
+## 系統架構 — 8 大功能模組
 
 ```
 PMS
-├── [決策戰情室]     DashboardView       綜合儀表板：MRP 全局告警、庫存熱圖、KPI 追蹤
-├── [3階 MRP 推導]  MrpCalculatorView   單品/全品 MRP 計算引擎、多版本需求比較
-├── [參數策略設定]   SystemSettingsView  系統參數 & 業務規則配置（預警門檻/排程策略/良率基準）
-├── [10大主檔維護]  DataTablesView      10 張主檔 CRUD（不含 audit_log，audit_log 僅匯出不覆蓋）
-├── [無損資料中心]  DataExchangeView    JSON/Excel 匯出入、資料規格字典、示範數據載入
-└── [PRD 規格辭典]  PrdDocView          系統設計規格文件（PRD）瀏覽器
+├── [決策戰情室]           DashboardView               綜合儀表板：MRP 全局告警、庫存熱圖、KPI 追蹤
+├── [3階 MRP 推導]         MrpCalculatorView           單品/全品 MRP 計算引擎、多版本需求比較
+├── [參數策略設定]         SystemSettingsView          系統參數 & 業務規則配置（預警門檻/排程策略/良率基準）
+├── [物料分類體系]         MaterialClassManagementView 五層分類樹管理（RAW/MAT/PART/COMP/SET）
+├── [10大主檔維護]         DataTablesView              10 張主檔 CRUD（不含 audit_log，audit_log 僅匯出不覆蓋）
+├── [無損資料中心]         DataExchangeView            JSON/Excel 匯出入、資料規格字典、示範數據載入
+├── [備份與復原設定]       BackupSettingsView          自動備份排程、恢復備份檔、容量統計
+└── [PRD 規格辭典]         PrdDocView                  系統設計規格文件（PRD）瀏覽器
 ```
 
 ---
 
-## 資料模型 — 9 大主檔
+## 資料模型 — 10 大主檔
 
 | # | 主檔名稱 | 主鍵 | 說明 |
 |---|----------|------|------|
-| 1 | **料號基本主檔** (item_master) | `sku` | 成品/原料品號、客戶代碼、計量單位 |
-| 2 | **模具產能主檔** (mold_master) | `mold_id` | 穴數、週期時間、日產能 |
-| 3 | **產品模具 BOM** (product_mold_bom) | `sku + mold_id` | 原料用料展開、損耗率 |
-| 4 | **良率標準檔** (yield_master) | `sku` | Sorting 全檢良率 |
-| 5 | **採購供應商規則** (supplier_rule_master) | `rm_sku` | 交期、MOQ、安全庫存 |
+| 1 | **料號基本主檔** (item_master) | `sku` | 成品/原料品號、客戶代碼、計量單位、五層分類 |
+| 2 | **模具產能主檔** (mold_master) | `mold_id` | 穴數、週期時間、日產能、機型與產線 |
+| 3 | **產品模具 BOM** (product_mold_bom) | `sku + mold_id` | 原料用料展開、損耗率、有效期 |
+| 4 | **良率標準檔** (yield_master) | `sku` | Sorting 全檢良率（僅 PART/COMP/SET）|
+| 5 | **採購供應商規則** (supplier_rule_master) | `rm_sku` | 交期、MOQ、安全庫存、單價 |
 | 6 | **業務需求預測** (demand_forecast_log) | `demand_id` | 分版本預估需求量 |
 | 7 | **實際訂單** (actual_order) | `order_id` | 確認訂單量、交期 |
 | 8 | **庫存 WIP 快照** (inventory_wip_snapshot) | `snapshot_date + sku` | 成品在庫、待驗品、原料庫存 |
-| 9 | **在途採購訂單** (po_in_transit) | `po_number` | 在途原料量、到廠日 |
+| 9 | **在途採購訂單** (po_in_transit) | `po_number` | 在途原料量、到廠日、ETA 偏差天數 |
+| 10 | **Sorting 良率紀錄** (sorting_actual_yield_log) | `log_id` | 全檢實際良率歷史軌跡（Phase 3）|
 
 另包含 **變更審計日誌** (audit_log)：記錄所有 Level 2/3 主檔異動（僅匯出，禁止匯入覆蓋）。
+另含 **物料分類體系** (material_classes)：五層樹狀分類（RAW/MAT/PART/COMP/SET），支援無限子節點。
 
 ---
 
@@ -99,7 +102,7 @@ Phase 3 → 採購決策
 
 ---
 
-## 系統參數（可配置）
+## 系統參數（可配置，共 13 項）
 
 | 參數 | 預設值 | 說明 |
 |------|--------|------|
@@ -109,6 +112,13 @@ Phase 3 → 採購決策
 | 多模備料策略 | 最保守重量 | 多模時選最大原料耗用量 |
 | 需求彙總模式 | 累加模式 | Forecast + Order 加總（可改為 PO 消耗/僅預測/僅訂單）|
 | 每日有效工時 | 24.0 小時 | 排程產能基礎 |
+| 產能瓶頸裕度天數 | 0 天 | 超出產能時的緩衝天數（赤字告警門檻）|
+| 塞穴告警門檻 | 100% | 穴數損耗達到此比例時觸發告警 |
+| 預設全檢良率 | 0.98 | 未指定時的 Sorting 良率基準 |
+| 預設成型損耗率 | 0.03 | 未指定時的 Mold BOM 損耗率 |
+| 預設採購交期 | 90 天 | 未指定時的 Supplier Rule 交期 |
+| 預設 MOQ | 1,000 KG | 未指定時的最低起訂量 |
+| 安全庫存係數 | 1.0 | 全廠安全庫存動態乘數 |
 
 ---
 
@@ -116,7 +126,10 @@ Phase 3 → 採購決策
 
 | 版本 | 日期 | 說明 |
 |------|------|------|
-| V-20260820-12 | 2026-08-20 | 首個完整基準版本。9 大主檔 CRUD、3 階 MRP 引擎、JSON/Excel 雙向匯出入、3 級變更管制審計日誌、Light/Dark 雙主題、PRD 規格辭典模組 |
+| V-20260821-22 | 2026-08-21 | 全域優化：移除 dead export、清理懸空依賴（motion/autoprefixer/esbuild/tsx）、修正 Demo 數據 material_class 欄位與 MrpCalculatorView SKU 篩選 Bug、Navbar 硬編日期動態化、同步更新 README/DEV_LOG |
+| V-20260821-21 | 2026-08-21 | SET 分類描述修正，明確支援直接 PART 一次組裝路徑；全域「8 大→10 大」文字盤點 |
+| V-20260821-20 | 2026-08-21 | 五層物料分類體系、FieldArchitectureAudit_Report、H-01~H-03 校驗函式、M-01~M-06 欄位擴充 |
+| V-20260820-12 | 2026-08-20 | 首個完整基準版本。10 大主檔 CRUD、3 階 MRP 引擎、JSON/Excel 雙向匯出入、3 級變更管制審計日誌、Light/Dark 雙主題、PRD 規格辭典模組 |
 
 ---
 
@@ -126,7 +139,7 @@ Phase 3 → 採購決策
 src/
 ├── main.tsx                  # 應用入口，ThemeProvider 包裝
 ├── App.tsx                   # 根元件：路由、Toast、LocalStorage 持久化
-├── types.ts                  # 全局 TypeScript 型別定義（9 主檔 + MRP 結果 + 系統參數）
+├── types.ts                  # 全局 TypeScript 型別定義（10 主檔 + MRP 結果 + 系統參數 + 物料分類）
 ├── index.css                 # 全局樣式（Tailwind base + 自定義 utility）
 ├── context/
 │   └── ThemeContext.tsx      # 主題狀態管理（Light/Dark + LocalStorage 持久化）
@@ -135,14 +148,18 @@ src/
 ├── utils/
 │   ├── mrpEngine.ts          # 3 階 MRP 計算核心引擎
 │   ├── dataExchange.ts       # JSON/Excel 匯出入 + 資料規格字典
-│   └── fieldMeta.ts          # 主檔欄位元數據（編輯等級、型態、驗證規則）
+│   ├── fieldMeta.ts          # 主檔欄位元數據（編輯等級、型態、驗證規則）
+│   ├── backupService.ts      # 自動備份排程與本地存儲管理
+│   └── materialClassValidation.ts  # 五層物料分類驗證工具（SKU 前綴推斷、FK 校驗）
 └── components/
-    ├── Navbar.tsx             # 頂部導覽列（6 頁籤 + 主題切換 + 告警徽章）
+    ├── Navbar.tsx             # 頂部導覽列（8 頁籤 + 主題切換 + 告警徽章 + 動態日期）
     ├── DashboardView.tsx      # 決策戰情室（全局 MRP 摘要 + 告警列表）
     ├── MrpCalculatorView.tsx  # MRP 計算器（單品推導 + 多版本比較）
     ├── SystemSettingsView.tsx # 系統參數配置面板
     ├── DataTablesView.tsx     # 10 大主檔 CRUD（3 級變更管制）
     ├── DataExchangeView.tsx   # 無損資料中心（JSON/Excel 匯出入）
+    ├── BackupSettingsView.tsx # 備份與復原設定面板
+    ├── MaterialClassManagementView.tsx  # 五層物料分類樹管理
     └── PrdDocView.tsx         # PRD 規格辭典瀏覽器
 ```
 

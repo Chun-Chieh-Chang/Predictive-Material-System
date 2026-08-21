@@ -108,21 +108,21 @@ SystemDatabase {
 
 ## 已知問題 & CAPA 記錄
 
-### CAPA-001 (2026-08-21)
+### CAPA-001 (2026-08-21) ✅ 已關閉
 
 **問題：** `Navbar.tsx` 連線狀態顯示的日期（`2026-08-20`）為硬編碼字串，非動態計算。  
 **影響等級：** 低（僅視覺顯示，不影響業務邏輯）  
 **RCA：** 初版開發以靜態字串快速實作佔位，未替換為動態日期。  
-**CAPA：** 下一版本更新為 `new Date().toISOString().slice(0, 10)` 動態計算。  
-**狀態：** ⚠️ 待辦（低優先度）
+**CAPA：** 改為 `TaiwanDate` 元件（`useState` + `useEffect` 30 秒檢查跨天），已於 V-20260821-22 優化時修複。  
+**狀態：** ✅ 已關閉
 
-### CAPA-002 (2026-08-21)
+### CAPA-002 (2026-08-21) ✅ 已關閉
 
 **問題：** `@google/genai`、`express`、`dotenv` 已在 `package.json` 中聲明，但 Frontend 代碼未實際使用。  
 **影響等級：** 低（僅增加 bundle 體積風險，目前 Vite tree-shaking 可有效排除）  
 **RCA：** AI Studio 後端預留架構，為未來 Server-Side Gemini API 整合準備。  
-**CAPA：** 保留，待後端功能啟用時引用。若確定不需要後端，下版清除。  
-**狀態：** ⚠️ 觀察中（設計決策，非 Bug）
+**CAPA：** 已於 V-20260821-22 全域優化時移除（`motion`、`autoprefixer`、`esbuild`、`tsx` 亦一併清除）。  
+**狀態：** ✅ 已關閉
 
 ---
 
@@ -177,11 +177,45 @@ SystemDatabase {
 
 ---
 
+### V-20260821-22 — 全域程式碼與檔案優化作業
+
+**狀態：** ✅ 穩定  
+**TypeScript 編譯：** 0 錯誤 / 0 警告  
+
+#### 已完成項目
+
+**死碼清理（零功能 Regression）**
+- `types.ts`：移除未使用的 `ChangeLevel` 型別
+- `materialClassValidation.ts`：11 個 internal-only 函式由 `export` 改為內部宣告
+- `backupService.ts`：`validateDatabaseIntegrity` / `resetBackupSessionFlag` 改為內部宣告
+- `dataExchange.ts`：`runRelationalAudit` 改為內部宣告
+
+**懸空依賴移除**
+- `package.json`：移除 `motion`（dependencies）、`autoprefixer` / `esbuild` / `tsx`（devDependencies）
+- `vite.config.ts`：`vendor-ui` manualChunks 移除 `motion`
+- `.gitignore`：新增 `.vscode/`、`.idea/`、`*.tsbuildinfo`
+
+**Bug Fix**
+- `seedData.ts`：DEMO_SAMPLE_DATABASE 的 item_master 全部補上 `material_class`（SET/RAW）
+- `MrpCalculatorView.tsx`：SKU 篩選由 `category === 'FinishedGoods'` 改為 `material_class === 'SET'`（解決 Demo 模式下 SKU 下拉空白）
+- `DashboardView.tsx`：硬編日期 `'2026-08-20'` 改為 `new Date()` 動態計算
+
+**文件同步**
+- `README.md`：版本號 → V-20260821-22，「6 大模組→8 大模組」，「9 大主檔→10 大主檔」，系統參數 6 項→13 項，補充 BackupSettingsView / MaterialClassManagementView 於專案結構
+- `DEV_LOG.md`：CAPA-001 / CAPA-002 狀態改為 ✅ 已關閉，新增 V-20260821-22 章節
+
+#### 開發承接文檔
+- `docs/DevelopmentStatus.md` — 下次啟動時優先閱讀，含待辦事項與執行順序
+
+---
+
 ## 後續開發路線圖（Roadmap）
 
 | 優先度 | 功能 | 說明 |
 |--------|------|------|
-| 🔴 高 | 動態連線日期修正 | Navbar 連線狀態日期改為動態計算（CAPA-001） |
+| 🔴 高 | H-01/H-02/H-03 校驗接入 handleSave | DataTablesView 新增 FK 分類校驗，阻擋非 RAW 料號進入 BOM/供應商規則 |
+| 🔴 高 | M-05 BOM 有效期重疊校驗接入 | DataTablesView 新增 checkBomValidityOverlap 校驗 |
+| 🟡 中 | eta_variance_days 自動計算 | po_in_transit save 時觸發 computeEtaVarianceDays |
 | 🟡 中 | 後端 API 整合 | 啟用 `@google/genai` 進行智能分析建議 |
 | 🟡 中 | 多廠區支援 | 擴展模具/庫存資料模型支援多廠房 |
 | 🟢 低 | PWA 離線支援 | Service Worker 緩存確保無網路環境可用 |

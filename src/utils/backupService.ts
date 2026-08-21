@@ -89,7 +89,7 @@ interface ValidationIssue {
   message: string;
 }
 
-export function validateDatabaseIntegrity(
+function validateDatabaseIntegrity(
   db: SystemDatabase
 ): { valid: boolean; issues: ValidationIssue[]; recordCount: number } {
   const issues: ValidationIssue[] = [];
@@ -378,7 +378,7 @@ export function shouldTriggerBackup(config: BackupScheduleConfig): boolean {
 }
 
 /** 重設 session flag（用於測試） */
-export function resetBackupSessionFlag(): void {
+function resetBackupSessionFlag(): void {
   _backupTriggeredThisSession = false;
 }
 

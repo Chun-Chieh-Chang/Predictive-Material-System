@@ -149,8 +149,6 @@ export interface SortingActualYieldLog {
 // Change Audit Log Entry (for Level 2 & Level 3 edits)
 // Level 3 = Engineering Change (Method A: mandatory reason)
 // Reserved: Level 3B = PIN approval, Level 3C = ECN workflow (future backend)
-export type ChangeLevel = 1 | 2 | 3;
-
 export interface ChangeAuditEntry {
   id: string;               // Unique entry ID (timestamp + random)
   timestamp: string;        // ISO 8601 change time
