@@ -208,16 +208,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </button>
 
-              <button
-                onClick={() => setActiveTab('data_exchange')}
-                id="nav-data-exchange-btn"
-                title="前往資料交換中心匯出正式範本或載入示範數據"
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white border border-slate-300 dark:border-slate-800 transition-all cursor-pointer shadow-xs"
-              >
-                <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                <span className="hidden sm:inline">資料交換中心</span>
-              </button>
-
               {adminUnlocked && (
                 <button
                   onClick={onNavigateToBackup}
