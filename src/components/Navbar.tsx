@@ -28,7 +28,6 @@ interface NavbarProps {
   activeTab: NavTab;
   setActiveTab: (tab: NavTab) => void;
   alertCount: number;
-  onResetSeedData: () => void;
   onNavigateToBackup: () => void;
   backupEnabled: boolean;
   adminUnlocked: boolean;
@@ -40,7 +39,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   setActiveTab,
   alertCount,
-  onResetSeedData,
   onNavigateToBackup,
   backupEnabled,
   adminUnlocked,

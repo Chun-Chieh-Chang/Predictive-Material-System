@@ -132,13 +132,6 @@ export function App() {
   const mrpResults = calculateAllMRP(db, undefined, systemParams);
   const totalAlerts = mrpResults.reduce((sum, r) => sum + r.alerts.filter((a) => a.level !== 'green').length, 0);
 
-  const handleResetSeed = () => {
-    if (window.confirm('確定要將系統重設回原廠標準種子資料庫嗎？')) {
-      setDb(JSON.parse(JSON.stringify(INITIAL_DATABASE)));
-      showToast('已成功重載標準種子資料庫！', 'success');
-    }
-  };
-
   const handleNavigateToMRP = (sku: string) => {
     setActiveMrpSku(sku);
     setActiveTab('mrp_calculator');
@@ -168,7 +161,6 @@ export function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         alertCount={totalAlerts}
-        onResetSeedData={handleResetSeed}
         onNavigateToBackup={handleNavigateToBackup}
         backupEnabled={backupConfig.enabled}
         adminUnlocked={adminUnlocked}
