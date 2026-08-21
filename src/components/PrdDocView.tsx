@@ -221,57 +221,61 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 
       {/* Content Rendering */}
       {activeTab === 'rich' && (
-        <div className="bg-slate-900/50 rounded-2xl p-8 border border-slate-800 shadow-xl shadow-black/20 space-y-8 text-slate-200 leading-relaxed text-sm">
+        <div className="rounded-2xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-8 text-sm leading-relaxed">
+
           {/* Section 1 */}
           <section className="space-y-3">
-            <h3 className="text-lg font-bold text-white flex items-center space-x-2 border-b border-slate-800 pb-2">
-              <span className="w-6 h-6 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center text-xs font-bold font-mono">1</span>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2 border-b border-slate-200 dark:border-slate-700 pb-2">
+              <span className="w-6 h-6 rounded-md bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-800 flex items-center justify-center text-xs font-bold font-mono">1</span>
               <span>核心原則與品管圈 (QCC) 定位</span>
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-              <div className="p-4 bg-slate-950/70 rounded-xl border border-slate-800">
-                <div className="font-bold text-white">No Double Key-in</div>
-                <p className="text-slate-400 mt-1">從 ERP 自動匯入庫存與在途，拒絕重複人工鍵入與資料不同步。</p>
+              <div className="p-4 bg-sky-50 dark:bg-sky-950/30 rounded-xl border border-sky-200 dark:border-sky-800">
+                <div className="font-bold text-sky-900 dark:text-sky-200">No Double Key-in</div>
+                <p className="text-sky-700 dark:text-sky-300 mt-1">從 ERP 自動匯入庫存與在途，拒絕重複人工鍵入與資料不同步。</p>
               </div>
-              <div className="p-4 bg-slate-950/70 rounded-xl border border-slate-800">
-                <div className="font-bold text-white">SSOT & MECE 原則</div>
-                <p className="text-slate-400 mt-1">單一真實數據來源，單穴克重與日產能一律動態推算，不開放手動竄改。</p>
+              <div className="p-4 bg-sky-50 dark:bg-sky-950/30 rounded-xl border border-sky-200 dark:border-sky-800">
+                <div className="font-bold text-sky-900 dark:text-sky-200">SSOT & MECE 原則</div>
+                <p className="text-sky-700 dark:text-sky-300 mt-1">單一真實數據來源，單穴克重與日產能一律動態推算，不開放手動竄改。</p>
               </div>
-              <div className="p-4 bg-slate-950/70 rounded-xl border border-slate-800">
-                <div className="font-bold text-white">業務需求驅動 (Demand First)</div>
-                <p className="text-slate-400 mt-1">以業務 Forecast 與 PO 為核心錨點，逆向倒推採購排程與產能負荷。</p>
+              <div className="p-4 bg-sky-50 dark:bg-sky-950/30 rounded-xl border border-sky-200 dark:border-sky-800">
+                <div className="font-bold text-sky-900 dark:text-sky-200">業務需求驅動 (Demand First)</div>
+                <p className="text-sky-700 dark:text-sky-300 mt-1">以業務 Forecast 與 PO 為核心錨點，逆向倒推採購排程與產能負荷。</p>
               </div>
             </div>
           </section>
 
-          {/* Section 2 */}
+          {/* Section 2: MRP 3-Stage Gradient Cards */}
           <section className="space-y-3">
-            <h3 className="text-lg font-bold text-white flex items-center space-x-2 border-b border-slate-800 pb-2">
-              <span className="w-6 h-6 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center text-xs font-bold font-mono">2</span>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2 border-b border-slate-200 dark:border-slate-700 pb-2">
+              <span className="w-6 h-6 rounded-md bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-800 flex items-center justify-center text-xs font-bold font-mono">2</span>
               <span>3 階段 MRP 數學推導公式</span>
             </h3>
             <div className="space-y-3">
-              <div className="p-4 bg-blue-950/60 border border-blue-500/40 rounded-xl">
-                <div className="font-bold text-blue-200 text-xs">階段一：真實成品缺口 (FG Net Requirement)</div>
-                <div className="font-mono text-xs text-blue-100 mt-1.5">
+              {/* 階段一：天藍色 */}
+              <div className="p-4 bg-gradient-to-r from-sky-50 to-sky-100/60 dark:from-sky-950/40 dark:to-sky-900/30 border border-sky-200 dark:border-sky-700 rounded-xl">
+                <div className="font-bold text-sky-800 dark:text-sky-300 text-xs">階段一：真實成品缺口 (FG Net Requirement)</div>
+                <div className="font-mono text-xs text-sky-700 dark:text-sky-200 mt-1.5">
                   真實缺口 (PCS) = (Forecast 需求 + 實際訂單) - 成品在庫良品 - (Sorting 待驗品 × 全檢良率)
                 </div>
               </div>
 
-              <div className="p-4 bg-purple-950/60 border border-purple-500/40 rounded-xl">
-                <div className="font-bold text-purple-200 text-xs">階段二：成型重量與原料毛需求 (BOM Explosion)</div>
-                <div className="font-mono text-xs text-purple-100 mt-1.5">
+              {/* 階段二：靛藍色 */}
+              <div className="p-4 bg-gradient-to-r from-indigo-50 to-indigo-100/60 dark:from-indigo-950/40 dark:to-indigo-900/30 border border-indigo-200 dark:border-indigo-700 rounded-xl">
+                <div className="font-bold text-indigo-800 dark:text-indigo-300 text-xs">階段二：成型重量與原料毛需求 (BOM Explosion)</div>
+                <div className="font-mono text-xs text-indigo-700 dark:text-indigo-200 mt-1.5">
                   單穴克重 (g) = (整模重量 + 流道重量) ÷ 妥善穴數<br/>
                   原料毛需求 (KG) = [(真實缺口 × 單穴克重) ÷ 1000] ÷ (1 - 標準生產損耗率)
                 </div>
               </div>
 
-              <div className="p-4 bg-emerald-950/60 border border-emerald-500/40 rounded-xl">
-                <div className="font-bold text-emerald-200 text-xs">階段三：原料淨需求與採購下單日 (RM Net Requirement)</div>
-                <div className="font-mono text-xs text-emerald-100 mt-1.5">
+              {/* 階段三：翠綠色 */}
+              <div className="p-4 bg-gradient-to-r from-emerald-50 to-emerald-100/60 dark:from-emerald-950/40 dark:to-emerald-900/30 border border-emerald-200 dark:border-emerald-700 rounded-xl">
+                <div className="font-bold text-emerald-800 dark:text-emerald-300 text-xs">階段三：原料淨需求與採購下單日 (RM Net Requirement)</div>
+                <div className="font-mono text-xs text-emerald-700 dark:text-emerald-200 mt-1.5">
                   原料淨需求 (KG) = 原料毛需求 - 原料庫存 - 原料在途採購 + 安全庫存量<br/>
                   建議下單量 (KG) = CEILING(原料淨需求, MOQ) | 建議下單日 = 需求交期 - 採購交期 (Lead Time)<br/>
-                  <span className="text-emerald-300">庫存上限檢查: RM On-Hand + In-Transit ≤ Max_Storage_Capacity_kg → 觸發爆倉警示</span>
+                  <span className="text-emerald-600 dark:text-emerald-300 font-semibold">庫存上限檢查: RM On-Hand + In-Transit ≤ Max_Storage_Capacity_kg → 觸發爆倉警示</span>
                 </div>
               </div>
             </div>
@@ -279,63 +283,66 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 
           {/* Section 3: Change Audit */}
           <section className="space-y-3">
-            <h3 className="text-lg font-bold text-white flex items-center space-x-2 border-b border-slate-800 pb-2">
-              <span className="w-6 h-6 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center text-xs font-bold font-mono">3</span>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2 border-b border-slate-200 dark:border-slate-700 pb-2">
+              <span className="w-6 h-6 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800 flex items-center justify-center text-xs font-bold font-mono">3</span>
               <span>變更稽核與權限管控 (Change Audit & Governance)</span>
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-              <div className="p-4 bg-slate-950/70 rounded-xl border border-slate-800">
+              {/* L1: 淺灰藍底 */}
+              <div className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700">
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="text-base">🟢</span>
-                  <div className="font-bold text-white">Level 1 — 一般變更</div>
+                  <div className="font-bold text-slate-800 dark:text-slate-200">Level 1 — 一般變更</div>
                 </div>
-                <p className="text-slate-400">無需記錄，直接儲存（例如：备注欄位）。</p>
+                <p className="text-slate-600 dark:text-slate-400">無需記錄，直接儲存（例如：备注欄位）。</p>
               </div>
-              <div className="p-4 bg-amber-950/60 rounded-xl border border-amber-500/40">
+              {/* L2: 琥珀暖色 */}
+              <div className="p-4 bg-gradient-to-r from-amber-50 to-amber-100/60 dark:from-amber-950/30 dark:to-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-700">
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="text-base">🟡</span>
-                  <div className="font-bold text-amber-200">Level 2 — MRP 影響變更</div>
+                  <div className="font-bold text-amber-800 dark:text-amber-300">Level 2 — MRP 影響變更</div>
                 </div>
-                <p className="text-amber-100">儲存前彈出影響確認對話框，顯示變更前後 MRP 差異摘要（例如：妥善穴數調整）。</p>
+                <p className="text-amber-700 dark:text-amber-200">儲存前彈出影響確認對話框，顯示變更前後 MRP 差異摘要（例如：妥善穴數調整）。</p>
               </div>
-              <div className="p-4 bg-red-950/60 rounded-xl border border-red-500/40">
+              {/* L3: 紅色警示 */}
+              <div className="p-4 bg-gradient-to-r from-rose-50 to-rose-100/60 dark:from-rose-950/30 dark:to-rose-900/20 rounded-xl border border-rose-200 dark:border-rose-700">
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="text-base">🔴</span>
-                  <div className="font-bold text-red-300">Level 3 — 工程變更</div>
+                  <div className="font-bold text-rose-700 dark:text-rose-300">Level 3 — 工程變更</div>
                 </div>
-                <p className="text-red-200">強制要求填寫變更原因方可儲存，完整記錄至 Audit_Log 可供稽核追溯（例如：設計穴數、單穴克重）。</p>
+                <p className="text-rose-700 dark:text-rose-200">強制要求填寫變更原因方可儲存，完整記錄至 Audit_Log 可供稽核追溯（例如：設計穴數、單穴克重）。</p>
               </div>
             </div>
           </section>
 
           {/* Section 4: Backup System */}
           <section className="space-y-3">
-            <h3 className="text-lg font-bold text-white flex items-center space-x-2 border-b border-slate-800 pb-2">
-              <span className="w-6 h-6 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-xs font-bold font-mono">4</span>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2 border-b border-slate-200 dark:border-slate-700 pb-2">
+              <span className="w-6 h-6 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-xs font-bold font-mono">4</span>
               <span>自動化備份系統 (Automated Backup)</span>
             </h3>
-            <div className="p-4 bg-slate-950/70 rounded-xl border border-slate-800 text-xs space-y-2">
+            <div className="p-4 bg-gradient-to-r from-sky-50 to-sky-100/50 dark:from-sky-950/30 dark:to-sky-900/20 rounded-xl border border-sky-200 dark:border-sky-700 text-xs space-y-2">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <div className="font-bold text-emerald-400 mb-1">排程備份</div>
-                  <p className="text-slate-400">可設定每日備份時間（台灣時間 UTC+8），瀏覽器保持開啟時自動執行。</p>
+                  <div className="font-bold text-sky-800 dark:text-sky-200 mb-1">排程備份</div>
+                  <p className="text-sky-700 dark:text-sky-300">可設定每日備份時間（台灣時間 UTC+8），瀏覽器保持開啟時自動執行。</p>
                 </div>
                 <div>
-                  <div className="font-bold text-emerald-400 mb-1">啟動備份</div>
-                  <p className="text-slate-400">可啟用「每次開啟頁面時自動備份」，防止意外關閉導致資料遺失。</p>
+                  <div className="font-bold text-sky-800 dark:text-sky-200 mb-1">啟動備份</div>
+                  <p className="text-sky-700 dark:text-sky-300">可啟用「每次開啟頁面時自動備份」，防止意外關閉導致資料遺失。</p>
                 </div>
                 <div>
-                  <div className="font-bold text-emerald-400 mb-1">備份路徑</div>
-                  <p className="text-slate-400">透過 File System Access API 授權寫入內網指定資料夾；不支援時以下載檔案方式進行。</p>
+                  <div className="font-bold text-sky-800 dark:text-sky-200 mb-1">備份路徑</div>
+                  <p className="text-sky-700 dark:text-sky-300">透過 File System Access API 授權寫入內網指定資料夾；不支援時以下載檔案方式進行。</p>
                 </div>
                 <div>
-                  <div className="font-bold text-emerald-400 mb-1">備份日誌</div>
-                  <p className="text-slate-400">完整記錄時間、檔案大小、資料筆數與執行耗時，支援日誌匯出與數量限制（預設 365 筆）。</p>
+                  <div className="font-bold text-sky-800 dark:text-sky-200 mb-1">備份日誌</div>
+                  <p className="text-sky-700 dark:text-sky-300">完整記錄時間、檔案大小、資料筆數與執行耗時，支援日誌匯出與數量限制（預設 365 筆）。</p>
                 </div>
               </div>
-              <div className="pt-2 border-t border-slate-800 flex items-center space-x-2">
-                <span className="text-rose-400">⚠</span>
-                <span className="text-slate-400">備份失敗時主動 Toast 通知管理員，便於及時介入處理。</span>
+              <div className="pt-2 border-t border-sky-200 dark:border-sky-800 flex items-center space-x-2">
+                <span className="text-rose-500">⚠</span>
+                <span className="text-sky-700 dark:text-sky-300">備份失敗時主動 Toast 通知管理員，便於及時介入處理。</span>
               </div>
             </div>
           </section>
