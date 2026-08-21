@@ -124,6 +124,14 @@ SystemDatabase {
 **CAPA：** 已於 V-20260821-22 全域優化時移除（`motion`、`autoprefixer`、`esbuild`、`tsx` 亦一併清除）。  
 **狀態：** ✅ 已關閉
 
+### CAPA-003 (2026-08-21)
+
+**問題：** `xlsx`（SheetJS）套件有 1 項 high severity 漏洞：Prototype Pollution + ReDoS。  
+**影響等級：** 中（本系統為純前端 LocalStorage 應用，Excel 檔案由使用者本機提供，不經伺服器處理）  
+**RCA：** xlsx v0.18.x 已知漏洞，官方尚未發布 patched 版本。  
+**CAPA：** 暂維持現狀。若未來升級至 v1.x（SheetJS Pro），可消除此風險。當前使用情境（本機匯入/匯出驗證資料）不觸發遠端程式碼執行路徑。  
+**狀態：** ⚠️ 觀察中（設計決策，風險可接受）
+
 ---
 
 ## 整體程式碼優化作業記錄
