@@ -213,159 +213,152 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
         </div>
       </div>
 
-      {/* Main 2-Column Section: Left (Exports) | Right (Universal Import) */}
-      <div className="grid grid-cols-12 gap-6">
-        
-        {/* LEFT COLUMN: Dual Format Exports (5 cols) */}
-        <div className="col-span-5 space-y-6">
-          
-          {/* Card 1: Formal Production Excel */}
-          <div className="bg-white dark:bg-slate-900/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-4">
-            <div className="flex items-center space-x-3 pb-3 border-b border-slate-200 dark:border-slate-800">
-              <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-[#059669] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center">
-                <FileSpreadsheet className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="flex items-center space-x-2">
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">正式生產部署專區</h3>
-                  <span className="text-[10px] bg-emerald-50 dark:bg-emerald-950 text-[#059669] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 px-1.5 py-0.5 rounded font-mono font-bold">PROD</span>
-                </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">供各權責單位（資材、製造、工程、業務）填報真實資料</p>
-              </div>
+      {/* Main Section: 4 Cards Horizontal Layout */}
+      <div className="grid grid-cols-12 gap-4">
+
+        {/* Card 1: Formal Production Excel */}
+        <div className="col-span-12 xl:col-span-3 bg-white dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-4">
+          <div className="flex items-center space-x-3 pb-3 border-b border-slate-200 dark:border-slate-800">
+            <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-[#059669] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center shrink-0">
+              <FileSpreadsheet className="w-5 h-5" />
             </div>
-
-            <div className="p-3.5 bg-slate-50 dark:bg-slate-950/70 rounded-xl border border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400 space-y-1.5">
-              <div className="font-semibold text-slate-900 dark:text-slate-200 flex items-center space-x-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span>正式規範：包含 00_勾稽字典 + 9 大工作表</span>
+            <div>
+              <div className="flex items-center space-x-2">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">正式生產部署專區</h3>
+                <span className="text-[10px] bg-emerald-50 dark:bg-emerald-950 text-[#059669] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 px-1.5 py-0.5 rounded font-mono font-bold whitespace-nowrap">PROD</span>
               </div>
-              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-mono">
-                純淨無任何模擬假資料，表頭附帶各部門權責與欄位填報約束
-              </p>
-            </div>
-
-            <div className="space-y-2 pt-1">
-              <button
-                onClick={() => {
-                  downloadTemplateExcel();
-                  onNotify('正式空白匯入範本 (料事如神系統_正式空白匯入範本_v1.0.xlsx) 已成功匯出，可直接分發給各權責單位！', 'success');
-                }}
-                id="exchange-download-formal-template-btn"
-                className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/20 transition-colors cursor-pointer"
-              >
-                <Upload className="w-4 h-4" />
-                <span>匯出正式空白匯入範本 (.xlsx)</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  exportToExcel(db, '料事如神系統_正式生產資料庫.xlsx');
-                  onNotify('目前系統正式資料庫已成功匯出！', 'success');
-                }}
-                id="exchange-export-prod-excel-btn"
-                className="w-full flex items-center justify-center space-x-2 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 hover:text-slate-900 dark:text-slate-300 font-semibold text-xs border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer"
-              >
-                <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span>匯出目前系統完整資料庫 (.xlsx)</span>
-              </button>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">供各權責單位填報真實資料</p>
             </div>
           </div>
 
-          {/* Card 2: Offline Demo / Training Sample Package */}
-          <div className="bg-white dark:bg-slate-900/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-4">
-            <div className="flex items-center space-x-3 pb-3 border-b border-slate-200 dark:border-slate-800">
-              <div className="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-500/10 text-[#0284c7] dark:text-sky-400 border border-sky-200 dark:border-sky-500/20 flex items-center justify-center">
-                <Sparkles className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="flex items-center space-x-2">
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">離線示範演練測試包</h3>
-                  <span className="text-[10px] bg-sky-50 dark:bg-sky-950 text-[#0284c7] dark:text-sky-400 border border-sky-200 dark:border-sky-800/60 px-1.5 py-0.5 rounded font-mono font-bold">SAMPLE</span>
-                </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">供人員培訓、系統演練與功能驗證之完整樣例</p>
-              </div>
+          <div className="p-3 bg-slate-50 dark:bg-slate-950/70 rounded-xl border border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400 space-y-1.5">
+            <div className="font-semibold text-slate-900 dark:text-slate-200 flex items-center space-x-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <span>00_勾稽字典 + 9 大工作表</span>
             </div>
-
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              包含醫療射出成型完整主檔（T接頭、16穴主力模、在途海運訂單與 3 階 MRP 數據鏈）。
-            </p>
-
-            <div className="space-y-2">
-              <button
-                onClick={() => {
-                  downloadDemoSampleExcel();
-                  onNotify('離線示範演練測試包 (料事如神系統_示範演練數據包_SAMPLE.xlsx) 已成功匯出，標明 SAMPLE 供演練使用！', 'success');
-                }}
-                id="exchange-download-demo-btn"
-                className="w-full flex items-center justify-center space-x-2 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/60 dark:hover:bg-sky-900/80 text-[#0284c7] dark:text-sky-200 font-semibold text-xs border border-sky-200 dark:border-sky-800/60 transition-colors cursor-pointer"
-              >
-                <Upload className="w-4 h-4 text-[#0284c7] dark:text-sky-400" />
-                <span>匯出示範演練數據包 (.xlsx)</span>
-              </button>
-            </div>
+            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">純淨無任何模擬假資料，附帶各部門權責與欄位約束</p>
           </div>
 
-          {/* Card 3: JSON Export */}
-          <div className="bg-white dark:bg-slate-900/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-4">
-            <div className="flex items-center space-x-3 pb-3 border-b border-slate-200 dark:border-slate-800">
-              <div className="w-9 h-9 rounded-xl bg-sky-50 dark:bg-blue-500/10 text-[#0284c7] dark:text-blue-400 border border-sky-200 dark:border-blue-500/20 flex items-center justify-center">
-                <FileCode className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">JSON 資料備份匯出</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">系統完整資料庫快照 (.json)</p>
-              </div>
-            </div>
-
-            <div className="p-3.5 bg-slate-900 text-cyan-300 rounded-xl font-mono text-xs overflow-hidden max-h-24 border border-slate-800">
-              <pre>{JSON.stringify(db, null, 2).slice(0, 240)} ...</pre>
-            </div>
+          <div className="space-y-2 pt-1">
+            <button
+              onClick={() => {
+                downloadTemplateExcel();
+                onNotify('正式空白匯入範本已成功匯出，可直接分發給各權責單位！', 'success');
+              }}
+              id="exchange-download-formal-template-btn"
+              className="w-full flex items-center justify-center space-x-2 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/20 transition-colors cursor-pointer"
+            >
+              <Upload className="w-3.5 h-3.5" />
+              <span>匯出正式空白範本 (.xlsx)</span>
+            </button>
 
             <button
               onClick={() => {
-                exportToJSON(db);
-                onNotify('全庫系統 JSON 備份檔已成功匯出！', 'success');
+                exportToExcel(db, '料事如神系統_正式生產資料庫.xlsx');
+                onNotify('目前系統正式資料庫已成功匯出！', 'success');
               }}
-              id="exchange-export-json-btn"
-              className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg shadow-blue-600/20 transition-colors cursor-pointer"
+              id="exchange-export-prod-excel-btn"
+              className="w-full flex items-center justify-center space-x-2 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 hover:text-slate-900 dark:text-slate-300 font-semibold text-xs border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer"
             >
-              <Upload className="w-4 h-4" />
-              <span>匯出完整系統 JSON 備份檔 (.json)</span>
+              <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>匯出系統完整資料庫 (.xlsx)</span>
             </button>
           </div>
-
         </div>
 
-        {/* RIGHT COLUMN: Universal Dual-Format Import (7 cols) */}
-        <div className="col-span-7 bg-white dark:bg-slate-900/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 flex flex-col justify-between space-y-6">
-          
-          <div className="space-y-4">
+        {/* Card 2: Offline Demo / Training Sample Package */}
+        <div className="col-span-12 xl:col-span-3 bg-white dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-4">
+          <div className="flex items-center space-x-3 pb-3 border-b border-slate-200 dark:border-slate-800">
+            <div className="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-500/10 text-[#0284c7] dark:text-sky-400 border border-sky-200 dark:border-sky-500/20 flex items-center justify-center shrink-0">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">離線示範演練測試包</h3>
+                <span className="text-[10px] bg-sky-50 dark:bg-sky-950 text-[#0284c7] dark:text-sky-400 border border-sky-200 dark:border-sky-800/60 px-1.5 py-0.5 rounded font-mono font-bold whitespace-nowrap">SAMPLE</span>
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">人員培訓、系統演練、功能驗證</p>
+            </div>
+          </div>
+
+          <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+            包含醫療射出成型完整主檔（T接頭、16穴主力模、在途海運訂單與 3 階 MRP 數據鏈）。
+          </p>
+
+          <div className="space-y-2">
+            <button
+              onClick={() => {
+                downloadDemoSampleExcel();
+                onNotify('離線示範演練測試包已成功匯出，標明 SAMPLE 供演練使用！', 'success');
+              }}
+              id="exchange-download-demo-btn"
+              className="w-full flex items-center justify-center space-x-2 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/60 dark:hover:bg-sky-900/80 text-[#0284c7] dark:text-sky-200 font-semibold text-xs border border-sky-200 dark:border-sky-800/60 transition-colors cursor-pointer"
+            >
+              <Upload className="w-3.5 h-3.5 text-[#0284c7] dark:text-sky-400" />
+              <span>匯出示範演練數據包 (.xlsx)</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Card 3: JSON Export */}
+        <div className="col-span-12 xl:col-span-3 bg-white dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-4">
+          <div className="flex items-center space-x-3 pb-3 border-b border-slate-200 dark:border-slate-800">
+            <div className="w-9 h-9 rounded-xl bg-sky-50 dark:bg-blue-500/10 text-[#0284c7] dark:text-blue-400 border border-sky-200 dark:border-blue-500/20 flex items-center justify-center shrink-0">
+              <FileCode className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">JSON 資料備份匯出</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">系統完整資料庫快照 (.json)</p>
+            </div>
+          </div>
+
+          <div className="p-3 bg-slate-900 text-cyan-300 rounded-xl font-mono text-xs overflow-hidden max-h-20 border border-slate-800">
+            <pre>{JSON.stringify(db, null, 2).slice(0, 200)} ...</pre>
+          </div>
+
+          <button
+            onClick={() => {
+              exportToJSON(db);
+              onNotify('全庫系統 JSON 備份檔已成功匯出！', 'success');
+            }}
+            id="exchange-export-json-btn"
+            className="w-full flex items-center justify-center space-x-2 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg shadow-blue-600/20 transition-colors cursor-pointer"
+          >
+            <Upload className="w-3.5 h-3.5" />
+            <span>匯出完整系統 JSON 備份檔 (.json)</span>
+          </button>
+        </div>
+
+        {/* Card 4: Excel & JSON Smart Import with Dry-Run */}
+        <div className="col-span-12 xl:col-span-3 bg-white dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 flex flex-col justify-between space-y-4">
+
+          <div className="space-y-3">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <div className="flex items-center space-x-3">
-                <div className="w-9 h-9 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center">
+              <div className="flex items-center space-x-2.5 min-w-0">
+                <div className="w-9 h-9 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center shrink-0">
                   <Download className="w-5 h-5" />
                 </div>
-                <div>
-                  <h3 className="text-base font-bold text-white">Excel & JSON 智慧匯入與 Dry-Run 預檢</h3>
-                  <p className="text-xs text-slate-400">
-                    一鍵支援 <span className="text-emerald-400 font-semibold">.xlsx</span> / <span className="text-emerald-400 font-semibold">.xls</span> 與 <span className="text-blue-400 font-semibold">.json</span> 格式自動辨識
+                <div className="min-w-0">
+                  <h3 className="text-sm font-bold text-white truncate">智慧匯入與 Dry-Run 預檢</h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    自動辨識 <span className="text-emerald-400 font-semibold">.xlsx</span> / <span className="text-blue-400 font-semibold">.json</span>
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-1.5">
-                <span className="text-xs font-bold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-[#059669] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">.xlsx</span>
-                <span className="text-xs font-bold px-2 py-0.5 rounded bg-sky-50 dark:bg-blue-950 text-[#0284c7] dark:text-blue-400 border border-sky-200 dark:border-blue-800">.json</span>
+              <div className="flex items-center space-x-1 shrink-0 ml-2">
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-[#059669] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">.xlsx</span>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sky-50 dark:bg-blue-950 text-[#0284c7] dark:text-blue-400 border border-sky-200 dark:border-blue-800">.json</span>
               </div>
             </div>
 
-            {/* Universal Drag & Drop Area */}
+            {/* Drag & Drop Area */}
             <div
               onClick={() => universalFileInputRef.current?.click()}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
+              className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all ${
                 dragActive
                   ? 'border-indigo-400 bg-indigo-50/50 dark:bg-indigo-950/30 scale-[1.01]'
                   : 'border-slate-300 dark:border-slate-800 hover:border-indigo-500 bg-slate-50/60 dark:bg-slate-950/60 hover:bg-indigo-50/30'
@@ -378,66 +371,55 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
                 onChange={handleFileInputChange}
                 className="hidden"
               />
-              
-              <div className="flex items-center justify-center space-x-3 mb-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800/80 flex items-center justify-center shadow-xs">
-                  <FileSpreadsheet className="w-5 h-5 text-[#059669] dark:text-emerald-400" />
+
+              <div className="flex items-center justify-center space-x-2 mb-2">
+                <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800/80 flex items-center justify-center">
+                  <FileSpreadsheet className="w-4 h-4 text-[#059669] dark:text-emerald-400" />
                 </div>
-                <div className="text-slate-400 font-bold">+</div>
-                <div className="w-10 h-10 rounded-xl bg-sky-50 dark:bg-blue-950/60 border border-sky-300 dark:border-blue-800/80 flex items-center justify-center shadow-xs">
-                  <FileCode className="w-5 h-5 text-[#0284c7] dark:text-blue-400" />
+                <div className="text-slate-400 font-bold text-xs">+</div>
+                <div className="w-8 h-8 rounded-lg bg-sky-50 dark:bg-blue-950/60 border border-sky-300 dark:border-blue-800/80 flex items-center justify-center">
+                  <FileCode className="w-4 h-4 text-[#0284c7] dark:text-blue-400" />
                 </div>
               </div>
 
-              <div className="text-sm font-bold text-slate-800 dark:text-white">
-                點擊選擇 或 拖曳 <span className="text-[#059669] dark:text-emerald-400">Excel (.xlsx)</span> 或 <span className="text-[#0284c7] dark:text-blue-400">JSON (.json)</span> 檔案至此
+              <div className="text-xs font-bold text-slate-800 dark:text-white">
+                點擊或拖曳檔案至此
               </div>
-              <div className="text-xs text-slate-400 mt-1">
-                系統自動辨識格式、解析 8 大工作表/主檔並啟動 Dry-Run 防護預檢
+              <div className="text-[10px] text-slate-400 mt-0.5">
+                支援 .xlsx / .xls / .json · 自動 Dry-Run 預檢
               </div>
 
-              <div className="mt-4 flex items-center justify-center space-x-3 text-xs text-slate-400">
-                <span className="flex items-center space-x-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>多工作表智慧對齊</span>
-                </span>
+              <div className="mt-2 flex items-center justify-center space-x-2 text-[10px] text-slate-400">
+                <span className="flex items-center space-x-1"><CheckCircle2 className="w-3 h-3 text-emerald-400" /><span>多工作表對齊</span></span>
                 <span>•</span>
-                <span className="flex items-center space-x-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
-                  <span>PK/FK 主鍵防呆校驗</span>
-                </span>
+                <span className="flex items-center space-x-1"><CheckCircle2 className="w-3 h-3 text-blue-400" /><span>PK/FK 校驗</span></span>
                 <span>•</span>
-                <span className="flex items-center space-x-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400" />
-                  <span>Upsert 安全增量覆蓋</span>
-                </span>
+                <span className="flex items-center space-x-1"><CheckCircle2 className="w-3 h-3 text-indigo-400" /><span>Upsert 安全覆蓋</span></span>
               </div>
             </div>
 
-            {/* Quick Button to Paste Raw JSON */}
+            {/* Quick JSON Paste Link */}
             <div className="flex items-center justify-between pt-1">
-              <span className="text-xs text-slate-400">需要直接貼上第三方 API 或 ERP 產出的原始代碼？</span>
+              <span className="text-[11px] text-slate-400 truncate mr-2">需要直接貼上原始 JSON 代碼？</span>
               <button
                 onClick={() => setShowPasteModal(true)}
-                className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 underline underline-offset-4"
+                className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 underline underline-offset-4 shrink-0"
               >
-                開啟 JSON 文字貼上區
+                開啟貼上區
               </button>
             </div>
           </div>
 
           {/* Dry-Run Precheck Report Box */}
           {dryRunReport ? (
-            <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-xs space-y-3">
+            <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-xs space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-slate-900 dark:text-white flex items-center space-x-2">
-                  <ShieldCheck className="w-4 h-4 text-[#059669] dark:text-emerald-400" />
-                  <span>
-                    Dry-Run 預檢分析報告 ({detectedFormat === 'excel' ? 'Excel 檔案' : 'JSON 資料'})
-                  </span>
+                <span className="font-bold text-slate-900 dark:text-white flex items-center space-x-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#059669] dark:text-emerald-400" />
+                  <span>Dry-Run 預檢報告</span>
                 </span>
                 <span
-                  className={`text-xs font-semibold px-2.5 py-0.5 rounded border ${
+                  className={`text-[10px] font-semibold px-2 py-0.5 rounded border shrink-0 ${
                     dryRunReport.success
                       ? 'text-[#059669] bg-emerald-50 dark:bg-emerald-950 border-emerald-200 dark:border-emerald-800/60'
                       : 'text-red-600 bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800/60'
@@ -448,63 +430,50 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
               </div>
 
               {Object.keys(dryRunReport.importedCounts).length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
+                <div className="grid grid-cols-2 gap-1.5 text-xs font-mono">
                   {Object.entries(dryRunReport.importedCounts).map(([table, count]) => (
-                    <div key={table} className="bg-white dark:bg-slate-900 p-2.5 rounded border border-slate-200 dark:border-slate-800 shadow-xs">
-                      <div className="text-slate-500 dark:text-slate-400 text-xs truncate" title={table}>{table}</div>
-                      <div className="font-bold text-slate-900 dark:text-white mt-1 text-sm">{count} 筆</div>
+                    <div key={table} className="bg-white dark:bg-slate-900 p-1.5 rounded border border-slate-200 dark:border-slate-800 shadow-xs">
+                      <div className="text-slate-500 dark:text-slate-400 text-[10px] truncate" title={table}>{table}</div>
+                      <div className="font-bold text-slate-900 dark:text-white mt-0.5">{count} 筆</div>
                     </div>
                   ))}
                 </div>
               )}
 
               {dryRunReport.errors.length > 0 && (
-                <div className="p-3 bg-red-50 dark:bg-red-950/30 rounded border border-red-200 dark:border-red-500/30 text-red-700 dark:text-red-300 text-xs space-y-1">
+                <div className="p-2 bg-red-50 dark:bg-red-950/30 rounded border border-red-200 dark:border-red-500/30 text-red-700 dark:text-red-300 text-xs space-y-0.5">
                   <div className="font-bold">❌ 錯誤清單：</div>
-                  {dryRunReport.errors.map((err, idx) => (
+                  {dryRunReport.errors.slice(0, 3).map((err, idx) => (
                     <div key={idx}>• {err}</div>
                   ))}
                 </div>
               )}
 
-              {dryRunReport.warnings.length > 0 && (
-                <div className="p-3 bg-amber-50 dark:bg-amber-950/30 rounded border border-amber-200 dark:border-amber-500/30 text-amber-800 dark:text-amber-200 text-xs space-y-1 max-h-28 overflow-y-auto">
-                  <div className="font-bold">⚠️ 注意事項 ({dryRunReport.warnings.length} 則)：</div>
-                  {dryRunReport.warnings.slice(0, 5).map((w, idx) => (
-                    <div key={idx}>• {w}</div>
-                  ))}
-                  {dryRunReport.warnings.length > 5 && (
-                    <div className="text-slate-500 dark:text-slate-400">...以及其餘 {dryRunReport.warnings.length - 5} 則</div>
-                  )}
-                </div>
-              )}
-
               {dryRunReport.success && (
-                <div className="pt-2 flex items-center justify-between border-t border-slate-200 dark:border-slate-800">
-                  <span className="text-xs text-slate-500 dark:text-slate-400">
-                    點擊確認後將執行安全覆蓋更新，並重新計算 MRP 需求
-                  </span>
+                <div className="pt-1 flex items-center justify-between border-t border-slate-200 dark:border-slate-800">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400">確認後將執行安全覆蓋更新</span>
                   <button
                     onClick={handleApplyImport}
                     id="exchange-confirm-import-btn"
-                    className="flex items-center space-x-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs shadow-md shadow-emerald-600/20 transition-colors"
+                    className="flex items-center space-x-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-[10px] shadow-md shadow-emerald-600/20 transition-colors"
                   >
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>確認並寫入系統資料庫 (Upsert)</span>
+                    <CheckCircle2 className="w-3 h-3" />
+                    <span>確認寫入系統</span>
                   </button>
                 </div>
               )}
             </div>
           ) : (
-            <div className="p-4 bg-slate-50/80 dark:bg-slate-950/40 rounded-xl border border-slate-200 dark:border-slate-800/80 text-xs text-slate-500 dark:text-slate-400 flex items-center justify-between">
-              <span className="flex items-center space-x-2">
-                <Database className="w-4 h-4 text-slate-400 dark:text-slate-500" />
-                <span>尚未載入檔案。請拖曳或選取檔案以啟動 Dry-Run 預檢。</span>
+            <div className="p-3 bg-slate-50/80 dark:bg-slate-950/40 rounded-xl border border-slate-200 dark:border-slate-800/80 text-xs text-slate-500 dark:text-slate-400 flex items-center justify-between">
+              <span className="flex items-center space-x-2 min-w-0">
+                <Database className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
+                <span className="truncate">尚未載入檔案，請拖曳或選取檔案</span>
               </span>
-              <span className="text-xs text-slate-400 dark:text-slate-500 font-mono">STANDBY</span>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono shrink-0 ml-2">STANDBY</span>
             </div>
           )}
         </div>
+
       </div>
 
       {/* Modal for Raw JSON Text Paste */}
