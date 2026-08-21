@@ -77,6 +77,8 @@ export const MOLD_MASTER_META: TableMeta = {
     },
     { key: 'status', label: '模具狀態', editability: 1, inputType: 'select', options: [{ value: 'active', label: '✅ 正常使用' }, { value: 'maintenance', label: '🔧 維修保養' }, { value: 'trial', label: '🧪 試模驗證' }] },
     { key: 'location', label: '機台存放位置', editability: 1, inputType: 'text', maxLength: 50 },
+    { key: 'machine_type', label: '成型機型號', editability: 1, inputType: 'text', maxLength: 50 }, // M-03
+    { key: 'production_line', label: '產線編號', editability: 1, inputType: 'text', maxLength: 20 }, // M-03
     { key: 'daily_capacity', label: '日產能 PCS（計算值）', editability: 'computed', inputType: 'computed', formatDisplay: (v) => v ? `${Number(v).toLocaleString()} PCS` : '—' },
   ],
 };
@@ -86,7 +88,7 @@ export const PRODUCT_MOLD_BOM_META: TableMeta = {
   fields: [
     { key: 'sku', label: '品號 (FK)', editability: 'locked', inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku', required: true },
     { key: 'mold_id', label: '模具編號 (FK)', editability: 'locked', inputType: 'fk_select', fkTable: 'mold_master', fkValueKey: 'mold_id', fkLabelKey: 'mold_id', required: true },
-    { key: 'rm_sku', label: '原料品號 (FK)', editability: 3, inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku', required: true },
+    { key: 'rm_sku', label: '原料品號 (FK，僅 RAW)', editability: 3, inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku', required: true },
     { key: 'net_mold_weight_g', label: '整模淨重 (g)', editability: 3, inputType: 'number', required: true, min: 0.001, step: 0.001, validate: (v) => { const val = Number(v); return (isFinite(val) && val > 0) ? null : '整模淨重必須 > 0 克'; } },
     { key: 'runner_weight_g', label: '流道重量 (g)', editability: 3, inputType: 'number', required: true, min: 0, step: 0.001, validate: (v) => { const val = Number(v); return (isFinite(val) && val >= 0) ? null : '流道重量必須 ≥ 0 克'; } },
     { key: 'is_primary_mold', label: '主模標記', editability: 3, inputType: 'checkbox' },
@@ -95,6 +97,8 @@ export const PRODUCT_MOLD_BOM_META: TableMeta = {
       validate: (v) => { const val = Number(v); return (isFinite(val) && val >= 0 && val <= 0.5) ? null : '損耗率須介於 0 ~ 0.5'; },
       formatDisplay: (v) => `${(Number(v) * 100).toFixed(1)}%`,
     },
+    { key: 'valid_from', label: 'BOM 生效起始日', editability: 1, inputType: 'date', required: true }, // M-05
+    { key: 'valid_to', label: 'BOM 失效日（null = 至今有效）', editability: 1, inputType: 'date' }, // M-05
     { key: 'remarks', label: '驗證備註', editability: 1, inputType: 'text', maxLength: 200 },
   ],
 };
@@ -115,13 +119,14 @@ export const YIELD_MASTER_META: TableMeta = {
 export const SUPPLIER_RULE_MASTER_META: TableMeta = {
   key: 'supplier_rule_master', label: '採購與供應商規則檔', pkFields: ['rm_sku'],
   fields: [
-    { key: 'rm_sku', label: '原料品號 (PK/FK)', editability: 'locked', inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku', required: true },
+    { key: 'rm_sku', label: '原料品號 (PK/FK，僅 RAW)', editability: 'locked', inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku', required: true },
     { key: 'supplier_name', label: '供應商名稱', editability: 1, inputType: 'text', required: true, maxLength: 100 },
     { key: 'lead_time_days', label: '採購交期 (天)', editability: 2, inputType: 'number', required: true, min: 1, step: 1, validate: (v) => { const val = Number(v); return (isFinite(val) && val >= 1) ? null : '交期必須 ≥ 1 天'; } },
     { key: 'moq_kg', label: 'MOQ (KG)', editability: 2, inputType: 'number', required: true, min: 1, step: 1, validate: (v) => { const val = Number(v); return (isFinite(val) && val > 0) ? null : 'MOQ 必須 > 0 KG'; } },
     { key: 'safety_stock_kg', label: '安全庫存 (KG)', editability: 2, inputType: 'number', required: true, min: 0, step: 1, validate: (v) => { const val = Number(v); return (isFinite(val) && val >= 0) ? null : '安全庫存必須 ≥ 0 KG'; } },
     { key: 'max_storage_capacity_kg', label: '倉容上限 (KG)', editability: 2, inputType: 'number', min: 0, step: 100 },
     { key: 'unit_price_usd', label: '單價 (USD/KG)', editability: 2, inputType: 'number', min: 0, step: 0.01 },
+    { key: 'unit_price_twd', label: '單價 (TWD/KG)', editability: 2, inputType: 'number', min: 0, step: 0.01 }, // M-04
   ],
 };
 
@@ -134,7 +139,8 @@ export const DEMAND_FORECAST_LOG_META: TableMeta = {
     { key: 'sku', label: '需求品號 (FK)', editability: 1, inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku', required: true },
     { key: 'target_date', label: '需求交期', editability: 2, inputType: 'date', required: true },
     { key: 'demand_qty', label: '預估量 (PCS)', editability: 2, inputType: 'number', required: true, min: 1, step: 1, validate: (v) => { const val = Number(v); return (isFinite(val) && val >= 1) ? null : '預估量必須 ≥ 1 PCS'; } },
-    { key: 'created_by', label: '填報業務', editability: 1, inputType: 'text', maxLength: 50 },
+    { key: 'created_by_id', label: '操作者帳號 ID', editability: 1, inputType: 'text', maxLength: 30, placeholder: 'e.g. usr_001' }, // M-02（原 created_by）
+    { key: 'created_by_name', label: '操作者顯示姓名', editability: 1, inputType: 'text', maxLength: 50 }, // M-02
     { key: 'notes', label: '備註', editability: 1, inputType: 'text', maxLength: 200 },
   ],
 };
@@ -167,18 +173,47 @@ export const PO_IN_TRANSIT_META: TableMeta = {
   key: 'po_in_transit', label: '在途採購訂單檔', pkFields: ['po_number'],
   fields: [
     { key: 'po_number', label: '採購單號 (PK)', editability: 'locked', inputType: 'text', required: true },
-    { key: 'rm_sku', label: '原料品號 (FK)', editability: 1, inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku', required: true },
+    { key: 'rm_sku', label: '原料品號 (FK，僅 RAW)', editability: 1, inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku', required: true },
     { key: 'in_transit_qty_kg', label: '在途量 (KG)', editability: 2, inputType: 'number', required: true, min: 0.1, step: 0.1, validate: (v) => { const val = Number(v); return (isFinite(val) && val > 0) ? null : '在途量必須 > 0 KG'; } },
     { key: 'eta_date', label: '預計到廠日', editability: 1, inputType: 'date', required: true },
+    { key: 'actual_arrival_date', label: '實際到廠日（回寫）', editability: 2, inputType: 'date' }, // M-01
+    { key: 'eta_variance_days', label: 'ETA 偏差天數（計算值）', editability: 'computed', inputType: 'computed', formatDisplay: (v) => {
+      if (v === null || v === undefined) return '—';
+      const n = Number(v);
+      return n === 0 ? '準時' : n > 0 ? `${n} 天延遲` : `${Math.abs(n)} 天提前`;
+    }}, // M-01
     { key: 'supplier_name', label: '供應商名稱', editability: 1, inputType: 'text', maxLength: 100 },
-    { key: 'status', label: '在途狀態', editability: 1, inputType: 'select', options: [{ value: 'ordered', label: '📋 已下單' }, { value: 'shipping', label: '🚢 海運中' }, { value: 'customs', label: '🛃 清關中' }, { value: 'arrived', label: '✅ 已到廠' }] },
+    { key: 'status', label: '在途狀態', editability: 1, inputType: 'select', options: [
+      { value: 'ordered', label: '📋 已下單' },
+      { value: 'shipping', label: '🚢 海運中' },
+      { value: 'customs', label: '🛃 清關中' },
+      { value: 'arrived', label: '✅ 已到廠' },
+      { value: 'delayed', label: '⚠️ 延遲' },
+      { value: 'partial_arrived', label: '📦 部分到貨' },
+    ]},
+  ],
+};
+
+// 11. Sorting Actual Yield Log (Phase 3 動態回饋閉環)
+export const SORTING_ACTUAL_YIELD_LOG_META: TableMeta = {
+  key: 'sorting_actual_yield_log', label: 'Sorting 實際良率紀錄檔', pkFields: ['log_id'],
+  fields: [
+    { key: 'log_id', label: '紀錄 ID (PK)', editability: 'locked', inputType: 'text', required: true },
+    { key: 'sku', label: '品號 (FK，僅 PART/COMP/SET)', editability: 'locked', inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku', required: true },
+    { key: 'batch_no', label: '生產批號', editability: 1, inputType: 'text', required: true, maxLength: 30 },
+    { key: 'sorting_date', label: '全檢日期', editability: 1, inputType: 'date', required: true },
+    { key: 'qty_sorted', label: '全檢數量 (PCS)', editability: 2, inputType: 'number', required: true, min: 1, step: 1 },
+    { key: 'qty_passed', label: '合格數量 (PCS)', editability: 2, inputType: 'number', required: true, min: 0, step: 1 },
+    { key: 'actual_yield_rate', label: '實際良率（計算值）', editability: 'computed', inputType: 'computed', formatDisplay: (v) => v ? `${(Number(v) * 100).toFixed(2)}%` : '—' },
+    { key: 'operator_id', label: '作業員 ID', editability: 1, inputType: 'text', maxLength: 30 },
+    { key: 'notes', label: '備註', editability: 1, inputType: 'text', maxLength: 200 },
   ],
 };
 
 export const ALL_TABLE_METAS: TableMeta[] = [
   ITEM_MASTER_META, MOLD_MASTER_META, PRODUCT_MOLD_BOM_META, YIELD_MASTER_META,
   SUPPLIER_RULE_MASTER_META, DEMAND_FORECAST_LOG_META, ACTUAL_ORDER_META,
-  INVENTORY_WIP_SNAPSHOT_META, PO_IN_TRANSIT_META,
+  INVENTORY_WIP_SNAPSHOT_META, PO_IN_TRANSIT_META, SORTING_ACTUAL_YIELD_LOG_META,
 ];
 
 export function getTableMeta(key: string): TableMeta | undefined {

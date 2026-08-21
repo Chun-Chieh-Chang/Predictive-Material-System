@@ -19,6 +19,7 @@ export const EMPTY_DATABASE: SystemDatabase = {
   po_in_transit: [],
   audit_log: [],
   material_classes: DEFAULT_MATERIAL_CLASSES,
+  sorting_actual_yield_log: [], // Phase 3 初期為空，待實際全檢紀錄匯入
 };
 
 // 2. 離線示範演練數據庫 (Demo / Training Sample Database - 嚴禁與正式資料混淆)
@@ -133,8 +134,9 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       net_mold_weight_g: 9.63,
       runner_weight_g: 8.32,
       is_primary_mold: true,
-      std_mfg_scrap_rate: 0.03, // 3%
-      remarks: '已完成 PPOV 驗證, 常態量產模'
+      std_mfg_scrap_rate: 0.03,
+      remarks: '已完成 PPOV 驗證, 常態量產模',
+      valid_from: '2025-01-01', valid_to: null
     },
     {
       sku: 'A01-210-251',
@@ -144,7 +146,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       runner_weight_g: 10.40,
       is_primary_mold: true,
       std_mfg_scrap_rate: 0.03,
-      remarks: '主力 16 穴模, 單穴克重約 1.39g'
+      remarks: '主力 16 穴模, 單穴克重約 1.39g',
+      valid_from: '2025-01-01', valid_to: null
     },
     {
       sku: 'A01-210-251',
@@ -154,7 +157,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       runner_weight_g: 8.36,
       is_primary_mold: false,
       std_mfg_scrap_rate: 0.05,
-      remarks: '急單備用 8 穴模, 單穴克重 2.22g'
+      remarks: '急單備用 8 穴模, 單穴克重 2.22g',
+      valid_from: '2025-01-01', valid_to: null
     },
     {
       sku: 'C09-200-251',
@@ -164,7 +168,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       runner_weight_g: 6.20,
       is_primary_mold: true,
       std_mfg_scrap_rate: 0.04,
-      remarks: 'Y管成型, 週期 32s'
+      remarks: 'Y管成型, 週期 32s',
+      valid_from: '2025-01-01', valid_to: null
     },
     {
       sku: 'B02-100-011',
@@ -174,7 +179,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       runner_weight_g: 7.10,
       is_primary_mold: true,
       std_mfg_scrap_rate: 0.02,
-      remarks: '高產能 24 穴模 (目前妥善 22 穴)'
+      remarks: '高產能 24 穴模 (目前妥善 22 穴)',
+      valid_from: '2025-01-01', valid_to: null
     }
   ],
 
@@ -239,7 +245,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       sku: 'A01-200-131',
       target_date: '2026-11-30',
       demand_qty: 120000,
-      created_by: 'Iris (業務採購)',
+      created_by_id: 'usr_iris',
+      created_by_name: 'Iris (業務採購)',
       created_at: '2026-08-01 09:30',
       notes: 'MDX 歐美旺季初估需求'
     },
@@ -250,7 +257,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       sku: 'A01-200-131',
       target_date: '2026-11-30',
       demand_qty: 90000,
-      created_by: 'Iris (業務採購)',
+      created_by_id: 'usr_iris',
+      created_by_name: 'Iris (業務採購)',
       created_at: '2026-08-08 14:15',
       notes: 'MDX 下修 Forecast (-30,000 PCS)，系統觸發防爆倉注意'
     },
@@ -261,7 +269,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       sku: 'A01-210-251',
       target_date: '2026-12-15',
       demand_qty: 80000,
-      created_by: 'Iris (業務採購)',
+      created_by_id: 'usr_iris',
+      created_by_name: 'Iris (業務採購)',
       created_at: '2026-08-08 14:20',
       notes: '加壓接頭年末定期備量'
     },
@@ -272,7 +281,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       sku: 'C09-200-251',
       target_date: '2026-10-31',
       demand_qty: 45000,
-      created_by: 'Iris (業務採購)',
+      created_by_id: 'usr_iris',
+      created_by_name: 'Iris (業務採購)',
       created_at: '2026-08-08 14:25',
       notes: 'Y管緊急追加 Forecast'
     },
@@ -283,7 +293,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       sku: 'B02-100-011',
       target_date: '2026-09-30',
       demand_qty: 150000,
-      created_by: 'Kevin (業務專案)',
+      created_by_id: 'usr_kevin',
+      created_by_name: 'Kevin (業務專案)',
       created_at: '2026-08-10 11:00',
       notes: 'ICU 急單專案'
     }
@@ -383,6 +394,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
   ],
   audit_log: [],
   material_classes: DEFAULT_MATERIAL_CLASSES,
+  sorting_actual_yield_log: [], // Phase 3 初期為空，待實際全檢紀錄匯入
 };
 
 // 預設初次啟動為純淨空庫，不強行硬編碼假資料

@@ -226,7 +226,7 @@ export function exportToExcel(db: SystemDatabase, filename = '料事如神系統
       '成品品名(參考)': fgItem?.description || fgItem?.category || '',
       '需求交期': f.target_date,
       '預估需求量_PCS': f.demand_qty,
-      '填報業務': f.created_by,
+      '填報業務': f.created_by_name || f.created_by_id || '',
       '備註說明': f.notes || ''
     };
   });
@@ -449,7 +449,9 @@ export function importFromJSON(jsonText: string, currentDB: SystemDatabase): { d
           runner_weight_g: Number(row.runner_weight_g) || 0,
           is_primary_mold: Boolean(row.is_primary_mold),
           std_mfg_scrap_rate: Number(row.std_mfg_scrap_rate) || 0.03,
-          remarks: row.remarks || ''
+          remarks: row.remarks || '',
+          valid_from: String(row.valid_from || '2025-01-01'),
+          valid_to: row.valid_to ? String(row.valid_to) : null,
         };
         if (existingIdx >= 0) {
           newDB.product_mold_bom[existingIdx] = bom;
@@ -582,7 +584,9 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
           runner_weight_g: Number(r['流道重量_克'] || r['runner_weight_g'] || 5),
           is_primary_mold: isPrimary,
           std_mfg_scrap_rate: Number(r['標準生產損耗率'] || r['std_mfg_scrap_rate'] || 0.03),
-          remarks: r['備註驗證狀態'] || r['remarks'] || ''
+          remarks: r['備註驗證狀態'] || r['remarks'] || '',
+          valid_from: String(r['BOM生效起始日'] || r['valid_from'] || '2025-01-01'),
+          valid_to: r['BOM失效日'] || r['valid_to'] || null,
         };
         const idx = newDB.product_mold_bom.findIndex((b) => b.sku === bom.sku && b.mold_id === bom.mold_id);
         if (idx >= 0) newDB.product_mold_bom[idx] = bom;
@@ -655,7 +659,8 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
           sku: String(sku).trim(),
           target_date: String(r['需求交期'] || r['target_date'] || '2026-11-30').trim(),
           demand_qty: Number(r['預估需求量_PCS'] || r['demand_qty'] || 10000),
-          created_by: String(r['填報業務'] || r['created_by'] || 'Admin').trim(),
+          created_by_id: String(r['填報業務'] || r['created_by'] || r['created_by_id'] || 'Admin').trim(),
+          created_by_name: r['created_by_name'] || null,
           created_at: new Date().toISOString(),
           notes: r['備註說明'] || ''
         };

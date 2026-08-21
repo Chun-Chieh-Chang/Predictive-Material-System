@@ -39,6 +39,15 @@ export function App() {
         // Backward compat: ensure audit_log field exists
         if (!parsed.audit_log) parsed.audit_log = [];
         if (!parsed.material_classes) parsed.material_classes = [];
+        if (!parsed.sorting_actual_yield_log) parsed.sorting_actual_yield_log = [];
+        // M-02: migrate created_by → created_by_id + created_by_name
+        if (parsed.demand_forecast_log?.length && parsed.demand_forecast_log[0]['created_by'] !== undefined && parsed.demand_forecast_log[0]['created_by_id'] === undefined) {
+          parsed.demand_forecast_log = parsed.demand_forecast_log.map((r: Record<string, unknown>) => ({
+            ...r,
+            created_by_id: r['created_by'] as string,
+            created_by_name: null as string | null,
+          }));
+        }
         return parsed;
       }
     } catch (e) {

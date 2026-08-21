@@ -39,18 +39,6 @@ export interface ItemMaster {
   material_class_label?: string | null; // 分類完整路徑標籤（e.g. RAW > ABS/MABS）
 }
 
-// 現有資料結構維持不變
-// 1. Item Master (料號基本主檔)
-export interface ItemMasterV0 {
-  sku: string; // 品號 (PK)
-  alt_sku?: string | null; // 替代品號
-  customer_id: string; // 客戶代碼 (MDX, ICU, etc.)
-  category: string; // 產品/原料種類 (T接頭, ABS, etc.)
-  color?: string; // 外觀顏色
-  unit: string; // 計量單位 (PCS, KG)
-  description?: string; // 說明備註
-}
-
 // 2. Mold Master (模具與產能主檔)
 export interface MoldMaster {
   mold_id: string; // 模具編號 (PK) (e.g. MI17193)
@@ -60,19 +48,23 @@ export interface MoldMaster {
   daily_capacity?: number; // 系統動態計算: (86400 / cycle_time_sec) * active_cavities
   status?: 'active' | 'maintenance' | 'trial';
   location?: string;
+  machine_type?: string;    // 成型機型號 (M-03)
+  production_line?: string; // 產線編號 (M-03)
 }
 
 // 3. Product Mold BOM (產品模具成型關聯檔)
 export interface ProductMoldBOM {
   sku: string; // 品號 (FK)
   mold_id: string; // 模具編號 (FK)
-  rm_sku: string; // 使用原料品號 (FK)
+  rm_sku: string; // 使用原料品號 (FK，僅 RAW 類)
   net_mold_weight_g: number; // 整模重量_克 (不含流道)
   runner_weight_g: number; // 流道重量_克
   unit_weight_g?: number; // 系統動態計算: (net_mold_weight_g + runner_weight_g) / active_cavities
   is_primary_mold: boolean; // 是否為主模 (Primary)
   std_mfg_scrap_rate: number; // 標準生產損耗率 (e.g. 0.03 for 3%)
-  remarks?: string; // 驗證狀態備註 (e.g. 已完成 PPOV 驗證)
+  remarks?: string; // 驗證狀態備註
+  valid_from: string;   // BOM 生效起始日 (YYYY-MM-DD, M-05)
+  valid_to: string | null; // BOM 失效日，null = 至今有效 (M-05)
 }
 
 // 4. Yield Master (Sorting良率標準檔 - 權責: 製造)
@@ -84,13 +76,14 @@ export interface YieldMaster {
 
 // 5. Supplier Rule Master (採購與供應商規則檔)
 export interface SupplierRuleMaster {
-  rm_sku: string; // 原料品號 (PK, FK)
+  rm_sku: string; // 原料品號 (PK, FK，僅 RAW 類)
   supplier_name: string; // 供應商名稱
   lead_time_days: number; // 採購交期_天 (國外海運 90~150天)
   moq_kg: number; // 最小起訂量_KG
   safety_stock_kg: number; // 安全庫存量_KG
-  max_storage_capacity_kg?: number; // 實體倉容上限_KG (實體倉庫可存放極限)
+  max_storage_capacity_kg?: number; // 實體倉容上限_KG
   unit_price_usd?: number; // 預估單價 (USD/KG)
+  unit_price_twd?: number; // 預估單價 (TWD/KG, M-04)
 }
 
 // 6. Demand Forecast Log (業務預估需求檔)
@@ -101,7 +94,8 @@ export interface DemandForecastLog {
   sku: string; // 需求品號 (FK)
   target_date: string; // 需求交期 (YYYY-MM-DD)
   demand_qty: number; // 預估需求量_PCS
-  created_by: string; // 填報業務
+  created_by_id: string; // 操作者帳號 ID (M-02，原 created_by)
+  created_by_name?: string | null; // 顯示用姓名 (M-02)
   created_at: string; // 建立時間
   notes?: string;
 }
@@ -129,11 +123,27 @@ export interface InventoryWIPSnapshot {
 // 9. PO In Transit (在途採購訂單檔)
 export interface POInTransit {
   po_number: string; // 採購單號 (PK)
-  rm_sku: string; // 原料品號 (FK)
+  rm_sku: string; // 原料品號 (FK，僅 RAW 類)
   in_transit_qty_kg: number; // 在途採購量_KG
   eta_date: string; // 預計到廠日 (YYYY-MM-DD)
+  actual_arrival_date?: string | null; // 實際到廠日 (M-01)
   supplier_name?: string;
-  status: 'ordered' | 'shipping' | 'customs' | 'arrived';
+  status: 'ordered' | 'shipping' | 'customs' | 'arrived' | 'delayed' | 'partial_arrived';
+  eta_variance_days?: number | null; // computed: actual - eta (M-01)
+}
+
+// 10. Sorting Actual Yield Log (Sorting 實際良率紀錄檔 — Phase 3 動態回饋閉環)
+export interface SortingActualYieldLog {
+  log_id: string;             // PK: SYL-{YYYYMMDD}-{SEQ}
+  sku: string;                // FK → item_master.sku (PART/COMP/SET only)
+  batch_no: string;           // 生產批號
+  sorting_date: string;       // YYYY-MM-DD
+  qty_sorted: number;         // 全檢數量 PCS
+  qty_passed: number;         // 合格數量 PCS
+  actual_yield_rate: number;  // computed: qty_passed / qty_sorted
+  operator_id: string;        // 作業員 ID
+  notes?: string | null;
+  created_at: string;         // ISO timestamp
 }
 
 // Change Audit Log Entry (for Level 2 & Level 3 edits)
@@ -168,6 +178,7 @@ export interface SystemDatabase {
   po_in_transit: POInTransit[];
   audit_log: ChangeAuditEntry[]; // Change audit trail (export-only, never import-overwrite)
   material_classes: MaterialClass[]; // 物料分類樹（匯出時包含，匯入時若無此欄位則保留現有分類）
+  sorting_actual_yield_log: SortingActualYieldLog[]; // Phase 3 動態回饋閉環（初期為空陣列）
 }
 
 
@@ -349,4 +360,5 @@ export const MATERIAL_CLASS_LABELS: Record<MaterialClassCode, string> = {
 export const BACKUP_CONFIG_STORAGE_KEY = 'PMS_BACKUP_CONFIG_V1';
 export const BACKUP_LOG_STORAGE_KEY    = 'PMS_BACKUP_LOG_V1';
 export const MATERIAL_CLASSES_STORAGE_KEY = 'PMS_MATERIAL_CLASSES_V1';
+export const SORTING_YIELD_LOG_STORAGE_KEY = 'PMS_SORTING_YIELD_LOG_V1';
 

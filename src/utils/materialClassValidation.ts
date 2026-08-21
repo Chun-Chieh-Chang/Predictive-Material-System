@@ -8,7 +8,7 @@
  * - 分類路徑建構
  */
 
-import type { MaterialClass, MaterialClassCode, ItemMaster } from '../types';
+import type { MaterialClass, MaterialClassCode, ItemMaster, ProductMoldBOM, YieldMaster, SupplierRuleMaster } from '../types';
 
 // ─── 預設 SKU 前綴規範（可匯入時覆寫）──
 export const SKU_PREFIX_RULES: Record<MaterialClassCode, string[]> = {
@@ -196,4 +196,79 @@ export function migrateItemMasterClasses(items: ItemMaster[], classes: MaterialC
       material_class_label: inferred ? buildClassPath(classes, inferred) : null,
     };
   });
+}
+
+// ─── H-01 / H-02 / H-03：FK 分類校驗 ────────────────────────────────────────
+
+/**
+ * 校驗 SKU 是否屬於指定類別（H-01/H-02/H-03 共用）。
+ * @param sku          待校驗料號
+ * @param expected     允許的分類代碼（e.g. ['RAW']、['PART','COMP','SET']）
+ * @param itemMaster   料號主檔資料
+ * @returns { valid, hint }  validity 與錯誤提示
+ */
+export function validateSkuClass(
+  sku: string,
+  expected: MaterialClassCode[],
+  itemMaster: ItemMaster[]
+): { valid: boolean; hint: string } {
+  const target = itemMaster.find(i => i.sku === sku);
+  if (!target) return { valid: true, hint: '' }; // FK 不存在時由呼叫端處理
+  const cls = target.material_class;
+  if (cls && expected.includes(cls)) return { valid: true, hint: '' };
+  if (!cls) return { valid: false, hint: `料號「${sku}」尚未分類，請先至物料分類體系指定分類` };
+  return { valid: false, hint: `料號「${sku}」屬於 ${cls} 類，不屬於 ${expected.join('/')} 允許範圍` };
+}
+
+/** H-01：product_mold_bom.rm_sku 僅接受 RAW 類 */
+export function validateRmSkuAsRaw(
+  rm_sku: string, itemMaster: ItemMaster[]
+): { valid: boolean; hint: string } {
+  return validateSkuClass(rm_sku, ['RAW'], itemMaster);
+}
+
+/** H-02：yield_master.sku 僅接受 PART / COMP / SET 類（不含 RAW/MAT）*/
+export function validateYieldSku(
+  sku: string, itemMaster: ItemMaster[]
+): { valid: boolean; hint: string } {
+  return validateSkuClass(sku, ['PART', 'COMP', 'SET'], itemMaster);
+}
+
+/** H-03：supplier_rule_master.rm_sku 僅接受 RAW 類 */
+export function validateSupplierRmSku(
+  rm_sku: string, itemMaster: ItemMaster[]
+): { valid: boolean; hint: string } {
+  return validateSkuClass(rm_sku, ['RAW'], itemMaster);
+}
+
+/** M-01：計算 po_in_transit.eta_variance_days（實際到貨 − ETA）*/
+export function computeEtaVarianceDays(
+  etaDate: string, actualDate: string | null | undefined
+): number | null {
+  if (!actualDate) return null;
+  const eta = new Date(etaDate);
+  const actual = new Date(actualDate);
+  return Math.round((actual.getTime() - eta.getTime()) / 86400000);
+}
+
+/** M-05：檢查 BOM 有效期區間是否有重疊（同一 sku+mold_id 不允許同時有效）*/
+export function checkBomValidityOverlap(
+  bomEntries: ProductMoldBOM[],
+  testEntry: ProductMoldBOM,
+  excludeId?: { sku: string; mold_id: string }
+): { hasOverlap: boolean; overlappingIds: string[] } {
+  const overlapping: string[] = [];
+  for (const entry of bomEntries) {
+    if (excludeId && entry.sku === excludeId.sku && entry.mold_id === excludeId.mold_id) continue;
+    if (entry.sku !== testEntry.sku) continue;
+    // 日期重疊判斷：test.valid_from <= entry.valid_to (or null) AND test.valid_to (or Infinity) >= entry.valid_from
+    const testStart = new Date(testEntry.valid_from).getTime();
+    const testEnd   = testEntry.valid_to ? new Date(testEntry.valid_to).getTime() : Infinity;
+    const entryStart = new Date(entry.valid_from).getTime();
+    const entryEnd   = entry.valid_to ? new Date(entry.valid_to).getTime() : Infinity;
+    if (testStart <= entryEnd && testEnd >= entryStart) {
+      overlapping.push(`${entry.sku}+${entry.mold_id}`);
+    }
+  }
+  return { hasOverlap: overlapping.length > 0, overlappingIds: overlapping };
 }
