@@ -26,7 +26,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 **系統架構與作者**: Developed by Wesley Chang @Mouldex, Aug-2026  
 **發布組織**: 公司品管圈 (QCC) - 料事如神圈  
 **系統代號**: PMS (Predictive Material System)  
-**核心原則**: No Double Key-in / SSOT (Single Source of Truth) / MECE / 業務需求優先  
+**核心原則**: No Double Key-in / SSOT (Single Source of Truth) / MECE / 業務需求優先 / 變更可追溯  
 
 ---
 
@@ -48,6 +48,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
    - **計算公式**: \`日產能 = (86,400 ÷ 成型週期_秒) × 妥善穴數\`
 6. **Conservative Max Weight Principle (最重克重保守原則)**: 當品號未指定主模或存在多副模具時，系統自動取單穴克重最高者進行備料推算，以防原料短缺。
 7. **品號絕對唯一原則 (1:1 SKU Rule)**: 一個品號對應唯一的成品規格；若存在客戶歷史替代編號（如 R1-2355），必須透過 Alt_SKU 欄位建立關聯，不可重複建檔。
+8. **多模備料策略 (Multi-Mold Strategy)**: 系統支援三種備料原則：\`conservative_max_weight\`（最重克重，預設）、\`primary_mold_only\`（僅主模）、\`lowest_weight\`（最輕克重）。
 
 ---
 
@@ -66,33 +67,59 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 - **原料淨需求 (KG)**: \`RM Net Req = MAX(0, RM Gross Req - 原料可用庫存 - 原料在途採購量 + 安全庫存量)\`
 - **建議下單量**: \`Suggested PO Qty = CEILING(RM Net Req, 最小起訂量 MOQ)\`
 - **建議下單日**: \`Suggested Order Date = 需求交期 (Target Date) - 採購交期 (Lead Time Days)\`
+- **庫存上限檢查**: \`RM On-Hand + In-Transit ≤ Default Warehouse Capacity (KG)\` → 觸發爆倉警示
 
 ---
 
-## 4. 8 大核心資料表架構 (Database Schema)
-1. **Item_Master (料號基本主檔)**: SKU (PK), Alt_SKU, Customer_ID, Category, Color, Unit.
-2. **Mold_Master (模具與產能主檔)**: Mold_ID (PK), Design_Cavities, Active_Cavities, Cycle_Time_Sec, Location, Status.
-3. **Product_Mold_BOM (產品模具成型關聯檔)**: SKU (FK), Mold_ID (FK), RM_SKU (FK), Net_Mold_Weight_g, Runner_Weight_g, Is_Primary_Mold, Std_Mfg_Scrap_Rate.
-4. **Yield_Master (Sorting良率標準檔)**: SKU (PK, FK), Std_Sorting_Yield, Inspection_Standard.
-5. **Supplier_Rule_Master (採購與供應商規則檔)**: RM_SKU (PK, FK), Supplier_Name, Lead_Time_Days, MOQ_kg, Safety_Stock_kg, Unit_Price_USD.
-6. **Demand_Forecast_Log (業務預估需求檔)**: Demand_ID (PK), Version_No, Customer_ID, SKU, Target_Date, Demand_Qty, Created_By.
-7. **Actual_Order (實際訂單檔)**: Order_ID (PK), Customer_ID, SKU, Target_Date, Order_Qty, Status.
+## 4. 10 大核心資料表架構 (Database Schema)
+
+1. **Item_Master (料號基本主檔)**: SKU (PK), Alt_SKU, Customer_ID, Category, Color, Unit, Description.
+2. **Mold_Master (模具與產能主檔)**: Mold_ID (PK), Design_Cavities, Active_Cavities, Cycle_Time_Sec, Daily_Capacity_PCS, Location, Status.
+3. **Product_Mold_BOM (產品模具成型關聯檔)**: SKU (FK), Mold_ID (FK), RM_SKU (FK), Net_Mold_Weight_g, Runner_Weight_g, Unit_Weight_g, Is_Primary_Mold, Std_Mfg_Scrap_Rate, Remarks.
+4. **Yield_Master (Sorting 良率標準檔)**: SKU (PK, FK), Std_Sorting_Yield, Notes.
+5. **Supplier_Rule_Master (採購與供應商規則檔)**: RM_SKU (PK, FK), Supplier_Name, Lead_Time_Days, MOQ_kg, Safety_Stock_kg, Max_Storage_Capacity_kg, Unit_Price_USD.
+6. **Demand_Forecast_Log (業務預估需求檔)**: Demand_ID (PK), Version_No, Customer_ID, SKU, Target_Date, Demand_Qty, Created_By, Created_At, Notes.
+7. **Actual_Order (實際訂單檔)**: Order_ID (PK), Customer_ID, SKU, Target_Date, Order_Qty, Status, Order_Date.
 8. **Inventory_WIP_Snapshot (庫存與待驗快照檔)**: Snapshot_Date (PK), SKU (PK), FG_Ready_Qty, WIP_Pending_Qty, RM_On_Hand_kg.
-9. **PO_In_Transit (在途採購訂單檔)**: PO_Number (PK), RM_SKU, In_Transit_Qty_kg, ETA_Date, Supplier_Name.
+9. **PO_In_Transit (在途採購訂單檔)**: PO_Number (PK), RM_SKU, In_Transit_Qty_kg, ETA_Date, Supplier_Name, Status.
+10. **Audit_Log (變更歷程檔)**: ID (PK), Timestamp, Table_Key, PK_Value, Field_Name, Field_Label, Old_Value, New_Value, Change_Level (2|3), Reason, MRP_Impact_Summary.
+
+> **Audit_Log 備註**: 此為純讀取記錄檔，匯入/匯出 JSON 時僅匯出不覆蓋，確保變更軌跡永不遺失。
 
 ---
 
 ## 5. 即時預警機制 (Alert Engine)
 - 🔴 **缺料危機警示 (Shortage Risk)**: 當下單期吃緊 (\`距離最晚下單日 < 15 天\`) 或已逾期，觸發即刻採購通知。
 - 🟡 **防爆倉與呆滯料警示 (Overstock Risk)**: 當 Forecast 下修且 \`庫存+在途 > 需求 1.6 倍\` 時，提醒生管與採購評估 PO 延期或暫緩。
+- 🟠 **倉容超限警示 (Warehouse Overcapacity)**: 當 \`原料庫存 > 單一品項倉容上限 (Max_Storage_Capacity_kg)\` 時，提醒生管協調進料。
 - 🟣 **產能瓶頸預警 (Capacity Bottleneck)**: 當 \`所需生產天數 (FG Gap ÷ 日產能) > 距離交期天數\` 時，觸發模具塞穴修復或開備用模之排產警報。
 
 ---
 
-## 6. 三階段演進藍圖 (Roadmap)
-- **Phase 1 (本系統 MVP)**: 完成 Excel/JSON 雙向導入匯出、動態妥善穴數單穴克重運算與 3 階段 MRP 推導。
-- **Phase 2 (ERP 整合)**: 透過 Dingxin ERP API 建立 \`Inventory_WIP_Snapshot\` 與 \`PO_In_Transit\` 自動同步。
-- **Phase 3 (系統固化與自適應反饋)**: 引入 Sorting 良率動態回饋閉環，持續校正全檢標準良率。`;
+## 6. 變更稽核與权限管控 (Change Audit & Governance)
+為達成 No Double Key-in 與 SSOT 原則，所有影響 MRP 結果的敏感欄位變更皆納入分級管控：
+
+- **Level 1 (🟢 一般變更)**: 無需記錄，直接儲存（例如：备注欄位）。
+- **Level 2 (🟡 MRP 影響變更)**: 儲存前彈出影響確認對話框，顯示變更前後 MRP 差異摘要（例如：妥善穴數調整）。
+- **Level 3 (🔴 工程變更)**: 強制要求填寫變更原因（Reason）方可儲存，完整記錄至 Audit_Log 可供稽核追溯（例如：設計穴數、單穴克重）。
+
+---
+
+## 7. 自動化備份系統 (Automated Backup System)
+為確保資料安全性，系統內建基於 File System Access API 的自動化備份機制：
+
+- **排程備份**: 可設定每日備份時間（台灣時間 UTC+8），系統在瀏覽器保持開啟時自動執行。
+- **啟動備份**: 可啟用「每次開啟頁面時自動備份」，防止意外關閉導致資料遺失。
+- **備份路徑**: 透過 \`showDirectoryPicker()\` 授權瀏覽器直接寫入內網指定資料夾；不支援時則以下載檔案方式進行。
+- **備份日誌**: 完整記錄每次備份時間、檔案大小、資料筆數與執行耗時，支援日誌匯出與數量限制。
+- **失敗告警**: 備份失敗時主動 Toast 通知管理員，便於及時介入處理。
+
+---
+
+## 8. 三階段演進藍圖 (Roadmap)
+- **Phase 1 (本系統 MVP ✅)**: 完成 Excel/JSON 雙向導入匯出、3 階段 MRP 推導、動態妥善穴數單穴克重運算、變更稽核（L2/L3）、自動化備份系統、版號自動計算（V-YYYYMMDD-NN）。
+- **Phase 2 (ERP 整合)**: 透過 Dingxin ERP API 建立 \`Inventory_WIP_Snapshot\` 與 \`PO_In_Transit\` 自動同步，減少人工鍵入。
+- **Phase 3 (系統固化與自適應反饋)**: 引入 Sorting 良率動態回饋閉環，持續校正全檢標準良率；導入 PWA 離線操作支援。`;
 
   const handleCopyMarkdown = () => {
     navigator.clipboard.writeText(prdMarkdownContent);
@@ -106,7 +133,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = '料事如神圈_PRD規格書_V12.md';
+    a.download = `料事如神圈_PRD規格書_${import.meta.env.VITE_PMS_VERSION}.md`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -243,11 +270,76 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
                 <div className="font-bold text-emerald-300 text-xs">階段三：原料淨需求與採購下單日 (RM Net Requirement)</div>
                 <div className="font-mono text-xs text-emerald-200 mt-1.5">
                   原料淨需求 (KG) = 原料毛需求 - 原料庫存 - 原料在途採購 + 安全庫存量<br/>
-                  建議下單量 (KG) = CEILING(原料淨需求, MOQ) | 建議下單日 = 需求交期 - 採購交期 (Lead Time)
+                  建議下單量 (KG) = CEILING(原料淨需求, MOQ) | 建議下單日 = 需求交期 - 採購交期 (Lead Time)<br/>
+                  <span className="text-emerald-400/70">庫存上限檢查: RM On-Hand + In-Transit ≤ Max_Storage_Capacity_kg → 觸發爆倉警示</span>
                 </div>
               </div>
             </div>
           </section>
+
+          {/* Section 3: Change Audit */}
+          <section className="space-y-3">
+            <h3 className="text-lg font-bold text-white flex items-center space-x-2 border-b border-slate-800 pb-2">
+              <span className="w-6 h-6 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center text-xs font-bold font-mono">3</span>
+              <span>變更稽核與權限管控 (Change Audit & Governance)</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              <div className="p-4 bg-slate-950/70 rounded-xl border border-slate-800">
+                <div className="flex items-center space-x-2 mb-2">
+                  <span className="text-base">🟢</span>
+                  <div className="font-bold text-white">Level 1 — 一般變更</div>
+                </div>
+                <p className="text-slate-400">無需記錄，直接儲存（例如：备注欄位）。</p>
+              </div>
+              <div className="p-4 bg-amber-950/30 rounded-xl border border-amber-500/30">
+                <div className="flex items-center space-x-2 mb-2">
+                  <span className="text-base">🟡</span>
+                  <div className="font-bold text-amber-300">Level 2 — MRP 影響變更</div>
+                </div>
+                <p className="text-amber-200/70">儲存前彈出影響確認對話框，顯示變更前後 MRP 差異摘要（例如：妥善穴數調整）。</p>
+              </div>
+              <div className="p-4 bg-red-950/30 rounded-xl border border-red-500/30">
+                <div className="flex items-center space-x-2 mb-2">
+                  <span className="text-base">🔴</span>
+                  <div className="font-bold text-red-400">Level 3 — 工程變更</div>
+                </div>
+                <p className="text-red-200/70">強制要求填寫變更原因方可儲存，完整記錄至 Audit_Log 可供稽核追溯（例如：設計穴數、單穴克重）。</p>
+              </div>
+            </div>
+          </section>
+
+          {/* Section 4: Backup System */}
+          <section className="space-y-3">
+            <h3 className="text-lg font-bold text-white flex items-center space-x-2 border-b border-slate-800 pb-2">
+              <span className="w-6 h-6 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-xs font-bold font-mono">4</span>
+              <span>自動化備份系統 (Automated Backup)</span>
+            </h3>
+            <div className="p-4 bg-slate-950/70 rounded-xl border border-slate-800 text-xs space-y-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <div className="font-bold text-emerald-400 mb-1">排程備份</div>
+                  <p className="text-slate-400">可設定每日備份時間（台灣時間 UTC+8），瀏覽器保持開啟時自動執行。</p>
+                </div>
+                <div>
+                  <div className="font-bold text-emerald-400 mb-1">啟動備份</div>
+                  <p className="text-slate-400">可啟用「每次開啟頁面時自動備份」，防止意外關閉導致資料遺失。</p>
+                </div>
+                <div>
+                  <div className="font-bold text-emerald-400 mb-1">備份路徑</div>
+                  <p className="text-slate-400">透過 File System Access API 授權寫入內網指定資料夾；不支援時以下載檔案方式進行。</p>
+                </div>
+                <div>
+                  <div className="font-bold text-emerald-400 mb-1">備份日誌</div>
+                  <p className="text-slate-400">完整記錄時間、檔案大小、資料筆數與執行耗時，支援日誌匯出與數量限制（預設 365 筆）。</p>
+                </div>
+              </div>
+              <div className="pt-2 border-t border-slate-800 flex items-center space-x-2">
+                <span className="text-rose-400">⚠</span>
+                <span className="text-slate-400">備份失敗時主動 Toast 通知管理員，便於及時介入處理。</span>
+              </div>
+            </div>
+          </section>
+
         </div>
       )}
 
@@ -293,6 +385,13 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
               <div className="font-bold text-white text-sm">Conservative Max Weight Principle (最重克重原則)</div>
               <p className="text-xs text-slate-400 mt-2 leading-relaxed">
                 當成品對應多副模具（M:N 關聯）且未指定主模時，系統預設採用單穴克重最大之模具進行備料推算，杜絕原料短缺。
+              </p>
+            </div>
+
+            <div className="p-5 bg-slate-950/70 rounded-xl border border-slate-800">
+              <div className="font-bold text-white text-sm">Multi-Mold Strategy (多模備料策略)</div>
+              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                系統支援三種備料原則：\`conservative_max_weight\`（最重克重，預設）、\`primary_mold_only\`（僅主模）、\`lowest_weight\`（最輕克重），可在系統參數中切換。
               </p>
             </div>
           </div>
