@@ -231,4 +231,18 @@ SystemDatabase {
 
 ---
 
+## V-20260821-23 — GitHub Pages 部署上線
+
+**狀態：** ✅ 穩定發布
+**部署網址：** https://chun-chieh-chang.github.io/Predictive-Material-System/
+
+#### 本次完成
+
+- GitHub Actions workflow 修復：移除 GitHub Pages environment 保護規則阻擋部署
+- 升級部署工具鏈至 Node.js 22、github-pages-deploy-action v5
+- workflow 重構為單一 job 結構，消除並行 conflict
+- TypeScript 編譯：✅ 0 錯誤 / 0 警告
+
+---
+
 *DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-21*
