@@ -182,9 +182,9 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
             <span className="bg-emerald-50 dark:bg-emerald-950 text-[#059669] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 text-xs font-bold px-2.5 py-0.5 rounded-md font-mono">
               LOSSLESS DATA GATEWAY
             </span>
-            <span className="text-xs text-slate-500">雙向無損資料交換中心</span>
+            <span className="text-xs text-slate-500">雙向資料交換中心</span>
           </div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-1">Excel & JSON 雙向無損匯入 / 匯出平台</h2>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-1">Excel & JSON 雙向匯入 / 匯出平台</h2>
           <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
             嚴格區分「正式生產檔案」與「示範演練測試包」，支援 9 大工作表智慧辨識匯入、Dry-Run 預檢與 Upsert 安全覆蓋
           </p>

@@ -90,7 +90,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 ---
 
 ## 6. 三階段演進藍圖 (Roadmap)
-- **Phase 1 (本系統 MVP)**: 完成 Excel/JSON 雙向無損導入匯出、動態妥善穴數單穴克重運算與 3 階段 MRP 推導。
+- **Phase 1 (本系統 MVP)**: 完成 Excel/JSON 雙向導入匯出、動態妥善穴數單穴克重運算與 3 階段 MRP 推導。
 - **Phase 2 (ERP 整合)**: 透過 Dingxin ERP API 建立 \`Inventory_WIP_Snapshot\` 與 \`PO_In_Transit\` 自動同步。
 - **Phase 3 (系統固化與自適應反饋)**: 引入 Sorting 良率動態回饋閉環，持續校正全檢標準良率。`;
 

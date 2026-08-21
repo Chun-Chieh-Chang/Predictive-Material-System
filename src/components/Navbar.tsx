@@ -124,7 +124,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'mrp_calculator' as NavTab, label: '3階 MRP 推導', sub: 'MRP Engine', icon: Calculator },
     { id: 'system_settings' as NavTab, label: '參數策略設定', sub: 'System Config', icon: SlidersHorizontal },
     { id: 'data_tables' as NavTab, label: '8大主檔維護', sub: 'Master Data', icon: Database },
-    { id: 'data_exchange' as NavTab, label: '無損資料中心', sub: 'Data Gateway', icon: FileSpreadsheet },
+    { id: 'data_exchange' as NavTab, label: '資料交換中心', sub: 'Data Gateway', icon: FileSpreadsheet },
     { id: 'prd_docs' as NavTab, label: 'PRD 規格辭典', sub: 'PRD & Spec', icon: FileText },
     ...(adminUnlocked ? [{ id: 'backup_settings' as NavTab, label: '自動化備份', sub: 'Backup System', icon: ShieldCheck, badge: backupEnabled ? 'RUNNING' : undefined }] : []),
   ];
@@ -211,7 +211,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={() => setActiveTab('data_exchange')}
                 id="nav-data-exchange-btn"
-                title="前往無損資料中心匯出正式範本或載入示範數據"
+                title="前往資料交換中心匯出正式範本或載入示範數據"
                 className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white border border-slate-300 dark:border-slate-800 transition-all cursor-pointer shadow-xs"
               >
                 <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />

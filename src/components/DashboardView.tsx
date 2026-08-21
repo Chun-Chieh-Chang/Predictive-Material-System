@@ -280,7 +280,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               onClick={onNavigateToExchange ?? onNavigateToSettings}
               className="px-4 py-2 bg-[#059669] hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all shadow-md cursor-pointer"
             >
-              前往無損資料中心匯入
+              前往資料交換中心匯入
             </button>
           </div>
         </div>
