@@ -147,6 +147,36 @@ SystemDatabase {
 
 ---
 
+## 近期開發紀錄
+
+### V-20260821-20~21 — 欄位架構盤點實作 + 分類體系補強
+
+**狀態：** ✅ 穩定  
+**TypeScript 編譯：** 0 錯誤 / 0 警告  
+
+#### 本次完成
+
+1. **五層物料分類體系**（`MaterialClassManagementView`）
+   - RAW / MAT / PART / COMP / SET 五層樹，支援無限子節點擴充
+   - SKU 前缀自動推斷（RM-/PKG-/CONN-/ASM-/A01-）
+   - JSON 備份同步攜帶 `material_classes` 陣列
+
+2. **FieldArchitectureAudit_Report.md** — 完整盤點報告
+   - H-01~H-04：FK 分類校驗函式定義（待接入 handleSave）
+   - M-01~M-06：10 張主檔欄位擴充實作
+   - FT-01~FT-07 測試驗證規格書
+
+3. **全域一致性盤點**（7 處「8 大主檔」修正為「10 大」）
+   - Navbar / DataTablesView / DataExchangeView / README / DEV_LOG / PrdDocView
+
+4. **SET 分類描述修正**（`8fa4560`）
+   - 明確 SET 可透過 BOM 直接引用 PART（一次組裝），不需經 COMP 入庫
+
+#### 開發承接文檔
+- `docs/DevelopmentStatus.md` — 下次啟動時優先閱讀，含待辦事項與執行順序
+
+---
+
 ## 後續開發路線圖（Roadmap）
 
 | 優先度 | 功能 | 說明 |
