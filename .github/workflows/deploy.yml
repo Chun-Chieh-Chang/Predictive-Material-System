@@ -21,19 +21,22 @@ concurrency:
 
 jobs:
   # ─────────────────────────────────────────
-  # Job 1: Build
+  # Job: Build & Deploy
   # ─────────────────────────────────────────
-  build:
-    name: Build Vite App
+  build-and-deploy:
+    name: Build and Deploy to GitHub Pages
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
@@ -56,17 +59,6 @@ jobs:
           # Vite 預設輸出目錄
           path: './dist'
 
-  # ─────────────────────────────────────────
-  # Job 2: Deploy (only after build succeeds)
-  # ─────────────────────────────────────────
-  deploy:
-    name: Deploy to GitHub Pages
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
