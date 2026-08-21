@@ -22,7 +22,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
   const [copied, setCopied] = useState<boolean>(false);
 
   const prdMarkdownContent = `# 料事如神圈 - 智能備料與生產排程管理系統 PRD 規格書
-**版本號 (Document Version)**: V-20260820-12  
+**版本號 (Document Version)**: ${import.meta.env.VITE_PMS_VERSION}
 **系統架構與作者**: Developed by Wesley Chang @Mouldex, Aug-2026  
 **發布組織**: 公司品管圈 (QCC) - 料事如神圈  
 **系統代號**: PMS (Predictive Material System)  
@@ -121,7 +121,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
         <div>
           <div className="flex items-center space-x-2">
             <span className="bg-blue-950 text-blue-400 border border-blue-800/60 text-xs font-bold px-2.5 py-0.5 rounded-md font-mono">
-              PRD V-20260820-12
+              PRD {import.meta.env.VITE_PMS_VERSION}
             </span>
             <span className="text-xs text-slate-500">產品需求與規格白皮書</span>
           </div>

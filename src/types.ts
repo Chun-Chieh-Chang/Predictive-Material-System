@@ -236,3 +236,48 @@ export const DEFAULT_SYSTEM_PARAMETERS: SystemParameters = {
   safetyStockMultiplier: 1.0
 };
 
+// ─── Backup System Types ───────────────────────────────────────────────────────
+
+export type BackupStatus = 'idle' | 'success' | 'failed' | 'pending';
+
+export interface BackupLogEntry {
+  id: string;                         // Unique entry ID (timestamp + random)
+  timestamp: string;                  // ISO 8601 UTC time of backup
+  status: BackupStatus;              // success | failed | pending
+  backupFileName: string;            // Generated filename (e.g. PMS_Backup_20260821-020000+0800.json)
+  fileSizeBytes: number;             // Compressed JSON size
+  databaseSnapshotCount: number;     // Total rows across all tables
+  auditLogCount: number;             // Current audit_log length
+  targetDirectory?: string;          // Display path (not writable from browser)
+  errorDetails?: string;             // Error message if status === 'failed'
+  durationMs: number;                // Time taken for backup operation
+}
+
+export interface BackupScheduleConfig {
+  enabled: boolean;                   // Whether scheduled backup is active
+  scheduledHour: number;             // Hour (0-23) to trigger backup
+  scheduledMinute: number;           // Minute (0-59) to trigger backup
+  directoryHandle: FileSystemDirectoryHandle | null; // FSA API handle (runtime only, not serializable)
+  directoryLabel: string;            // Human-readable label of chosen directory
+  lastBackupId: string | null;       // ID of most recent successful backup
+  autoDownloadOnLaunch: boolean;     // If true, download backup file on each page load
+  alertOnError: boolean;             // Whether to show toast on backup failure
+  maxLogEntries: number;             // Max backup log entries to keep (oldest pruned)
+}
+
+export const DEFAULT_BACKUP_CONFIG: BackupScheduleConfig = {
+  enabled: false,
+  scheduledHour: 2,        // 02:00 凌晨備份（離峰時段）
+  scheduledMinute: 0,
+  directoryHandle: null,
+  directoryLabel: '',
+  lastBackupId: null,
+  autoDownloadOnLaunch: false,
+  alertOnError: true,
+  maxLogEntries: 365        // 最多保留 365 筆備份日誌
+};
+
+// Storage keys
+export const BACKUP_CONFIG_STORAGE_KEY = 'PMS_BACKUP_CONFIG_V1';
+export const BACKUP_LOG_STORAGE_KEY    = 'PMS_BACKUP_LOG_V1';
+

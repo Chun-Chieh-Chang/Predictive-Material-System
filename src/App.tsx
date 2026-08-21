@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Navbar, NavTab } from './components/Navbar';
 import { DashboardView } from './components/DashboardView';
 import { MrpCalculatorView } from './components/MrpCalculatorView';
@@ -11,9 +11,18 @@ import { SystemSettingsView } from './components/SystemSettingsView';
 import { DataTablesView, TableKey } from './components/DataTablesView';
 import { DataExchangeView } from './components/DataExchangeView';
 import { PrdDocView } from './components/PrdDocView';
-import { SystemDatabase, SystemParameters, DEFAULT_SYSTEM_PARAMETERS } from './types';
+import { BackupSettingsView } from './components/BackupSettingsView';
+import {
+  SystemDatabase,
+  SystemParameters,
+  DEFAULT_SYSTEM_PARAMETERS,
+  BackupScheduleConfig,
+  DEFAULT_BACKUP_CONFIG,
+  BACKUP_CONFIG_STORAGE_KEY,
+} from './types';
 import { INITIAL_DATABASE } from './data/seedData';
 import { calculateAllMRP } from './utils/mrpEngine';
+import { performBackup, shouldTriggerBackup, loadBackupConfig } from './utils/backupService';
 import { CheckCircle2, AlertCircle, X } from 'lucide-react';
 
 const STORAGE_KEY = 'PMS_DATABASE_STATE_V1';
@@ -63,13 +72,51 @@ export function App() {
     try {
       localStorage.setItem(PARAMS_STORAGE_KEY, JSON.stringify(systemParams));
     } catch (e) {
-      console.error('Failed to save system parameters to local storage', e);
+      console.error('Failed to save system parameters from local storage', e);
     }
   }, [systemParams]);
 
   const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
   const [activeMrpSku, setActiveMrpSku] = useState<string>('A01-200-131');
   const [activeTableKey, setActiveTableKey] = useState<TableKey>('item_master');
+
+  // ── Admin 管理模式（5連擊解鎖）────────────────────────────────────────────────
+  const [adminUnlocked, setAdminUnlocked] = useState(false);
+  const handleAdminUnlock = () => setAdminUnlocked(true);
+  const handleAdminLock   = () => { setAdminUnlocked(false); setActiveTab('dashboard'); };
+
+  // Backup config state (loaded from localStorage)
+  const [backupConfig, setBackupConfig] = useState<BackupScheduleConfig>(() => loadBackupConfig());
+  const backupConfigRef = useRef<BackupScheduleConfig>(backupConfig);
+  backupConfigRef.current = backupConfig;
+
+  // Backup interval ref (to clear on unmount)
+  const backupIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // ── Backup: Save config when changed ─────────────────────────────────────────
+  useEffect(() => {
+    const { directoryHandle: _dh, ...serializable } = backupConfig;
+    localStorage.setItem(BACKUP_CONFIG_STORAGE_KEY, JSON.stringify(serializable));
+  }, [backupConfig]);
+
+  // ── Backup: Schedule polling & on-launch auto-backup ─────────────────────────
+  useEffect(() => {
+    // On-launch auto-backup
+    if (backupConfig.autoDownloadOnLaunch && db) {
+      performBackup(db, backupConfig, showToast);
+    }
+
+    // Scheduled backup polling (every 10 s)
+    backupIntervalRef.current = setInterval(() => {
+      if (shouldTriggerBackup(backupConfigRef.current) && db) {
+        performBackup(db, backupConfigRef.current, showToast);
+      }
+    }, 10000);
+
+    return () => {
+      if (backupIntervalRef.current) clearInterval(backupIntervalRef.current);
+    };
+  }, [db]); // Only re-run when db changes to get fresh reference
 
   // Toast Notification state
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -106,6 +153,10 @@ export function App() {
     setActiveTab('system_settings');
   };
 
+  const handleNavigateToBackup = () => {
+    setActiveTab('backup_settings');
+  };
+
   return (
     <div className="min-h-screen bg-[#f1f5f9] dark:bg-slate-950 text-slate-900 dark:text-slate-200 flex flex-col font-sans antialiased selection:bg-[#0284c7] selection:text-white transition-colors duration-200">
       {/* Top Navbar */}
@@ -114,6 +165,11 @@ export function App() {
         setActiveTab={setActiveTab}
         alertCount={totalAlerts}
         onResetSeedData={handleResetSeed}
+        onNavigateToBackup={handleNavigateToBackup}
+        backupEnabled={backupConfig.enabled}
+        adminUnlocked={adminUnlocked}
+        onAdminUnlock={handleAdminUnlock}
+        onAdminLock={handleAdminLock}
       />
 
       {/* Main Content Area */}
@@ -167,6 +223,13 @@ export function App() {
         {activeTab === 'prd_docs' && (
           <PrdDocView onNotify={showToast} />
         )}
+
+        {activeTab === 'backup_settings' && adminUnlocked && (
+          <BackupSettingsView
+            db={db}
+            onNotify={showToast}
+          />
+        )}
       </main>
 
       {/* Toast Notification Popup (QC Style with Cobalt Border) */}
@@ -193,7 +256,7 @@ export function App() {
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <span className="font-bold text-slate-800 dark:text-slate-300">料事如神圈 QCC 物料需求管理系統</span>
             <span className="text-slate-300 dark:text-slate-700">•</span>
-            <span className="font-mono text-slate-500 dark:text-slate-400">Baseline Version V-20260820-12</span>
+            <span className="font-mono text-slate-500 dark:text-slate-400">Baseline Version {import.meta.env.VITE_PMS_VERSION}</span>
             <span className="text-slate-300 dark:text-slate-700">•</span>
             <span className="text-[#0284c7] dark:text-sky-400 font-semibold font-mono">Developed by Wesley Chang @Mouldex, Aug-2026</span>
           </div>

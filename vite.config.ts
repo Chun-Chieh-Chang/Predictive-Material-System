@@ -2,13 +2,14 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
+import gitVersionPlugin from './vite-plugin-git-version';
 
 export default defineConfig(() => {
   return {
     // GitHub Pages 部署路徑：https://chun-chieh-chang.github.io/Predictive-Material-System/
     // 本地開發 (npm run dev) 不受此設定影響
     base: '/Predictive-Material-System/',
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), gitVersionPlugin()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

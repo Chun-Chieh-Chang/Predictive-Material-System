@@ -1044,7 +1044,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <div className="flex items-center justify-between pb-3 border-b border-blue-500/20">
                 <span className="text-xs font-bold uppercase tracking-wider text-blue-200 flex items-center gap-1.5">
                   <TrendingUp className="w-4 h-4 text-cyan-400" />
-                  <span>基準 vs 模擬 $\Delta$ 差異衝擊推演</span>
+                  <span>基準 vs 模擬 Δ 差異衝擊推演</span>
                 </span>
                 <span
                   className={`text-xs font-mono font-bold px-2.5 py-0.5 rounded-full border ${

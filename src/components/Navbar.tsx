@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import {
   BarChart3,
   Calculator,
@@ -13,26 +13,89 @@ import {
   RotateCcw,
   SlidersHorizontal,
   Sun,
-  Moon
+  Moon,
+  ShieldCheck,
+  Crown,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
-export type NavTab = 'dashboard' | 'mrp_calculator' | 'system_settings' | 'data_tables' | 'data_exchange' | 'prd_docs';
+const ADMIN_COMBO_THRESHOLD = 5;
+const ADMIN_COMBO_WINDOW_MS = 1500;
+
+export type NavTab = 'dashboard' | 'mrp_calculator' | 'system_settings' | 'data_tables' | 'data_exchange' | 'prd_docs' | 'backup_settings';
 
 interface NavbarProps {
   activeTab: NavTab;
   setActiveTab: (tab: NavTab) => void;
   alertCount: number;
   onResetSeedData: () => void;
+  onNavigateToBackup: () => void;
+  backupEnabled: boolean;
+  adminUnlocked: boolean;
+  onAdminUnlock: () => void;
+  onAdminLock: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   setActiveTab,
   alertCount,
-  onResetSeedData
+  onResetSeedData,
+  onNavigateToBackup,
+  backupEnabled,
+  adminUnlocked,
+  onAdminUnlock,
+  onAdminLock,
 }) => {
   const { theme, toggleTheme } = useTheme();
+
+  // ── 5連擊 Admin 解鎖邏輯（視覺計數局部維護）──────────────────────────────────
+  const tapCountRef = useRef(0);
+  const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastTapAtRef = useRef<number>(0);
+  const [comboTaps, setComboTaps] = useState<number>(0);
+
+  const clearComboTimer = useCallback(() => {
+    if (tapTimerRef.current) {
+      clearTimeout(tapTimerRef.current);
+      tapTimerRef.current = null;
+    }
+    tapCountRef.current = 0;
+    setComboTaps(0);
+  }, []);
+
+  const handleVersionBadgeClick = useCallback(() => {
+    if (adminUnlocked) {
+      // 已解鎖：點擊重新鎖定
+      onAdminLock();
+      return;
+    }
+
+    const now = Date.now();
+    const elapsed = now - lastTapAtRef.current;
+    lastTapAtRef.current = now;
+
+    if (elapsed > ADMIN_COMBO_WINDOW_MS && elapsed !== 0) {
+      clearComboTimer();
+    }
+
+    tapCountRef.current += 1;
+    const count = tapCountRef.current;
+    setComboTaps(count);
+
+    if (count >= ADMIN_COMBO_THRESHOLD) {
+      clearComboTimer();
+      onAdminUnlock();
+    } else {
+      tapTimerRef.current = setTimeout(() => {
+        clearComboTimer();
+      }, ADMIN_COMBO_WINDOW_MS);
+    }
+  }, [adminUnlocked, clearComboTimer, onAdminUnlock, onAdminLock]);
+
+  useEffect(() => {
+    return () => { if (tapTimerRef.current) clearTimeout(tapTimerRef.current); };
+  }, []);
 
   const tabs = [
     { id: 'dashboard' as NavTab, label: '決策戰情室', sub: 'Decision War Room', icon: BarChart3, badge: alertCount > 0 ? alertCount : undefined },
@@ -40,7 +103,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'system_settings' as NavTab, label: '參數策略設定', sub: 'System Config', icon: SlidersHorizontal },
     { id: 'data_tables' as NavTab, label: '8大主檔維護', sub: 'Master Data', icon: Database },
     { id: 'data_exchange' as NavTab, label: '無損資料中心', sub: 'Data Gateway', icon: FileSpreadsheet },
-    { id: 'prd_docs' as NavTab, label: 'PRD 規格辭典', sub: 'PRD & Spec', icon: FileText }
+    { id: 'prd_docs' as NavTab, label: 'PRD 規格辭典', sub: 'PRD & Spec', icon: FileText },
+    ...(adminUnlocked ? [{ id: 'backup_settings' as NavTab, label: '自動化備份', sub: 'Backup System', icon: ShieldCheck, badge: backupEnabled ? 'RUNNING' : undefined }] : []),
   ];
 
   return (
@@ -61,9 +125,20 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span className="text-slate-500 dark:text-slate-400 text-xs font-normal hidden md:inline">
                   Predictive Material System
                 </span>
-                <span className="bg-[#eef2ff] dark:bg-indigo-950/60 text-[#4f46e5] dark:text-indigo-400 border border-[#c7d2fe] dark:border-indigo-800/60 text-xs font-mono px-2 py-0.5 rounded-md font-semibold tracking-wide">
-                  ISO • V-20260820-12
-                </span>
+                <button
+                  onClick={handleVersionBadgeClick}
+                  className={`text-xs font-mono px-2 py-0.5 rounded-md font-semibold tracking-wide transition-all cursor-pointer select-none ${
+                    adminUnlocked
+                      ? 'bg-gradient-to-r from-amber-500 to-yellow-400 text-amber-950 border-amber-400 shadow-lg shadow-amber-500/30 animate-pulse'
+                      : 'bg-[#eef2ff] dark:bg-indigo-950/60 text-[#4f46e5] dark:text-indigo-400 border border-[#c7d2fe] dark:border-indigo-800/60 hover:border-[#4f46e5] dark:hover:border-indigo-400'
+                  }`}
+                  title={adminUnlocked ? 'Admin 管理模式已啟用（點擊重新鎖定）' : 'ISO 標準認證版號標籤'}
+                >
+                  <span className="flex items-center gap-1">
+                    {adminUnlocked && <Crown className="w-3 h-3" />}
+                    ISO • {import.meta.env.VITE_PMS_VERSION}
+                  </span>
+                </button>
               </div>
               <p className="text-xs text-slate-600 dark:text-slate-400 hidden sm:block mt-0.5">
                 QCC 料事如神圈 • 射出成型智能備料與產能排程推估
@@ -120,6 +195,28 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 <span className="hidden sm:inline">資料交換中心</span>
               </button>
+
+              {adminUnlocked && (
+                <button
+                  onClick={onNavigateToBackup}
+                  id="nav-backup-btn"
+                  title={`自動化備份系統${backupEnabled ? '（排程已啟用）' : '（排程未啟用）'}`}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer shadow-xs ${
+                    backupEnabled
+                      ? 'bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
+                      : 'bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white border-slate-300 dark:border-slate-800'
+                  }`}
+                >
+                  <ShieldCheck className={`w-3.5 h-3.5 ${backupEnabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`} />
+                  <span className="hidden sm:inline">自動化備份</span>
+                  {backupEnabled && (
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                  )}
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -143,9 +240,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <Icon className={`w-4 h-4 ${isActive ? 'text-[#0284c7] dark:text-sky-300' : 'text-slate-400 dark:text-slate-500'}`} />
                 <span>{tab.label}</span>
                 {tab.badge !== undefined && (
-                  <span className="bg-[#dc2626] text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                    {tab.badge}
-                  </span>
+                  tab.id === 'backup_settings' ? (
+                    <span className="bg-emerald-600 text-white text-xs font-bold px-2 py-0.5 rounded-full animate-pulse">
+                      {tab.badge}
+                    </span>
+                  ) : (
+                    <span className="bg-[#dc2626] text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                      {tab.badge}
+                    </span>
+                  )
                 )}
               </button>
             );
