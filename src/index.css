@@ -99,10 +99,13 @@
   border-radius: 5px !important;
 }
 
-/* Explicitly guarantee no text or labels in the app render below 13px */
+/* Global minimum font size: 14px per design spec */
 .text-xs {
-  font-size: 13px !important;
-  line-height: 1.35rem !important;
+  font-size: 14px !important;
+  line-height: 1.45rem !important;
+}
+.text-\[10px\] {
+  font-size: 14px !important;
 }
 
 .text-sm {

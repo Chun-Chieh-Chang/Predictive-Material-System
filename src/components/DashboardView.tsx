@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -265,12 +265,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="text-xs bg-sky-100 dark:bg-sky-950 text-[#0284c7] dark:text-sky-300 border border-sky-300 dark:border-sky-800/60 font-bold px-2 py-0.5 rounded font-mono">
+                <span className="text-sm bg-sky-100 dark:bg-sky-950 text-[#0284c7] dark:text-sky-300 border border-sky-300 dark:border-sky-800/60 font-bold px-2 py-0.5 rounded font-mono">
                   PURE DATABASE READY
                 </span>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">目前系統為純淨空資料庫狀態</h3>
               </div>
-              <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">
+              <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">
                 尚未載入品號與模具資料。您可分發正式空白範本給權責單位填報，或載入示範數據包立即體驗全套 MRP 運算。
               </p>
             </div>
@@ -278,7 +278,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div className="flex items-center space-x-2 shrink-0">
             <button
               onClick={onNavigateToExchange ?? onNavigateToSettings}
-              className="px-4 py-2 bg-[#059669] hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all shadow-md cursor-pointer"
+              className="px-4 py-2 bg-[#059669] hover:bg-emerald-600 text-white rounded-xl text-sm font-bold transition-all shadow-md cursor-pointer"
             >
               前往資料交換中心匯入
             </button>
@@ -291,13 +291,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {/* Metric 1: Shortage Count */}
         <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 border-l-4 border-l-[#dc2626] rounded-2xl p-5 flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-lg shadow-black/5 dark:shadow-black/20">
           <div className="flex flex-col">
-            <span className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">
+            <span className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">
               預期缺料 Shortage Risk
             </span>
             <span className="text-3xl font-mono font-bold text-red-600 dark:text-red-400 mt-1">
               0{redAlerts.length}
             </span>
-            <span className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            <span className="text-sm text-slate-500 dark:text-slate-400 mt-1">
               最晚下單期吃緊 / 逾期
             </span>
           </div>
@@ -309,19 +309,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {/* Metric 2: Overstock / Excess & Capacity Count */}
         <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 border-l-4 border-l-[#d97706] rounded-2xl p-5 flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-lg shadow-black/5 dark:shadow-black/20">
           <div className="flex flex-col">
-            <span className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">
+            <span className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">
               超備呆滯 / 實體爆倉
             </span>
             <div className="flex items-baseline space-x-2 mt-1">
               <span className="text-2xl font-mono font-bold text-amber-600 dark:text-amber-400">
-                0{yellowAlerts.length} <span className="text-xs font-sans font-normal text-slate-500 dark:text-slate-400">呆滯</span>
+                0{yellowAlerts.length} <span className="text-sm font-sans font-normal text-slate-500 dark:text-slate-400">呆滯</span>
               </span>
               <span className="text-slate-400 dark:text-slate-600 font-bold">|</span>
               <span className="text-2xl font-mono font-bold text-orange-600 dark:text-orange-400">
-                0{orangeAlerts.length} <span className="text-xs font-sans font-normal text-slate-500 dark:text-slate-400">超容</span>
+                0{orangeAlerts.length} <span className="text-sm font-sans font-normal text-slate-500 dark:text-slate-400">超容</span>
               </span>
             </div>
-            <span className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            <span className="text-sm text-slate-500 dark:text-slate-400 mt-1">
               供需比失衡 / 倉容上限超載
             </span>
           </div>
@@ -333,13 +333,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {/* Metric 3: Total Forecast Demand */}
         <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 border-l-4 border-l-[#0284c7] rounded-2xl p-5 flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-lg shadow-black/5 dark:shadow-black/20">
           <div className="flex flex-col">
-            <span className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">
+            <span className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">
               業務監控總需求 Total Demand
             </span>
             <span className="text-2xl font-mono font-bold text-[#0284c7] dark:text-blue-400 mt-1">
-              {totalForecastPCS.toLocaleString()} <span className="text-xs font-normal text-slate-500 dark:text-slate-400">PCS</span>
+              {totalForecastPCS.toLocaleString()} <span className="text-sm font-normal text-slate-500 dark:text-slate-400">PCS</span>
             </span>
-            <span className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            <span className="text-sm text-slate-500 dark:text-slate-400 mt-1">
               成品淨缺口: {totalFGGapPcs.toLocaleString()} PCS
             </span>
           </div>
@@ -351,13 +351,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {/* Metric 4: Molds & Cavities Status */}
         <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 border-l-4 border-l-[#4f46e5] rounded-2xl p-5 flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-lg shadow-black/5 dark:shadow-black/20">
           <div className="flex flex-col">
-            <span className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">
+            <span className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">
               模具妥善監控 Molds Active
             </span>
             <span className="text-2xl font-mono font-bold text-[#4f46e5] dark:text-purple-400 mt-1">
-              0{db.mold_master.length} <span className="text-xs font-normal text-slate-500 dark:text-slate-400">套模具</span>
+              0{db.mold_master.length} <span className="text-sm font-normal text-slate-500 dark:text-slate-400">套模具</span>
             </span>
-            <span className="text-xs text-amber-600 dark:text-amber-400/90 mt-1 flex items-center gap-1.5 font-medium">
+            <span className="text-sm text-amber-600 dark:text-amber-400/90 mt-1 flex items-center gap-1.5 font-medium">
               <span className="w-2 h-2 rounded-full bg-amber-500 dark:bg-amber-400"></span>
               {db.mold_master.length > 0 ? 'MI20224 塞穴 (22/24 穴)' : '目前無模具主檔'}
             </span>
@@ -383,11 +383,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <div>
                 <h2 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
                   <span>多維度 What-If 模擬試算沙盒</span>
-                  <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                  <span className="text-sm font-mono px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
                     Full Parameter Simulator
                   </span>
                 </h2>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-sm text-slate-400 mt-0.5">
                   全方位自由調校「需求、訂單、模具穴數、成型週期、全檢良率、在庫在途、交期與 MOQ」，即時推演對 MRP 採購與產能的量化衝擊
                 </p>
               </div>
@@ -397,14 +397,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           {/* Sku Selector & Reset Button */}
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center space-x-2 bg-slate-100 dark:bg-slate-950/80 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-800 shadow-xs">
-              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">模擬目標品號:</span>
+              <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">模擬目標品號:</span>
               <select
                 value={selectedSku}
                 onChange={(e) => {
                   setSelectedSku(e.target.value);
                   handleResetSandbox();
                 }}
-                className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-mono font-bold text-xs focus:outline-hidden cursor-pointer px-2.5 py-1 rounded-md border border-slate-300 dark:border-slate-700"
+                className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-mono font-bold text-sm focus:outline-hidden cursor-pointer px-2.5 py-1 rounded-md border border-slate-300 dark:border-slate-700"
               >
                 {mrpResults.map((r) => (
                   <option key={r.sku} value={r.sku} className="bg-white text-slate-900 dark:bg-slate-900 dark:text-white">
@@ -417,7 +417,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <button
               onClick={handleResetSandbox}
               title="還原所有調整為標準主檔基準值"
-              className="flex items-center space-x-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-semibold border border-slate-700 transition-colors cursor-pointer"
+              className="flex items-center space-x-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-sm font-semibold border border-slate-700 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>還原基準值</span>
@@ -428,17 +428,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {/* Quick Scenario Preset Buttons */}
         <div className="mt-4 pt-1">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+            <span className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
               <Zap className="w-3.5 h-3.5 text-amber-400" />
               <span>一鍵情境快速套用 (Scenario Quick Presets)</span>
             </span>
-            <span className="text-xs text-slate-500 font-mono">點擊立即注入極端壓力測試</span>
+            <span className="text-sm text-slate-500 font-mono">點擊立即注入極端壓力測試</span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
             <button
               onClick={() => applyPreset('clogged_cavities')}
-              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-red-950/40 border border-slate-800 hover:border-red-500/40 text-slate-300 hover:text-red-300 transition-all text-xs font-medium text-left cursor-pointer group"
+              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-red-950/40 border border-slate-800 hover:border-red-500/40 text-slate-300 hover:text-red-300 transition-all text-sm font-medium text-left cursor-pointer group"
             >
               <Flame className="w-4 h-4 text-red-400 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
@@ -449,7 +449,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             <button
               onClick={() => applyPreset('peak_demand')}
-              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-blue-950/40 border border-slate-800 hover:border-blue-500/40 text-slate-300 hover:text-blue-300 transition-all text-xs font-medium text-left cursor-pointer group"
+              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-blue-950/40 border border-slate-800 hover:border-blue-500/40 text-slate-300 hover:text-blue-300 transition-all text-sm font-medium text-left cursor-pointer group"
             >
               <TrendingUp className="w-4 h-4 text-blue-400 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
@@ -460,7 +460,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             <button
               onClick={() => applyPreset('shipping_delay')}
-              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-amber-950/40 border border-slate-800 hover:border-amber-500/40 text-slate-300 hover:text-amber-300 transition-all text-xs font-medium text-left cursor-pointer group"
+              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-amber-950/40 border border-slate-800 hover:border-amber-500/40 text-slate-300 hover:text-amber-300 transition-all text-sm font-medium text-left cursor-pointer group"
             >
               <Truck className="w-4 h-4 text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
@@ -471,7 +471,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             <button
               onClick={() => applyPreset('wip_defect')}
-              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-orange-950/40 border border-slate-800 hover:border-orange-500/40 text-slate-300 hover:text-orange-300 transition-all text-xs font-medium text-left cursor-pointer group"
+              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-orange-950/40 border border-slate-800 hover:border-orange-500/40 text-slate-300 hover:text-orange-300 transition-all text-sm font-medium text-left cursor-pointer group"
             >
               <ShieldAlert className="w-4 h-4 text-orange-400 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
@@ -482,7 +482,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             <button
               onClick={() => applyPreset('zero_inventory')}
-              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-purple-950/40 border border-slate-800 hover:border-purple-500/40 text-slate-300 hover:text-purple-300 transition-all text-xs font-medium text-left cursor-pointer group"
+              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-purple-950/40 border border-slate-800 hover:border-purple-500/40 text-slate-300 hover:text-purple-300 transition-all text-sm font-medium text-left cursor-pointer group"
             >
               <Warehouse className="w-4 h-4 text-purple-400 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
@@ -493,7 +493,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             <button
               onClick={() => applyPreset('full_overtime')}
-              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-emerald-950/40 border border-slate-800 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-300 transition-all text-xs font-medium text-left cursor-pointer group"
+              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-emerald-950/40 border border-slate-800 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-300 transition-all text-sm font-medium text-left cursor-pointer group"
             >
               <Sparkles className="w-4 h-4 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
@@ -513,7 +513,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <div className="flex flex-wrap items-center gap-1.5 pb-4 border-b border-slate-200 dark:border-slate-800">
                 <button
                   onClick={() => setSandboxTab('demand')}
-                  className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                  className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
                     sandboxTab === 'demand'
                       ? 'bg-[#e0f2fe] text-[#0284c7] border-[#0284c7] shadow-xs dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-600'
                       : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:text-slate-900 hover:bg-[#f8fafc]'
@@ -525,7 +525,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                 <button
                   onClick={() => setSandboxTab('molding')}
-                  className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                  className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
                     sandboxTab === 'molding'
                       ? 'bg-[#eef2ff] text-[#4f46e5] border-[#4f46e5] shadow-xs dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-600'
                       : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:text-slate-900 hover:bg-[#f8fafc]'
@@ -537,7 +537,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                 <button
                   onClick={() => setSandboxTab('quality_stock')}
-                  className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                  className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
                     sandboxTab === 'quality_stock'
                       ? 'bg-[#ecfdf5] text-[#059669] border-[#059669] shadow-xs dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-600'
                       : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:text-slate-900 hover:bg-[#f8fafc]'
@@ -549,7 +549,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                 <button
                   onClick={() => setSandboxTab('procure')}
-                  className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                  className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
                     sandboxTab === 'procure'
                       ? 'bg-[#ecfeff] text-[#0891b2] border-[#0891b2] shadow-xs dark:bg-cyan-950/60 dark:text-cyan-300 dark:border-cyan-600'
                       : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:text-slate-900 hover:bg-[#f8fafc]'
@@ -566,7 +566,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Forecast Qty */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <div className="flex justify-between items-center text-xs">
+                      <div className="flex justify-between items-center text-sm">
                         <span className="font-semibold text-slate-200">業務預估量 Forecast (PCS)</span>
                         <span className="font-mono font-bold text-blue-400 text-sm">
                           {simForecast.toLocaleString()}
@@ -590,7 +590,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                     {/* Actual PO Qty */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <div className="flex justify-between items-center text-xs">
+                      <div className="flex justify-between items-center text-sm">
                         <span className="font-semibold text-slate-200">實際訂單量 PO Qty (PCS)</span>
                         <span className="font-mono font-bold text-cyan-400 text-sm">
                           {simActualOrder.toLocaleString()}
@@ -616,11 +616,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Demand Consumption Mode */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <label className="text-xs font-semibold text-slate-200 block">需求沖銷模式 (Consumption Mode)</label>
+                      <label className="text-sm font-semibold text-slate-200 block">需求沖銷模式 (Consumption Mode)</label>
                       <select
                         value={simDemandMode}
                         onChange={(e) => setOverrideDemandMode(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 font-medium focus:outline-hidden cursor-pointer"
+                        className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-slate-200 font-medium focus:outline-hidden cursor-pointer"
                       >
                         <option value="additive">疊加模式 (Forecast + 實際訂單 PO)</option>
                         <option value="po_consume">實單沖銷 (Max[Forecast, 實際訂單])</option>
@@ -634,7 +634,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                     {/* Delivery Target Date Offset */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <div className="flex justify-between items-center text-xs">
+                      <div className="flex justify-between items-center text-sm">
                         <span className="font-semibold text-slate-200">交期調整 (Offset Days)</span>
                         <span className="font-mono font-bold text-amber-400 text-sm">
                           {overrideDateOffsetDays > 0 ? `+${overrideDateOffsetDays}` : overrideDateOffsetDays} 天 ({simTargetDateStr})
@@ -665,14 +665,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Mold Switcher (If multi-mold available) */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <label className="text-xs font-semibold text-slate-200 block">成型模具選擇 (Mold Selection)</label>
+                      <label className="text-sm font-semibold text-slate-200 block">成型模具選擇 (Mold Selection)</label>
                       <select
                         value={currentMoldId}
                         onChange={(e) => {
                           setOverrideMoldId(e.target.value);
                           setOverrideCavities(null);
                         }}
-                        className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-purple-300 font-mono font-semibold focus:outline-hidden cursor-pointer"
+                        className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-purple-300 font-mono font-semibold focus:outline-hidden cursor-pointer"
                       >
                         {relatedBoms.map((b) => {
                           const m = db.mold_master.find((mold) => mold.mold_id === b.mold_id);
@@ -690,7 +690,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                     {/* Active Cavities */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <div className="flex justify-between items-center text-xs">
+                      <div className="flex justify-between items-center text-sm">
                         <span className="font-semibold text-slate-200">妥善穴數 (Active Cavities)</span>
                         <span className="font-mono font-bold text-purple-400 text-sm">
                           {simActiveCav} / {simDesignCav} 穴 {simActiveCav < simDesignCav ? `(塞 ${simDesignCav - simActiveCav} 穴)` : '(全穴正常)'}
@@ -716,7 +716,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {/* Cycle Time */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <div className="flex justify-between items-center text-xs">
+                      <div className="flex justify-between items-center text-sm">
                         <span className="font-semibold text-slate-200">成型週期 Cycle Time</span>
                         <span className="font-mono font-bold text-white text-sm">
                           {simCycleTime}s
@@ -740,7 +740,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                     {/* Daily Operating Hours */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <div className="flex justify-between items-center text-xs">
+                      <div className="flex justify-between items-center text-sm">
                         <span className="font-semibold text-slate-200">日稼動工時</span>
                         <span className="font-mono font-bold text-cyan-300 text-sm">
                           {simDailyHours} 小時/日
@@ -764,7 +764,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                     {/* Mfg Scrap Rate */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <div className="flex justify-between items-center text-xs">
+                      <div className="flex justify-between items-center text-sm">
                         <span className="font-semibold text-slate-200">射出生產損耗率</span>
                         <span className="font-mono font-bold text-red-300 text-sm">
                           {(simScrap * 100).toFixed(1)}%
@@ -795,7 +795,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Sorting Yield */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <div className="flex justify-between items-center text-xs">
+                      <div className="flex justify-between items-center text-sm">
                         <span className="font-semibold text-slate-200">Sorting 全檢良率</span>
                         <span className="font-mono font-bold text-emerald-400 text-sm">
                           {(simYield * 100).toFixed(1)}%
@@ -819,7 +819,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                     {/* WIP Pending Qty */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <div className="flex justify-between items-center text-xs">
+                      <div className="flex justify-between items-center text-sm">
                         <span className="font-semibold text-slate-200">待驗品庫存 WIP (PCS)</span>
                         <span className="font-mono font-bold text-white text-sm">
                           {simWipQty.toLocaleString()} (有效良品: {simWipEffective.toLocaleString()})
@@ -845,7 +845,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {/* FG Ready Qty */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <div className="flex justify-between items-center text-xs">
+                      <div className="flex justify-between items-center text-sm">
                         <span className="font-semibold text-slate-200">成品良品庫存 (PCS)</span>
                         <span className="font-mono font-bold text-blue-300 text-sm">
                           {simFgReady.toLocaleString()}
@@ -869,7 +869,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                     {/* RM On-Hand */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <div className="flex justify-between items-center text-xs">
+                      <div className="flex justify-between items-center text-sm">
                         <span className="font-semibold text-slate-200">原料在庫庫存 (KG)</span>
                         <span className="font-mono font-bold text-purple-300 text-sm">
                           {simRmOnHand.toLocaleString()}
@@ -893,7 +893,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                     {/* RM In-Transit */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <div className="flex justify-between items-center text-xs">
+                      <div className="flex justify-between items-center text-sm">
                         <span className="font-semibold text-slate-200">原料在途訂單 (KG)</span>
                         <span className="font-mono font-bold text-amber-300 text-sm">
                           {simRmInTransit.toLocaleString()}
@@ -924,7 +924,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Lead Time Days */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <div className="flex justify-between items-center text-xs">
+                      <div className="flex justify-between items-center text-sm">
                         <span className="font-semibold text-slate-200">採購交期 Lead Time</span>
                         <span className="font-mono font-bold text-amber-400 text-sm">
                           {simLeadTime} 天 (海運/空運)
@@ -948,7 +948,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                     {/* MOQ (KG) */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <div className="flex justify-between items-center text-xs">
+                      <div className="flex justify-between items-center text-sm">
                         <span className="font-semibold text-slate-200">最小起訂量 MOQ (KG)</span>
                         <span className="font-mono font-bold text-cyan-400 text-sm">
                           {simMoq.toLocaleString()} KG
@@ -974,7 +974,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Safety Stock (KG) */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <div className="flex justify-between items-center text-xs">
+                      <div className="flex justify-between items-center text-sm">
                         <span className="font-semibold text-slate-200">安全庫存量 Safety Stock (KG)</span>
                         <span className="font-mono font-bold text-emerald-400 text-sm">
                           {simSafetyStock.toLocaleString()} KG
@@ -998,7 +998,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                     {/* Unit Price (USD) */}
                     <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <div className="flex justify-between items-center text-xs">
+                      <div className="flex justify-between items-center text-sm">
                         <span className="font-semibold text-slate-200">原料預估單價 Unit Price</span>
                         <span className="font-mono font-bold text-blue-300 text-sm">
                           ${simUnitPrice.toFixed(2)} USD/KG
@@ -1025,7 +1025,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
 
             {/* Bottom Status Tip */}
-            <div className="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+            <div className="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-sm text-slate-400">
               <span className="flex items-center space-x-1.5">
                 <Info className="w-3.5 h-3.5 text-blue-400" />
                 <span>所有滑桿與選單皆即時驅動 MRP 核心數學模型計算</span>
@@ -1044,12 +1044,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div className="lg:col-span-5 bg-gradient-to-b from-blue-950/70 to-slate-950/90 rounded-2xl border border-blue-500/30 p-5 flex flex-col justify-between shadow-xl">
             <div>
               <div className="flex items-center justify-between pb-3 border-b border-blue-500/20">
-                <span className="text-xs font-bold uppercase tracking-wider text-blue-200 flex items-center gap-1.5">
+                <span className="text-sm font-bold uppercase tracking-wider text-blue-200 flex items-center gap-1.5">
                   <TrendingUp className="w-4 h-4 text-cyan-400" />
                   <span>基準 vs 模擬 Δ 差異衝擊推演</span>
                 </span>
                 <span
-                  className={`text-xs font-mono font-bold px-2.5 py-0.5 rounded-full border ${
+                  className={`text-sm font-mono font-bold px-2.5 py-0.5 rounded-full border ${
                     simDaysUntilLatestOrder < 0
                       ? 'bg-red-950/80 text-red-400 border-red-500/40'
                       : simDaysUntilLatestOrder <= 15
@@ -1062,13 +1062,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
 
               {/* Comparison Tiles */}
-              <div className="grid grid-cols-2 gap-3 mt-3.5 text-xs">
+              <div className="grid grid-cols-2 gap-3 mt-3.5 text-sm">
                 {/* Tile 1: Unit Weight */}
                 <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
                   <span className="text-slate-400 block text-[11px]">動態單穴克重</span>
                   <div className="flex items-baseline justify-between mt-1">
                     <span className="text-base font-bold font-mono text-cyan-300">
-                      {simUnitWeight.toFixed(3)} <span className="text-xs font-normal">g</span>
+                      {simUnitWeight.toFixed(3)} <span className="text-sm font-normal">g</span>
                     </span>
                     <span className={`font-mono text-[11px] font-bold ${deltaUnitWeight > 0 ? 'text-red-400' : deltaUnitWeight < 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
                       {deltaUnitWeight > 0 ? `+${deltaUnitWeight}` : deltaUnitWeight === 0 ? '±0' : deltaUnitWeight}
@@ -1081,7 +1081,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <span className="text-slate-400 block text-[11px]">日射出產能</span>
                   <div className="flex items-baseline justify-between mt-1">
                     <span className="text-base font-bold font-mono text-white">
-                      {simDailyCap.toLocaleString()} <span className="text-xs font-normal">PCS</span>
+                      {simDailyCap.toLocaleString()} <span className="text-sm font-normal">PCS</span>
                     </span>
                     <span className={`font-mono text-[11px] font-bold ${deltaDailyCap > 0 ? 'text-emerald-400' : deltaDailyCap < 0 ? 'text-red-400' : 'text-slate-500'}`}>
                       {deltaDailyCap > 0 ? `+${deltaDailyCap.toLocaleString()}` : deltaDailyCap === 0 ? '±0' : deltaDailyCap.toLocaleString()}
@@ -1094,7 +1094,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <span className="text-slate-400 block text-[11px]">成品淨缺口</span>
                   <div className="flex items-baseline justify-between mt-1">
                     <span className="text-base font-bold font-mono text-blue-400">
-                      {simFgGap.toLocaleString()} <span className="text-xs font-normal">PCS</span>
+                      {simFgGap.toLocaleString()} <span className="text-sm font-normal">PCS</span>
                     </span>
                     <span className={`font-mono text-[11px] font-bold ${deltaFgGap > 0 ? 'text-red-400' : deltaFgGap < 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
                       {deltaFgGap > 0 ? `+${deltaFgGap.toLocaleString()}` : deltaFgGap === 0 ? '±0' : deltaFgGap.toLocaleString()}
@@ -1107,7 +1107,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <span className="text-slate-400 block text-[11px]">原料淨需求 (KG)</span>
                   <div className="flex items-baseline justify-between mt-1">
                     <span className="text-base font-bold font-mono text-purple-300">
-                      {simNetRMKg.toLocaleString()} <span className="text-xs font-normal">KG</span>
+                      {simNetRMKg.toLocaleString()} <span className="text-sm font-normal">KG</span>
                     </span>
                     <span className={`font-mono text-[11px] font-bold ${deltaNetRM > 0 ? 'text-red-400' : deltaNetRM < 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
                       {deltaNetRM > 0 ? `+${deltaNetRM.toLocaleString()}` : deltaNetRM === 0 ? '±0' : deltaNetRM.toLocaleString()}
@@ -1118,13 +1118,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
               {/* Major PO Impact Banner */}
               <div className="mt-3.5 bg-blue-900/40 p-4 rounded-xl border border-blue-400/30 space-y-2">
-                <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center justify-between text-sm">
                   <span className="text-blue-200 font-semibold">建議發單採購量 (MOQ取整):</span>
                   <span className="text-lg font-bold font-mono text-white">
                     {simSuggestedPOKg.toLocaleString()} KG
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-xs pt-1 border-t border-blue-500/20">
+                <div className="flex items-center justify-between text-sm pt-1 border-t border-blue-500/20">
                   <span className="text-blue-300">預估採購總金額 (USD):</span>
                   <span className="font-mono font-bold text-cyan-300">
                     ${simTotalCostUsd.toLocaleString()} USD
@@ -1133,7 +1133,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     </span>
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-xs pt-1 border-t border-blue-500/20">
+                <div className="flex items-center justify-between text-sm pt-1 border-t border-blue-500/20">
                   <span className="text-blue-300">最晚下單期限 (Order Date):</span>
                   <span className="font-mono font-bold text-amber-300">
                     {simSuggestedOrderDate} ({simDaysUntilLatestOrder >= 0 ? `剩 ${simDaysUntilLatestOrder} 天` : `逾期 ${Math.abs(simDaysUntilLatestOrder)} 天`})
@@ -1142,7 +1142,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
 
               {/* Decision Protocol Recommendation */}
-              <div className="mt-3.5 p-3 bg-slate-950/70 rounded-xl border border-slate-800 text-xs space-y-1">
+              <div className="mt-3.5 p-3 bg-slate-950/70 rounded-xl border border-slate-800 text-sm space-y-1">
                 <div className="font-bold text-slate-200 flex items-center space-x-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
                   <span>沙盒推演決策建言：</span>
@@ -1178,16 +1178,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div>
             <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
               <span>📊 決策戰情室</span>
-              <span className="text-slate-500 text-xs font-normal font-mono">Decision War Room</span>
+              <span className="text-slate-500 text-sm font-normal font-mono">Decision War Room</span>
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-sm text-slate-400 mt-0.5">
               自動辨識長交期物料，倒推最晚採購下單排程與風險處置建議
             </p>
           </div>
           <button
             onClick={() => exportToExcel(db)}
             id="war-room-export-btn"
-            className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs rounded-xl border border-slate-700 text-slate-200 transition-colors shrink-0 cursor-pointer"
+            className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-sm rounded-xl border border-slate-700 text-slate-200 transition-colors shrink-0 cursor-pointer"
           >
             <Download className="w-3.5 h-3.5 text-emerald-400" />
             <span>匯出建議採購清單 Excel</span>
@@ -1196,8 +1196,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         {/* War Room Priority Table */}
         <div className="overflow-x-auto mt-4">
-          <table className="w-full text-left text-xs">
-            <thead className="text-xs text-slate-400 uppercase border-b border-slate-800 font-semibold">
+          <table className="w-full text-left text-sm">
+            <thead className="text-sm text-slate-400 uppercase border-b border-slate-800 font-semibold">
               <tr>
                 <th className="pb-3 px-2">狀態 Status</th>
                 <th className="pb-3 px-2">需求品號 SKU</th>
@@ -1217,30 +1217,30 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <tr key={item.sku} className="hover:bg-slate-800/40 transition-colors">
                     <td className="py-3 px-2 font-sans">
                       {isShortage ? (
-                        <span className="px-2.5 py-1 bg-red-500/10 text-red-400 border border-red-500/20 rounded-md text-xs font-bold whitespace-nowrap">
+                        <span className="px-2.5 py-1 bg-red-500/10 text-red-400 border border-red-500/20 rounded-md text-sm font-bold whitespace-nowrap">
                           🔴 缺料 Shortage
                         </span>
                       ) : isOvercapacity ? (
-                        <span className="px-2.5 py-1 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-md text-xs font-bold whitespace-nowrap">
+                        <span className="px-2.5 py-1 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-md text-sm font-bold whitespace-nowrap">
                           🟠 爆倉 Overcapacity
                         </span>
                       ) : isOverstock ? (
-                        <span className="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-md text-xs font-bold whitespace-nowrap">
+                        <span className="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-md text-sm font-bold whitespace-nowrap">
                           🟡 超備 Excess
                         </span>
                       ) : (
-                        <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-md text-xs font-bold whitespace-nowrap">
+                        <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-md text-sm font-bold whitespace-nowrap">
                           🟢 正常 Normal
                         </span>
                       )}
                     </td>
-                    <td className="py-3 px-2 text-white font-bold text-xs">{item.sku}</td>
-                    <td className="py-3 px-2 text-slate-300 font-sans text-xs">{item.customerId}</td>
-                    <td className="py-3 px-2 text-purple-400 font-semibold text-xs">{item.rmSku}</td>
-                    <td className="py-3 px-2 text-right text-blue-400 font-bold text-xs">
+                    <td className="py-3 px-2 text-white font-bold text-sm">{item.sku}</td>
+                    <td className="py-3 px-2 text-slate-300 font-sans text-sm">{item.customerId}</td>
+                    <td className="py-3 px-2 text-purple-400 font-semibold text-sm">{item.rmSku}</td>
+                    <td className="py-3 px-2 text-right text-blue-400 font-bold text-sm">
                       {item.suggestedOrderQtyKg.toLocaleString()} KG
                     </td>
-                    <td className="py-3 px-2 text-right font-medium text-xs">
+                    <td className="py-3 px-2 text-right font-medium text-sm">
                       <span className={item.daysUntilLatestOrder < 0 ? 'text-red-400 font-bold' : item.daysUntilLatestOrder <= (params?.shortageAlertBufferDays || 15) ? 'text-amber-400 font-semibold' : 'text-slate-200'}>
                         {item.suggestedOrderDate}
                       </span>
@@ -1248,7 +1248,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     <td className="py-3 px-2 text-center font-sans">
                       <button
                         onClick={() => onNavigateToMRP(item.sku)}
-                        className="px-2.5 py-1 text-xs font-medium text-cyan-400 hover:text-cyan-300 bg-cyan-950/50 hover:bg-cyan-900/50 border border-cyan-800/60 rounded-lg transition-colors cursor-pointer"
+                        className="px-2.5 py-1 text-sm font-medium text-cyan-400 hover:text-cyan-300 bg-cyan-950/50 hover:bg-cyan-900/50 border border-cyan-800/60 rounded-lg transition-colors cursor-pointer"
                       >
                         明細
                       </button>
@@ -1270,12 +1270,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
             <div>
               <h3 className="text-base font-bold text-white">即時物料與產能預警中心</h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-sm text-slate-400">
                 自動監控海運交期倒數、在途採購 PO、妥善穴數塞穴產能與 Forecast 下修呆滯
               </p>
             </div>
           </div>
-          <span className="text-xs font-mono font-semibold text-slate-300 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+          <span className="text-sm font-mono font-semibold text-slate-300 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
             {allAlerts.length} 項預警狀態
           </span>
         </div>
@@ -1301,24 +1301,24 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               >
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold font-mono bg-[#eff6ff] dark:bg-slate-900 px-2.5 py-1 rounded-md border border-[#bae6fd] dark:border-slate-700 text-[#0284c7] dark:text-sky-300 shadow-xs">
+                    <span className="text-sm font-bold font-mono bg-[#eff6ff] dark:bg-slate-900 px-2.5 py-1 rounded-md border border-[#bae6fd] dark:border-slate-700 text-[#0284c7] dark:text-sky-300 shadow-xs">
                       {alert.sku}
                     </span>
-                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 font-mono">{alert.customer}</span>
+                    <span className="text-sm font-bold text-slate-500 dark:text-slate-400 font-mono">{alert.customer}</span>
                   </div>
                   <h4 className="font-bold text-sm text-slate-900 dark:text-white mt-2.5 flex items-center gap-1.5">
                     <span>{alert.title}</span>
                   </h4>
-                  <p className="text-xs mt-2 leading-relaxed text-slate-600 dark:text-slate-300 font-normal">
+                  <p className="text-sm mt-2 leading-relaxed text-slate-600 dark:text-slate-300 font-normal">
                     {alert.description}
                   </p>
                 </div>
 
                 <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800/80 bg-slate-50/70 dark:bg-slate-950/40 p-2.5 rounded-lg">
-                  <div className="text-xs font-bold text-slate-700 dark:text-slate-400 flex items-center space-x-1">
+                  <div className="text-sm font-bold text-slate-700 dark:text-slate-400 flex items-center space-x-1">
                     <span>💡 處置對策建議：</span>
                   </div>
-                  <p className="text-xs font-medium mt-1 text-slate-800 dark:text-slate-200 leading-relaxed">
+                  <p className="text-sm font-medium mt-1 text-slate-800 dark:text-slate-200 leading-relaxed">
                     {alert.actionRecommendation}
                   </p>
                 </div>
@@ -1333,14 +1333,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800 gap-2">
           <div>
             <h3 className="text-base font-bold text-white">MRP 建議採購下單排程表</h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-sm text-slate-400">
               整合原料單價、MOQ 取整、安全庫存與海運 Lead Time 倒推排程
             </p>
           </div>
           <button
             onClick={() => onNavigateToTables('supplier_rule_master')}
             id="view-supplier-rules-btn"
-            className="text-xs text-cyan-400 font-semibold hover:text-cyan-300 flex items-center space-x-1 cursor-pointer"
+            className="text-sm text-cyan-400 font-semibold hover:text-cyan-300 flex items-center space-x-1 cursor-pointer"
           >
             <span>維護供應商交期規則</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -1348,7 +1348,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         <div className="overflow-x-auto mt-4">
-          <table className="w-full text-left text-xs">
+          <table className="w-full text-left text-sm">
             <thead className="bg-slate-950/60 text-slate-400 font-semibold uppercase border-b border-slate-800">
               <tr>
                 <th className="px-3.5 py-3">需求品號 / 客戶</th>
@@ -1367,32 +1367,32 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               {mrpResults.map((item) => (
                 <tr key={item.sku} className="hover:bg-slate-800/30 transition-colors">
                   <td className="px-3.5 py-3.5">
-                    <div className="font-bold text-white text-xs">{item.sku}</div>
-                    <div className="text-xs text-slate-400 font-sans mt-0.5">{item.productName} ({item.customerId})</div>
+                    <div className="font-bold text-white text-sm">{item.sku}</div>
+                    <div className="text-sm text-slate-400 font-sans mt-0.5">{item.productName} ({item.customerId})</div>
                   </td>
                   <td className="px-3.5 py-3.5">
-                    <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-xs">
+                    <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-sm">
                       {item.versionNo}
                     </span>
                   </td>
                   <td className="px-3.5 py-3.5">
-                    <div className="font-semibold text-purple-400 text-xs">{item.rmSku}</div>
+                    <div className="font-semibold text-purple-400 text-sm">{item.rmSku}</div>
                   </td>
-                  <td className="px-3.5 py-3.5 text-right font-medium text-slate-200 text-xs">
+                  <td className="px-3.5 py-3.5 text-right font-medium text-slate-200 text-sm">
                     {item.fgNetRequirementQty.toLocaleString()}
                   </td>
-                  <td className="px-3.5 py-3.5 text-right font-medium text-slate-200 text-xs">
+                  <td className="px-3.5 py-3.5 text-right font-medium text-slate-200 text-sm">
                     {item.rmNetRequirementKg.toLocaleString()}
                   </td>
                   <td className="px-3.5 py-3.5 text-right font-bold text-blue-400 text-sm">
                     {item.suggestedOrderQtyKg.toLocaleString()}
                   </td>
-                  <td className="px-3.5 py-3.5 text-slate-300 font-sans text-xs">
+                  <td className="px-3.5 py-3.5 text-slate-300 font-sans text-sm">
                     {item.leadTimeDays} 天 (MOQ: {item.moqKg} KG)
                   </td>
                   <td className="px-3.5 py-3.5">
-                    <div className="font-semibold text-white text-xs">{item.suggestedOrderDate}</div>
-                    <div className="text-xs text-slate-400 font-sans mt-0.5">
+                    <div className="font-semibold text-white text-sm">{item.suggestedOrderDate}</div>
+                    <div className="text-sm text-slate-400 font-sans mt-0.5">
                       {item.daysUntilLatestOrder >= 0
                         ? `剩餘 ${item.daysUntilLatestOrder} 天`
                         : `已逾期 ${Math.abs(item.daysUntilLatestOrder)} 天`}
@@ -1400,15 +1400,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   </td>
                   <td className="px-3.5 py-3.5 text-center font-sans">
                     {item.daysUntilLatestOrder < 0 ? (
-                      <span className="bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1 rounded-md text-xs font-bold whitespace-nowrap">
+                      <span className="bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1 rounded-md text-sm font-bold whitespace-nowrap">
                         緊急逾期
                       </span>
                     ) : item.daysUntilLatestOrder < 15 ? (
-                      <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-md text-xs font-bold whitespace-nowrap">
+                      <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-md text-sm font-bold whitespace-nowrap">
                         即刻發單
                       </span>
                     ) : (
-                      <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-md text-xs font-bold whitespace-nowrap">
+                      <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-md text-sm font-bold whitespace-nowrap">
                         排程充裕
                       </span>
                     )}
@@ -1416,7 +1416,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <td className="px-3.5 py-3.5 text-center font-sans">
                     <button
                       onClick={() => onNavigateToMRP(item.sku)}
-                      className="px-2.5 py-1 text-xs font-semibold text-cyan-400 bg-cyan-950/50 hover:bg-cyan-900/50 border border-cyan-800/60 rounded-lg transition-colors cursor-pointer"
+                      className="px-2.5 py-1 text-sm font-semibold text-cyan-400 bg-cyan-950/50 hover:bg-cyan-900/50 border border-cyan-800/60 rounded-lg transition-colors cursor-pointer"
                     >
                       MRP 明細
                     </button>

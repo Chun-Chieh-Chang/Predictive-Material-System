@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -147,15 +147,15 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
       <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-xl shadow-black/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="bg-blue-950 text-blue-400 border border-blue-800/60 text-xs font-bold px-2.5 py-0.5 rounded-md font-mono">
+            <span className="bg-blue-950 text-blue-400 border border-blue-800/60 text-sm font-bold px-2.5 py-0.5 rounded-md font-mono">
               PRD {import.meta.env.VITE_PMS_VERSION}
             </span>
-            <span className="text-xs text-slate-500">產品需求與規格白皮書</span>
+            <span className="text-sm text-slate-500">產品需求與規格白皮書</span>
           </div>
           <h2 className="text-xl font-bold text-white mt-1">
             料事如神圈 — 系統需求規範與統一用詞標準
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-sm text-slate-400 mt-0.5">
             完整收錄 3-Stage MRP 數學公式、8大資料表結構、用詞標準化（設計穴數 / 妥善穴數）與風險預警機制
           </p>
         </div>
@@ -164,7 +164,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
           <button
             onClick={handleCopyMarkdown}
             id="prd-copy-md-btn"
-            className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-colors"
+            className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-sm font-medium bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-colors"
           >
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
             <span>複製 Markdown</span>
@@ -172,7 +172,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
           <button
             onClick={handleDownloadMarkdown}
             id="prd-download-md-btn"
-            className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow-md shadow-blue-600/20"
+            className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-sm font-medium bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow-md shadow-blue-600/20"
           >
             <Download className="w-3.5 h-3.5" />
             <span>匯出 PRD (.md)</span>
@@ -184,7 +184,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
       <div className="flex space-x-2">
         <button
           onClick={() => setActiveTab('rich')}
-          className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+          className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
             activeTab === 'rich'
               ? 'bg-[#e0f2fe] text-[#0284c7] border-[#0284c7] shadow-xs dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-600'
               : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-[#f8fafc] dark:hover:bg-slate-900 hover:text-slate-900'
@@ -196,7 +196,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 
         <button
           onClick={() => setActiveTab('dictionary')}
-          className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+          className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
             activeTab === 'dictionary'
               ? 'bg-[#eef2ff] text-[#4f46e5] border-[#4f46e5] shadow-xs dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-600'
               : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-[#f8fafc] dark:hover:bg-slate-900 hover:text-slate-900'
@@ -208,7 +208,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 
         <button
           onClick={() => setActiveTab('markdown')}
-          className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+          className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
             activeTab === 'markdown'
               ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border-slate-400 dark:border-slate-700 shadow-xs'
               : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-[#f8fafc] dark:hover:bg-slate-900 hover:text-slate-900'
@@ -226,10 +226,10 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
           {/* Section 1 */}
           <section className="space-y-3">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2 border-b border-slate-200 dark:border-slate-700 pb-2">
-              <span className="w-6 h-6 rounded-md bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-800 flex items-center justify-center text-xs font-bold font-mono">1</span>
+              <span className="w-6 h-6 rounded-md bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-800 flex items-center justify-center text-sm font-bold font-mono">1</span>
               <span>核心原則與品管圈 (QCC) 定位</span>
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               <div className="p-4 bg-sky-50 dark:bg-sky-950/30 rounded-xl border border-sky-200 dark:border-sky-800">
                 <div className="font-bold text-sky-900 dark:text-sky-200">No Double Key-in</div>
                 <p className="text-sky-700 dark:text-sky-300 mt-1">從 ERP 自動匯入庫存與在途，拒絕重複人工鍵入與資料不同步。</p>
@@ -248,22 +248,22 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
           {/* Section 2: MRP 3-Stage Gradient Cards */}
           <section className="space-y-3">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2 border-b border-slate-200 dark:border-slate-700 pb-2">
-              <span className="w-6 h-6 rounded-md bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-800 flex items-center justify-center text-xs font-bold font-mono">2</span>
+              <span className="w-6 h-6 rounded-md bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-800 flex items-center justify-center text-sm font-bold font-mono">2</span>
               <span>3 階段 MRP 數學推導公式</span>
             </h3>
             <div className="space-y-3">
               {/* 階段一：天藍色 */}
               <div className="p-4 bg-gradient-to-r from-sky-50 to-sky-100/60 dark:from-sky-950/40 dark:to-sky-900/30 border border-sky-200 dark:border-sky-700 rounded-xl">
-                <div className="font-bold text-sky-800 dark:text-sky-300 text-xs">階段一：真實成品缺口 (FG Net Requirement)</div>
-                <div className="font-mono text-xs text-sky-700 dark:text-sky-200 mt-1.5">
+                <div className="font-bold text-sky-800 dark:text-sky-300 text-sm">階段一：真實成品缺口 (FG Net Requirement)</div>
+                <div className="font-mono text-sm text-sky-700 dark:text-sky-200 mt-1.5">
                   真實缺口 (PCS) = (Forecast 需求 + 實際訂單) - 成品在庫良品 - (Sorting 待驗品 × 全檢良率)
                 </div>
               </div>
 
               {/* 階段二：靛藍色 */}
               <div className="p-4 bg-gradient-to-r from-indigo-50 to-indigo-100/60 dark:from-indigo-950/40 dark:to-indigo-900/30 border border-indigo-200 dark:border-indigo-700 rounded-xl">
-                <div className="font-bold text-indigo-800 dark:text-indigo-300 text-xs">階段二：成型重量與原料毛需求 (BOM Explosion)</div>
-                <div className="font-mono text-xs text-indigo-700 dark:text-indigo-200 mt-1.5">
+                <div className="font-bold text-indigo-800 dark:text-indigo-300 text-sm">階段二：成型重量與原料毛需求 (BOM Explosion)</div>
+                <div className="font-mono text-sm text-indigo-700 dark:text-indigo-200 mt-1.5">
                   單穴克重 (g) = (整模重量 + 流道重量) ÷ 妥善穴數<br/>
                   原料毛需求 (KG) = [(真實缺口 × 單穴克重) ÷ 1000] ÷ (1 - 標準生產損耗率)
                 </div>
@@ -271,8 +271,8 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 
               {/* 階段三：翠綠色 */}
               <div className="p-4 bg-gradient-to-r from-emerald-50 to-emerald-100/60 dark:from-emerald-950/40 dark:to-emerald-900/30 border border-emerald-200 dark:border-emerald-700 rounded-xl">
-                <div className="font-bold text-emerald-800 dark:text-emerald-300 text-xs">階段三：原料淨需求與採購下單日 (RM Net Requirement)</div>
-                <div className="font-mono text-xs text-emerald-700 dark:text-emerald-200 mt-1.5">
+                <div className="font-bold text-emerald-800 dark:text-emerald-300 text-sm">階段三：原料淨需求與採購下單日 (RM Net Requirement)</div>
+                <div className="font-mono text-sm text-emerald-700 dark:text-emerald-200 mt-1.5">
                   原料淨需求 (KG) = 原料毛需求 - 原料庫存 - 原料在途採購 + 安全庫存量<br/>
                   建議下單量 (KG) = CEILING(原料淨需求, MOQ) | 建議下單日 = 需求交期 - 採購交期 (Lead Time)<br/>
                   <span className="text-emerald-600 dark:text-emerald-300 font-semibold">庫存上限檢查: RM On-Hand + In-Transit ≤ Max_Storage_Capacity_kg → 觸發爆倉警示</span>
@@ -284,10 +284,10 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
           {/* Section 3: Change Audit */}
           <section className="space-y-3">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2 border-b border-slate-200 dark:border-slate-700 pb-2">
-              <span className="w-6 h-6 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800 flex items-center justify-center text-xs font-bold font-mono">3</span>
+              <span className="w-6 h-6 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800 flex items-center justify-center text-sm font-bold font-mono">3</span>
               <span>變更稽核與權限管控 (Change Audit & Governance)</span>
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               {/* L1: 淺灰藍底 */}
               <div className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700">
                 <div className="flex items-center space-x-2 mb-2">
@@ -318,10 +318,10 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
           {/* Section 4: Backup System */}
           <section className="space-y-3">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2 border-b border-slate-200 dark:border-slate-700 pb-2">
-              <span className="w-6 h-6 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-xs font-bold font-mono">4</span>
+              <span className="w-6 h-6 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-sm font-bold font-mono">4</span>
               <span>自動化備份系統 (Automated Backup)</span>
             </h3>
-            <div className="p-4 bg-gradient-to-r from-sky-50 to-sky-100/50 dark:from-sky-950/30 dark:to-sky-900/20 rounded-xl border border-sky-200 dark:border-sky-700 text-xs space-y-2">
+            <div className="p-4 bg-gradient-to-r from-sky-50 to-sky-100/50 dark:from-sky-950/30 dark:to-sky-900/20 rounded-xl border border-sky-200 dark:border-sky-700 text-sm space-y-2">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <div className="font-bold text-sky-800 dark:text-sky-200 mb-1">排程備份</div>
@@ -355,16 +355,16 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
         <div className="bg-slate-900/50 rounded-2xl p-8 border border-slate-800 shadow-xl shadow-black/20 space-y-6 text-sm">
           <div className="border-b border-slate-800 pb-4">
             <h3 className="text-lg font-bold text-white">統一用詞與名詞定義規範 (Terminology Dictionary)</h3>
-            <p className="text-xs text-slate-400 mt-1">已嚴格依據 PRD 規範將「完整穴數」統一為「設計穴數」，「現況穴數」統一為「妥善穴數」</p>
+            <p className="text-sm text-slate-400 mt-1">已嚴格依據 PRD 規範將「完整穴數」統一為「設計穴數」，「現況穴數」統一為「妥善穴數」</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-5 bg-slate-950/70 rounded-xl border border-slate-800">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-white text-sm">設計穴數 (Design Cavities)</span>
-                <span className="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">原: 完整穴數</span>
+                <span className="text-sm bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">原: 完整穴數</span>
               </div>
-              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              <p className="text-sm text-slate-400 mt-2 leading-relaxed">
                 模具出廠原裝設計之總穴數。代表該模具之物理最高潛在產能。
               </p>
             </div>
@@ -372,32 +372,32 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
             <div className="p-5 bg-purple-950/60 rounded-xl border border-purple-500/40">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-purple-200 text-sm">妥善穴數 (Active Cavities)</span>
-                <span className="text-xs bg-[#eef2ff] dark:bg-purple-950/60 text-[#4f46e5] dark:text-purple-300 border border-[#c7d2fe] dark:border-purple-800/60 px-2 py-0.5 rounded font-mono font-bold">
+                <span className="text-sm bg-[#eef2ff] dark:bg-purple-950/60 text-[#4f46e5] dark:text-purple-300 border border-[#c7d2fe] dark:border-purple-800/60 px-2 py-0.5 rounded font-mono font-bold">
                   原: 現況穴數
                 </span>
               </div>
-              <p className="text-xs text-purple-100 mt-2 leading-relaxed">
+              <p className="text-sm text-purple-100 mt-2 leading-relaxed">
                 產線現場目前可正常射出注膠之有效穴數。若發生塞穴，此數值動態降低，系統將自動調升「單穴克重」並下修「日產能」。
               </p>
             </div>
 
             <div className="p-5 bg-slate-950/70 rounded-xl border border-slate-800">
               <div className="font-bold text-white text-sm">WIP 待驗品 (Sorting WIP)</div>
-              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              <p className="text-sm text-slate-400 mt-2 leading-relaxed">
                 已製造射出完成，集中於 Sorting 檢驗區等待進行 100% 全檢之準成品。在 MRP 運算中依據「標準全檢良率」折算有效成品供給。
               </p>
             </div>
 
             <div className="p-5 bg-slate-950/70 rounded-xl border border-slate-800">
               <div className="font-bold text-white text-sm">Conservative Max Weight Principle (最重克重原則)</div>
-              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              <p className="text-sm text-slate-400 mt-2 leading-relaxed">
                 當成品對應多副模具（M:N 關聯）且未指定主模時，系統預設採用單穴克重最大之模具進行備料推算，杜絕原料短缺。
               </p>
             </div>
 
             <div className="p-5 bg-slate-950/70 rounded-xl border border-slate-800">
               <div className="font-bold text-white text-sm">Multi-Mold Strategy (多模備料策略)</div>
-              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              <p className="text-sm text-slate-400 mt-2 leading-relaxed">
                 系統支援三種備料原則：\`conservative_max_weight\`（最重克重，預設）、\`primary_mold_only\`（僅主模）、\`lowest_weight\`（最輕克重），可在系統參數中切換。
               </p>
             </div>
@@ -407,7 +407,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 
       {/* Raw Markdown */}
       {activeTab === 'markdown' && (
-        <div className="bg-slate-950 rounded-2xl p-6 border border-slate-800 text-cyan-300 font-mono text-xs overflow-x-auto shadow-xl">
+        <div className="bg-slate-950 rounded-2xl p-6 border border-slate-800 text-cyan-300 font-mono text-sm overflow-x-auto shadow-xl">
           <pre className="whitespace-pre-wrap">{prdMarkdownContent}</pre>
         </div>
       )}

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -138,12 +138,12 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
             <div className="flex items-center space-x-2">
-              <span className="bg-emerald-950 text-emerald-400 border border-emerald-800/60 text-xs font-bold px-2.5 py-0.5 rounded-md font-mono">
+              <span className="bg-emerald-950 text-emerald-400 border border-emerald-800/60 text-sm font-bold px-2.5 py-0.5 rounded-md font-mono">
                 BACKUP ORCHESTRATOR
               </span>
             </div>
             <h2 className="text-xl font-bold text-white mt-1">自動化備份系統</h2>
-            <p className="text-xs text-slate-400 mt-0.5 max-w-xl">
+            <p className="text-sm text-slate-400 mt-0.5 max-w-xl">
               定時產生完整資料庫封存檔，支援直接寫入內網授權目錄或下載備份。
               所有備份日誌完整記錄於本機，可供稽核追溯。
             </p>
@@ -158,7 +158,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
             }`}>
               <div className="flex items-center space-x-1.5">
                 <ShieldCheck className={`w-4 h-4 ${config.enabled ? 'text-emerald-400' : 'text-slate-500'}`} />
-                <span className="text-xs text-slate-400">排程</span>
+                <span className="text-sm text-slate-400">排程</span>
               </div>
               <div className={`text-sm font-bold font-mono mt-0.5 ${config.enabled ? 'text-emerald-400' : 'text-slate-500'}`}>
                 {config.enabled ? 'ON' : 'OFF'}
@@ -168,7 +168,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
             <div className="px-4 py-3 rounded-xl border bg-slate-950/70 border-slate-800">
               <div className="flex items-center space-x-1.5">
                 <Clock className="w-4 h-4 text-cyan-400" />
-                <span className="text-xs text-slate-400">下次備份</span>
+                <span className="text-sm text-slate-400">下次備份</span>
               </div>
               <div className="text-sm font-bold font-mono text-cyan-300 mt-0.5">
                 {config.enabled
@@ -182,7 +182,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
             <div className="px-4 py-3 rounded-xl border bg-slate-950/70 border-slate-800">
               <div className="flex items-center space-x-1.5">
                 <Calendar className="w-4 h-4 text-amber-400" />
-                <span className="text-xs text-slate-400">上次備份</span>
+                <span className="text-sm text-slate-400">上次備份</span>
               </div>
               <div className="text-sm font-bold font-mono text-amber-300 mt-0.5">
                 {daysSince === Infinity ? '尚未備份' : `${daysSince} 天前`}
@@ -192,7 +192,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
             <div className="px-4 py-3 rounded-xl border bg-slate-950/70 border-slate-800">
               <div className="flex items-center space-x-1.5">
                 <HardDrive className="w-4 h-4 text-purple-400" />
-                <span className="text-xs text-slate-400">日誌筆數</span>
+                <span className="text-sm text-slate-400">日誌筆數</span>
               </div>
               <div className="text-sm font-bold font-mono text-purple-300 mt-0.5">
                 {logs.length} 筆
@@ -204,7 +204,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
         {fsaNote && (
           <div className="mt-4 flex items-start space-x-2 bg-amber-950/30 border border-amber-800/50 rounded-xl px-4 py-3">
             <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-            <p className="text-xs text-amber-300/90 leading-relaxed">{fsaNote}</p>
+            <p className="text-sm text-amber-300/90 leading-relaxed">{fsaNote}</p>
           </div>
         )}
       </div>
@@ -220,13 +220,13 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
               </div>
               <div>
                 <h3 className="text-base font-bold text-white">排程與觸發設定</h3>
-                <p className="text-xs text-slate-400">自動備份時程與執行模式</p>
+                <p className="text-sm text-slate-400">自動備份時程與執行模式</p>
               </div>
             </div>
 
             {/* Master Toggle */}
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-white flex items-center space-x-2">
+              <label className="text-sm font-bold text-white flex items-center space-x-2">
                 <span className={`w-2.5 h-2.5 rounded-full ${config.enabled ? 'bg-emerald-400 animate-pulse' : 'bg-slate-600'}`}></span>
                 <span>啟用自動備份排程</span>
               </label>
@@ -244,7 +244,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
 
             {/* Schedule Time */}
             <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800/80 space-y-3">
-              <label className="text-xs font-bold text-white block">備份觸發時間（台灣時間 UTC+8）</label>
+              <label className="text-sm font-bold text-white block">備份觸發時間（台灣時間 UTC+8）</label>
               <div className="flex items-center space-x-3">
                 <input
                   type="time"
@@ -255,7 +255,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
                   }}
                   className="px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-sm focus:outline-hidden focus:border-cyan-500"
                 />
-                <span className="text-xs text-slate-500">台灣時間（建議離峰時段，如 02:00）</span>
+                <span className="text-sm text-slate-500">台灣時間（建議離峰時段，如 02:00）</span>
               </div>
               <p className="text-[11px] text-slate-500">
                 備份程式會在設定時間±2分鐘內自動執行。瀏覽器需保持開啟才能觸發排程。
@@ -265,7 +265,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
             {/* Auto Download on Launch */}
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-xs font-bold text-white">每次啟動頁面時自動備份</div>
+                <div className="text-sm font-bold text-white">每次啟動頁面時自動備份</div>
                 <div className="text-[11px] text-slate-500 mt-0.5">開啟系統時立即產生最新備份（避免資料遺失）</div>
               </div>
               <button
@@ -283,7 +283,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
             {/* Alert on Error */}
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-xs font-bold text-white">備份失敗時發送通知</div>
+                <div className="text-sm font-bold text-white">備份失敗時發送通知</div>
                 <div className="text-[11px] text-slate-500 mt-0.5">發生錯誤時於介面上顯示紅燈告警</div>
               </div>
               <button
@@ -307,14 +307,14 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
               </div>
               <div>
                 <h3 className="text-base font-bold text-white">目錄授權與儲存目標</h3>
-                <p className="text-xs text-slate-400">選擇備份檔案寫入位置</p>
+                <p className="text-sm text-slate-400">選擇備份檔案寫入位置</p>
               </div>
             </div>
 
             <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800/80 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-xs font-bold text-white">授權目錄</div>
+                  <div className="text-sm font-bold text-white">授權目錄</div>
                   <div className="text-[11px] text-slate-500 mt-0.5">
                     {config.directoryLabel
                       ? `已授權：${config.directoryLabel}`
@@ -324,7 +324,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
                 <button
                   onClick={handlePickDirectory}
                   disabled={!dirSupported}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-purple-700 hover:bg-purple-600 disabled:bg-slate-800 disabled:text-slate-600 text-white transition-colors"
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold bg-purple-700 hover:bg-purple-600 disabled:bg-slate-800 disabled:text-slate-600 text-white transition-colors"
                 >
                   <FolderOpen className="w-3.5 h-3.5" />
                   <span>{config.directoryLabel ? '變更目錄' : '選擇目錄'}</span>
@@ -358,7 +358,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
               </div>
               <div>
                 <h3 className="text-base font-bold text-white">手動立即備份</h3>
-                <p className="text-xs text-slate-400">現在就產生一份完整資料庫封存</p>
+                <p className="text-sm text-slate-400">現在就產生一份完整資料庫封存</p>
               </div>
             </div>
 
@@ -400,13 +400,13 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
               </div>
               <div>
                 <h3 className="text-base font-bold text-white">備份作業日誌</h3>
-                <p className="text-xs text-slate-400">完整操作記錄與狀態追蹤</p>
+                <p className="text-sm text-slate-400">完整操作記錄與狀態追蹤</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
               <button
                 onClick={handleExportLogs}
-                className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+                className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
                 title="匯出日誌 JSON"
               >
                 <Download className="w-3 h-3" />
@@ -414,7 +414,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
               </button>
               <button
                 onClick={handleClearLogs}
-                className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-red-950/60 hover:bg-red-900/60 text-red-400 border border-red-900/60 transition-colors"
+                className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-sm font-semibold bg-red-950/60 hover:bg-red-900/60 text-red-400 border border-red-900/60 transition-colors"
                 title="清除所有日誌"
               >
                 <Trash2 className="w-3 h-3" />
@@ -428,14 +428,14 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
             {logs.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-slate-600 space-y-3">
                 <FileArchive className="w-10 h-10 opacity-30" />
-                <p className="text-xs font-mono">尚無備份記錄</p>
+                <p className="text-sm font-mono">尚無備份記錄</p>
                 <p className="text-[11px] text-slate-700">執行首次備份後將在此顯示完整日誌</p>
               </div>
             ) : (
               [...logs].reverse().map((entry) => (
                 <div
                   key={entry.id}
-                  className={`p-3.5 rounded-xl border text-xs font-mono space-y-1.5 ${
+                  className={`p-3.5 rounded-xl border text-sm font-mono space-y-1.5 ${
                     entry.status === 'success'
                       ? 'bg-emerald-950/20 border-emerald-900/40'
                       : 'bg-red-950/20 border-red-900/40'
@@ -499,13 +499,13 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
           </div>
           <div>
             <h3 className="text-base font-bold text-white">容量管理與保留策略</h3>
-            <p className="text-xs text-slate-400">控制備份日誌的儲存上限</p>
+            <p className="text-sm text-slate-400">控制備份日誌的儲存上限</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800/80 space-y-2">
-            <label className="text-xs font-bold text-white block">最大日誌筆數</label>
+            <label className="text-sm font-bold text-white block">最大日誌筆數</label>
             <input
               type="number"
               min={30}
@@ -519,7 +519,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
           </div>
 
           <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800/80 space-y-2">
-            <div className="text-xs font-bold text-white">當前日誌大小估算</div>
+            <div className="text-sm font-bold text-white">當前日誌大小估算</div>
             <div className="text-lg font-bold font-mono text-cyan-300">
               {(logs.reduce((sum, l) => sum + JSON.stringify(l).length, 0) / 1024).toFixed(1)} KB
             </div>
@@ -527,7 +527,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
           </div>
 
           <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800/80 space-y-2">
-            <div className="text-xs font-bold text-white">上次成功備份時間</div>
+            <div className="text-sm font-bold text-white">上次成功備份時間</div>
             <div className="text-sm font-mono text-emerald-300 mt-1">
               {lastBackupEntry
                 ? new Date(lastBackupEntry.timestamp).toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })

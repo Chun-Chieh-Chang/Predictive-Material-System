@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -144,12 +144,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <h1 className="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white">
                   料事如神系統
                 </h1>
-                <span className="text-slate-500 dark:text-slate-400 text-xs font-normal hidden md:inline">
+                <span className="text-slate-500 dark:text-slate-400 text-sm font-normal hidden md:inline">
                   Predictive Material System
                 </span>
                 <button
                   onClick={handleVersionBadgeClick}
-                  className={`text-xs font-mono px-2 py-0.5 rounded-md font-semibold tracking-wide transition-all cursor-pointer select-none ${
+                  className={`text-sm font-mono px-2 py-0.5 rounded-md font-semibold tracking-wide transition-all cursor-pointer select-none ${
                     adminUnlocked
                       ? 'bg-gradient-to-r from-amber-500 to-yellow-400 text-amber-950 border-amber-400 shadow-lg shadow-amber-500/30 animate-pulse'
                       : 'bg-[#eef2ff] dark:bg-indigo-950/60 text-[#4f46e5] dark:text-indigo-400 border border-[#c7d2fe] dark:border-indigo-800/60 hover:border-[#4f46e5] dark:hover:border-indigo-400'
@@ -162,7 +162,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </span>
                 </button>
               </div>
-              <p className="text-xs text-slate-600 dark:text-slate-400 hidden sm:block mt-0.5">
+              <p className="text-sm text-slate-600 dark:text-slate-400 hidden sm:block mt-0.5">
                 QCC 料事如神圈 • 射出成型智能備料與產能排程推估
               </p>
             </div>
@@ -176,7 +176,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[#059669]"></span>
               </span>
-              <span className="text-xs font-semibold">
+              <span className="text-sm font-semibold">
                 內網伺服器連線中
               </span>
               <span className="text-[11px] text-[#059669]/80 dark:text-emerald-400/80 font-mono ml-1">
@@ -193,7 +193,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={toggleTheme}
                 id="nav-theme-toggle-btn"
                 title={theme === 'light' ? '切換為深色主題 (Dark Theme)' : '切換為淺色主題 (Light Theme)'}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white border border-slate-300 dark:border-slate-800 transition-all cursor-pointer shadow-xs"
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white border border-slate-300 dark:border-slate-800 transition-all cursor-pointer shadow-xs"
               >
                 {theme === 'light' ? (
                   <>
@@ -213,7 +213,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onClick={onNavigateToBackup}
                   id="nav-backup-btn"
                   title={`自動化備份系統${backupEnabled ? '（排程已啟用）' : '（排程未啟用）'}`}
-                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer shadow-xs ${
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all cursor-pointer shadow-xs ${
                     backupEnabled
                       ? 'bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
                       : 'bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white border-slate-300 dark:border-slate-800'
@@ -253,11 +253,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span>{tab.label}</span>
                 {tab.badge !== undefined && (
                   tab.id === 'backup_settings' ? (
-                    <span className="bg-emerald-600 text-white text-xs font-bold px-2 py-0.5 rounded-full animate-pulse">
+                    <span className="bg-emerald-600 text-white text-sm font-bold px-2 py-0.5 rounded-full animate-pulse">
                       {tab.badge}
                     </span>
                   ) : (
-                    <span className="bg-[#dc2626] text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    <span className="bg-[#dc2626] text-white text-sm font-bold px-2 py-0.5 rounded-full">
                       {tab.badge}
                     </span>
                   )

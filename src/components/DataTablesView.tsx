@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -73,7 +73,7 @@ function CellInput({
   onChange: (key: string, val: unknown) => void;
   error?: string;
 }) {
-  const baseInput = 'w-full px-2 py-1.5 rounded-lg text-xs border transition-colors focus:outline-none focus:ring-1';
+  const baseInput = 'w-full px-2 py-1.5 rounded-lg text-sm border transition-colors focus:outline-none focus:ring-1';
   const normalClass = `${baseInput} bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white focus:border-[#0284c7] focus:ring-[#0284c7]/30`;
   const errorClass = `${baseInput} bg-red-50 dark:bg-red-950/30 border-red-400 text-slate-900 dark:text-white focus:border-red-500 focus:ring-red-500/30`;
   const cls = error ? errorClass : normalClass;
@@ -151,8 +151,8 @@ function displayValue(field: FieldMeta, value: unknown, db: SystemDatabase, reco
 
   if (field.inputType === 'checkbox') {
     return value
-      ? <span className="text-[#059669] font-bold text-xs">✅ 是</span>
-      : <span className="text-slate-400 text-xs">☐ 否</span>;
+      ? <span className="text-[#059669] font-bold text-sm">✅ 是</span>
+      : <span className="text-slate-400 text-sm">☐ 否</span>;
   }
 
   if (field.inputType === 'select' && field.options) {
@@ -411,12 +411,12 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
       <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xl shadow-black/5 dark:shadow-black/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="bg-sky-50 dark:bg-blue-950 text-[#0284c7] dark:text-blue-400 border border-sky-200 dark:border-blue-800/60 text-xs font-mono font-bold px-2 py-0.5 rounded-md">
+            <span className="bg-sky-50 dark:bg-blue-950 text-[#0284c7] dark:text-blue-400 border border-sky-200 dark:border-blue-800/60 text-sm font-mono font-bold px-2 py-0.5 rounded-md">
               SSOT DATA HUB
             </span>
             <h2 className="text-xl font-bold text-slate-900 dark:text-white">8 大核心資料庫即時維護中心</h2>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             遵循 SSOT 與 MECE 原則 ·
             <span className="text-[#059669] dark:text-emerald-400 font-semibold mx-1">🟢 即時儲存</span>
             <span className="text-amber-600 dark:text-amber-400 font-semibold mx-1">🟡 影響確認</span>
@@ -432,7 +432,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
               placeholder="搜尋品號、模具、客戶..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="pl-9 pr-8 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl text-xs text-slate-800 dark:text-slate-200 focus:border-blue-500 focus:outline-none w-48 sm:w-64 placeholder:text-slate-400"
+              className="pl-9 pr-8 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl text-sm text-slate-800 dark:text-slate-200 focus:border-blue-500 focus:outline-none w-48 sm:w-64 placeholder:text-slate-400"
             />
             {searchTerm && (
               <button onClick={() => setSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
@@ -442,14 +442,14 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
           </div>
           <button
             onClick={() => setShowAuditLog(v => !v)}
-            className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${showAuditLog ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700' : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700 hover:bg-slate-50'}`}
+            className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-sm font-semibold border transition-colors cursor-pointer ${showAuditLog ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700' : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700 hover:bg-slate-50'}`}
           >
             <History className="w-3.5 h-3.5" />
             <span>變更歷程 ({(db.audit_log || []).length})</span>
           </button>
           <button
             onClick={() => exportToExcel(db)}
-            className="flex items-center space-x-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-600/20 transition-all cursor-pointer whitespace-nowrap"
+            className="flex items-center space-x-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-bold shadow-md shadow-emerald-600/20 transition-all cursor-pointer whitespace-nowrap"
           >
             <Download className="w-3.5 h-3.5" />
             <span>匯出 Excel</span>
@@ -464,15 +464,15 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
             <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2">
               <History className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               <span>變更稽核日誌</span>
-              <span className="text-xs font-mono text-slate-500">({(db.audit_log || []).length} 筆)</span>
+              <span className="text-sm font-mono text-slate-500">({(db.audit_log || []).length} 筆)</span>
             </h3>
             <button onClick={() => setShowAuditLog(false)} className="text-slate-400 hover:text-slate-600"><X className="w-4 h-4" /></button>
           </div>
           {(db.audit_log || []).length === 0 ? (
-            <p className="text-xs text-slate-500 italic">尚無變更記錄。所有 Level 2/3 欄位的異動將自動記錄於此。</p>
+            <p className="text-sm text-slate-500 italic">尚無變更記錄。所有 Level 2/3 欄位的異動將自動記錄於此。</p>
           ) : (
             <div className="overflow-x-auto max-h-64 overflow-y-auto">
-              <table className="w-full text-xs">
+              <table className="w-full text-sm">
                 <thead className="bg-slate-50 dark:bg-slate-950 text-slate-500 dark:text-slate-400 font-semibold">
                   <tr>
                     <th className="px-3 py-2 text-left whitespace-nowrap">時間</th>
@@ -526,7 +526,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
               <Icon className={`w-4 h-4 ${isActive ? 'text-[#0284c7] dark:text-sky-300' : 'text-slate-400 dark:text-slate-500'}`} />
               <span>{t.label}</span>
               <span className={`text-[10px] px-1.5 py-0.5 rounded font-sans ${isActive ? 'bg-[#0284c7]/20 text-[#0284c7] dark:text-sky-300' : 'bg-slate-200 dark:bg-slate-800 text-slate-500'}`}>{t.dept}</span>
-              <span className={`text-xs px-2 py-0.5 rounded-full font-mono font-bold ${isActive ? 'bg-[#0284c7] text-white dark:bg-sky-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>{t.count}</span>
+              <span className={`text-sm px-2 py-0.5 rounded-full font-mono font-bold ${isActive ? 'bg-[#0284c7] text-white dark:bg-sky-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>{t.count}</span>
             </button>
           );
         })}
@@ -538,19 +538,19 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
         <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/80 dark:bg-slate-950/60">
           <div className="text-sm font-bold text-slate-900 dark:text-slate-200 flex items-center space-x-2 flex-wrap gap-1">
             <span>{tableMeta.label}</span>
-            <span className="bg-sky-100 dark:bg-sky-500/10 text-[#0284c7] dark:text-sky-400 border border-sky-300 dark:border-sky-500/20 text-xs px-2 py-0.5 rounded font-sans font-semibold">
+            <span className="bg-sky-100 dark:bg-sky-500/10 text-[#0284c7] dark:text-sky-400 border border-sky-300 dark:border-sky-500/20 text-sm px-2 py-0.5 rounded font-sans font-semibold">
               權責: {tablesMeta.find(t => t.key === activeTable)?.dept}
             </span>
-            <span className="text-slate-500 dark:text-slate-400 font-mono text-xs">({activeTable})</span>
+            <span className="text-slate-500 dark:text-slate-400 font-mono text-sm">({activeTable})</span>
             {tableMeta.compositeKey && (
-              <span className="text-xs bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800 px-1.5 py-0.5 rounded font-sans">複合主鍵</span>
+              <span className="text-sm bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800 px-1.5 py-0.5 rounded font-sans">複合主鍵</span>
             )}
           </div>
           <div className="flex items-center space-x-3">
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">共 {tableData.length} 筆</span>
+            <span className="text-sm text-slate-500 dark:text-slate-400 font-mono">共 {tableData.length} 筆</span>
             <button
               onClick={handleStartAdd}
-              className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#0284c7] hover:bg-sky-600 text-white rounded-xl text-xs font-bold shadow-sm shadow-sky-600/20 transition-colors cursor-pointer"
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#0284c7] hover:bg-sky-600 text-white rounded-xl text-sm font-bold shadow-sm shadow-sky-600/20 transition-colors cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>新增一筆</span>
@@ -560,7 +560,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
 
         {/* Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 dark:bg-slate-950/80 text-slate-600 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-800">
               <tr>
                 {tableMeta.fields.map(field => (
@@ -591,7 +591,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
                   {tableMeta.fields.map(field => (
                     <td key={field.key} className="px-3 py-2.5">
                       {field.editability === 'computed' ? (
-                        <span className="text-slate-400 italic text-xs">自動計算</span>
+                        <span className="text-slate-400 italic text-sm">自動計算</span>
                       ) : (
                         <div>
                           <CellInput field={field} value={addRowData[field.key]} editRow={addRowData} db={db} onChange={handleAddRowChange} error={addRowErrors[field.key]} />
@@ -602,8 +602,8 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
                   ))}
                   <td className="px-3 py-2.5 text-center">
                     <div className="flex items-center justify-center space-x-1">
-                      <button onClick={handleConfirmAdd} className="flex items-center space-x-1 px-2.5 py-1 bg-[#059669] hover:bg-emerald-500 text-white rounded-lg text-xs font-bold cursor-pointer"><CheckCircle2 className="w-3 h-3" /><span>確認新增</span></button>
-                      <button onClick={handleCancelAdd} className="flex items-center space-x-1 px-2 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs cursor-pointer"><XCircle className="w-3 h-3" /></button>
+                      <button onClick={handleConfirmAdd} className="flex items-center space-x-1 px-2.5 py-1 bg-[#059669] hover:bg-emerald-500 text-white rounded-lg text-sm font-bold cursor-pointer"><CheckCircle2 className="w-3 h-3" /><span>確認新增</span></button>
+                      <button onClick={handleCancelAdd} className="flex items-center space-x-1 px-2 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-sm cursor-pointer"><XCircle className="w-3 h-3" /></button>
                     </div>
                   </td>
                 </tr>
@@ -625,7 +625,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
                               <span className="font-bold text-slate-900 dark:text-white">{String(record[field.key] ?? '—')}</span>
                             </span>
                           ) : field.editability === 'computed' ? (
-                            <span className="text-slate-400 italic text-xs">自動計算</span>
+                            <span className="text-slate-400 italic text-sm">自動計算</span>
                           ) : (
                             <div>
                               <CellInput field={field} value={editRow[field.key]} editRow={editRow} db={db} onChange={handleEditChange} error={validationErrors[field.key]} />
@@ -648,14 +648,14 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
                         <div className="flex items-center justify-center space-x-1">
                           <button
                             onClick={() => handleSave(record)}
-                            className="flex items-center space-x-1 px-2.5 py-1 bg-[#059669] hover:bg-emerald-500 text-white rounded-lg text-xs font-bold cursor-pointer shadow-sm"
+                            className="flex items-center space-x-1 px-2.5 py-1 bg-[#059669] hover:bg-emerald-500 text-white rounded-lg text-sm font-bold cursor-pointer shadow-sm"
                           >
                             <CheckCircle2 className="w-3 h-3" />
                             <span>儲存</span>
                           </button>
                           <button
                             onClick={handleCancelEdit}
-                            className="flex items-center space-x-1 px-2 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs cursor-pointer"
+                            className="flex items-center space-x-1 px-2 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-sm cursor-pointer"
                           >
                             <XCircle className="w-3 h-3" />
                           </button>
@@ -685,7 +685,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
 
               {filteredData.length === 0 && !isAddingRow && (
                 <tr>
-                  <td colSpan={tableMeta.fields.length + 1} className="px-4 py-8 text-center text-slate-400 dark:text-slate-500 font-sans text-xs italic">
+                  <td colSpan={tableMeta.fields.length + 1} className="px-4 py-8 text-center text-slate-400 dark:text-slate-500 font-sans text-sm italic">
                     {searchTerm ? `找不到符合「${searchTerm}」的記錄` : `${tableMeta.label} 尚無資料。點擊「新增一筆」開始建立。`}
                   </td>
                 </tr>
@@ -712,17 +712,17 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
               </div>
               <div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">確認刪除</h3>
-                <p className="text-xs text-slate-500">此操作無法復原</p>
+                <p className="text-sm text-slate-500">此操作無法復原</p>
               </div>
             </div>
 
-            <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-xs">
+            <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-sm">
               <p className="text-slate-700 dark:text-slate-300">您即將刪除：</p>
               <p className="font-bold text-slate-900 dark:text-white mt-1 font-mono">{tableMeta.label} — {getPkDisplay(tableMeta, deleteModal.record)}</p>
             </div>
 
             {deleteModal.fkImpacts.length > 0 && (
-              <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-xl text-xs space-y-1">
+              <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-xl text-sm space-y-1">
                 <p className="font-bold text-amber-700 dark:text-amber-400 flex items-center space-x-1">
                   <AlertTriangle className="w-4 h-4" />
                   <span>⚠️ 下列資料表存在關聯記錄，刪除後 FK 參照將失效：</span>
@@ -758,16 +758,16 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">
                   {activeSaveModal.level === 3 ? '🔴 工程變更確認' : '🟡 影響說明確認'}
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-sm text-slate-500">
                   {activeSaveModal.level === 3 ? '此修改涉及工程規格，請填寫變更原因後確認' : '此修改將影響 MRP 計算結果，請確認後繼續'}
                 </p>
               </div>
             </div>
 
             <div className="space-y-2">
-              <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">異動欄位：</p>
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">異動欄位：</p>
               {activeSaveModal.changedFields.map(({ field, oldVal, newVal }) => (
-                <div key={field.key} className="p-2.5 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800 text-xs space-y-0.5">
+                <div key={field.key} className="p-2.5 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800 text-sm space-y-0.5">
                   <p className="font-semibold text-slate-900 dark:text-white">
                     {field.editability === 3 ? '🔴 ' : '🟡 '}{field.label}
                   </p>
@@ -782,7 +782,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
 
             {activeSaveModal.level === 3 && (
               <div>
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+                <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                   變更原因 <span className="text-red-500">*（必填）</span>
                 </label>
                 <textarea
@@ -790,7 +790,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
                   onChange={e => setSaveModal(prev => prev ? { ...prev, reason: e.target.value } : null)}
                   placeholder="請說明此工程變更的原因（如：量測數據更新、設計優化、PPQV 驗證後調整...）"
                   rows={3}
-                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:border-red-400 focus:outline-none resize-none placeholder:text-slate-400"
+                  className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:border-red-400 focus:outline-none resize-none placeholder:text-slate-400"
                 />
               </div>
             )}
