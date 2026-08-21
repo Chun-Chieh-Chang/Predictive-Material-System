@@ -22,6 +22,30 @@ import { useTheme } from '../context/ThemeContext';
 const ADMIN_COMBO_THRESHOLD = 5;
 const ADMIN_COMBO_WINDOW_MS = 1500;
 
+/** 將 Date 轉為台灣時間 YYYY-MM-DD 字串 */
+function formatTaiwanDate(date: Date): string {
+  const y  = date.getFullYear();
+  const m  = String(date.getMonth() + 1).padStart(2, '0');
+  const d  = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+/**
+ * 即時顯示台灣日期的小元件，每日 00:00 自動換算。
+ * 以 30 秒間隔檢查日期是否跨天，避免每秒更新造成不必要的 re-render。
+ */
+const TaiwanDate: React.FC = () => {
+  const [dateStr, setDateStr] = useState(() => formatTaiwanDate(new Date()));
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const next = formatTaiwanDate(new Date());
+      if (next !== dateStr) setDateStr(next);
+    }, 30_000);
+    return () => clearInterval(timer);
+  }, [dateStr]);
+  return <>{dateStr}</>;
+};
+
 export type NavTab = 'dashboard' | 'mrp_calculator' | 'system_settings' | 'data_tables' | 'data_exchange' | 'prd_docs' | 'backup_settings';
 
 interface NavbarProps {
@@ -156,7 +180,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 內網伺服器連線中
               </span>
               <span className="text-[11px] text-[#059669]/80 dark:text-emerald-400/80 font-mono ml-1">
-                2026-08-20
+                <TaiwanDate />
               </span>
             </div>
 
