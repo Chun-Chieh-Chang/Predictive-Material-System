@@ -199,12 +199,12 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
             className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-600/20 transition-colors"
             title="匯出設定檔"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Upload className="w-3.5 h-3.5" />
             <span>匯出參數</span>
           </button>
 
           <label className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 cursor-pointer transition-colors">
-            <Upload className="w-3.5 h-3.5 text-cyan-400" />
+            <Download className="w-3.5 h-3.5 text-cyan-400" />
             <span>匯入</span>
             <input
               type="file"

@@ -214,10 +214,10 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
       </div>
 
       {/* Main 2-Column Section: Left (Exports) | Right (Universal Import) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-12 gap-6">
         
         {/* LEFT COLUMN: Dual Format Exports (5 cols) */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="col-span-5 space-y-6">
           
           {/* Card 1: Formal Production Excel */}
           <div className="bg-white dark:bg-slate-900/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-4">
@@ -253,7 +253,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
                 id="exchange-download-formal-template-btn"
                 className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/20 transition-colors cursor-pointer"
               >
-                <Download className="w-4 h-4" />
+                <Upload className="w-4 h-4" />
                 <span>匯出正式空白匯入範本 (.xlsx)</span>
               </button>
 
@@ -299,7 +299,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
                 id="exchange-download-demo-btn"
                 className="w-full flex items-center justify-center space-x-2 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/60 dark:hover:bg-sky-900/80 text-[#0284c7] dark:text-sky-200 font-semibold text-xs border border-sky-200 dark:border-sky-800/60 transition-colors cursor-pointer"
               >
-                <Download className="w-4 h-4 text-[#0284c7] dark:text-sky-400" />
+                <Upload className="w-4 h-4 text-[#0284c7] dark:text-sky-400" />
                 <span>匯出示範演練數據包 (.xlsx)</span>
               </button>
             </div>
@@ -329,7 +329,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
               id="exchange-export-json-btn"
               className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg shadow-blue-600/20 transition-colors cursor-pointer"
             >
-              <Download className="w-4 h-4" />
+              <Upload className="w-4 h-4" />
               <span>匯出完整系統 JSON 備份檔 (.json)</span>
             </button>
           </div>
@@ -337,13 +337,13 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
         </div>
 
         {/* RIGHT COLUMN: Universal Dual-Format Import (7 cols) */}
-        <div className="lg:col-span-7 bg-white dark:bg-slate-900/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 flex flex-col justify-between space-y-6">
+        <div className="col-span-7 bg-white dark:bg-slate-900/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 flex flex-col justify-between space-y-6">
           
           <div className="space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center space-x-3">
                 <div className="w-9 h-9 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center">
-                  <Upload className="w-5 h-5" />
+                  <Download className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-white">Excel & JSON 智慧匯入與 Dry-Run 預檢</h3>
