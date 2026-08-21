@@ -341,10 +341,10 @@ export const DEFAULT_MATERIAL_CLASSES: MaterialClass[] = [
     description: '單一塑膠射出製品，可獨立存在但尚非最終出貨品。由 BOM 展開計算毛需求，以 PCS 計量。' },
   // ── COMP：組件類（零件＋物料組裝完成之中間產品）──
   { code: 'COMP', name: '組件類', nameEn: 'Components', sort_order: 4, is_active: true, business_type: 'component',
-    description: '由零件與物料組裝完成的中間組裝產品。作為 SET 的子階層，納入 Assembly BOM 管理。' },
+    description: '由零件與物料組裝完成的中間組裝產品。納入 Assembly BOM 管理（可作為 SET 的組裝子項）。' },
   // ── SET：SET 類（最終出廠組合製品）──
   { code: 'SET', name: 'SET 類', nameEn: 'Sets (Final Products)', sort_order: 5, is_active: true, business_type: 'set',
-    description: '由組件加裝輸液管所構成的最終出廠組合製品。對應業務 Forecast、PO 與成品庫存。' },
+    description: '由零件或組件一次組裝完成的最終出廠組合製品。可包含直接 PART 領出組裝、或經 COMP 入庫後再領出組裝兩種路徑。對應業務 Forecast、PO 與成品庫存。' },
 ];
 
 // 分類代碼 → 中文名稱快速查找表

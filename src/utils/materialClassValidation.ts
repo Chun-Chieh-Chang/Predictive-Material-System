@@ -228,6 +228,7 @@ export function validateRmSkuAsRaw(
 }
 
 /** H-02：yield_master.sku 僅接受 PART / COMP / SET 類（不含 RAW/MAT）*/
+/** 說明：SET 可直接由 PART 一次組裝，無需經 COMP 入庫，故 PART/COMP/SET 均可作為良率標準品號。*/
 export function validateYieldSku(
   sku: string, itemMaster: ItemMaster[]
 ): { valid: boolean; hint: string } {

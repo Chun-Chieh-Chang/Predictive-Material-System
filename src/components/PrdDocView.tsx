@@ -124,8 +124,8 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 | \`RAW\`  | 原料類 | 原料採購 (raw) | 塑膠原粒、色母、色粉等基礎原材料，KG 計量 |
 | \`MAT\`  | 物料類 | 包材管理 (material) | 紙箱、塑膠袋、標籤、B膠、收縮膜等包裝耗材 |
 | \`PART\` | 零件類 | 零件生產 (part) | 單一塑膠射出製品，PCS 計量，BOM 毛需求推導 |
-| \`COMP\` | 組件類 | 組裝生產 (component) | 零件＋物料組裝之中間產品，Assembly BOM 管理 |
-| \`SET\`  | SET 類 | 成品出貨 (set) | 組件＋輸液管最終組合製品，對應 Forecast/PO/庫存 |
+| \`COMP\` | 組件類 | 組裝生產 (component) | 零件＋物料組裝之中間產品，納入 Assembly BOM（可作為 SET 組裝子項） |
+| \`SET\`  | SET 類 | 成品出貨 (set) | 由零件或組件一次組裝完成的最終出廠組合製品，可包含直接 PART 領出或經 COMP 入庫後再領出兩種路徑，對應 Forecast/PO/庫存 |
 
 ### 匯入校驗規格
 - \`material_class\` 欄位：必填（RAW/MAT/PART/COMP/SET）
@@ -376,8 +376,8 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
                 { code: 'RAW',  name: '原料類',  en: 'Raw Materials', color: 'sky',    desc: '塑膠原粒、色母、色粉等基礎原材料。以 KG 計量，納入供應商採購排程。', icon: '🌿' },
                 { code: 'MAT',  name: '物料類',  en: 'Packaging',     color: 'amber',  desc: '紙箱、塑膠袋、標籤、B膠、收縮膜等包裝與輔料。PCS/KG 計量，不直接參與成型。', icon: '📦' },
                 { code: 'PART', name: '零件類',  en: 'Parts',         color: 'emerald',desc: '單一塑膠射出製品。由 BOM 展開計算毛需求，以 PCS 計量。', icon: '⚙️' },
-                { code: 'COMP', name: '組件類',  en: 'Components',    color: 'violet', desc: '零件＋物料組裝之中間產品。作為 SET 子階層，納入 Assembly BOM。', icon: '🔧' },
-                { code: 'SET',  name: 'SET 類',  en: 'Final Sets',    color: 'rose',   desc: '由組件加裝輸液管的最終出廠組合製品。對應 Forecast/PO/成品庫存。', icon: '📋' },
+                { code: 'COMP', name: '組件類',  en: 'Components',    color: 'violet', desc: '零件＋物料組裝之中間產品。納入 Assembly BOM 管理（可作為 SET 組裝子項，非強制路徑）。', icon: '🔧' },
+                { code: 'SET',  name: 'SET 類',  en: 'Final Sets',    color: 'rose',   desc: '由零件或組件一次組裝完成的最終出廠組合製品。可含直接 PART 領出組裝，或經 COMP 入庫後再領出組裝兩種路徑。對應 Forecast/PO/成品庫存。', icon: '📋' },
               ].map(c => (
                 <div key={c.code} className={`p-4 bg-${c.color}-50 dark:bg-${c.color}-950/30 border border-${c.color}-200 dark:border-${c.color}-700 rounded-xl`}>
                   <div className="flex items-center gap-2 mb-1.5">
