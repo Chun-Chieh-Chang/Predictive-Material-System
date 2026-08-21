@@ -29,7 +29,7 @@
   - Level 1：低影響欄位（直接修改）
   - Level 2：中影響欄位（記錄審計日誌）
   - Level 3：高影響工程變更（必填原因 + 審計日誌）
-  - 支援 9 張主檔的完整 CRUD 欄位定義
+  - 支援 10 張主檔的完整 CRUD 欄位定義
 - `dataExchange.ts` — 無損資料交換引擎
   - JSON 匯出：完整資料庫序列化（含 audit_log）
   - JSON 匯入：結構驗證 + 型別轉換 + 防呆校驗
@@ -50,8 +50,8 @@
   - 所有 `SystemParameters` 欄位的 UI 配置面板
   - 即時預覽參數變更對 MRP 的影響
   - 變更不回寫資料庫，僅保存至 `PARAMS_STORAGE_KEY` LocalStorage
-- `DataTablesView` — 8 大主檔維護
-  - 9 張主檔（含 audit_log 唯讀檢視）的分頁 CRUD
+- `DataTablesView` — 10 大主檔維護
+  - 10 張主檔的分頁 CRUD（不含 audit_log，audit_log 為 append-only 稽核日誌）
   - 新增/編輯/刪除 with 變更管制
   - 審計日誌分頁（Level 2/3 變更記錄）
 - `DataExchangeView` — 無損資料中心

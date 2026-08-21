@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { SystemDatabase } from '../types';
 import { DEMO_SAMPLE_DATABASE, EMPTY_DATABASE } from '../data/seedData';
 import {
@@ -487,7 +487,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-white">直接貼上 JSON 原始代碼</h4>
-                  <p className="text-sm text-slate-400">支援貼上包含 8 大主檔陣列之標準 JSON 物件</p>
+                  <p className="text-sm text-slate-400">支援貼上包含 10 大主檔陣列之標準 JSON 物件</p>
                 </div>
               </div>
               <button

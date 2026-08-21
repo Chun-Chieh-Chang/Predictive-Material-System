@@ -57,7 +57,7 @@ PMS
 ├── [決策戰情室]     DashboardView       綜合儀表板：MRP 全局告警、庫存熱圖、KPI 追蹤
 ├── [3階 MRP 推導]  MrpCalculatorView   單品/全品 MRP 計算引擎、多版本需求比較
 ├── [參數策略設定]   SystemSettingsView  系統參數 & 業務規則配置（預警門檻/排程策略/良率基準）
-├── [8大主檔維護]   DataTablesView      9 張資料主檔的 CRUD（含 3 級變更管制審計日誌）
+├── [10大主檔維護]  DataTablesView      10 張主檔 CRUD（不含 audit_log，audit_log 僅匯出不覆蓋）
 ├── [無損資料中心]  DataExchangeView    JSON/Excel 匯出入、資料規格字典、示範數據載入
 └── [PRD 規格辭典]  PrdDocView          系統設計規格文件（PRD）瀏覽器
 ```
@@ -141,7 +141,7 @@ src/
     ├── DashboardView.tsx      # 決策戰情室（全局 MRP 摘要 + 告警列表）
     ├── MrpCalculatorView.tsx  # MRP 計算器（單品推導 + 多版本比較）
     ├── SystemSettingsView.tsx # 系統參數配置面板
-    ├── DataTablesView.tsx     # 8 大主檔 CRUD（3 級變更管制）
+    ├── DataTablesView.tsx     # 10 大主檔 CRUD（3 級變更管制）
     ├── DataExchangeView.tsx   # 無損資料中心（JSON/Excel 匯出入）
     └── PrdDocView.tsx         # PRD 規格辭典瀏覽器
 ```
