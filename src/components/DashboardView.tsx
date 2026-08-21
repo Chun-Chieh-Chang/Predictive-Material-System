@@ -40,6 +40,7 @@ interface DashboardViewProps {
   onNavigateToMRP: (sku: string) => void;
   onNavigateToTables: (tableName: string) => void;
   onNavigateToSettings?: () => void;
+  onNavigateToExchange?: () => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -47,7 +48,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   params,
   onNavigateToMRP,
   onNavigateToTables,
-  onNavigateToSettings
+  onNavigateToSettings,
+  onNavigateToExchange
 }) => {
   const mrpResults = calculateAllMRP(db, undefined, params);
 
@@ -275,7 +277,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
           <div className="flex items-center space-x-2 shrink-0">
             <button
-              onClick={onNavigateToSettings}
+              onClick={onNavigateToExchange ?? onNavigateToSettings}
               className="px-4 py-2 bg-[#059669] hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all shadow-md cursor-pointer"
             >
               前往無損資料中心匯入

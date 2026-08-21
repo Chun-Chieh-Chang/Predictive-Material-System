@@ -153,6 +153,10 @@ export function App() {
     setActiveTab('system_settings');
   };
 
+  const handleNavigateToExchange = () => {
+    setActiveTab('data_exchange');
+  };
+
   const handleNavigateToBackup = () => {
     setActiveTab('backup_settings');
   };
@@ -181,6 +185,7 @@ export function App() {
             onNavigateToMRP={handleNavigateToMRP}
             onNavigateToTables={handleNavigateToTables}
             onNavigateToSettings={handleNavigateToSettings}
+            onNavigateToExchange={handleNavigateToExchange}
           />
         )}
 
