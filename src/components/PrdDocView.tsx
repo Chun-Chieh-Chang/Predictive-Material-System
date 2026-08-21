@@ -251,27 +251,27 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
               <span>3 階段 MRP 數學推導公式</span>
             </h3>
             <div className="space-y-3">
-              <div className="p-4 bg-blue-950/30 border border-blue-500/30 rounded-xl">
-                <div className="font-bold text-blue-300 text-xs">階段一：真實成品缺口 (FG Net Requirement)</div>
-                <div className="font-mono text-xs text-blue-200 mt-1.5">
+              <div className="p-4 bg-blue-950/60 border border-blue-500/40 rounded-xl">
+                <div className="font-bold text-blue-200 text-xs">階段一：真實成品缺口 (FG Net Requirement)</div>
+                <div className="font-mono text-xs text-blue-100 mt-1.5">
                   真實缺口 (PCS) = (Forecast 需求 + 實際訂單) - 成品在庫良品 - (Sorting 待驗品 × 全檢良率)
                 </div>
               </div>
 
-              <div className="p-4 bg-purple-950/30 border border-purple-500/30 rounded-xl">
-                <div className="font-bold text-purple-300 text-xs">階段二：成型重量與原料毛需求 (BOM Explosion)</div>
-                <div className="font-mono text-xs text-purple-200 mt-1.5">
+              <div className="p-4 bg-purple-950/60 border border-purple-500/40 rounded-xl">
+                <div className="font-bold text-purple-200 text-xs">階段二：成型重量與原料毛需求 (BOM Explosion)</div>
+                <div className="font-mono text-xs text-purple-100 mt-1.5">
                   單穴克重 (g) = (整模重量 + 流道重量) ÷ 妥善穴數<br/>
                   原料毛需求 (KG) = [(真實缺口 × 單穴克重) ÷ 1000] ÷ (1 - 標準生產損耗率)
                 </div>
               </div>
 
-              <div className="p-4 bg-emerald-950/30 border border-emerald-500/30 rounded-xl">
-                <div className="font-bold text-emerald-300 text-xs">階段三：原料淨需求與採購下單日 (RM Net Requirement)</div>
-                <div className="font-mono text-xs text-emerald-200 mt-1.5">
+              <div className="p-4 bg-emerald-950/60 border border-emerald-500/40 rounded-xl">
+                <div className="font-bold text-emerald-200 text-xs">階段三：原料淨需求與採購下單日 (RM Net Requirement)</div>
+                <div className="font-mono text-xs text-emerald-100 mt-1.5">
                   原料淨需求 (KG) = 原料毛需求 - 原料庫存 - 原料在途採購 + 安全庫存量<br/>
                   建議下單量 (KG) = CEILING(原料淨需求, MOQ) | 建議下單日 = 需求交期 - 採購交期 (Lead Time)<br/>
-                  <span className="text-emerald-400/70">庫存上限檢查: RM On-Hand + In-Transit ≤ Max_Storage_Capacity_kg → 觸發爆倉警示</span>
+                  <span className="text-emerald-300">庫存上限檢查: RM On-Hand + In-Transit ≤ Max_Storage_Capacity_kg → 觸發爆倉警示</span>
                 </div>
               </div>
             </div>
@@ -291,19 +291,19 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
                 </div>
                 <p className="text-slate-400">無需記錄，直接儲存（例如：备注欄位）。</p>
               </div>
-              <div className="p-4 bg-amber-950/30 rounded-xl border border-amber-500/30">
+              <div className="p-4 bg-amber-950/60 rounded-xl border border-amber-500/40">
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="text-base">🟡</span>
-                  <div className="font-bold text-amber-300">Level 2 — MRP 影響變更</div>
+                  <div className="font-bold text-amber-200">Level 2 — MRP 影響變更</div>
                 </div>
-                <p className="text-amber-200/70">儲存前彈出影響確認對話框，顯示變更前後 MRP 差異摘要（例如：妥善穴數調整）。</p>
+                <p className="text-amber-100">儲存前彈出影響確認對話框，顯示變更前後 MRP 差異摘要（例如：妥善穴數調整）。</p>
               </div>
-              <div className="p-4 bg-red-950/30 rounded-xl border border-red-500/30">
+              <div className="p-4 bg-red-950/60 rounded-xl border border-red-500/40">
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="text-base">🔴</span>
-                  <div className="font-bold text-red-400">Level 3 — 工程變更</div>
+                  <div className="font-bold text-red-300">Level 3 — 工程變更</div>
                 </div>
-                <p className="text-red-200/70">強制要求填寫變更原因方可儲存，完整記錄至 Audit_Log 可供稽核追溯（例如：設計穴數、單穴克重）。</p>
+                <p className="text-red-200">強制要求填寫變更原因方可儲存，完整記錄至 Audit_Log 可供稽核追溯（例如：設計穴數、單穴克重）。</p>
               </div>
             </div>
           </section>
@@ -362,14 +362,14 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
               </p>
             </div>
 
-            <div className="p-5 bg-purple-950/30 rounded-xl border border-purple-500/30">
+            <div className="p-5 bg-purple-950/60 rounded-xl border border-purple-500/40">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-purple-300 text-sm">妥善穴數 (Active Cavities)</span>
+                <span className="font-bold text-purple-200 text-sm">妥善穴數 (Active Cavities)</span>
                 <span className="text-xs bg-[#eef2ff] dark:bg-purple-950/60 text-[#4f46e5] dark:text-purple-300 border border-[#c7d2fe] dark:border-purple-800/60 px-2 py-0.5 rounded font-mono font-bold">
                   原: 現況穴數
                 </span>
               </div>
-              <p className="text-xs text-purple-200 mt-2 leading-relaxed">
+              <p className="text-xs text-purple-100 mt-2 leading-relaxed">
                 產線現場目前可正常射出注膠之有效穴數。若發生塞穴，此數值動態降低，系統將自動調升「單穴克重」並下修「日產能」。
               </p>
             </div>
