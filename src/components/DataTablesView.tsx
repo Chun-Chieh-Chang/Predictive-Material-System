@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -178,6 +178,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
 }) => {
   const [activeTable, setActiveTable] = useState<TableKey>(initialTable);
   const [searchTerm, setSearchTerm] = useState('');
+  const [materialClassFilter, setMaterialClassFilter] = useState<string>('');
 
   // Inline Edit State
   const [editingKey, setEditingKey] = useState<string | null>(null); // composite key string
@@ -226,12 +227,16 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
     tableMeta.pkFields.map(pk => String(record[pk] ?? '')).join('|');
 
   const filteredData = useMemo(() => {
-    if (!searchTerm) return tableData;
+    let result = tableData;
+    if (materialClassFilter && activeTable === 'item_master') {
+      result = result.filter(row => (row['material_class'] ?? '') === materialClassFilter);
+    }
+    if (!searchTerm) return result;
     const term = searchTerm.toLowerCase();
-    return tableData.filter(row =>
+    return result.filter(row =>
       Object.values(row).some(v => String(v ?? '').toLowerCase().includes(term))
     );
-  }, [tableData, searchTerm]);
+  }, [tableData, searchTerm, materialClassFilter, activeTable]);
 
   // ─── Validate a row using fieldMeta validators ──────────────────────────
   const validateRowData = useCallback((data: Record<string, unknown>, meta: TableMeta) => {
@@ -425,6 +430,17 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
           </p>
         </div>
         <div className="flex items-center space-x-2 flex-wrap gap-2">
+          {activeTable === 'item_master' && (
+            <select value={materialClassFilter} onChange={e => setMaterialClassFilter(e.target.value)}
+              className="px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl text-sm text-slate-700 dark:text-slate-300 focus:border-blue-500 focus:outline-none">
+              <option value="">全部分類</option>
+              <option value="RAW">🌿 原料類</option>
+              <option value="MAT">📦 物料類</option>
+              <option value="PART">⚙️ 零件類</option>
+              <option value="COMP">🔧 組件類</option>
+              <option value="SET">📋 SET 類</option>
+            </select>
+          )}
           <div className="relative">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input

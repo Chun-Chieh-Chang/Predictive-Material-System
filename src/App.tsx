@@ -12,6 +12,7 @@ import { DataTablesView, TableKey } from './components/DataTablesView';
 import { DataExchangeView } from './components/DataExchangeView';
 import { PrdDocView } from './components/PrdDocView';
 import { BackupSettingsView } from './components/BackupSettingsView';
+import { MaterialClassManagementView } from './components/MaterialClassManagementView';
 import {
   SystemDatabase,
   SystemParameters,
@@ -37,6 +38,7 @@ export function App() {
         const parsed = JSON.parse(saved);
         // Backward compat: ensure audit_log field exists
         if (!parsed.audit_log) parsed.audit_log = [];
+        if (!parsed.material_classes) parsed.material_classes = [];
         return parsed;
       }
     } catch (e) {
@@ -197,6 +199,13 @@ export function App() {
             setParams={setSystemParams}
             onNotify={showToast}
             onNavigateToMRP={handleNavigateToMRP}
+          />
+        )}
+
+        {activeTab === 'material_class_management' && (
+          <MaterialClassManagementView
+            classes={db.material_classes}
+            onNotify={showToast}
           />
         )}
 

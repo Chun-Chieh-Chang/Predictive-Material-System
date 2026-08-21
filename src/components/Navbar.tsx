@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -16,6 +16,7 @@ import {
   Moon,
   ShieldCheck,
   Crown,
+  Layers,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
@@ -46,7 +47,7 @@ const TaiwanDate: React.FC = () => {
   return <>{dateStr}</>;
 };
 
-export type NavTab = 'dashboard' | 'mrp_calculator' | 'system_settings' | 'data_tables' | 'data_exchange' | 'prd_docs' | 'backup_settings';
+export type NavTab = 'dashboard' | 'mrp_calculator' | 'system_settings' | 'material_class_management' | 'data_tables' | 'data_exchange' | 'prd_docs' | 'backup_settings';
 
 interface NavbarProps {
   activeTab: NavTab;
@@ -123,6 +124,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'dashboard' as NavTab, label: '決策戰情室', sub: 'Decision War Room', icon: BarChart3, badge: alertCount > 0 ? alertCount : undefined },
     { id: 'mrp_calculator' as NavTab, label: '3階 MRP 推導', sub: 'MRP Engine', icon: Calculator },
     { id: 'system_settings' as NavTab, label: '參數策略設定', sub: 'System Config', icon: SlidersHorizontal },
+    { id: 'material_class_management' as NavTab, label: '物料分類體系', sub: 'Material Classes', icon: Layers },
     { id: 'data_tables' as NavTab, label: '8大主檔維護', sub: 'Master Data', icon: Database },
     { id: 'data_exchange' as NavTab, label: '資料交換中心', sub: 'Data Gateway', icon: FileSpreadsheet },
     { id: 'prd_docs' as NavTab, label: 'PRD 規格辭典', sub: 'PRD & Spec', icon: FileText },

@@ -116,9 +116,27 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 
 ---
 
-## 8. 三階段演進藍圖 (Roadmap)
-- **Phase 1 (本系統 MVP ✅)**: 完成 Excel/JSON 雙向導入匯出、3 階段 MRP 推導、動態妥善穴數單穴克重運算、變更稽核（L2/L3）、自動化備份系統、版號自動計算（V-YYYYMMDD-NN）。
-- **Phase 2 (ERP 整合)**: 透過 Dingxin ERP API 建立 \`Inventory_WIP_Snapshot\` 與 \`PO_In_Transit\` 自動同步，減少人工鍵入。
+## 6. 五層物料分類體系 (Material Classification System)
+本系統實作**五層核心物料分類**，支援無限子節點擴充：
+
+| 代碼 | 分類名稱 | 業務處理模式 | 涵蓋範圍 |
+|------|----------|-------------|----------|
+| \`RAW\`  | 原料類 | 原料採購 (raw) | 塑膠原粒、色母、色粉等基礎原材料，KG 計量 |
+| \`MAT\`  | 物料類 | 包材管理 (material) | 紙箱、塑膠袋、標籤、B膠、收縮膜等包裝耗材 |
+| \`PART\` | 零件類 | 零件生產 (part) | 單一塑膠射出製品，PCS 計量，BOM 毛需求推導 |
+| \`COMP\` | 組件類 | 組裝生產 (component) | 零件＋物料組裝之中間產品，Assembly BOM 管理 |
+| \`SET\`  | SET 類 | 成品出貨 (set) | 組件＋輸液管最終組合製品，對應 Forecast/PO/庫存 |
+
+### 匯入校驗規格
+- \`material_class\` 欄位：必填（RAW/MAT/PART/COMP/SET）
+- 預設 SKU 前缀自動推斷：RM-/PP-/PVC- → RAW；PKG-/BAG- → MAT；CONN-/VALVE- → PART；ASM-/COMP- → COMP；A01-/B02- → SET
+- 無法推斷的品號在 Dry-Run 預檢時標示為待分類
+
+---
+
+## 7. 三階段演進藍圖 (Roadmap)
+- **Phase 1 (本系統 MVP ✅)**: 完成 Excel/JSON 雙向導入匯出、3 階段 MRP 推導、動態妥善穴數單穴克重運算、變更稽核（L2/L3）、自動化備份系統、版號自動計算（V-YYYYMMDD-NN）、五層物料分類體系。
+- **Phase 2 (ERP 整合)**: 透過 Dingxin ERP API 建立 Inventory_WIP_Snapshot 與 PO_In_Transit 自動同步，減少人工鍵入。
 - **Phase 3 (系統固化與自適應反饋)**: 引入 Sorting 良率動態回饋閉環，持續校正全檢標準良率；導入 PWA 離線操作支援。`;
 
   const handleCopyMarkdown = () => {
@@ -343,6 +361,42 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
               <div className="pt-2 border-t border-sky-200 dark:border-sky-800 flex items-center space-x-2">
                 <span className="text-rose-500">⚠</span>
                 <span className="text-sky-700 dark:text-sky-300">備份失敗時主動 Toast 通知管理員，便於及時介入處理。</span>
+              </div>
+            </div>
+          </section>
+
+          {/* Section 5: Material Classification */}
+          <section className="space-y-3">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2 border-b border-slate-200 dark:border-slate-700 pb-2">
+              <span className="w-6 h-6 rounded-md bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-200 dark:border-violet-800 flex items-center justify-center text-sm font-bold font-mono">5</span>
+              <span>五層物料分類體系 (Material Classification System)</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+              {[
+                { code: 'RAW',  name: '原料類',  en: 'Raw Materials', color: 'sky',    desc: '塑膠原粒、色母、色粉等基礎原材料。以 KG 計量，納入供應商採購排程。', icon: '🌿' },
+                { code: 'MAT',  name: '物料類',  en: 'Packaging',     color: 'amber',  desc: '紙箱、塑膠袋、標籤、B膠、收縮膜等包裝與輔料。PCS/KG 計量，不直接參與成型。', icon: '📦' },
+                { code: 'PART', name: '零件類',  en: 'Parts',         color: 'emerald',desc: '單一塑膠射出製品。由 BOM 展開計算毛需求，以 PCS 計量。', icon: '⚙️' },
+                { code: 'COMP', name: '組件類',  en: 'Components',    color: 'violet', desc: '零件＋物料組裝之中間產品。作為 SET 子階層，納入 Assembly BOM。', icon: '🔧' },
+                { code: 'SET',  name: 'SET 類',  en: 'Final Sets',    color: 'rose',   desc: '由組件加裝輸液管的最終出廠組合製品。對應 Forecast/PO/成品庫存。', icon: '📋' },
+              ].map(c => (
+                <div key={c.code} className={`p-4 bg-${c.color}-50 dark:bg-${c.color}-950/30 border border-${c.color}-200 dark:border-${c.color}-700 rounded-xl`}>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-base">{c.icon}</span>
+                    <span className={`font-mono font-bold text-${c.color}-700 dark:text-${c.color}-300`}>{c.code}</span>
+                    <span className="font-bold text-slate-800 dark:text-slate-200">{c.name}</span>
+                    <span className="text-slate-400 dark:text-slate-500 text-xs ml-auto">{c.en}</span>
+                  </div>
+                  <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{c.desc}</p>
+                </div>
+              ))}
+            </div>
+            <div className="p-4 bg-gradient-to-r from-violet-50 to-violet-100/60 dark:from-violet-950/30 dark:to-violet-900/20 rounded-xl border border-violet-200 dark:border-violet-700 text-xs space-y-2">
+              <div className="font-bold text-violet-800 dark:text-violet-300">匯入規格 (Import Spec)</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-violet-700 dark:text-violet-200">
+                <p>• <span className="font-mono font-bold">material_class</span> 欄位：填寫代碼（RAW/MAT/PART/COMP/SET），未填寫時依 SKU 前綴自動推斷。</p>
+                <p>• 預設前綴規則：RM-/PP-/PVC- → RAW，PKG-/BAG- → MAT，CONN-/VALVE- → PART，ASM-/COMP- → COMP，A01-/B02-/SET- → SET。</p>
+                <p>• 匯入預檢時會標示「待分類」品號，管理員需在 MaterialClassManagementView 手動指定。</p>
+                <p>• JSON 備份檔會同步匯出 <span className="font-mono font-bold">material_classes</span> 陣列，匯入時自動合併。</p>
               </div>
             </div>
           </section>

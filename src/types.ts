@@ -3,8 +3,45 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// 1. Item Master (料號基本主檔)
+// ─── Material Classification System ──────────────────────────────────────────
+// 五層核心物料分類體系，支援無限擴充
+
+/** 物料業務類別：決定存儲模式與 MRP 處置邏輯 */
+export type MaterialBusinessType = 'raw' | 'material' | 'part' | 'component' | 'set';
+
+/** 五層分類代碼：以 '-' 分隔階層路徑 */
+export type MaterialClassCode = 'RAW' | 'MAT' | 'PART' | 'COMP' | 'SET';
+
+/** 分類樹節點 */
+export interface MaterialClass {
+  code: MaterialClassCode;          // 分類代碼（唯一識別）
+  name: string;                     // 中文名稱
+  nameEn?: string;                  // 英文名稱
+  description?: string;             // 說明與涵蓋範圍
+  parent_code?: MaterialClassCode;  // 父節點代碼（null = 頂層）
+  color?: string;                   // 視覺區分色（hex / Tailwind class）
+  sort_order: number;               // 顯示順序
+  is_active: boolean;               // 是否啟用
+  business_type: MaterialBusinessType; // 對應業務處理模式
+}
+
+/** 擴展的料號主檔（含分類字段） */
 export interface ItemMaster {
+  sku: string; // 品號 (PK)
+  alt_sku?: string | null; // 替代品號
+  customer_id: string; // 客戶代碼 (MDX, ICU, etc.)
+  category: string; // 產品/原料種類 (T接頭, ABS, etc.)
+  color?: string; // 外觀顏色
+  unit: string; // 計量單位 (PCS, KG)
+  description?: string; // 說明備註
+  // 分類體系字段（可選，舊資料無此欄位）
+  material_class?: MaterialClassCode | null;
+  material_class_label?: string | null; // 分類完整路徑標籤（e.g. RAW > ABS/MABS）
+}
+
+// 現有資料結構維持不變
+// 1. Item Master (料號基本主檔)
+export interface ItemMasterV0 {
   sku: string; // 品號 (PK)
   alt_sku?: string | null; // 替代品號
   customer_id: string; // 客戶代碼 (MDX, ICU, etc.)
@@ -130,6 +167,7 @@ export interface SystemDatabase {
   inventory_wip_snapshot: InventoryWIPSnapshot[];
   po_in_transit: POInTransit[];
   audit_log: ChangeAuditEntry[]; // Change audit trail (export-only, never import-overwrite)
+  material_classes: MaterialClass[]; // 物料分類樹（匯出時包含，匯入時若無此欄位則保留現有分類）
 }
 
 
@@ -277,7 +315,38 @@ export const DEFAULT_BACKUP_CONFIG: BackupScheduleConfig = {
   maxLogEntries: 365        // 最多保留 365 筆備份日誌
 };
 
+// ─── Material Classification System Default Tree ─────────────────────────────
+// 五層核心物料分類體系，各層含說明、適用業務場景與 MRP 處置邏輯
+
+export const DEFAULT_MATERIAL_CLASSES: MaterialClass[] = [
+  // ── RAW：原料類（塑膠原粒、色母、色粉等基礎原材料）──
+  { code: 'RAW', name: '原料類', nameEn: 'Raw Materials', sort_order: 1, is_active: true, business_type: 'raw',
+    description: '塑膠原粒、色母、色粉等所有用於生產的基礎原材料。以 KG 計量，納入供應商規則與採購排程。' },
+  // ── MAT：物料類（紙箱、塑膠袋、標籤、收縮膜等包裝與輔料）──
+  { code: 'MAT', name: '物料類', nameEn: 'Packaging & Supplies', sort_order: 2, is_active: true, business_type: 'material',
+    description: '紙箱、塑膠袋、標籤紙、B膠、收縮膜等各類包裝耗材與輔助生產物料。不直接參與成型，以 PCS/KG 計量。' },
+  // ── PART：零件類（單一射出製品）──
+  { code: 'PART', name: '零件類', nameEn: 'Parts', sort_order: 3, is_active: true, business_type: 'part',
+    description: '單一塑膠射出製品，可獨立存在但尚非最終出貨品。由 BOM 展開計算毛需求，以 PCS 計量。' },
+  // ── COMP：組件類（零件＋物料組裝完成之中間產品）──
+  { code: 'COMP', name: '組件類', nameEn: 'Components', sort_order: 4, is_active: true, business_type: 'component',
+    description: '由零件與物料組裝完成的中間組裝產品。作為 SET 的子階層，納入 Assembly BOM 管理。' },
+  // ── SET：SET 類（最終出廠組合製品）──
+  { code: 'SET', name: 'SET 類', nameEn: 'Sets (Final Products)', sort_order: 5, is_active: true, business_type: 'set',
+    description: '由組件加裝輸液管所構成的最終出廠組合製品。對應業務 Forecast、PO 與成品庫存。' },
+];
+
+// 分類代碼 → 中文名稱快速查找表
+export const MATERIAL_CLASS_LABELS: Record<MaterialClassCode, string> = {
+  RAW:  '原料類',
+  MAT:  '物料類',
+  PART: '零件類',
+  COMP: '組件類',
+  SET:  'SET 類',
+};
+
 // Storage keys
 export const BACKUP_CONFIG_STORAGE_KEY = 'PMS_BACKUP_CONFIG_V1';
 export const BACKUP_LOG_STORAGE_KEY    = 'PMS_BACKUP_LOG_V1';
+export const MATERIAL_CLASSES_STORAGE_KEY = 'PMS_MATERIAL_CLASSES_V1';
 

@@ -4,6 +4,7 @@
  */
 
 import { SystemDatabase } from '../types';
+import { DEFAULT_MATERIAL_CLASSES } from '../types';
 
 // 1. 純淨正式空資料庫 (Pure Production Empty Database)
 export const EMPTY_DATABASE: SystemDatabase = {
@@ -17,6 +18,7 @@ export const EMPTY_DATABASE: SystemDatabase = {
   inventory_wip_snapshot: [],
   po_in_transit: [],
   audit_log: [],
+  material_classes: DEFAULT_MATERIAL_CLASSES,
 };
 
 // 2. 離線示範演練數據庫 (Demo / Training Sample Database - 嚴禁與正式資料混淆)
@@ -380,6 +382,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     }
   ],
   audit_log: [],
+  material_classes: DEFAULT_MATERIAL_CLASSES,
 };
 
 // 預設初次啟動為純淨空庫，不強行硬編碼假資料
