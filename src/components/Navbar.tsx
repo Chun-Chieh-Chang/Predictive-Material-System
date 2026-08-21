@@ -125,7 +125,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'mrp_calculator' as NavTab, label: '3階 MRP 推導', sub: 'MRP Engine', icon: Calculator },
     { id: 'system_settings' as NavTab, label: '參數策略設定', sub: 'System Config', icon: SlidersHorizontal },
     { id: 'material_class_management' as NavTab, label: '物料分類體系', sub: 'Material Classes', icon: Layers },
-    { id: 'data_tables' as NavTab, label: '8大主檔維護', sub: 'Master Data', icon: Database },
+    { id: 'data_tables' as NavTab, label: '10大主檔維護', sub: 'Master Data', icon: Database },
     { id: 'data_exchange' as NavTab, label: '資料交換中心', sub: 'Data Gateway', icon: FileSpreadsheet },
     { id: 'prd_docs' as NavTab, label: 'PRD 規格辭典', sub: 'PRD & Spec', icon: FileText },
     ...(adminUnlocked ? [{ id: 'backup_settings' as NavTab, label: '自動化備份', sub: 'Backup System', icon: ShieldCheck, badge: backupEnabled ? 'RUNNING' : undefined }] : []),

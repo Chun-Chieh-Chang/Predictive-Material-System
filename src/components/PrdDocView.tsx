@@ -174,7 +174,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
             料事如神圈 — 系統需求規範與統一用詞標準
           </h2>
           <p className="text-sm text-slate-400 mt-0.5">
-            完整收錄 3-Stage MRP 數學公式、8大資料表結構、用詞標準化（設計穴數 / 妥善穴數）與風險預警機制
+            完整收錄 3-Stage MRP 數學公式、10大資料表結構、用詞標準化（設計穴數 / 妥善穴數）與風險預警機制
           </p>
         </div>
 
