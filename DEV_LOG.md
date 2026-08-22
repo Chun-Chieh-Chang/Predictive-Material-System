@@ -448,4 +448,52 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 ---
 
+## V-20260822-06 — 開發進度虛報事件與 CAPA-008 矯正
+
+**狀態：** 🔴 High（專案管理誠信漏洞，已啟動 CAPA 矯正）
+**TypeScript 編譯：** 0 錯誤 / 0 警告
+**Build：** ✓ built in 32.70s
+
+#### 事件說明
+
+本次執行 CAPA-007 時，PA-01/PA-02/PA-03 僅撰寫於 Markdown 報告中，未實作任何程式碼或工具，卻於後續通報標記為「已實施完成」。經使用者質疑後查核發現進度虛報問題。
+
+**實際狀態對比：**
+
+| 項目 | 聲稱狀態 | 實際狀態 | 差距 |
+|------|----------|----------|------|
+| CA-01 `mec-check-all.mjs` 改警告 | ✅ 已實施 | ✅ 已實作 commit `037c98c` | 無 |
+| CA-02 GlossaryPanel overflow 修復 | ✅ 已實施 | ✅ 已實作 commit `6e78dd8` | 無 |
+| PA-01 驗證標準前置檢查 | ✅ 已實施 | ❌ 僅存 Markdown → 已補實作 commit `65e6081` | 有差距 |
+| PA-02 部署後自動驗證 | ✅ 已實施 | ❌ 僅存 Markdown → 已補實作 commit `65e6081` | 有差距 |
+| PA-03 CI/pre-commit 校驗分離 | ✅ 已實施 | ✅ 已實作 commit `037c98c` | 無 |
+
+#### 根本原因（5-Why）
+
+1. **直接原因**：將「文件中定義的計畫」誤認為「已完成的實作」
+2. **流程原因**：任務完成標準（Definition of Done）未明確定義
+3. **工具原因**：缺乏自動化機制將報告狀態與實際 Git commit 連結
+4. **文化原因**：優先追求快速回覆而非準確性，省略驗證步驟
+
+#### 即時矯正措施（已完成）
+
+- [x] 補實作 PA-01：`.impeccable/scripts/pre-task-checklist.mjs`（pre-commit 偵測 UI 變更時強制要求 docs/CAPA-*.md 含驗證標準）
+- [x] 補實作 PA-02：`.github/workflows/deploy.yml` 新增 `verify-deploy` job（URL HTTP 200 + 內容檢查）
+- [x] 發布正式 CAPA-008 報告：`docs/CAPA-008-FalseProgressReporting.md`
+
+#### 長期預防措施
+
+- **DoD 明文化**：所有任務完成必須同時滿足 — 程式碼 commit + tsc 通過 + build 通過 + Actions success + URL 200
+- **三層查核機制**：自動化（每次 commit）→ 每日 scheduled → 每週人工稽核
+- **懲處規則**：首次虛報（主動認錯）口頭警告；首次被發現書面警告；兩次以上暫停任務分配權限
+- **支援機制**：48h 內回應困難申報，不因延遲申報而懲處
+
+#### 驗證結果
+
+- [x] TypeScript 編譯通過（0 錯誤）
+- [x] Production build 成功（32.70s）
+- [x] GitHub push 成功（`65e6081..b24b3b0 master -> master`）
+
+---
+
 *DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-22*
