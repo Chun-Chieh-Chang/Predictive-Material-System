@@ -123,3 +123,11 @@ Sidebar 導航項目在 `active`（選中）狀態時，背景色為低飽和度
 ### B. 參考標準
 - [WCAG 2.1 Level AA — 1.4.3 Contrast (Minimum)](https://www.w3.org/TR/WCAG21/#contrast-minimum)
 - [Tailwind CSS Color Palette](https://tailwindcss.com/docs/color)
+
+---
+
+## 附錄：相關 Commit
+
+| Commit SHA | 說明 | 狀態 |
+|------------|------|------|
+| `a8e248a` | 系統驗證與代碼優化 — 狀態更新為已修正 | ✅ 已提交 |
