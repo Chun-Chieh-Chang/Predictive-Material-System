@@ -293,7 +293,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="min-w-0">
           <div className="text-sm font-bold text-white leading-tight">料事如神系統</div>
           <div className="text-[10px] text-slate-500 font-mono leading-tight">
-            PMS v{import.meta.env.VITE_PMS_VERSION}
+            PMS v{import.meta.env.VITE_PMS_VERSION || 'dev'}
           </div>
         </div>
       </div>

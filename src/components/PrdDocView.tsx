@@ -22,7 +22,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
   const [copied, setCopied] = useState<boolean>(false);
 
   const prdMarkdownContent = `# 料事如神圈 - 智能備料與生產排程管理系統 PRD 規格書
-**版本號 (Document Version)**: ${import.meta.env.VITE_PMS_VERSION}
+**版本號 (Document Version)**: ${import.meta.env.VITE_PMS_VERSION || 'dev'}
 **系統架構與作者**: Developed by Wesley Chang @Mouldex, Aug-2026  
 **發布組織**: 公司品管圈 (QCC) - 料事如神圈  
 **系統代號**: PMS (Predictive Material System)  
@@ -151,7 +151,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `料事如神圈_PRD規格書_${import.meta.env.VITE_PMS_VERSION}.md`;
+    a.download = `料事如神圈_PRD規格書_${import.meta.env.VITE_PMS_VERSION || 'dev'}.md`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -166,7 +166,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
         <div>
           <div className="flex items-center space-x-2">
             <span className="bg-blue-950 text-blue-400 border border-blue-800/60 text-sm font-bold px-2.5 py-0.5 rounded-md font-mono">
-              PRD {import.meta.env.VITE_PMS_VERSION}
+              PRD {import.meta.env.VITE_PMS_VERSION || 'dev'}
             </span>
             <span className="text-sm text-slate-500">產品需求與規格白皮書</span>
           </div>

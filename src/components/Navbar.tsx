@@ -169,7 +169,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 >
                   <span className="flex items-center gap-1">
                     {adminUnlocked && <Crown className="w-3 h-3" />}
-                    ISO • {import.meta.env.VITE_PMS_VERSION}
+                    ISO • {import.meta.env.VITE_PMS_VERSION || 'dev'}
                   </span>
                 </button>
               </div>
