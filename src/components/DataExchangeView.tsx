@@ -217,7 +217,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
       <div className="grid grid-cols-12 gap-4">
 
         {/* Card 1: Formal Production Excel */}
-        <div className="col-span-12 xl:col-span-3 bg-white dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-4">
+        <div className="col-span-12 md:col-span-6 xl:col-span-3 bg-white dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-4">
           <div className="flex items-center space-x-3 pb-3 border-b border-slate-200 dark:border-slate-800">
             <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-pms-pass dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center shrink-0">
               <FileSpreadsheet className="w-5 h-5" />
@@ -267,7 +267,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
         </div>
 
         {/* Card 2: Offline Demo / Training Sample Package */}
-        <div className="col-span-12 xl:col-span-3 bg-white dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-4">
+        <div className="col-span-12 md:col-span-6 xl:col-span-3 bg-white dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-4">
           <div className="flex items-center space-x-3 pb-3 border-b border-slate-200 dark:border-slate-800">
             <div className="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-500/10 text-pms-cobalt dark:text-sky-400 border border-sky-200 dark:border-sky-500/20 flex items-center justify-center shrink-0">
               <Sparkles className="w-5 h-5" />
@@ -301,7 +301,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
         </div>
 
         {/* Card 3: JSON Export */}
-        <div className="col-span-12 xl:col-span-3 bg-white dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-4">
+        <div className="col-span-12 md:col-span-6 xl:col-span-3 bg-white dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-4">
           <div className="flex items-center space-x-3 pb-3 border-b border-slate-200 dark:border-slate-800">
             <div className="w-9 h-9 rounded-xl bg-sky-50 dark:bg-blue-500/10 text-pms-cobalt dark:text-blue-400 border border-sky-200 dark:border-blue-500/20 flex items-center justify-center shrink-0">
               <FileCode className="w-5 h-5" />
@@ -330,7 +330,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
         </div>
 
         {/* Card 4: Excel & JSON Smart Import with Dry-Run */}
-        <div className="col-span-12 xl:col-span-3 bg-white dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 flex flex-col justify-between space-y-4">
+        <div className="col-span-12 md:col-span-6 xl:col-span-3 bg-white dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 flex flex-col justify-between space-y-4">
 
           <div className="space-y-3">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">

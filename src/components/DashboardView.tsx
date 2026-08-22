@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿/**
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -1217,7 +1217,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {!isCollapsed('warroom') && (
         <>
         {/* War Room Priority Table */}
-        <div className="overflow-x-auto mt-4">
+        <div className="overflow-x-auto scrollbar-sm mt-4">
           <table className="w-full text-left text-sm">
             <thead className="text-sm text-slate-400 uppercase border-b border-slate-800 font-semibold">
               <tr>
@@ -1374,7 +1374,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {!isCollapsed('procurement') && (
-        <div className="overflow-x-auto mt-4">
+        <div className="overflow-x-auto scrollbar-sm mt-4">
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-950/60 text-slate-400 font-semibold uppercase border-b border-slate-800">
               <tr>

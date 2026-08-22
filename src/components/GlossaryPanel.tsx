@@ -57,7 +57,7 @@ const GlossaryPanel: React.FC<GlossaryPanelProps> = ({ open, onClose }) => {
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
 
       {/* Panel */}
-      <div className="relative ml-auto w-full max-w-lg bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200 dark:border-slate-700">
+      <div className="relative ml-auto w-full max-w-lg md:max-w-xl lg:max-w-2xl bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200 dark:border-slate-700">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60">
           <div className="flex items-center gap-2.5">

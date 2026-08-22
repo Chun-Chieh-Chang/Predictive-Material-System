@@ -943,7 +943,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
           <span className="text-sm text-slate-500 font-mono">即時連動</span>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto scrollbar-sm">
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-slate-800 text-slate-400 font-mono text-[11px]">

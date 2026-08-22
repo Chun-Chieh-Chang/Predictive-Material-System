@@ -239,7 +239,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 
       {/* Content Rendering */}
       {activeTab === 'rich' && (
-        <div className="rounded-2xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-8 text-sm leading-relaxed">
+        <div className="rounded-2xl p-4 sm:p-6 md:p-8 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-8 text-sm leading-relaxed">
 
           {/* Section 1 */}
           <section className="space-y-3">
@@ -406,7 +406,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 
       {/* Dictionary View */}
       {activeTab === 'dictionary' && (
-        <div className="bg-slate-900/50 rounded-2xl p-8 border border-slate-800 shadow-xl shadow-black/20 space-y-6 text-sm">
+        <div className="bg-slate-900/50 rounded-2xl p-4 sm:p-6 md:p-8 border border-slate-800 shadow-xl shadow-black/20 space-y-6 text-sm">
           <div className="border-b border-slate-800 pb-4">
             <h3 className="text-lg font-bold text-white">統一用詞與名詞定義規範 (Terminology Dictionary)</h3>
             <p className="text-sm text-slate-400 mt-1">已嚴格依據 PRD 規範將「完整穴數」統一為「設計穴數」，「現況穴數」統一為「妥善穴數」</p>
