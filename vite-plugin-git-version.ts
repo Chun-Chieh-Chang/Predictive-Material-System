@@ -2,38 +2,39 @@
  * vite-plugin-git-version.ts
  *
  * 建構階段自動讀取 git 狀態，注入動態版號到 import.meta.env.VITE_PMS_VERSION：
- *   - 若 .git 存在 → 今日（UTC）日曆日期 + 今日提交序號（UTC 基準，跨環境一致）
- *   - 若 .git 不存在 → fallback 為 V-{UTC-date}-00
+ *   - 若 .git 存在 → 今日本地日期 + 今日提交序號
+ *   - 若 .git 不存在 → fallback 為 V-{local-date}-00
  *
  * 輸出格式：V-YYYYMMDD-{dailyCommitCount}
- * 例：V-20260822-03
+ * 例：V-20260823-01
  *
- * MECE 保證：相同 git 歷史在任何時區環境下產生完全相同的版號。
+ * 說明：版號使用本地時區，與使用者電腦時間一致。
+ * CI（GitHub Actions）使用 UTC，與本地可能相差 ±1 天，屬預期行為。
  */
 
 import type { Plugin } from 'vite';
 import { execSync } from 'child_process';
 
-/** 將 Date 轉為 UTC YYYYMMDD 字串（不依賴執行環境時區） */
-function formatUTCDate(date: Date = new Date()): string {
-  const y  = date.getUTCFullYear();
-  const m  = String(date.getUTCMonth() + 1).padStart(2, '0');
-  const d  = String(date.getUTCDate()).padStart(2, '0');
+/** 將 Date 轉為本地 YYYYMMDD 字串（與使用者電腦時間一致） */
+function formatLocalDate(date: Date = new Date()): string {
+  const y  = date.getFullYear();
+  const m  = String(date.getMonth() + 1).padStart(2, '0');
+  const d  = String(date.getDate()).padStart(2, '0');
   return `${y}${m}${d}`;
 }
 
-/** 計算今日（UTC）的 commit 數（跨平台安全寫法） */
+/** 計算今日（本地時間）的 commit 數 */
 function resolveDailyCommitCount(root: string): number {
   try {
-    const todayUTC = formatUTCDate();
-    // 使用 --format 而非 --pretty=format:"..." 避免 Windows shell 引號解析差異
-    // git 在 Windows 上執行 %ad 時不會觸發 shell 引號問題
+    const todayLocal = formatLocalDate();
+    // git committer date 儲存為 UTC，--date=format 以執行環境時區輸出
+    // 在本地開發環境（Asia/Taipei）執行時，%Y%m%d 會產生本地日期字串
     const raw = execSync(
       'git log --format=%ad --date=format:%Y%m%d',
       { cwd: root, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }
     );
     const commits = raw.trim().split('\n').filter(Boolean);
-    return commits.filter(d => d === todayUTC).length;
+    return commits.filter(d => d === todayLocal).length;
   } catch {
     return 0;
   }
@@ -44,7 +45,7 @@ export default function gitVersionPlugin(): Plugin {
     name: 'vite-plugin-git-version',
     configResolved(resolvedConfig) {
       const root  = resolvedConfig.root;
-      const today = formatUTCDate();
+      const today = formatLocalDate();
       const count = resolveDailyCommitCount(root);
       const version = `V-${today}-${String(count).padStart(2, '0')}`;
 
@@ -52,7 +53,7 @@ export default function gitVersionPlugin(): Plugin {
       resolvedConfig.define ??= {};
       resolvedConfig.define['import.meta.env.VITE_PMS_VERSION'] = JSON.stringify(version);
 
-      console.log(`[git-version] ${version} (${count} commits UTC today)`);
+      console.log(`[git-version] ${version} (${count} commits local today)`);
     },
   };
 }
