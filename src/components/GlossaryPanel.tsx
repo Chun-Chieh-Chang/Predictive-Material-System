@@ -113,7 +113,7 @@ const GlossaryPanel: React.FC<GlossaryPanelProps> = ({ open, onClose }) => {
 
         {/* Category Tabs */}
         <div className="px-5 pb-3 shrink-0">
-          <div className="flex gap-1.5 flex-nowrap overflow-x-auto scrollbar-none">
+          <div className="flex gap-1.5 flex-wrap">
             <button
               onClick={() => setActiveCategory('all')}
               className={`px-3 py-1.5 rounded-md text-xs font-semibold whitespace-nowrap transition-colors ${
