@@ -303,7 +303,6 @@ export const GLOSSARY_ENTRIES: GlossaryEntry[] = [
     term: 'BOM 有效期',
     en: 'BOM Validity Period',
     category: 'molding',
-    system: 'molding',
     definition: 'BOM 記錄的生效起始日與失效日。模具更換或材料變更時，舊 BOM 設失效日，新 BOM 設生效日，避免過時數據影響 MRP 計算。',
     example: '舊 BOM valid_to = 2025-05-31，新 BOM valid_from = 2025-06-01',
     related: ['product_mold_bom', 'change_audit'],

@@ -182,7 +182,7 @@ const GlossaryPanel: React.FC<GlossaryPanelProps> = ({ open, onClose }) => {
 
 interface GlossaryCardProps {
   entry: GlossaryEntry
-  colors: ReturnType<typeof CATEGORY_COLORS>[GlossaryCategory]
+  colors: (typeof CATEGORY_COLORS)[GlossaryCategory]
 }
 
 const GlossaryCard: React.FC<GlossaryCardProps> = ({ entry, colors }) => {

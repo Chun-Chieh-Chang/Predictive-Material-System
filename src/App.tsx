@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Navbar, NavTab } from './components/Navbar';
+import { Sidebar } from './components/Sidebar';
 import { DashboardView } from './components/DashboardView';
 import { MrpCalculatorView } from './components/MrpCalculatorView';
 import { SystemSettingsView } from './components/SystemSettingsView';
@@ -92,6 +93,7 @@ export function App() {
   const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
   const [activeMrpSku, setActiveMrpSku] = useState<string>('A01-200-131');
   const [activeTableKey, setActiveTableKey] = useState<TableKey>('item_master');
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // ── Admin 管理模式（5連擊解鎖）────────────────────────────────────────────────
   const [adminUnlocked, setAdminUnlocked] = useState(false);
@@ -170,6 +172,21 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-[#f1f5f9] dark:bg-slate-950 text-slate-900 dark:text-slate-200 flex flex-col font-sans antialiased selection:bg-[#0284c7] selection:text-white transition-colors duration-200">
+      {/* Left Sidebar (desktop fixed, mobile overlay drawer) */}
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        alertCount={totalAlerts}
+        adminUnlocked={adminUnlocked}
+        backupEnabled={backupConfig.enabled}
+        onNavigateToBackup={handleNavigateToBackup}
+        mobileOpen={menuOpen}
+        setMobileOpen={setMenuOpen}
+      />
+
+      {/* Page wrapper: pushes content right on desktop to accommodate fixed sidebar */}
+      <div className="lg:ml-64 flex flex-col min-h-screen">
+
       {/* Top Navbar */}
       <Navbar
         activeTab={activeTab}
@@ -181,6 +198,8 @@ export function App() {
         onAdminUnlock={handleAdminUnlock}
         onAdminLock={handleAdminLock}
         onHelp={() => setGlossaryOpen(true)}
+        onMenuToggle={() => setMenuOpen((v) => !v)}
+        menuOpen={menuOpen}
       />
 
       {/* Main Content Area */}
@@ -294,6 +313,7 @@ export function App() {
           </div>
         </div>
       </footer>
+      </div>{/* close .lg:ml-64 wrapper */}
     </div>
   );
 }

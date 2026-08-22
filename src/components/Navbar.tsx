@@ -18,6 +18,8 @@ import {
   Crown,
   Layers,
   HelpCircle,
+  Menu,
+  X,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
@@ -60,6 +62,8 @@ interface NavbarProps {
   onAdminUnlock: () => void;
   onAdminLock: () => void;
   onHelp: () => void;
+  onMenuToggle: () => void;
+  menuOpen: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -72,6 +76,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onAdminUnlock,
   onAdminLock,
   onHelp,
+  onMenuToggle,
+  menuOpen,
 }) => {
   const { theme, toggleTheme } = useTheme();
 
@@ -248,39 +254,19 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Tab Navigation Row */}
-        <nav className="flex space-x-2 overflow-x-auto py-2.5 scrollbar-none">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                id={`nav-tab-${tab.id}`}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center space-x-2.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all whitespace-nowrap border cursor-pointer ${
-                  isActive
-                    ? 'bg-[#e0f2fe] text-[#0284c7] border-[#0284c7] font-bold shadow-xs dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-600'
-                    : 'bg-white dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800/80 hover:bg-[#f8fafc] dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-[#0284c7] dark:text-sky-300' : 'text-slate-400 dark:text-slate-500'}`} />
-                <span>{tab.label}</span>
-                {tab.badge !== undefined && (
-                  tab.id === 'backup_settings' ? (
-                    <span className="bg-emerald-600 text-white text-sm font-bold px-2 py-0.5 rounded-full animate-pulse">
-                      {tab.badge}
-                    </span>
-                  ) : (
-                    <span className="bg-[#dc2626] text-white text-sm font-bold px-2 py-0.5 rounded-full">
-                      {tab.badge}
-                    </span>
-                  )
-                )}
-              </button>
-            );
-          })}
-        </nav>
+        {/* Mobile hamburger menu button (visible < lg) */}
+        <div className="lg:hidden flex items-center gap-2 pb-3 border-b border-slate-200 dark:border-slate-800/50">
+          <button
+            onClick={onMenuToggle}
+            id="nav-menu-btn"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer border border-slate-300 dark:border-slate-700"
+            title={menuOpen ? '關閉選單' : '開啟選單'}
+            aria-label={menuOpen ? '關閉選單' : '開啟選單'}
+          >
+            {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            <span>導航</span>
+          </button>
+        </div>
       </div>
     </header>
   );

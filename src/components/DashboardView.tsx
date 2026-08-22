@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿/**
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -28,7 +28,9 @@ import {
   DollarSign,
   Calendar,
   Warehouse,
-  RotateCcw
+  RotateCcw,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { SystemDatabase, MRPCalculationResult, SystemParameters, ProductMoldBOM } from '../types';
 import { calculateAllMRP } from '../utils/mrpEngine';
