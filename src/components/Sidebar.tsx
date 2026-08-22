@@ -30,14 +30,48 @@ interface NavItem {
   badge?: number | string;
 }
 
+interface GroupAccent {
+  titleColor: string;   // group title / dot / chevron
+  dotColor: string;     // bg- variant of the color
+  itemBorder: string;   // left-border class for items
+  chipBg: string;       // subtle background for header row
+  chipHover: string;    // hover bg for header row
+}
+
 interface NavGroup {
   title: string;
+  accent: GroupAccent;
   items: NavItem[];
 }
+
+const ACCENT: Record<string, GroupAccent> = {
+  core: {
+    titleColor: 'text-sky-400',
+    dotColor:   'bg-sky-400',
+    itemBorder: 'border-l-sky-500',
+    chipBg:     'bg-sky-500/10',
+    chipHover:  'hover:bg-sky-500/15',
+  },
+  data: {
+    titleColor: 'text-emerald-400',
+    dotColor:   'bg-emerald-400',
+    itemBorder: 'border-l-emerald-500',
+    chipBg:     'bg-emerald-500/10',
+    chipHover:  'hover:bg-emerald-500/15',
+  },
+  settings: {
+    titleColor: 'text-amber-400',
+    dotColor:   'bg-amber-400',
+    itemBorder: 'border-l-amber-500',
+    chipBg:     'bg-amber-500/10',
+    chipHover:  'hover:bg-amber-500/15',
+  },
+};
 
 const NAV_GROUPS: NavGroup[] = [
   {
     title: '核心操作',
+    accent: ACCENT.core,
     items: [
       { id: 'dashboard', label: '決策戰情室', sub: 'Decision War Room', icon: BarChart3 },
       { id: 'mrp_calculator', label: '3 階 MRP 推導', sub: 'MRP Engine', icon: Calculator },
@@ -45,6 +79,7 @@ const NAV_GROUPS: NavGroup[] = [
   },
   {
     title: '資料管理',
+    accent: ACCENT.data,
     items: [
       { id: 'material_class_management', label: '物料分類體系', sub: 'Material Classes', icon: Layers },
       { id: 'data_tables', label: '10 大主檔維護', sub: 'Master Data', icon: Database },
@@ -53,6 +88,7 @@ const NAV_GROUPS: NavGroup[] = [
   },
   {
     title: '設定與文件',
+    accent: ACCENT.settings,
     items: [
       { id: 'system_settings', label: '參數策略設定', sub: 'System Config', icon: SlidersHorizontal },
       { id: 'prd_docs', label: 'PRD 規格辭典', sub: 'PRD & Spec', icon: FileText },
@@ -69,7 +105,6 @@ interface SidebarProps {
   adminUnlocked: boolean;
   backupEnabled: boolean;
   onNavigateToBackup: () => void;
-  // Mobile drawer control
   mobileOpen: boolean;
   setMobileOpen: (open: boolean) => void;
 }
@@ -97,7 +132,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     setExpandedGroups((prev) => ({ ...prev, [title]: !prev[title] }));
   };
 
-  // ── Handle nav click: close mobile drawer + set active tab ────────────────
+  // ── Handle nav click ──────────────────────────────────────────────────────
   const handleNavClick = (tab: NavTab) => {
     setActiveTab(tab);
     setMobileOpen(false);
@@ -113,7 +148,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   }, [mobileOpen, setMobileOpen]);
 
   // ── Render single nav item ────────────────────────────────────────────────
-  const renderItem = (item: NavItem) => {
+  const renderItem = (item: NavItem, accent: GroupAccent) => {
     const isActive = activeTab === item.id;
     const Icon = item.icon;
     const hasBadge = item.badge !== undefined || (item.id === 'dashboard' && alertCount > 0);
@@ -126,33 +161,33 @@ export const Sidebar: React.FC<SidebarProps> = ({
         onClick={() => handleNavClick(item.id)}
         title={`${item.label}（${item.sub}）`}
         className={[
-          'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-all duration-150 cursor-pointer',
-          'group relative',
+          'w-full flex items-center gap-3 px-3 py-2 pl-4 rounded-lg text-left transition-all duration-150 cursor-pointer',
+          'group relative border-l-2 border-l-transparent',
           isActive
-            ? 'bg-sky-600 text-white font-semibold'
-            : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200',
+            ? `${accent.itemBorder} bg-white/10 text-white font-semibold`
+            : 'text-slate-400 hover:bg-white/5 hover:text-slate-200 hover:border-l-slate-600',
         ].join(' ')}
       >
-        {/* Active left accent bar */}
+        {/* Active glow bar */}
         {isActive && (
           <span
-            className="absolute left-0 top-1.5 bottom-1.5 w-0.5 bg-sky-400 rounded-full"
-            style={{ boxShadow: '0 0 8px 2px rgba(56,189,248,0.45)' }}
+            className="absolute left-0 top-1.5 bottom-1.5 w-0.5 bg-white/60 rounded-full"
+            style={{ boxShadow: '0 0 6px 1px rgba(255,255,255,0.2)' }}
           />
         )}
 
         <Icon
           className={[
             'w-4 h-4 shrink-0 transition-colors duration-150',
-            isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200',
+            isActive ? 'text-white' : 'text-slate-500 group-hover:text-slate-300',
           ].join(' ')}
         />
 
         <div className="flex-1 min-w-0">
-          <div className={['text-sm truncate font-semibold', isActive ? 'text-white' : ''].join(' ')}>
+          <div className={['text-sm truncate font-medium', isActive ? 'text-white' : ''].join(' ')}>
             {item.label}
           </div>
-          <div className="text-[10px] text-slate-500 truncate font-mono">
+          <div className="text-[11px] text-slate-500 truncate font-mono">
             {item.sub}
           </div>
         </div>
@@ -176,32 +211,39 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // ── Render a nav group ────────────────────────────────────────────────────
   const renderGroup = (group: NavGroup) => {
     const isExpanded = expandedGroups[group.title] ?? true;
+    const { title, accent } = group;
 
     return (
-      <div key={group.title} className="mb-1">
-        {/* Group header */}
+      <div key={title} className="mb-0.5">
+        {/* ── Group header ── */}
         <button
-          onClick={() => toggleGroup(group.title)}
-          className="w-full flex items-center gap-2 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-slate-300 transition-colors cursor-pointer rounded-lg"
+          onClick={() => toggleGroup(title)}
+          className={[
+            'w-full flex items-center gap-2 px-3 py-1.5 rounded-lg',
+            'text-[10px] font-bold uppercase tracking-widest transition-colors cursor-pointer',
+            accent.chipBg, accent.chipHover,
+          ].join(' ')}
           title={isExpanded ? '收合' : '展開'}
         >
           {isExpanded ? (
-            <ChevronDown className="w-3 h-3 shrink-0" />
+            <ChevronDown className={`w-3 h-3 shrink-0 ${accent.titleColor}`} />
           ) : (
-            <ChevronRight className="w-3 h-3 shrink-0" />
+            <ChevronRight className="w-3 h-3 shrink-0 text-slate-500" />
           )}
-          <span className="truncate">{group.title}</span>
+          {/* colored dot */}
+          <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${accent.dotColor}`} />
+          <span className={`truncate ${accent.titleColor}`}>{title}</span>
         </button>
 
-        {/* Group items */}
+        {/* ── Group items ── */}
         <div
           className={[
             'overflow-hidden transition-all duration-200',
-            isExpanded ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0',
+            isExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0',
           ].join(' ')}
         >
-          <div className="space-y-0.5 pl-1 pb-1">
-            {group.items.map(renderItem)}
+          <div className="space-y-0.5 py-0.5">
+            {group.items.map((item) => renderItem(item, accent))}
           </div>
         </div>
       </div>
@@ -243,7 +285,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // ── Desktop / mobile shared sidebar content ───────────────────────────────
   const sidebarContent = (
     <div className="flex flex-col h-full">
-      {/* Brand header (desktop: compact, mobile: full width) */}
+      {/* Brand header */}
       <div className="hidden lg:flex items-center gap-2.5 px-4 py-3.5 border-b border-slate-800 shrink-0">
         <div className="w-8 h-8 bg-sky-500 rounded-lg flex items-center justify-center font-bold text-white text-sm shadow-md shadow-sky-500/30 shrink-0">
           料
@@ -266,8 +308,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Admin section (conditional) */}
         {adminUnlocked && (
           <>
-            <div className="my-2 border-t border-slate-800" />
-            <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+            <div className="my-2 border-t border-slate-800/60" />
+            <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-600">
               Admin 模式
             </div>
             <div className="space-y-0.5 pb-2">
