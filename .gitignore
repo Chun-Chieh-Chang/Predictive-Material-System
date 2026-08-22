@@ -55,6 +55,7 @@ metadata.json
 # Generated docs
 docs/*.mec-report.json
 docs/*.json
+*.mec-report.json
 
 # Audit logs — intentionally tracked (for retrospective analysis)
 # docs/.audit/ ← 已移除此排除規則，審計日誌將被提交至版控

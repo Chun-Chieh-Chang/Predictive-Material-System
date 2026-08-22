@@ -247,9 +247,83 @@ const summaryPath = resolve(auditDir, 'kb-analytics-summary.md');
 writeFileSync(summaryPath, report, 'utf-8');
 
 // 同步更新知識庫中的 reuse_count（根據日誌重新計算）
-// 此處簡化：僅更新 last_used 時間戳
-const kb = loadKB();
+let updatedKB = false;
+const logPath = resolve(auditDir, 'kb-proactive-log.jsonl');
+if (existsSync(logPath)) {
+  try {
+    const lines = readFileSync(logPath, 'utf-8').split('\n').filter(Boolean);
+    const hitCountPerEntry = {};
+    for (const line of lines) {
+      try {
+        const entry = JSON.parse(line);
+        for (const hit of (entry.hits || [])) {
+          hitCountPerEntry[hit.id] = (hitCountPerEntry[hit.id] || 0) + 1;
+        }
+      } catch { /* ignore malformed */ }
+    }
+    // 更新知識庫檔案：為命中的條目更新 reuse_count 與 last_used
+    if (Object.keys(hitCountPerEntry).length > 0) {
+      const kbContent = readFileSync(kbPath, 'utf-8');
+      const lines = kbContent.split('\n');
+      const updatedHits = new Map(Object.entries(hitCountPerEntry));
+      const today = new Date().toISOString().slice(0, 10);
+      const newLines = [];
+      let currentEntryId = null;
+      let currentEntryStart = -1;
+      let lastFieldLine = -1;
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+
+        // 偵測新條目開始
+        const idMatch = line.match(/^\s*-\s*id:\s*(.+)/);
+        if (idMatch) {
+          // 先寫入上一個條目的剩餘行
+          if (currentEntryId !== null && currentEntryStart >= 0) {
+            for (let j = lastFieldLine + 1; j < i; j++) newLines.push(lines[j]);
+          }
+          currentEntryId = idMatch[1].trim();
+          currentEntryStart = i;
+          lastFieldLine = i;
+          newLines.push(line);
+          continue;
+        }
+
+        // 偵測 reuse_count 欄位
+        const reuseMatch = line.match(/^(\s*reuse_count:\s*)(\d+)/);
+        if (reuseMatch && updatedHits.has(currentEntryId)) {
+          newLines.push(`${reuseMatch[1]}${updatedHits.get(currentEntryId)}`);
+          lastFieldLine = i;
+          continue;
+        }
+
+        // 偵測 last_used 欄位
+        const luMatch = line.match(/^(\s*last_used:\s*)"([^"]*)"/);
+        if (luMatch && updatedHits.has(currentEntryId)) {
+          newLines.push(`${luMatch[1]}"${today}"`);
+          lastFieldLine = i;
+          continue;
+        }
+
+        newLines.push(line);
+        lastFieldLine = i;
+      }
+
+      // 寫入最後一個條目的剩餘行
+      if (currentEntryId !== null && currentEntryStart >= 0) {
+        for (let j = lastFieldLine + 1; j < lines.length; j++) newLines.push(lines[j]);
+      }
+
+      const newKB = newLines.join('\n');
+      if (newKB !== kbContent) {
+        writeFileSync(kbPath, newKB, 'utf-8');
+        updatedKB = true;
+      }
+    }
+  } catch { /* ignore */ }
+}
 console.log(`  知識庫：${metrics.kb_active}/${metrics.kb_entries} 活躍条目`);
 console.log(`  預警總次數：${metrics.total_warnings}`);
 console.log(`  預警準確率：${(metrics.warning_accuracy * 100).toFixed(1)}%`);
+if (updatedKB) console.log(`  ✅ 已根據預警日誌更新知識庫 reuse_count 與 last_used`);
 console.log(`\n  詳細報告：${summaryPath}\n`);

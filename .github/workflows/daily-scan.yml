@@ -53,6 +53,13 @@ jobs:
             DEPLOY_TOTAL=0; DEPLOY_SUCCESS=0; DEPLOY_FAIL=0
           fi
 
+          # ── KB Analytics ────────────────────────────────────────────────
+          KB_ANALYTICS=""
+          if [ -f ".impeccable/scripts/kb-analytics.mjs" ]; then
+            node .impeccable/scripts/kb-analytics.mjs > "$AUDIT_DIR/kb-analytics-output.txt" 2>&1 || true
+            KB_ANALYTICS=$(cat "$AUDIT_DIR/kb-analytics-output.txt" 2>/dev/null || echo "（執行失敗）")
+          fi
+
           # ── 寫入摘要 ────────────────────────────────────────────────────
           {
             echo "# 每週審核摘要 — 第 $WEEK_NUM 週（$TIMESTAMP）"
@@ -67,6 +74,12 @@ jobs:
             echo "| 部署驗證次數 | $DEPLOY_TOTAL |"
             echo "|  成功 | $DEPLOY_SUCCESS |"
             echo "|  失敗 | $DEPLOY_FAIL |"
+            echo ""
+            echo "## KB 知識庫分析"
+            echo ""
+            echo '```'
+            echo "$KB_ANALYTICS"
+            echo '```'
             echo ""
             echo "## 詳細日誌"
             echo ""
