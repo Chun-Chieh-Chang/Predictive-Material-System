@@ -35,3 +35,13 @@ assets/.aistudio/
 .vscode/
 .idea/
 *.tsbuildinfo
+
+# impeccable runtime state
+.impeccable/config.local.json
+.impeccable/hook.cache.json
+.impeccable/*.png
+.impeccable/live/server.json
+.impeccable/live/sessions/
+.impeccable/live/previews/
+.impeccable/live/annotations/
+.impeccable/live/cache/
