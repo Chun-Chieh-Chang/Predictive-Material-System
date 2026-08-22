@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -143,29 +143,27 @@ jobs:
       - name: Generate deploy audit log
         run: |
           TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-          COMMIT_SHA=${{ github.sha }}
-          RUN_ID=${{ github.run_id }}
-          WORKFLOW=${{ github.workflow }}
-          PREVIOUS_JOB=${{ needs.build-and-deploy.result }}
+          COMMIT_SHA="${{ github.sha }}"
+          RUN_ID="${{ github.run_id }}"
+          WORKFLOW="${{ github.workflow }}"
+          PREVIOUS_JOB="${{ needs.build-and-deploy.result }}"
+          ATTEMPTS="${{ env.ATTEMPTS }}"
+          HTTP_CODE="${{ env.HTTP_CODE }}"
+          CONTENT_OK="${{ env.CONTENT_OK }}"
           AUDIT_DIR="docs/.audit"
           mkdir -p "$AUDIT_DIR"
           AUDIT_FILE="$AUDIT_DIR/deploy-audit.jsonl"
 
           STATUS="unknown"
-          if [ "${{ env.CONTENT_OK }}" = "true" ] && [ "${{ env.HTTP_CODE }}" = "200" ]; then
+          if [ "$CONTENT_OK" = "true" ] && [ "$HTTP_CODE" = "200" ]; then
             STATUS="success"
-          elif [ "${{ needs.build-and-deploy.result }}" = "failure" ]; then
+          elif [ "$PREVIOUS_JOB" = "failure" ]; then
             STATUS="build_failed"
           else
             STATUS="verify_failed"
           fi
 
-          # Write single-line JSON entry (no heredoc — avoids YAML indentation bleed)
-          printf '{"timestamp":"%s","commit_sha":"%s","run_id":%s,"workflow":"%s","previous_job_result":"%s","attempts":%s,"url":"https://chun-chieh-chang.github.io/Predictive-Material-System/","http_code":"%s","content_match":"%s","status":"%s"}\n' \
-            "$TIMESTAMP" "$COMMIT_SHA" "$RUN_ID" "$WORKFLOW" "$PREVIOUS_JOB" \
-            "${{ env.ATTEMPTS }}" "${{ env.HTTP_CODE }}" "${{ env.CONTENT_OK }}" "$STATUS" \
-            >> "$AUDIT_FILE"
-
+          echo "{\"timestamp\":\"$TIMESTAMP\",\"commit_sha\":\"$COMMIT_SHA\",\"run_id\":$RUN_ID,\"workflow\":\"$WORKFLOW\",\"previous_job_result\":\"$PREVIOUS_JOB\",\"attempts\":$ATTEMPTS,\"url\":\"https://chun-chieh-chang.github.io/Predictive-Material-System/\",\"http_code\":\"$HTTP_CODE\",\"content_match\":\"$CONTENT_OK\",\"status\":\"$STATUS\"}" >> "$AUDIT_FILE"
           cat "$AUDIT_FILE" | tail -1
 
       - name: Commit audit log（不阻擋 workflow）
