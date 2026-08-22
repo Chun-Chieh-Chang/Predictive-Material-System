@@ -97,6 +97,7 @@ jobs:
   # ─────────────────────────────────────────
   # Job: Deploy Verification（部署後自動驗證網站可用性）
   # PA-02：推送成功 = git push + Actions success + URL 200 OK
+  # 新增：結構化日誌輸出 → docs/.audit/deploy-audit.jsonl（可被工具備份與分析）
   # ─────────────────────────────────────────
   verify-deploy:
     name: Verify Deployment
@@ -104,21 +105,69 @@ jobs:
     runs-on: ubuntu-latest
     if: success()
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
       - name: Wait for Pages propagation
         run: sleep 30
 
       - name: Check deployment URL
+        id: url-check
         run: |
+          set -e
           URL="https://chun-chieh-chang.github.io/Predictive-Material-System/"
           echo "  → 驗證部署網址: $URL"
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "$URL" || echo "000")
-          if [ "$HTTP_CODE" != "200" ]; then
-            echo "❌ 部署驗證失敗：HTTP $HTTP_CODE"
-            exit 1
+
+          BODY=""
+          if [ "$HTTP_CODE" = "200" ]; then
+            BODY=$(curl -s --max-time 15 "$URL")
           fi
-          BODY=$(curl -s --max-time 15 "$URL")
-          if ! echo "$BODY" | grep -q "料事如神"; then
-            echo "❌ 部署驗證失敗：頁面內容不正確（未發現 '料事如神'）"
-            exit 1
+
+          CONTENT_OK=false
+          if echo "$BODY" | grep -q "料事如神"; then
+            CONTENT_OK=true
           fi
-          echo "  ✅ 部署驗證通過：$URL（HTTP $HTTP_CODE，內容正確）"
+
+          echo "HTTP_CODE=$HTTP_CODE" >> $GITHUB_ENV
+          echo "CONTENT_OK=$CONTENT_OK" >> $GITHUB_ENV
+          echo "  → HTTP=$HTTP_CODE content_match=$CONTENT_OK"
+
+      - name: Generate deploy audit log
+        run: |
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          COMMIT_SHA=${{ github.sha }}
+          RUN_ID=${{ github.run_id }}
+          WORKFLOW=${{ github.workflow }}
+
+          AUDIT_DIR="docs/.audit"
+          mkdir -p "$AUDIT_DIR"
+          AUDIT_FILE="$AUDIT_DIR/deploy-audit.jsonl"
+
+          ENTRY=$(cat <<EOF
+          {"timestamp":"$TIMESTAMP","commit_sha":"$COMMIT_SHA","run_id":$RUN_ID,"workflow":"$WORKFLOW",
+          "url":"https://chun-chieh-chang.github.io/Predictive-Material-System/",
+          "http_code":"${{ env.HTTP_CODE }}",
+          "content_match":"${{ env.CONTENT_OK }}",
+          "status":"${{ env.CONTENT_OK == 'true' && env.HTTP_CODE == '200' && 'success' || 'failure' }}" }
+          EOF
+          )
+          echo "$ENTRY" >> "$AUDIT_FILE"
+          cat "$AUDIT_FILE" | tail -1
+
+      - name: Commit audit log
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add docs/.audit/deploy-audit.jsonl
+          git commit -m "chore: deploy audit log (${{ github.run_id }})" || echo "No changes to commit"
+          git push
+
+      - name: Fail if deployment invalid
+        if: env.CONTENT_OK != 'true' || env.HTTP_CODE != '200'
+        run: |
+          echo "❌ 部署驗證失敗：HTTP ${{ env.HTTP_CODE }} content_match=${{ env.CONTENT_OK }}"
+          echo "日誌已寫入 docs/.audit/deploy-audit.jsonl"
+          exit 1
