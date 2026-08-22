@@ -12,6 +12,7 @@ import {
   Code,
   ShieldCheck
 } from 'lucide-react';
+import { PMS_VERSION } from '../utils/version';
 
 interface PrdDocViewProps {
   onNotify: (msg: string, type?: 'success' | 'error') => void;
@@ -22,8 +23,8 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
   const [copied, setCopied] = useState<boolean>(false);
 
   const prdMarkdownContent = `# 料事如神圈 - 智能備料與生產排程管理系統 PRD 規格書
-**版本號 (Document Version)**: ${import.meta.env.VITE_PMS_VERSION || 'dev'}
-**系統架構與作者**: Developed by Wesley Chang @Mouldex, Aug-2026  
+**版本號 (Document Version)**: ${PMS_VERSION}
+**系統架構與作者**: Developed by Wesley Chang @Mouldex, {new Date().getFullYear()}-08  
 **發布組織**: 公司品管圈 (QCC) - 料事如神圈  
 **系統代號**: PMS (Predictive Material System)  
 **核心原則**: No Double Key-in / SSOT (Single Source of Truth) / MECE / 業務需求優先 / 變更可追溯  
@@ -166,7 +167,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
         <div>
           <div className="flex items-center space-x-2">
             <span className="bg-blue-950 text-blue-400 border border-blue-800/60 text-sm font-bold px-2.5 py-0.5 rounded-md font-mono">
-              PRD {import.meta.env.VITE_PMS_VERSION || 'dev'}
+              PRD {PMS_VERSION}
             </span>
             <span className="text-sm text-slate-500">產品需求與規格白皮書</span>
           </div>

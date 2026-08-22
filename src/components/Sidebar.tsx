@@ -292,9 +292,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
         <div className="min-w-0">
           <div className="text-sm font-bold text-white leading-tight">料事如神系統</div>
-          <div className="text-[10px] text-slate-500 font-mono leading-tight">
-            PMS v{import.meta.env.VITE_PMS_VERSION || 'dev'}
-          </div>
         </div>
       </div>
 
@@ -353,7 +350,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="px-4 py-3 border-t border-slate-800 shrink-0">
         <div className="text-[10px] text-slate-500 font-mono leading-relaxed">
           Developed by Wesley Chang<br />
-          @Mouldex · Aug 2026
+          @Mouldex · {new Date().getFullYear()}
         </div>
       </div>
     </div>

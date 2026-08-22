@@ -22,13 +22,14 @@ function formatUTCDate(date: Date = new Date()): string {
   return `${y}${m}${d}`;
 }
 
-/** 計算今日（UTC）的 commit 數 */
+/** 計算今日（UTC）的 commit 數（跨平台安全寫法） */
 function resolveDailyCommitCount(root: string): number {
   try {
     const todayUTC = formatUTCDate();
-    // git committer date 本身是 UTC，直接比對 YYYYMMDD 即可，無需任何時區轉換
+    // 使用 --format 而非 --pretty=format:"..." 避免 Windows shell 引號解析差異
+    // git 在 Windows 上執行 %ad 時不會觸發 shell 引號問題
     const raw = execSync(
-      'git log --pretty=format:"%ad" --date=format:"%Y%m%d"',
+      'git log --format=%ad --date=format:%Y%m%d',
       { cwd: root, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }
     );
     const commits = raw.trim().split('\n').filter(Boolean);

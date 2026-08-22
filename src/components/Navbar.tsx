@@ -22,6 +22,7 @@ import {
   X,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { PMS_VERSION } from '../utils/version';
 
 const ADMIN_COMBO_THRESHOLD = 5;
 const ADMIN_COMBO_WINDOW_MS = 1500;
@@ -169,7 +170,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 >
                   <span className="flex items-center gap-1">
                     {adminUnlocked && <Crown className="w-3 h-3" />}
-                    ISO • {import.meta.env.VITE_PMS_VERSION || 'dev'}
+                    ISO • {PMS_VERSION}
                   </span>
                 </button>
               </div>

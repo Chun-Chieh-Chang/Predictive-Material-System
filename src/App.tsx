@@ -6,6 +6,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Navbar, NavTab } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
+import { PMS_VERSION } from './utils/version';
 import { DashboardView } from './components/DashboardView';
 import { MrpCalculatorView } from './components/MrpCalculatorView';
 import { SystemSettingsView } from './components/SystemSettingsView';
@@ -297,7 +298,7 @@ export function App() {
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <span className="font-bold text-slate-800 dark:text-slate-300">料事如神圈 QCC 物料需求管理系統</span>
             <span className="text-slate-300 dark:text-slate-700">•</span>
-            <span className="font-mono text-slate-500 dark:text-slate-400">Baseline Version {import.meta.env.VITE_PMS_VERSION || 'dev'}</span>
+            <span className="font-mono text-slate-500 dark:text-slate-400">Baseline Version {PMS_VERSION}</span>
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-slate-500 dark:text-slate-400">產能排程與備料推估引擎</span>
