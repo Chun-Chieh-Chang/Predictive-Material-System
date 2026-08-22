@@ -4,11 +4,11 @@ import path from 'path';
 import {defineConfig} from 'vite';
 import gitVersionPlugin from './vite-plugin-git-version';
 
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
+  // GitHub Pages 部署需 base 路徑；本地 dev 不設 base，避免 WebSocket 握手 400 錯誤
+  const isProd = mode === 'production';
   return {
-    // GitHub Pages 部署路徑：https://chun-chieh-chang.github.io/Predictive-Material-System/
-    // 本地開發 (npm run dev) 不受此設定影響
-    base: '/Predictive-Material-System/',
+    base: isProd ? '/Predictive-Material-System/' : '/',
     plugins: [react(), tailwindcss(), gitVersionPlugin()],
     resolve: {
       alias: {
