@@ -1,0 +1,97 @@
+name: Daily Audit Scan
+
+on:
+  schedule:
+    # 每天 UTC 1:00（台北時間 9:00）執行
+    - cron: '0 1 * * *'
+  workflow_dispatch:  # 支援手動觸發
+
+permissions:
+  contents: write
+
+jobs:
+  daily-scan:
+    name: Daily Audit Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Generate weekly audit summary
+        run: |
+          AUDIT_DIR="docs/.audit"
+          mkdir -p "$AUDIT_DIR"
+
+          SUMMARY_FILE="$AUDIT_DIR/weekly-summary.md"
+          TIMESTAMP=$(date -u +"%Y-%m-%d")
+          WEEK_NUM=$(date -u +"%V")
+
+          # ── pre-task-checklist.jsonl 分析 ───────────────────────────────
+          PRE_LOG="$AUDIT_DIR/pre-task-checklist.jsonl"
+          if [ -f "$PRE_LOG" ]; then
+            TOTAL=$(wc -l < "$PRE_LOG" | tr -d ' ')
+            FAILS=$(grep '"exit_code":1' "$PRE_LOG" | wc -l | tr -d ' ')
+            PASSES=$(grep '"exit_code":0' "$PRE_LOG" | wc -l | tr -d ' ')
+          else
+            TOTAL=0; FAILS=0; PASSES=0
+          fi
+
+          # ── deploy-audit.jsonl 分析 ─────────────────────────────────────
+          DEPLOY_LOG="$AUDIT_DIR/deploy-audit.jsonl"
+          if [ -f "$DEPLOY_LOG" ]; then
+            DEPLOY_TOTAL=$(wc -l < "$DEPLOY_LOG" | tr -d ' ')
+            DEPLOY_SUCCESS=$(grep '"status":"success"' "$DEPLOY_LOG" | wc -l | tr -d ' ')
+            DEPLOY_FAIL=$(grep '"status":"failure"' "$DEPLOY_LOG" | wc -l | tr -d ' ')
+          else
+            DEPLOY_TOTAL=0; DEPLOY_SUCCESS=0; DEPLOY_FAIL=0
+          fi
+
+          # ── 寫入摘要 ────────────────────────────────────────────────────
+          cat > "$SUMMARY_FILE" <<EOF
+# 每週審核摘要 — 第 $WEEK_NUM 週（$TIMESTAMP）
+
+## 總覽
+
+| 指標 | 數值 |
+|------|------|
+| pre-task-checklist 總執行次數 | $TOTAL |
+|  通過 | $PASSES |
+|  失敗（缺失驗證標準） | $FAILS |
+| 部署驗證次數 | $DEPLOY_TOTAL |
+|  成功 | $DEPLOY_SUCCESS |
+|  失敗 | $DEPLOY_FAIL |
+
+## 詳細日誌
+
+\`\`\`jsonl
+$(cat "$PRE_LOG" 2>/dev/null | tail -20)
+\`\`\`
+
+## 建議行動
+
+EOF
+
+          if [ "$FAILS" -gt 5 ]; then
+            echo "- ⚠️  近 7 天 UI 驗證失敗超過 5 次，建議審視 VERIFICATION_KEYWORDS 是否需要擴充" >> "$SUMMARY_FILE"
+          fi
+          if [ "$DEPLOY_FAIL" -gt 0 ]; then
+            echo "- ❌ 有部署驗證失敗記錄，請檢查 GitHub Actions 日誌" >> "$SUMMARY_FILE"
+          fi
+          if [ "$FAILS" -le 5 ] && [ "$DEPLOY_FAIL" -eq 0 ]; then
+            echo "- ✅ 所有指標正常，無需行動" >> "$SUMMARY_FILE"
+          fi
+
+      - name: Commit weekly summary
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add docs/.audit/weekly-summary.md
+          git commit -m "chore: weekly audit summary (${{ github.run_id }})" || echo "No changes to commit"
+          git push

@@ -8,6 +8,18 @@
 
 echo "🚀 PMS Pre-push Checks..."
 
+# 0. DoD 五項條件驗證（G-01 + G-07：程式化執行，取代純文字規範）
+echo "  → DoD 檢查..."
+node .impeccable/scripts/do-d-check.mjs || {
+  echo "❌ DoD 檢查失敗，請修復後重新 push"
+  exit 1
+}
+
+# 0.5. Fail Pattern 檢測（G-03：歷史失敗模式分析，警告模式不阻擋）
+echo "  → Fail Pattern 檢測..."
+node .impeccable/scripts/fail-pattern-detector.mjs
+echo "  ✅ Fail Pattern 檢測完成"
+
 # 1. TypeScript 檢查
 echo "  → TypeScript check..."
 npx tsc --noEmit
