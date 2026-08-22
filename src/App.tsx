@@ -15,7 +15,7 @@ import { DataExchangeView } from './components/DataExchangeView';
 import { PrdDocView } from './components/PrdDocView';
 import { BackupSettingsView } from './components/BackupSettingsView';
 import { MaterialClassManagementView } from './components/MaterialClassManagementView';
-import { GlossaryPanel } from './components/GlossaryPanel';
+import { GlossaryView } from './components/GlossaryView';
 import {
   SystemDatabase,
   SystemParameters,
@@ -98,7 +98,6 @@ export function App() {
 
   // ── Admin 管理模式（5連擊解鎖）────────────────────────────────────────────────
   const [adminUnlocked, setAdminUnlocked] = useState(false);
-  const [glossaryOpen, setGlossaryOpen] = useState(false);
   const handleAdminUnlock = () => setAdminUnlocked(true);
   const handleAdminLock   = () => { setAdminUnlocked(false); setActiveTab('dashboard'); };
 
@@ -198,7 +197,6 @@ export function App() {
         adminUnlocked={adminUnlocked}
         onAdminUnlock={handleAdminUnlock}
         onAdminLock={handleAdminLock}
-        onHelp={() => setGlossaryOpen(true)}
         onMenuToggle={() => setMenuOpen((v) => !v)}
         menuOpen={menuOpen}
       />
@@ -263,6 +261,8 @@ export function App() {
           <PrdDocView onNotify={showToast} />
         )}
 
+        {activeTab === 'glossary' && <GlossaryView />}
+
         {activeTab === 'backup_settings' && adminUnlocked && (
           <BackupSettingsView
             db={db}
@@ -270,9 +270,6 @@ export function App() {
           />
         )}
       </main>
-
-      {/* Professional Terminology Glossary Panel */}
-      <GlossaryPanel open={glossaryOpen} onClose={() => setGlossaryOpen(false)} />
 
       {/* Toast Notification Popup (QC Style with Cobalt Border) */}
       {toast && (

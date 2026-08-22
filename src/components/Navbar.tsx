@@ -17,7 +17,7 @@ import {
   ShieldCheck,
   Crown,
   Layers,
-  HelpCircle,
+  BookOpen,
   Menu,
   X,
 } from 'lucide-react';
@@ -51,7 +51,7 @@ const TaiwanDate: React.FC = () => {
   return <>{dateStr}</>;
 };
 
-export type NavTab = 'dashboard' | 'mrp_calculator' | 'system_settings' | 'material_class_management' | 'data_tables' | 'data_exchange' | 'prd_docs' | 'backup_settings';
+export type NavTab = 'dashboard' | 'mrp_calculator' | 'system_settings' | 'material_class_management' | 'data_tables' | 'data_exchange' | 'prd_docs' | 'glossary' | 'backup_settings';
 
 interface NavbarProps {
   activeTab: NavTab;
@@ -62,7 +62,6 @@ interface NavbarProps {
   adminUnlocked: boolean;
   onAdminUnlock: () => void;
   onAdminLock: () => void;
-  onHelp: () => void;
   onMenuToggle: () => void;
   menuOpen: boolean;
 }
@@ -76,7 +75,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   adminUnlocked,
   onAdminUnlock,
   onAdminLock,
-  onHelp,
   onMenuToggle,
   menuOpen,
 }) => {
@@ -138,6 +136,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'data_tables' as NavTab, label: '10大主檔維護', sub: 'Master Data', icon: Database },
     { id: 'data_exchange' as NavTab, label: '資料交換中心', sub: 'Data Gateway', icon: FileSpreadsheet },
     { id: 'prd_docs' as NavTab, label: 'PRD 規格辭典', sub: 'PRD & Spec', icon: FileText },
+    { id: 'glossary' as NavTab, label: '術語辭典', sub: 'Glossary', icon: BookOpen },
     ...(adminUnlocked ? [{ id: 'backup_settings' as NavTab, label: '自動化備份', sub: 'Backup System', icon: ShieldCheck, badge: backupEnabled ? 'RUNNING' : undefined }] : []),
   ];
 
@@ -241,16 +240,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   )}
                 </button>
               )}
-              {/* Help / Glossary Button */}
-              <button
-                onClick={onHelp}
-                id="nav-help-btn"
-                title="開啟專業術語辭典（FK、SKU、MRP 等術語一覽）"
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white border border-slate-300 dark:border-slate-800 transition-all cursor-pointer shadow-xs"
-              >
-                <HelpCircle className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
-                <span className="hidden sm:inline font-semibold">術語辭典</span>
-              </button>
             </div>
           </div>
         </div>

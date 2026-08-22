@@ -13,6 +13,7 @@ import {
   FileText,
   SlidersHorizontal,
   ShieldCheck,
+  BookOpen,
   ChevronDown,
   ChevronRight,
   Menu,
@@ -92,6 +93,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { id: 'system_settings', label: '參數策略設定', sub: 'System Config', icon: SlidersHorizontal },
       { id: 'prd_docs', label: 'PRD 規格辭典', sub: 'PRD & Spec', icon: FileText },
+      { id: 'glossary', label: '術語辭典', sub: 'Glossary', icon: BookOpen },
     ],
   },
 ];
