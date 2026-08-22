@@ -379,5 +379,5 @@ export function calculateAllMRP(
   return results;
 }
 
-export const calculateMRPForSku = calculateMRPForSKU;
+
 

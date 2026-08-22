@@ -23,7 +23,7 @@ import {
   ChevronUp
 } from 'lucide-react';
 import { SystemDatabase, MRPCalculationResult, SystemParameters } from '../types';
-import { calculateMRPForSku } from '../utils/mrpEngine';
+import { calculateMRPForSKU } from '../utils/mrpEngine';
 
 interface MrpCalculatorViewProps {
   db: SystemDatabase;
@@ -48,6 +48,25 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
       return next;
     });
   };
+
+  // High-priority light-mode color overrides injected as inline styles
+  const lightModeOverrides = `
+    .light label.text-white,
+    .light .text-white,
+    .light span.text-white,
+    .light strong.text-white { color: #0f172a !important; }
+    .light .text-slate-400 { color: #475569 !important; }
+    .light .text-slate-500 { color: #374151 !important; }
+    .light .text-slate-300 { color: #334155 !important; }
+    .light .text-red-400 { color: #dc2626 !important; }
+    .light .text-amber-400 { color: #d97706 !important; }
+    .light .text-purple-400 { color: #7c3aed !important; }
+    .light .text-cyan-400 { color: #0891b2 !important; }
+    .light .text-emerald-400 { color: #059669 !important; }
+    .light .text-blue-400 { color: #0284c7 !important; }
+    .light .text-purple-300 { color: #6d28d9 !important; }
+    .light .text-slate-200 { color: #1e293b !important; }
+  `;
   const isStageCollapsed = (id: string) => collapsedStages.has(id);
 
   // Available finished goods SKUs (SET 類成品)
@@ -58,7 +77,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
   const currentMoldId = activeMoldId || relatedBoms.find((b) => b.is_primary_mold)?.mold_id || relatedBoms[0]?.mold_id;
 
   // Run MRP Calculation with System Parameters
-  const result: MRPCalculationResult | null = calculateMRPForSku(
+  const result: MRPCalculationResult | null = calculateMRPForSKU(
     db,
     selectedSku,
     currentMoldId,
@@ -75,7 +94,9 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
   }
 
   return (
-    <div className="space-y-6 pb-12">
+    <>
+      <style dangerouslySetInnerHTML={{ __html: lightModeOverrides }} />
+      <div className="space-y-6 pb-12">
       {/* 1. Header & SKU Selector Bento Card */}
       <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-xl shadow-black/20">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -537,5 +558,6 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
         )}
       </div>
     </div>
+    </>
   );
 };

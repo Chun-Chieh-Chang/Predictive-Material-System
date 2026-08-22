@@ -377,11 +377,6 @@ export function shouldTriggerBackup(config: BackupScheduleConfig): boolean {
   return diffMs < 2 * 60 * 1000;
 }
 
-/** 重設 session flag（用於測試） */
-function resetBackupSessionFlag(): void {
-  _backupTriggeredThisSession = false;
-}
-
 /** 距離下次備份的分鐘數（負數表示已過） */
 export function minutesUntilNextBackup(config: BackupScheduleConfig): number {
   if (!config.enabled) return Infinity;

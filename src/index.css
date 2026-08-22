@@ -107,20 +107,20 @@
 
 @layer base {
   html {
-    font-size: 16px;
+    font-size: 15px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', 'PingFang TC', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
   }
-  
+
   /* Default Light Theme (QC Annual Summary color logic) */
   body {
     font-size: 15px;
     line-height: 1.6;
     color: var(--text-primary);
     background-color: var(--bg-workbench);
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', 'PingFang TC', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+    font-family: inherit;
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
@@ -152,23 +152,41 @@
   border-radius: 5px !important;
 }
 
-/* Global minimum font size: 14px per design spec */
+/* Global Typography Scale — PMS Standard
+ * Minimum font size: 13px (WCAG AA compliant for normal text)
+ * Base: 15px (html/body), Step: ~0.5px per tier
+ */
 .text-xs {
-  font-size: 14px !important;
-  line-height: 1.45rem !important;
+  font-size: 13px !important;
+  line-height: 1.4rem !important;
 }
 .text-\[10px\] {
-  font-size: 14px !important;
+  font-size: 13px !important;          /* → maps to text-xs minimum */
 }
-
+.text-\[11px\] {
+  font-size: 14px !important;          /* → maps to text-xs standard */
+}
 .text-sm {
   font-size: 14.5px !important;
-  line-height: 1.45rem !important;
+  line-height: 1.5rem !important;
+}
+.text-base {
+  font-size: 15px !important;
+  line-height: 1.6rem !important;
 }
 
-.text-base {
-  font-size: 16px !important;
-  line-height: 1.6rem !important;
+/* Global line-height standard */
+.leading-standard {
+  line-height: 1.6 !important;
+}
+
+/* Hide scrollbar visually while preserving scroll functionality */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
 
 /* Custom Scrollbar for sleek tables */
@@ -249,45 +267,50 @@ html:not(.dark) .border-slate-700 {
 }
 
 /* High Contrast Light Mode Typography Rules */
+/* ============================================================
+   CORE: text-white → dark text on white/light backgrounds
+   ============================================================ */
 html:not(.dark) h1.text-white,
 html:not(.dark) h2.text-white,
 html:not(.dark) h3.text-white,
 html:not(.dark) h4.text-white,
+html:not(.dark) h5.text-white,
+html:not(.dark) h6.text-white,
 html:not(.dark) p.text-white,
-html:not(.dark) div.text-white {
+html:not(.dark) div.text-white,
+html:not(.dark) span.text-white,
+html:not(.dark) label.text-white,
+html:not(.dark) button.text-white,
+html:not(.dark) strong.text-white,
+html:not(.dark) a.text-white,
+html:not(.dark) td.text-white,
+html:not(.dark) th.text-white,
+html:not(.dark) code.text-white,
+html:not(.dark) input.text-white {
   color: #0f172a !important;
 }
 
-html:not(.dark) .text-slate-200 {
-  color: #1e293b !important;
-}
+/* ============================================================
+   SLATE GRADIENT — all slate shades converted for light mode
+   (slate-200..600 are too light on white; map to darker equivalents)
+   ============================================================ */
+html:not(.dark) .text-slate-100 { color: #0f172a !important; }
+html:not(.dark) .text-slate-200 { color: #1e293b !important; }
+html:not(.dark) .text-slate-300 { color: #334155 !important; }
+html:not(.dark) .text-slate-400 { color: #475569 !important; }
+html:not(.dark) .text-slate-500 { color: #374151 !important; } /* darkened for AA compliance */
+html:not(.dark) .text-slate-600 { color: #475569 !important; }
 
-html:not(.dark) .text-slate-300 {
-  color: #334155 !important;
-}
-
-html:not(.dark) .text-slate-400 {
-  color: #475569 !important;
-}
-
-html:not(.dark) .text-slate-500 {
-  color: #64748b !important;
-}
-
-html:not(.dark) .text-slate-600 {
-  color: #475569 !important;
-}
-
-/* High Contrast Inner Metrics & Accent Text in Cards */
+/* ============================================================
+   ACCENT COLORS — light text shades converted for light mode
+   ============================================================ */
 html:not(.dark) .text-blue-100,
 html:not(.dark) .text-blue-200 {
   color: #1e3a8a !important; /* Blue 900 */
 }
-
 html:not(.dark) .text-blue-300 {
   color: #1d4ed8 !important; /* Blue 700 */
 }
-
 html:not(.dark) .text-blue-400 {
   color: #0284c7 !important; /* Cobalt 600 */
 }
@@ -296,7 +319,6 @@ html:not(.dark) .text-cyan-200,
 html:not(.dark) .text-cyan-300 {
   color: #0e7490 !important; /* Cyan 700 */
 }
-
 html:not(.dark) .text-cyan-400 {
   color: #0891b2 !important; /* Cyan 600 */
 }
@@ -305,7 +327,6 @@ html:not(.dark) .text-amber-200,
 html:not(.dark) .text-amber-300 {
   color: #b45309 !important; /* Amber 700 */
 }
-
 html:not(.dark) .text-amber-400 {
   color: #d97706 !important; /* Amber 600 */
 }
@@ -314,7 +335,6 @@ html:not(.dark) .text-purple-200,
 html:not(.dark) .text-purple-300 {
   color: #6d28d9 !important; /* Purple 700 */
 }
-
 html:not(.dark) .text-purple-400 {
   color: #7c3aed !important; /* Purple 600 */
 }
@@ -323,7 +343,6 @@ html:not(.dark) .text-emerald-200,
 html:not(.dark) .text-emerald-300 {
   color: #047857 !important; /* Emerald 700 */
 }
-
 html:not(.dark) .text-emerald-400 {
   color: #059669 !important; /* Emerald 600 */
 }
@@ -332,7 +351,6 @@ html:not(.dark) .text-red-200,
 html:not(.dark) .text-red-300 {
   color: #b91c1c !important; /* Red 700 */
 }
-
 html:not(.dark) .text-red-400 {
   color: #dc2626 !important; /* Red 600 */
 }
@@ -341,9 +359,29 @@ html:not(.dark) .text-orange-200,
 html:not(.dark) .text-orange-300 {
   color: #c2410c !important; /* Orange 700 */
 }
-
 html:not(.dark) .text-orange-400 {
   color: #ea580c !important; /* Orange 600 */
+}
+
+html:not(.dark) .text-indigo-200,
+html:not(.dark) .text-indigo-300 {
+  color: #3730a3 !important; /* Indigo 800 */
+}
+html:not(.dark) .text-indigo-400 {
+  color: #4f46e5 !important; /* Indigo 600 */
+}
+
+/* ============================================================
+   CATCH-ALL: any remaining light text on light background
+   Covers edge cases not explicitly listed above
+   ============================================================ */
+html:not(.dark) .text-sky-100,
+html:not(.dark) .text-sky-200,
+html:not(.dark) .text-sky-300 {
+  color: #0c4a6e !important;
+}
+html:not(.dark) .text-sky-400 {
+  color: #0284c7 !important;
 }
 
 /* Standalone Primary CTA Buttons (Cobalt #0284c7) */

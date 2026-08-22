@@ -1,0 +1,273 @@
+{
+  "templateVersion": "1.0",
+  "lastUpdated": "2026-08-22",
+  "metadata": {
+    "description": "MECE 標準拆解模板庫 — 用於第一層校驗的自動匹配與補全",
+    "usage": "由 AI 輔助時自動注入，校驗大模型 MECE 拆解完整性",
+    "versioning": "每次新增模板需更新此版本号"
+  },
+  "templates": {
+    "bug-investigation": {
+      "name": "Bug 根因分析標準框架",
+      "description": "適用於所有 P1/P2 級 Bug 的系統性根因分析",
+      "applicableScenarios": ["bug-investigation", "root-cause-analysis", "post-mortem"],
+      "severityLevel": ["P1", "P2"],
+      "dimensions": [
+        {
+          "name": "技術層面",
+          "description": "與代碼、配置、架構直接相關的技術因素",
+          "mandatoryChecklist": [
+            "代碼邏輯錯誤",
+            "配置/環境問題",
+            "選擇器/權重競爭",
+            "第三方依賴行為",
+            "瀏覽器兼容性",
+            "渲染引擎差異"
+          ],
+          "commonOmissions": [
+            "CSS cascade 優先級計算的不確定性",
+            "框架內部實現細節變更（如 Tailwind v4 where()）",
+            "ThemeContext 屬性與選擇器失配"
+          ]
+        },
+        {
+          "name": "流程層面",
+          "description": "與開發、測試、部署、審核相關的流程因素",
+          "mandatoryChecklist": [
+            "編碼階段檢查",
+            "Commit 階段檢查",
+            "PR 階段檢查",
+            "測試階段檢查",
+            "上線前檢查",
+            "CAPA 閉合驗證"
+          ],
+          "commonOmissions": [
+            "無淺色模式系統性驗證流程",
+            "無雙模式視覺審核 checklist",
+            "CAPA 關閉驗證標準未強制執行"
+          ]
+        },
+        {
+          "name": "工具層面",
+          "description": "與自動化檢測、lint、CI 相關的工具因素",
+          "mandatoryChecklist": [
+            "Linting 工具（ESLint/Stylelint）",
+            "測試框架（Vitest/Jest）",
+            "CI/CD Pipeline 質量 gate",
+            "自動化工具檢測器",
+            "視覺回歸測試",
+            "可訪問性檢測"
+          ],
+          "commonOmissions": [
+            "檢測器 ignorePatterns 造成盲區",
+            "CSS 覆蓋規則本身未被檢測"
+          ]
+        },
+        {
+          "name": "測試驗證層面",
+          "description": "與自動化測試覆蓋率相關的驗證因素",
+          "mandatoryChecklist": [
+            "單元測試覆蓋率",
+            "集成測試覆蓋率",
+            "E2E 測試覆蓋率",
+            "可訪問性測試",
+            "視覺回歸測試",
+            "性能測試"
+          ],
+          "commonOmissions": [
+            "無組件級測試框架",
+            "無對比度自動化測試",
+            "無多瀏覽器兼容性驗證"
+          ]
+        },
+        {
+          "name": "文檔層面",
+          "description": "與文檔規範和知識傳承相關的因素",
+          "mandatoryChecklist": [
+            "規格文檔完整性",
+            "設計規範文件",
+            "CHANGELOG 更新",
+            "CAPA 報告關聯",
+            "開發日誌記錄",
+            "知識傳承文檔"
+          ],
+          "commonOmissions": [
+            "無標準化 CHANGELOG.md",
+            "無 CAPA 與 git commit 關聯追蹤"
+          ]
+        },
+        {
+          "name": "環境層面",
+          "description": "與運行環境、瀏覽器、設備相關的環境因素",
+          "mandatoryChecklist": [
+            "多瀏覽器兼容性驗證",
+            "多設備視口響應",
+            "生產環境快取策略",
+            "CDN/部署環境差異",
+            "第三方服務依賴"
+          ],
+          "commonOmissions": [
+            "生產環境 CSS/JS bundle 快取策略",
+            "多設備實際測試缺失"
+          ]
+        }
+      ],
+      "conflictRules": [
+        {
+          "id": "CR-001",
+          "rule": "同一問題不得同時出現在技術層面和工具層面",
+          "resolution": "選擇更具體的層面歸類（實現細節→技術層，工具缺失→工具層）"
+        },
+        {
+          "id": "CR-002",
+          "rule": "流程層面與工具層面不應重疊",
+          "resolution": "流程層面描述『何時檢查』，工具層面描述『用何工具檢查』"
+        },
+        {
+          "id": "CR-003",
+          "rule": "測試驗證層面應獨立於工具層面",
+          "resolution": "測試框架存在但覆蓋不足→測試驗證層；根本無測試框架→工具層"
+        }
+      ],
+      "meceValidationRules": [
+        {
+          "rule": "至少 4 個維度需有實質內容",
+          "action": "若少於 4 維度，觸發維度補全建議"
+        },
+        {
+          "rule": "每個維度至少 2 個子項",
+          "action": "若某個維度子項少於 2，觸發該維度深度擴展建議"
+        },
+        {
+          "rule": "不得出現完全空白的維度",
+          "action": "若某維度無任何內容，強制要求補充或正式排除並說明理由"
+        }
+      ]
+    },
+    "feature-implementation": {
+      "name": "新功能實施標準框架",
+      "description": "適用於新功能開發的需求拆解與實施規劃",
+      "applicableScenarios": ["feature-design", "sprint-planning", "technical-spec"],
+      "severityLevel": ["P0", "P1", "P2"],
+      "dimensions": [
+        {
+          "name": "需求層面",
+          "mandatoryChecklist": [
+            "功能需求定義",
+            "非功能需求（性能/可訪問性）",
+            "邊界條件處理",
+            "異常場景處理"
+          ]
+        },
+        {
+          "name": "設計層面",
+          "mandatoryChecklist": [
+            "數據模型設計",
+            "UI/UX 設計",
+            "API 介面設計",
+            "狀態管理設計"
+          ]
+        },
+        {
+          "name": "實現層面",
+          "mandatoryChecklist": [
+            "核心邏輯實現",
+            "錯誤處理",
+            "邊界條件處理",
+            "性能優化"
+          ]
+        },
+        {
+          "name": "測試層面",
+          "mandatoryChecklist": [
+            "單元測試",
+            "集成測試",
+            "E2E 測試",
+            "回歸測試"
+          ]
+        },
+        {
+          "name": "部署層面",
+          "mandatoryChecklist": [
+            "環境配置",
+            "數據遷移",
+            "版本兼容",
+            "回滾方案"
+          ]
+        },
+        {
+          "name": "文檔層面",
+          "mandatoryChecklist": [
+            "API 文檔",
+            "使用說明",
+            "變更日誌",
+            "培訓材料"
+          ]
+        }
+      ],
+      "conflictRules": [
+        {
+          "rule": "實現層面與測試層面不得重疊",
+          "resolution": "實現層描述『如何做』，測試層描述『如何驗證』"
+        }
+      ]
+    },
+    "risk-assessment": {
+      "name": "風險評估標準框架",
+      "description": "適用於項目風險識別與評估",
+      "applicableScenarios": ["risk-assessment", "pre-mortem", "architecture-review"],
+      "severityLevel": ["P0", "P1"],
+      "dimensions": [
+        {
+          "name": "技術風險",
+          "mandatoryChecklist": [
+            "技術選型風險",
+            "依賴庫安全風險",
+            "性能瓶頸風險",
+            "架構擴展性風險"
+          ]
+        },
+        {
+          "name": "流程風險",
+          "mandatoryChecklist": [
+            "排期風險",
+            "人資風險",
+            "溝通協作風險",
+            "需求變更風險"
+          ]
+        },
+        {
+          "name": "數據風險",
+          "mandatoryChecklist": [
+            "數據完整性風險",
+            "數據安全風險",
+            "遷移風險",
+            "備份恢復風險"
+          ]
+        },
+        {
+          "name": "外部風險",
+          "mandatoryChecklist": [
+            "第三方服務依賴風險",
+            "法規合規風險",
+            "供應商風險",
+            "基礎設施風險"
+          ]
+        }
+      ]
+    }
+  },
+  "MECE-validation": {
+    "completeness-checklist": [
+      "是否已掃描所有標準維度？",
+      "每個維度是否有至少 2 個子項？",
+      "是否有維度被完全遺漏但仍應納入？",
+      "子項之間是否存在邏輯重疊？"
+    ],
+    "exhaustiveness-rules": [
+      "不允許因「暫不涉及」而省略整個維度",
+      "每個維度必須明確標註『適用』或『不適用（附理由）』",
+      "若有未覆蓋的情境，必須記錄為待觀察項"
+    ]
+  }
+}

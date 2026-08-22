@@ -177,7 +177,8 @@ export interface SortingActualYieldLog {
 
 步驟 2: 型別相容遷移（H-04）
   - 讀取現有 item_master 資料
-  - 若 material_class 為 null，執行 migrateItemMasterClasses() 自動對應
+  - material_class 已於初始導入時同步建立，無需執行 migrateItemMasterClasses()
+  - 若 material_class 為 null，由業務人員至物料分類體系手動指定分類
   - 更新 localStorage 中的 PMS_ITEM_MASTER key
 
 步驟 3: po_in_transit 欄位擴展（M-01）
@@ -215,7 +216,7 @@ export interface SortingActualYieldLog {
 
 | 面向 | 對策 | 過渡期時間 |
 |------|------|-----------|
-| 舊版匯出 JSON（無 material_class 欄位）| 匯入時自動執行 `migrateItemMasterClasses()` 依 category 推斷分類 | 立即生效 |
+| 舊版匯出 JSON（無 material_class 欄位）| 使用者手動指定分類或透過工具欄位補填 | 立即生效 |
 | 舊版匯出 JSON（無 sorting_yield_log）| 系統初始化時自動建立空陣列 | 立即生效 |
 | 瀏覽器快取舊版 schema | 每次載入檢查 `localStorage.__SCHEMA_VERSION__`，若低於最新版本則提示使用者匯出備份再清空 | 首次啟動偵測 |
 | 多標籤頁並行操作 | 使用 `storage` event 監聽跨標籤同步，30ms debounce | 立即生效 |

@@ -45,3 +45,13 @@ assets/.aistudio/
 .impeccable/live/previews/
 .impeccable/live/annotations/
 .impeccable/live/cache/
+
+# Sync files
+sync.ffs_db
+
+# Metadata
+metadata.json
+
+# Generated docs
+docs/*.mec-report.json
+docs/*.json

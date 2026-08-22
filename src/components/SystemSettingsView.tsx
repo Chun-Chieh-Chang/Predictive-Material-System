@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Sliders,
   RotateCcw,
@@ -53,8 +53,28 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'all' | 'alerts' | 'mrp' | 'yield'>('all');
 
+  // High-priority light-mode color overrides injected as inline styles
+  // These bypass Tailwind v4 where() specificity and guarantee readability
+  const lightModeOverrides = `
+    .light label.text-white,
+    .light .text-white,
+    .light span.text-white,
+    .light strong.text-white { color: #0f172a !important; }
+    .light .text-slate-400 { color: #475569 !important; }
+    .light .text-slate-500 { color: #374151 !important; }
+    .light .text-slate-300 { color: #334155 !important; }
+    .light .text-red-400 { color: #dc2626 !important; }
+    .light .text-amber-400 { color: #d97706 !important; }
+    .light .text-purple-400 { color: #7c3aed !important; }
+    .light .text-cyan-400 { color: #0891b2 !important; }
+    .light .text-emerald-400 { color: #059669 !important; }
+    .light .text-blue-400 { color: #0284c7 !important; }
+    .light .text-purple-300 { color: #6d28d9 !important; }
+    .light .text-slate-200 { color: #1e293b !important; }
+  `;
+
   // Real-time calculation with current parameters
-  const mrpResults = calculateAllMRP(db, undefined, params);
+  const mrpResults = useMemo(() => calculateAllMRP(db, undefined, params), [db, params]);
   const redAlerts = mrpResults.flatMap((r) => r.alerts.filter((a) => a.level === 'red'));
   const yellowAlerts = mrpResults.flatMap((r) => r.alerts.filter((a) => a.level === 'yellow'));
   const purpleAlerts = mrpResults.flatMap((r) => r.alerts.filter((a) => a.level === 'purple'));
@@ -138,7 +158,9 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
   };
 
   return (
-    <div className="space-y-6 pb-16">
+    <>
+      <style dangerouslySetInnerHTML={{ __html: lightModeOverrides }} />
+      <div className="space-y-6 pb-16">
       {/* Header Bento Banner */}
       <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-xl shadow-black/20 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
@@ -1040,5 +1062,6 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
         </div>
       </div>
     </div>
+    </>
   );
 };

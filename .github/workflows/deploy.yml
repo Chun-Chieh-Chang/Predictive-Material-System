@@ -21,10 +21,44 @@ concurrency:
 
 jobs:
   # ─────────────────────────────────────────
+  # Job: Quality Gate（所有檢查通過後才進入部署）
+  # ─────────────────────────────────────────
+  quality-gate:
+    name: Quality Gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript type check
+        run: npx tsc --noEmit
+
+      - name: MECE template validation
+        run: npm run mec:check:all
+
+      - name: Contrast ratio check
+        run: node .impeccable/scripts/contrast-check.mjs src/components/
+
+      - name: Build production bundle
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+  # ─────────────────────────────────────────
   # Job: Build & Deploy
   # ─────────────────────────────────────────
   build-and-deploy:
     name: Build and Deploy to GitHub Pages
+    needs: quality-gate
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

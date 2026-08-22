@@ -37,13 +37,13 @@
 | `MaterialClassManagementView` UI | ✅ |
 | SKU 前綴推斷規則 `inferClassFromSku()` | ✅ |
 | 匯入驗證 `validateImportRows()` | ✅ |
-| 遷移函式 `migrateItemMasterClasses()` | ✅ |
+| 遷移函式 `migrateItemMasterClasses()` | ❌ 已移除（2026-08-22） |
 
 #### 架構盤點修正（FieldArchitectureAudit_Report.md）
 | ID | 內容 | 狀態 |
 |----|------|------|
 | H-04 | 移除 `ItemMasterV0`，統一使用 `ItemMaster` | ✅ |
-| H-01~H-03 | 驗證函式定義 `validateSkuClass` / `validateRmSkuAsRaw` / `validateYieldSku` / `validateSupplierRmSku` | ✅ **函式已定義，尚未接入 handleSave** |
+| H-01~H-03 | 驗證函式 `validateRmSkuAsRaw` / `validateYieldSku` / `validateSupplierRmSku` | ❌ 已於 2026-08-22 移除（未接入 handleSave，待 MRP 完整整合後重新評估） |
 | M-01 | `po_in_transit` 新增到貨日期欄位 | ✅ |
 | M-02 | `demand_forecast_log` 遷移邏輯（App.tsx）| ✅ |
 | M-03~M-05 | fieldMeta 欄位擴充 | ✅ |
@@ -69,22 +69,16 @@
 **現狀：** `validateRmSkuAsRaw()` / `validateYieldSku()` / `validateSupplierRmSku()` 已定義於 `materialClassValidation.ts`，但 `DataTablesView.tsx` 的 `handleSave` 流程中未呼叫。
 
 **實作位置：** `src/components/DataTablesView.tsx` → `validateRowData()` 或 `handleSave()`
+（待 MRP 完整整合後重新啟用）
 
 **實作邏輯：**
+（待 MRP 完整整合後重新啟用——原程式碼已移除）
 ```typescript
-// 在 validateRowData() 中，當欄位為 fk_select 且對應產品類型的 SKu 需驗證分類時：
-if (field.key === 'rm_sku' && meta.key === 'product_mold_bom') {
-  const result = validateRmSkuAsRaw(String(val), db.item_master);
-  if (!result.valid) errors[field.key] = result.hint;
-}
-if (field.key === 'sku' && meta.key === 'yield_master') {
-  const result = validateYieldSku(String(val), db.item_master);
-  if (!result.valid) errors[field.key] = result.hint;
-}
-if (field.key === 'rm_sku' && meta.key === 'supplier_rule_master') {
-  const result = validateSupplierRmSku(String(val), db.item_master);
-  if (!result.valid) errors[field.key] = result.hint;
-}
+// if (field.key === 'rm_sku' && meta.key === 'product_mold_bom') {
+//   const result = validateRmSkuAsRaw(String(val), db.item_master);
+//   if (!result.valid) errors[field.key] = result.hint;
+// }
+// ...
 ```
 
 **驗證方式（FT-01~FT-03）：**
@@ -95,23 +89,24 @@ if (field.key === 'rm_sku' && meta.key === 'supplier_rule_master') {
 ---
 
 #### T-02：M-05 BOM 有效期校驗接入 handleSave
-**現狀：** `checkBomValidityOverlap()` 已定義，但未接入保存流程。
+**現狀：** `checkBomValidityOverlap()` 已於 2026-08-22 移除（未接入保存流程，待 MRP 完整整合後重新評估）。
 
 **實作位置：** `src/components/DataTablesView.tsx` → `handleSave()`
+（待 MRP 完整整合後重新啟用）
 
 **實作邏輯：**
 ```typescript
-if (activeTable === 'product_mold_bom') {
-  const overlapResult = checkBomValidityOverlap(
-    db.product_mold_bom,
-    editRow as ProductMoldBOM,
-    originalRecord ? { sku: originalRecord.sku, mold_id: originalRecord.mold_id } : undefined
-  );
-  if (overlapResult.hasOverlap) {
-    errors['valid_from'] = `與以下 BOM 有效期重疊：${overlapResult.overlappingIds.join(', ')}`;
-    return;
-  }
-}
+// if (activeTable === 'product_mold_bom') {
+//   const overlapResult = checkBomValidityOverlap(
+//     db.product_mold_bom,
+//     editRow as ProductMoldBOM,
+//     originalRecord ? { sku: originalRecord.sku, mold_id: originalRecord.mold_id } : undefined
+//   );
+//   if (overlapResult.hasOverlap) {
+//     errors['valid_from'] = `與以下 BOM 有效期重疊：${overlapResult.overlappingIds.join(', ')}`;
+//     return;
+//   }
+// }
 ```
 
 **驗證方式（FT-05）：** 新增 valid_to=2026-09-01 的 BOM entry，再新增 valid_from 與之重疊的 entry → 阻擋。
@@ -121,18 +116,18 @@ if (activeTable === 'product_mold_bom') {
 ### 🟡 P1 — 中優先度（功能完整性）
 
 #### T-03：po_in_transit `eta_variance_days` 自動計算
-**現狀：** fieldMeta 已定義 `eta_variance_days` 為 `computed`，但 save 時未觸發計算。
+**現狀：** fieldMeta 已定義 `eta_variance_days` 為 `computed`，`computeEtaVarianceDays()` 已於 2026-08-22 移除（save 時未觸發計算）。
 
 **實作位置：** `src/components/DataTablesView.tsx` → `commitSave()` 或 `handleSave()`
 
 **實作邏輯：**
 ```typescript
-if (activeTable === 'po_in_transit') {
-  const updatedRow = {
-    ...row,
-    eta_variance_days: computeEtaVarianceDays(row.eta_date, row.actual_arrival_date),
-  };
-}
+// if (activeTable === 'po_in_transit') {
+//   const updatedRow = {
+//     ...row,
+//     eta_variance_days: computeEtaVarianceDays(row.eta_date, row.actual_arrival_date),
+//   };
+// }
 ```
 
 ---

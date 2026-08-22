@@ -1,9 +1,9 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿/**
+/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   AlertTriangle,
   Package,
@@ -53,7 +53,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onNavigateToSettings,
   onNavigateToExchange
 }) => {
-  const mrpResults = calculateAllMRP(db, undefined, params);
+  const mrpResults = useMemo(() => calculateAllMRP(db, undefined, params), [db, params]);
 
   // Collect all alerts
   const allAlerts = mrpResults.flatMap((r) =>

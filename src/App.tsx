@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Navbar, NavTab } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { DashboardView } from './components/DashboardView';
@@ -145,7 +145,7 @@ export function App() {
   };
 
   // Calculate alerts for navbar badge using active system parameters
-  const mrpResults = calculateAllMRP(db, undefined, systemParams);
+  const mrpResults = useMemo(() => calculateAllMRP(db, undefined, systemParams), [db, systemParams]);
   const totalAlerts = mrpResults.reduce((sum, r) => sum + r.alerts.filter((a) => a.level !== 'green').length, 0);
 
   const handleNavigateToMRP = (sku: string) => {
@@ -298,8 +298,6 @@ export function App() {
             <span className="font-bold text-slate-800 dark:text-slate-300">料事如神圈 QCC 物料需求管理系統</span>
             <span className="text-slate-300 dark:text-slate-700">•</span>
             <span className="font-mono text-slate-500 dark:text-slate-400">Baseline Version {import.meta.env.VITE_PMS_VERSION}</span>
-            <span className="text-slate-300 dark:text-slate-700">•</span>
-            <span className="text-[#0284c7] dark:text-sky-400 font-semibold font-mono">Developed by Wesley Chang @Mouldex, Aug-2026</span>
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-slate-500 dark:text-slate-400">產能排程與備料推估引擎</span>

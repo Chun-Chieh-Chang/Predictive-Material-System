@@ -44,7 +44,7 @@ export const SKU_PREFIX_RULES: Record<MaterialClassCode, string[]> = {
 
 ### 2.3 H-01 FK 校驗擴充
 
-`validateRmSkuAsRaw` 函式現在接受色母（CB-）與色粉（CP-）前綴的 SKU，允許其作為 BOM 的 `rm_sku`。
+`validateRmSkuAsRaw` 函式（已於 2026-08-22 移除）曾接受色母（CB-）與色粉（CP-）前綴的 SKU，允許其作為 BOM 的 `rm_sku`。SKU_PREFIX_RULES.RAW 仍保留 `CB-`、`CP-`、`COLOR-` 前綴規範。
 
 ---
 
@@ -307,7 +307,7 @@ MRP 計算結果（MRPCalculationResult）─── colorantDetail ──→ 色
 |------|---------|
 | `src/types.ts` | 新增 `ColorMixingLog` 介面、`SystemDatabase.color_mixing_log`、`MRPCalculationResult.colorMixingRatioPct/colorantDetail`、`COLOR_MIXING_LOG_STORAGE_KEY` |
 | `src/utils/fieldMeta.ts` | `PRODUCT_MOLD_BOM_META` 新增 `color_mixing_ratio_pct`；新增完整 `COLOR_MIXING_LOG_META` |
-| `src/utils/materialClassValidation.ts` | `SKU_PREFIX_RULES.RAW` 加入 `CB-`, `CP-`, `COLOR-`；更新 `validateRmSkuAsRaw` 註解 |
+| `src/utils/materialClassValidation.ts` | `SKU_PREFIX_RULES.RAW` 加入 `CB-`, `CP-`, `COLOR-`（註：`validateRmSkuAsRaw` 函式已於 2026-08-22 移除） |
 | `src/utils/mrpEngine.ts` | 新增色母計算邏輯（effectiveResinGrossKg、colorantDetail） |
 | `src/utils/dataExchange.ts` | 支援 color_mixing_ratio_pct 匯出；新增 color_mixing_log JSON/Excel 匯出入；新增 Excel Sheet 10 |
 | `src/App.tsx` | 相容性初始化 `color_mixing_log` 欄位 |

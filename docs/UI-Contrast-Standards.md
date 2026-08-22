@@ -134,23 +134,71 @@ hover:'text-slate-200'  // 對比度 10.56:1
 
 ---
 
-## 6. 快速參考：Tailwind 色彩亮度階梯
+## 7. UI 布局完整性規範
+
+### 7.1 水平滾動容器規則
+
+任何使用 `overflow-x-auto` 的水平滾動容器必須滿足：
+
+| 規則 | 原因 | 反例 |
+|------|------|------|
+| 內層 flex 行必須有 `min-w-max` | Chrome 會壓縮 flex 行而非觸發 parent 滾動 | `<div className="flex gap-1.5">`（無 min-w-max） |
+| 必須定義對應的 scrollbar 樣式 | 避免瀏覽器默認滾動條破壞視覺設計 | `scrollbar-none` 未定義 |
+| 不得使用無效 Tailwind class | 無效 class 被忽略，導致样式意外退回到默認值 | `py-1.,` 而非 `py-1.5` |
+
+```tsx
+// ❌ 錯誤：flex 行可壓縮，按鈕被裁切
+<div className="overflow-x-auto scrollbar-none">
+  <div className="flex gap-1.5">
+    <button>全部 (57)</button>
+    <button>系統功能...</button>  {/* 可能被裁切 */}
+  </div>
+</div>
+
+// ✅ 正確：min-w-max 強制行寬不壓縮，觸發滾動
+<div className="overflow-x-auto scrollbar-none">
+  <div className="flex gap-1.5 min-w-max">
+    <button>全部 (57)</button>
+    <button>系統功能...</button>  {/* 可通過滾動訪問 */}
+  </div>
+</div>
+```
+
+### 7.2 響應式邊界檢查清單
+
+每版上線前必須確認以下斷點下所有可點擊元素完整可見：
 
 ```
-slate:  950(最暗) → 900 → 800 → 700 → 600 → 500 → 400 → 300 → 200 → 100 → 50(最亮)
-sky:    950 → 900 → 800 → 700 → 600 → 500 → 400 → 300 → 200 → 100 → 50
-emerald:950 → 900 → 800 → 700 → 600 → 500 → 400 → 300 → 200 → 100 → 50
+□ 320px  — 小手機（SE/舊款）
+□ 375px  — 主流手機（iPhone 14/15）
+□ 428px  — 大手機（Pro Max）
+□ 768px  — 平板豎直
+□ 1024px — 桌面小窗
+□ 1280px — 標準桌面
 ```
 
-**規則**：深色底（slate-950/900）使用 light 階文字（200/300/400）；淺色底（white/50）使用 dark 階文字（700/800/900）。
+### 7.3 `.scrollbar-none` CSS 定義（已全局註冊）
+
+```css
+/* src/index.css */
+.scrollbar-none {
+  -ms-overflow-style: none;       /* IE/Edge */
+  scrollbar-width: none;          /* Firefox */
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;                  /* Chrome/Safari/Opera */
+}
+```
 
 ---
 
-## 7. 相關 CAPA
+## 8. 相關 CAPA
 
 | CAPA 編號 | 主題 | 狀態 |
 |-----------|------|------|
 | CAPA-004 | Sidebar Active 狀態對比度矯正 | 已修正 |
+| CAPA-005 | 卡片文字可讀性對比度全面修復 | 已修正 |
+| CAPA-006 | 術語辭典右側按鈕被裁切（水平滾動失效） | 已修正 |
 
 ---
 

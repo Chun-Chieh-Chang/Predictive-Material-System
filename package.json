@@ -12,7 +12,10 @@
     "impeccable:init": "node scripts/impeccable-init.mjs",
     "impeccable:audit": "npx impeccable audit src/components/",
     "impeccable:detach": "node scripts/impeccable-detach.mjs",
-    "impeccable:attach": "node scripts/impeccable-attach.mjs"
+    "impeccable:attach": "node scripts/impeccable-attach.mjs",
+    "mec:check": "node .impeccable/scripts/mec-validator.mjs",
+    "mec:check:all": "node .impeccable/scripts/mec-check-all.mjs",
+    "prepare": "husky"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.14",
@@ -26,6 +29,7 @@
     "@types/node": "^22.14.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
+    "husky": "^9.1.7",
     "tailwindcss": "^4.1.14",
     "typescript": "~5.8.2",
     "vite": "^6.2.3"

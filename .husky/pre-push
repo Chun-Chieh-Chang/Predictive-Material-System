@@ -1,0 +1,40 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# ─────────────────────────────────────────────────────
+# Pre-push Hook — 料事如神系統 (PMS)
+# 在 push 前執行完整的質量檢查
+# ─────────────────────────────────────────────────────
+
+echo "🚀 PMS Pre-push Checks..."
+
+# 1. TypeScript 檢查
+echo "  → TypeScript check..."
+npx tsc --noEmit
+if [ $? -ne 0 ]; then
+  echo "❌ TypeScript 檢查失敗"
+  exit 1
+fi
+echo "  ✅ TypeScript 檢查通過"
+
+# 2. Build 檢查
+echo "  → Build check..."
+npm run build
+if [ $? -ne 0 ]; then
+  echo "❌ Build 失敗"
+  exit 1
+fi
+echo "  ✅ Build 通過"
+
+# 3. MECE 完整性校驗（僅檢查本次提交新增/修改的 CAPA 報告）
+echo "  → MECE 完整性校驗..."
+git diff --cached --name-only HEAD~1 HEAD | grep -E 'docs/CAPA-.*\.md' | while read capadoc; do
+  echo "    校驗: $capadoc"
+  node .impeccable/scripts/mec-validator.mjs "docs/$capadoc" || {
+    echo "❌ MECE 校驗失敗: $capadoc"
+    exit 1
+  }
+done
+echo "  ✅ MECE 校驗通過（歷史報告已跳過）"
+
+echo "✅ 所有 Pre-push 檢查通過"

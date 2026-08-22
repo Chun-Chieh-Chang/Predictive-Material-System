@@ -87,9 +87,9 @@
 
 | 缺口 ID | 說明 | 嚴重度 |
 |--------|------|--------|
-| DES-01 | H-01/H-02/H-03 FK 校驗函式已定義（materialClassValidation.ts:210-243），但未接入 handleSave() 流程 | 🔴 高 |
-| DES-02 | M-05 BOM 有效期重疊檢查函式已定義（checkBomValidityOverlap），但未接入 handleSave() | 🔴 高 |
-| DES-03 | M-01 eta_variance_days 自動計算函式已定義（computeEtaVarianceDays），但未接入 commitSave() | 中 |
+| DES-01 | H-01/H-02/H-03 FK 校驗（validateRmSkuAsRaw / validateYieldSku / validateSupplierRmSku）已於 2026-08-22 移除，待 MRP 完整整合後重新評估 | 🟡 中 |
+| DES-02 | M-05 BOM 有效期重疊檢查（checkBomValidityOverlap）已於 2026-08-22 移除，待 MRP 完整整合後重新評估 | 🟡 中 |
+| DES-03 | M-01 eta_variance_days 自動計算（computeEtaVarianceDays）已於 2026-08-22 移除，待 MRP 完整整合後重新評估 | 🟡 中 |
 
 ### 2.3 程式開發階段
 
@@ -257,14 +257,14 @@ handleSave() → validateRowData() → [H-01/H-02/H-03 校驗缺失] → commitS
 handleSave() → validateRowData() → [H-01/H-02/H-03 校驗] → commitSave()
 ```
 
-**根本原因：M-05 BOM 有效期重疊未接入**
+**根本原因：M-05 BOM 有效期重疊校驗（checkBomValidityOverlap）已於 2026-08-22 移除**
 
 ```
 現有流程：
-handleSave(product_mold_bom) → [checkBomValidityOverlap 未呼叫] → commitSave()
+handleSave(product_mold_bom) → commitSave()  （無重疊檢查）
 
-正確流程應為：
-handleSave(product_mold_bom) → checkBomValidityOverlap() → commitSave()
+註：checkBomValidityOverlap 函式已從 materialClassValidation.ts 移除，
+待 MRP 完整整合後重新評估是否需要恢復。
 ```
 
 ### 4.2 用戶體驗層面
@@ -337,14 +337,15 @@ const validateRowDataWithFK = useCallback((data, meta, db) => {
 
 **實作方案：**
 ```typescript
-// 在 handleSave() 中，commitSave() 之前增加檢查
-if (activeTable === 'product_mold_bom') {
-  const overlap = checkBomValidityOverlap(editRow, db.product_mold_bom);
-  if (overlap) {
-    onNotify?.(`M-05: BOM 有效期與品號 ${overlap.sku} 的 ${overlap.moldId} 模具記錄重疊 (${overlap.validFrom} ~ ${overlap.validTo})`, 'error');
-    return;
-  }
-}
+// 【已移除】2026-08-22 前
+// if (activeTable === 'product_mold_bom') {
+//   const overlap = checkBomValidityOverlap(editRow, db.product_mold_bom);
+//   if (overlap) {
+//     onNotify?.(`M-05: BOM 有效期與品號 ${overlap.sku} 的 ${overlap.moldId} 模具記錄重疊 (${overlap.validFrom} ~ ${overlap.validTo})`, 'error');
+//     return;
+//   }
+// }
+// 待 MRP 完整整合後重新評估是否需要恢復此校驗
 ```
 
 **驗證方式：** 建立兩筆相同 sku+mold_id 但 valid_from 重疊的 BOM，確認系統阻止儲存。

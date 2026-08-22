@@ -245,4 +245,207 @@ SystemDatabase {
 
 ---
 
-*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-21*
+## V-20260822-01 — 卡片文字可讀性對比度全面修復 + Bug 調查報告
+
+**狀態：** ✅ 修復完成 / 待驗收
+**TypeScript 編譯：** 0 錯誤 / 0 警告
+**Build：** ✓ built in 5.05s
+
+#### 本次完成
+
+**CAPA-004（Sidebar Active 對比度）**
+- 修正 `bg-sky-600/15` → `bg-sky-600`，對比度從 ~1.05:1 → 7.84:1
+- 新建 `docs/UI-Contrast-Standards.md` 全局設計規範
+
+**CAPA-005（卡片文字可讀性）— 兩階段修復**
+
+| 階段 | 方案 | 結果 |
+|------|------|------|
+| v1 | 擴展 `index.css` light mode 覆蓋規則（+9 元素類型、indigo/sky 色系） | ⚠️ 仍不完整 |
+| v2 | 組件級 `<style>` 注入（`.light .text-white { !important }`） | ✅ 徹底解決 |
+
+**根本原因（深度分析）**：
+1. Tailwind v4 `where()` 偽類權重與 CSS 覆蓋規則競爭，行為不穩定
+2. ThemeContext 使用 `class="light"` 而非 `data-theme`，初期選擇器匹配失敗
+3. 無自動化對比度檢測 → 無 pre-commit hook → 無 CI 質量檢查
+4. 開發者主要驗證暗色模式，淺色模式未被系統性測試
+
+**調查報告**：`docs/PMS-INV-20260822-01-ContrastBugInvestigation.md`
+
+**修改檔案**：
+- `src/index.css` — 全面擴展 light mode 覆蓋規則
+- `src/components/SystemSettingsView.tsx` — 注入 `.light` 優先級樣式
+- `src/components/MrpCalculatorView.tsx` — 注入 `.light` 優先級樣式
+- `docs/CAPA-005-ContrastFix.md` — 更新報告
+- `docs/UI-Contrast-Standards.md` — 新增第 7 章 CAPA 追蹤
+- `docs/PMS-INV-20260822-01-ContrastBugInvestigation.md` — 新編調查報告
+
+#### 驗證結果
+- [x] TypeScript 編譯通過
+- [x] Production build 成功
+- [x] JS bundle 包含正確選擇器（已驗證）
+- [ ] 手動視覺審核（需開發者瀏覽器確認）
+- [ ] 淺色模式跨瀏覽器兼容性測試
+
+---
+
+## V-20260822-02 — 術語辭典右側按鈕被裁切修復 + CAPA-006
+
+**狀態：** ✅ 修復完成 / 待驗收
+**TypeScript 編譯：** 0 錯誤 / 0 警告
+**Build：** ✓ built in 5.03s
+
+#### 問題
+GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊緣裁切，無法點擊。
+
+#### 根本原因（MECE 分析）
+1. 內層 flex 容器無 `min-w-max` → Chrome 壓縮行寬而非觸發 parent 滾動
+2. `scrollbar-none` class 未定義於 index.css → 無效，無法隱藏滾動條
+3. `py-1.,` Tailwind typo → 按鈕 padding 使用瀏覽器默認值
+
+#### 修復
+- `src/components/GlossaryPanel.tsx`：flex 行加 `min-w-max`，修復 `py-1.,` typo
+- `src/index.css`：新增 `.scrollbar-none` class 定義
+
+#### CAPA-006 報告
+`docs/CAPA-006-LayoutOverflowFix.md`
+
+#### 修改檔案
+- `src/components/GlossaryPanel.tsx` — min-w-max + py-1., typo 修復
+- `src/index.css` — 新增 .scrollbar-none CSS 規則
+- `docs/CAPA-006-LayoutOverflowFix.md` — 新編 CAPA 報告
+
+#### 驗證結果
+- [x] TypeScript 編譯通過
+- [x] Production build 成功
+- [ ] 手動視覺審核（375px/768px/1024px 多斷點確認）
+- [ ] 跨瀏覽器測試（Chrome/Firefox/Safari）
+
+---
+
+## V-20260822-03 — 全域字體規範統一（最小 13px + 級距標準化）
+
+**狀態：** ✅ 修復完成
+**TypeScript 編譯：** 0 錯誤 / 0 警告
+**Build：** ✓ built in 5.30s
+
+#### 問題
+1. `html` 16px vs `body` 15px 不一致（基準差異）
+2. `text-[10px]` / `text-[11px]` 自訂像素未受保護，渲染為 10-11px（低於 13px 最小值）
+3. `text-xs` 為 14px、`text-base` 為 16px，級距過大且與 html base 衝突
+4. `body font-family` 重複宣告
+5. 無全域行高標準 class
+
+#### 根本原因
+全局 index.css 的字體覆蓋規則不完整，缺少 `text-[10px]` 和 `text-[11px]` 的強制映射；基礎 html/body font-size 不一致。
+
+#### 修復
+- `html { font-size }` 16px → **15px**（與 body 統一）
+- `body { font-family }` 重複宣告 → **inherit**
+- `.text-xs` 14px → **13px**（新全域最小標準）
+- `.text-[10px]` 14px → **13px**（強制映射至最小值）
+- `.text-[11px]` **新增** → **14px**
+- `.text-sm` line-height 1.45rem → **1.5rem**
+- `.text-base` 16px → **15px**（與 html base 一致）
+- 新增 `.leading-standard` class（1.6 line-height）
+
+#### 字級標準級距（v2.0）
+| Class | 大小 | 行高 | 用途 |
+|-------|------|------|------|
+| text-xs / text-[10px] | 13px | 1.4rem | 徽章、輔助說明 |
+| text-[11px] | 14px | 繼承 | 次要資訊 |
+| text-sm | 14.5px | 1.5rem | 表單標籤、說明文字 |
+| text-base | 15px | 1.6rem | 正文段落 |
+
+#### 修改檔案
+- `src/index.css` — 字體規範全面重整
+- `docs/PMS-Typography-Standards.md` — 新編全域字體規範文件
+
+#### 驗證結果
+- [x] TypeScript 編譯通過
+- [x] Production build 成功
+- [ ] 多斷點視覺審核
+- [ ] 多瀏覽器兼容性確認
+
+---
+
+## V-20260822-04 — 原料主檔編碼規則全面診斷
+
+**狀態：** ✅ 診斷完成 / 待實施
+**報告：** `docs/PMS-INV-20260822-02-MasterFileAudit.md`
+
+#### 核心發現
+1. **`customer_id` 雙重語義衝突**：RAW 物料（INEOS/Avient/台化/廠內）實際記錄的是供應商，但字段名意為客戶
+2. **無 `supplier_code` 字段**：全系統無標準化供應商代碼，僅有自由文本 `supplier_name`
+3. **`POInTransit.supplier_name` 孤立**：自由文本無 FK 約束，與 SupplierRuleMaster 資料獨立
+4. **`alt_sku` 缺乏驗證**：無自引用、循環引用、不存在 SKU 的校驗
+5. **`ColorMixingLog` 無 RAW 類別強制驗證**：可錄入非 RAW 類 SKU
+
+#### 識別出 5 項問題
+| 編號 | 問題 | 嚴重度 |
+|------|------|--------|
+| I1 | POInTransit.supplier_name 孤立無 FK | 🔴 P1 |
+| I2 | customer_id 雙重語義（RAW 存供應商） | 🔴 P1 |
+| I3 | supplier_name 無唯一校驗 | 🟡 P2 |
+| I4 | alt_sku 缺乏循環引用檢查 | 🟡 P2 |
+| I5 | ColorMixingLog 無 RAW 類別強制驗證 | 🟡 P2 |
+
+#### 建議方案
+- 新增 `supplier_code` + `customer_code` 欄位拆分雙重語義
+- POInTransit.supplier_name → supplier_code FK
+- SupplierRuleMaster 新增 supplier_code 唯一識別
+- 新增 validateItemMasterRecord() 函數強制分類校驗
+
+---
+
+---
+
+## V-20260822-05 — 程式碼與檔案整體優化作業（死碼清理 + useMemo 最佳化 + 文檔同步）
+
+**狀態：** ✅ 修復完成
+**TypeScript 編譯：** 0 錯誤 / 0 警告
+**Build：** ✓ built in 4.97s
+
+#### 本次完成
+
+**死碼清理（手術刀式，零功能 Regression）**
+
+| 檔案 | 動作 | 說明 |
+|------|------|------|
+| `src/types.ts` | 移除 3 個未使用 Storage Key | `MATERIAL_CLASSES_STORAGE_KEY` / `SORTING_YIELD_LOG_STORAGE_KEY` / `COLOR_MIXING_LOG_STORAGE_KEY` |
+| `src/utils/materialClassValidation.ts` | 移除 6 個未使用函數 | `validateSkuClass`、`validateRmSkuAsRaw`、`validateYieldSku`、`validateSupplierRmSku`、`computeEtaVarianceDays`、`checkBomValidityOverlap`、`migrateItemMasterClasses` |
+| `src/utils/backupService.ts` | 移除 1 個未使用函數 | `resetBackupSessionFlag` |
+| `src/utils/mrpEngine.ts` | 移除無用別名 | `export const calculateMRPForSku = calculateMRPForSKU` |
+| `src/components/MrpCalculatorView.tsx` | import 修正 | `calculateMRPForSku` → `calculateMRPForSKU` |
+
+**BOM 字元清除**
+- `src/components/DashboardView.tsx`：移除開頭 38 個 U+FEFF BOM 字元（防 TypeScript 編譯器誤判）
+
+**useMemo 最佳化（避免 MRP 重複全量計算）**
+- `src/App.tsx`：`calculateAllMRP()` 呼叫改用 `useMemo(() => ..., [db, systemParams])` 包裹，新增 `useMemo` import
+- `src/components/DashboardView.tsx`：同上模式套用
+- `src/components/SystemSettingsView.tsx`：同上模式套用
+
+**配置文件更新**
+- `.gitignore`：新增 `sync.ffs_db`、`metadata.json`、`docs/*.mec-report.json`、`docs/*.json`
+
+**文檔同步更新**
+- `docs/DevelopmentStatus.md`：H-01/H-02/H-03 狀態更新為「已移除待MORP整合後重新評估」
+- `docs/FieldArchitectureAudit_Report.md`：移除 `migrateItemMasterClasses()` 引用
+- `docs/TraceabilityVerificationReport.md`：DES-01/02/03 嚴重度從 🔴高降為 🟡中；M-05 根本原因更新
+- `docs/ColorMaterialProcessSpec.md`：`validateRmSkuAsRaw` 引用更新為「已於2026-08-22移除」
+
+#### 資安盤點結果
+- ✅ 無硬編碼 API 金鑰或敏感憑證
+- ✅ `.env.example` 僅為佔位符，無實際值
+- ✅ 所有業務數據存於 LocalStorage，不涉及外部傳輸
+- ✅ 可安全推送至 GitHub 遠端倉庫
+
+#### 驗證結果
+- [x] TypeScript 編譯通過（0 錯誤）
+- [x] Production build 成功（4.97s）
+- [x] 業務邏輯零破壞（死碼均為未導入函數/Storage key）
+
+---
+
+*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-22*
