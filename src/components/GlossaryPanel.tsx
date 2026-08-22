@@ -9,7 +9,6 @@ import {
   GLOSSARY_ENTRIES,
   GLOSSARY_CATEGORIES,
   searchGlossary,
-  getEntriesByCategory,
   type GlossaryCategory,
   type GlossaryEntry,
 } from '../data/glossaryData'
@@ -29,6 +28,12 @@ const CATEGORY_COLORS: Record<GlossaryCategory, { bg: string; border: string; te
   doc:     { bg: 'bg-slate-50 dark:bg-slate-800/50',   border: 'border-slate-200 dark:border-slate-700',  text: 'text-slate-700 dark:text-slate-300', badge: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300' },
 }
 
+/**
+ * GlossaryPanel — 右側抽屜式術語辭典
+ *
+ * 使用絕對定位（right-0 top-0 h-full）而非 flex ml-auto，
+ * 避免在全寬父容器中產生「崩潰」錯位感。
+ */
 const GlossaryPanel: React.FC<GlossaryPanelProps> = ({ open, onClose }) => {
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState<GlossaryCategory | 'all'>('all')
@@ -52,16 +57,26 @@ const GlossaryPanel: React.FC<GlossaryPanelProps> = ({ open, onClose }) => {
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex">
+    <>
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity duration-200"
+        onClick={onClose}
+        aria-hidden="true"
+      />
 
-      {/* Panel wrapper: scrollable when content exceeds viewport width */}
-      <div className="relative ml-auto w-full min-w-fit flex flex-col border-l border-slate-200 dark:border-slate-700 shadow-2xl overflow-x-auto scrollbar-none">
-        {/* Panel */}
-        <div className="w-full max-w-[calc(100vw-1rem)] sm:max-w-[calc(100vw-2rem)] md:max-w-xl lg:max-w-2xl bg-white dark:bg-slate-900 flex flex-col shrink-0">
+      {/* Right-side drawer — absolute positioned, never fights with parent flex layout */}
+      <aside
+        className="fixed right-0 top-0 z-50 h-full w-full sm:w-80 md:w-96 lg:w-[32rem] xl:w-[36rem]
+                   bg-white dark:bg-slate-900
+                   border-l border-slate-200 dark:border-slate-700
+                   shadow-2xl flex flex-col overflow-hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-label="專業術語辭典"
+      >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/60 flex items-center justify-center">
               <BookOpen className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
@@ -83,7 +98,7 @@ const GlossaryPanel: React.FC<GlossaryPanelProps> = ({ open, onClose }) => {
         </div>
 
         {/* Search */}
-        <div className="px-5 pt-4 pb-3">
+        <div className="px-5 pt-4 pb-3 shrink-0">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
@@ -97,8 +112,8 @@ const GlossaryPanel: React.FC<GlossaryPanelProps> = ({ open, onClose }) => {
         </div>
 
         {/* Category Tabs */}
-        <div className="px-5 pb-3">
-          <div className="flex gap-1.5 flex-nowrap">
+        <div className="px-5 pb-3 shrink-0">
+          <div className="flex gap-1.5 flex-nowrap overflow-x-auto scrollbar-none">
             <button
               onClick={() => setActiveCategory('all')}
               className={`px-3 py-1.5 rounded-md text-xs font-semibold whitespace-nowrap transition-colors ${
@@ -128,7 +143,7 @@ const GlossaryPanel: React.FC<GlossaryPanelProps> = ({ open, onClose }) => {
           </div>
         </div>
 
-        {/* Entries List */}
+        {/* Entries List — scrollable body */}
         <div className="flex-1 overflow-y-auto px-5 pb-5">
           {filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-slate-400">
@@ -173,13 +188,12 @@ const GlossaryPanel: React.FC<GlossaryPanelProps> = ({ open, onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 text-[11px] text-slate-400 dark:text-slate-500 flex items-center justify-between">
+        <div className="px-5 py-3 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 text-[11px] text-slate-400 dark:text-slate-500 flex items-center justify-between shrink-0">
           <span>按 「全部」可瀏覽完整 {GLOSSARY_ENTRIES.length} 個術語</span>
           <span>每次新增術語請同步更新 glossaryData.ts</span>
         </div>
-      </div>
-      </div>
-    </div>
+      </aside>
+    </>
   )
 }
 
