@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "hooks": {
+    "postToolUse": [
+      {
+        "type": "command",
+        "matcher": "Edit|CreateFile|WriteFile",
+        "bash": "node \"$(git rev-parse --show-toplevel)/scripts/impeccable-hook.mjs\"",
+        "timeoutSec": 5
+      }
+    ],
+    "stop": [
+      {
+        "type": "command",
+        "bash": "node \"$(git rev-parse --show-toplevel)/scripts/impeccable-hook.mjs\" --mode=deep",
+        "timeoutSec": 30
+      }
+    ]
+  }
+}

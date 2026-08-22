@@ -1,0 +1,14 @@
+{
+  "configVersion": 2,
+  "buildPath": "code",
+  "provider": "trae",
+  "hook": {
+    "enabled": true,
+    "depth": "immediate",
+    "maxFilesPerScan": 20
+  },
+  "detector": {
+    "ignoreRules": ["overused-font", "ai-color-palette", "cream-palette", "icon-tile-stack"],
+    "ignorePatterns": ["html:not\\(.dark\\)"]
+  }
+}

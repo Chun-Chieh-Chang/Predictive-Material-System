@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "productName": "料事如神系統 (PMS)",
+  "productType": "product",
+  "mode": "operate",
+  "buildPath": "code",
+  "audience": "內部工業 MRP 用戶（射出成型工廠）",
+  "brandLane": "industrial-dashboard",
+  "voice": "專業、清晰、克制、精準",
+  "antiReferences": ["marketing-landing", "startup-saas", "portfolio", "agency-website"],
+  "colors": {
+    "primary": "#0284C7",
+    "primaryHover": "#0369A1",
+    "secondary": "#06B6D4",
+    "surfaceDark": "#0F172A",
+    "surfaceCardDark": "#1E293B",
+    "surfaceLight": "#FFFFFF",
+    "surfaceSubtle": "#F8FAFC",
+    "workbench": "#F1F5F9",
+    "textPrimary": "#0F172A",
+    "textSecondary": "#475569",
+    "textMuted": "#94A3B8",
+    "textLight": "#F8FAFC",
+    "statusPass": "#059669",
+    "statusWarning": "#D97706",
+    "statusAlert": "#DC2626",
+    "statusInfo": "#4F46E5",
+    "borderPrecision": "#CBD5E1",
+    "borderSubtle": "#E2E8F0"
+  },
+  "type": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', 'PingFang TC', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif",
+    "monospace": "'JetBrains Mono', 'Fira Code', 'Consolas', monospace",
+    "minFontSize": "14px",
+    "hierarchy": {
+      "xs": "14px",
+      "sm": "14.5px",
+      "base": "15px",
+      "lg": "17px",
+      "xl": "19px",
+      "2xl": "22px",
+      "3xl": "26px"
+    }
+  },
+  "radius": {
+    "sm": "5px",
+    "md": "6px",
+    "lg": "8px",
+    "xl": "10px"
+  },
+  "shadow": {
+    "instrument": "0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04)",
+    "card": "0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05)",
+    "popover": "0 12px 24px -4px rgba(15, 23, 42, 0.12), 0 4px 8px -2px rgba(15, 23, 42, 0.06)",
+    "modal": "0 24px 48px -12px rgba(15, 23, 42, 0.25)"
+  },
+  "detector": {
+    "ignorePatterns": [
+      "html:not\\(.dark\\)",
+      "bg-slate-950",
+      "text-slate-400",
+      "text-slate-500",
+      "hover:bg-slate-800"
+    ],
+    "ignoreRules": [
+      "overused-font",
+      "ai-color-palette",
+      "cream-palette",
+      "icon-tile-stack",
+      "marketing-buzzword",
+      "aphoristic-cadence"
+    ],
+    "auditLog": null
+  },
+  "hook": {
+    "enabled": true,
+    "depth": "immediate",
+    "maxFilesPerScan": 20
+  }
+}
