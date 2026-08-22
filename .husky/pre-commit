@@ -19,7 +19,12 @@ node .impeccable/scripts/pre-task-checklist.mjs || {
 }
 echo "  ✅ UI 驗證標準檢查通過"
 
-# 1. TypeScript 檢查
+# 1.5 KB 主動預警（warning 模式，不阻擋 commit）
+echo "  → KB 主動預警..."
+node .impeccable/scripts/kb-proactive-check.mjs
+echo "  ✅ KB 主動預警完成"
+
+# 2. TypeScript 檢查
 echo "  → TypeScript check..."
 npx tsc --noEmit
 if [ $? -ne 0 ]; then
@@ -28,7 +33,7 @@ if [ $? -ne 0 ]; then
 fi
 echo "  ✅ TypeScript 檢查通過"
 
-# 2. MECE 完整性校驗（僅檢查本次提交新增/修改的 CAPA 報告）
+# 3. MECE 完整性校驗（僅檢查本次提交新增/修改的 CAPA 報告）
 echo "  → MECE 完整性校驗..."
 git diff --cached --name-only | grep -E 'docs/CAPA-.*\.md' | while read capadoc; do
   echo "    校驗: $capadoc"
@@ -40,7 +45,7 @@ git diff --cached --name-only | grep -E 'docs/CAPA-.*\.md' | while read capadoc;
 done
 echo "  ✅ MECE 校驗通過"
 
-# 3. 對比度校驗
+# 4. 對比度校驗
 echo "  → 對比度校驗..."
 node .impeccable/scripts/contrast-check.mjs src/components/ 2>/dev/null || true
 echo "  ✅ 對比度校驗完成"

@@ -20,6 +20,11 @@ echo "  → Fail Pattern 檢測..."
 node .impeccable/scripts/fail-pattern-detector.mjs
 echo "  ✅ Fail Pattern 檢測完成"
 
+# 0.6. KB 主動預警（warning 模式，不阻擋 push）
+echo "  → KB 主動預警..."
+node .impeccable/scripts/kb-proactive-check.mjs
+echo "  ✅ KB 主動預警完成"
+
 # 1. TypeScript 檢查
 echo "  → TypeScript check..."
 npx tsc --noEmit
