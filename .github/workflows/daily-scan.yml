@@ -48,50 +48,56 @@ jobs:
           if [ -f "$DEPLOY_LOG" ]; then
             DEPLOY_TOTAL=$(wc -l < "$DEPLOY_LOG" | tr -d ' ')
             DEPLOY_SUCCESS=$(grep '"status":"success"' "$DEPLOY_LOG" | wc -l | tr -d ' ')
-            DEPLOY_FAIL=$(grep '"status":"failure"' "$DEPLOY_LOG" | wc -l | tr -d ' ')
+            DEPLOY_FAIL=$(grep '"status":"failure"\|"status":"verify_failed"\|"status":"build_failed"' "$DEPLOY_LOG" | wc -l | tr -d ' ')
           else
             DEPLOY_TOTAL=0; DEPLOY_SUCCESS=0; DEPLOY_FAIL=0
           fi
 
           # ── 寫入摘要 ────────────────────────────────────────────────────
-          cat > "$SUMMARY_FILE" <<EOF
-# 每週審核摘要 — 第 $WEEK_NUM 週（$TIMESTAMP）
-
-## 總覽
-
-| 指標 | 數值 |
-|------|------|
-| pre-task-checklist 總執行次數 | $TOTAL |
-|  通過 | $PASSES |
-|  失敗（缺失驗證標準） | $FAILS |
-| 部署驗證次數 | $DEPLOY_TOTAL |
-|  成功 | $DEPLOY_SUCCESS |
-|  失敗 | $DEPLOY_FAIL |
-
-## 詳細日誌
-
-\`\`\`jsonl
-$(cat "$PRE_LOG" 2>/dev/null | tail -20)
-\`\`\`
-
-## 建議行動
-
-EOF
-
-          if [ "$FAILS" -gt 5 ]; then
-            echo "- ⚠️  近 7 天 UI 驗證失敗超過 5 次，建議審視 VERIFICATION_KEYWORDS 是否需要擴充" >> "$SUMMARY_FILE"
-          fi
-          if [ "$DEPLOY_FAIL" -gt 0 ]; then
-            echo "- ❌ 有部署驗證失敗記錄，請檢查 GitHub Actions 日誌" >> "$SUMMARY_FILE"
-          fi
-          if [ "$FAILS" -le 5 ] && [ "$DEPLOY_FAIL" -eq 0 ]; then
-            echo "- ✅ 所有指標正常，無需行動" >> "$SUMMARY_FILE"
-          fi
+          {
+            echo "# 每週審核摘要 — 第 $WEEK_NUM 週（$TIMESTAMP）"
+            echo ""
+            echo "## 總覽"
+            echo ""
+            echo "| 指標 | 數值 |"
+            echo "|------|------|"
+            echo "| pre-task-checklist 總執行次數 | $TOTAL |"
+            echo "|  通過 | $PASSES |"
+            echo "|  失敗（缺失驗證標準） | $FAILS |"
+            echo "| 部署驗證次數 | $DEPLOY_TOTAL |"
+            echo "|  成功 | $DEPLOY_SUCCESS |"
+            echo "|  失敗 | $DEPLOY_FAIL |"
+            echo ""
+            echo "## 詳細日誌"
+            echo ""
+            echo '```jsonl'
+            if [ -f "$PRE_LOG" ]; then
+              cat "$PRE_LOG" | tail -20
+            else
+              echo "（尚無審計日誌）"
+            fi
+            echo '```'
+            echo ""
+            echo "## 建議行動"
+            echo ""
+            if [ "$FAILS" -gt 5 ]; then
+              echo "- ⚠️  近 7 天 UI 驗證失敗超過 5 次，建議審視 VERIFICATION_KEYWORDS 是否需要擴充"
+            fi
+            if [ "$DEPLOY_FAIL" -gt 0 ]; then
+              echo "- ❌ 有部署驗證失敗記錄，請檢查 GitHub Actions 日誌"
+            fi
+            if [ "$FAILS" -le 5 ] && [ "$DEPLOY_FAIL" -eq 0 ] && [ "$TOTAL" -gt 0 ]; then
+              echo "- ✅ 所有指標正常，無需行動"
+            fi
+            if [ "$TOTAL" -eq 0 ] && [ "$DEPLOY_TOTAL" -eq 0 ]; then
+              echo "- ℹ️  尚無審計數據，待首次 commit/push 後開始產生"
+            fi
+          } > "$SUMMARY_FILE"
 
       - name: Commit weekly summary
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add docs/.audit/weekly-summary.md
-          git commit -m "chore: weekly audit summary (${{ github.run_id }})" || echo "No changes to commit"
-          git push
+          git commit -m "chore: weekly audit summary (${{ github.run_id }})" || echo "No changes to commit (no new data)"
+          git push || echo "⚠️  Push failed, summary saved locally"
