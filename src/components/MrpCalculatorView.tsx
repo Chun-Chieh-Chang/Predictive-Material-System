@@ -105,8 +105,8 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
                 }}
                 className={`px-3 py-1.5 rounded-xl text-sm font-mono font-bold transition-all border cursor-pointer ${
                   selectedSku === item.sku
-                    ? 'bg-[#e0f2fe] text-[#0284c7] border-[#0284c7] shadow-xs dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-600'
-                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-[#f8fafc] hover:text-slate-900'
+                    ? 'bg-pms-cobalt-light text-pms-cobalt border-pms-cobalt shadow-xs dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-600'
+                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-pms-bg-subtle hover:text-slate-900'
                 }`}
               >
                 {item.sku}

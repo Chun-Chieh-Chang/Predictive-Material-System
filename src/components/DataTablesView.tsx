@@ -74,7 +74,7 @@ function CellInput({
   error?: string;
 }) {
   const baseInput = 'w-full px-2 py-1.5 rounded-lg text-sm border transition-colors focus:outline-none focus:ring-1';
-  const normalClass = `${baseInput} bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white focus:border-[#0284c7] focus:ring-[#0284c7]/30`;
+  const normalClass = `${baseInput} bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white focus:border-pms-cobalt focus:ring-pms-cobalt/30`;
   const errorClass = `${baseInput} bg-red-50 dark:bg-red-950/30 border-red-400 text-slate-900 dark:text-white focus:border-red-500 focus:ring-red-500/30`;
   const cls = error ? errorClass : normalClass;
 
@@ -85,7 +85,7 @@ function CellInput({
           type="checkbox"
           checked={!!value}
           onChange={e => onChange(field.key, e.target.checked)}
-          className="w-4 h-4 accent-[#0284c7] cursor-pointer"
+          className="w-4 h-4 accent-pms-cobalt cursor-pointer"
         />
       </div>
     );
@@ -151,7 +151,7 @@ function displayValue(field: FieldMeta, value: unknown, db: SystemDatabase, reco
 
   if (field.inputType === 'checkbox') {
     return value
-      ? <span className="text-[#059669] font-bold text-sm">✅ 是</span>
+      ? <span className="text-pms-pass font-bold text-sm">✅ 是</span>
       : <span className="text-slate-400 text-sm">☐ 否</span>;
   }
 
@@ -416,14 +416,14 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
       <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xl shadow-black/5 dark:shadow-black/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="bg-sky-50 dark:bg-blue-950 text-[#0284c7] dark:text-blue-400 border border-sky-200 dark:border-blue-800/60 text-sm font-mono font-bold px-2 py-0.5 rounded-md">
+            <span className="bg-pms-cobalt-light dark:bg-blue-950 text-pms-cobalt dark:text-blue-400 border border-sky-200 dark:border-blue-800/60 text-sm font-mono font-bold px-2 py-0.5 rounded-md">
               SSOT DATA HUB
             </span>
             <h2 className="text-xl font-bold text-slate-900 dark:text-white">10 大核心資料庫即時維護中心</h2>
           </div>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             遵循 SSOT 與 MECE 原則 ·
-            <span className="text-[#059669] dark:text-emerald-400 font-semibold mx-1">🟢 即時儲存</span>
+            <span className="text-pms-pass dark:text-emerald-400 font-semibold mx-1">🟢 即時儲存</span>
             <span className="text-amber-600 dark:text-amber-400 font-semibold mx-1">🟡 影響確認</span>
             <span className="text-red-600 dark:text-red-400 font-semibold mx-1">🔴 工程變更</span>
             三級管控 · 🔒 主鍵鎖定
@@ -509,7 +509,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
                       <td className="px-3 py-2 font-bold text-slate-900 dark:text-white">{entry.pk_value}</td>
                       <td className="px-3 py-2 text-slate-600 dark:text-slate-400">{entry.field_label}</td>
                       <td className="px-3 py-2 text-red-600 dark:text-red-400 line-through">{entry.old_value}</td>
-                      <td className="px-3 py-2 text-[#059669] dark:text-emerald-400 font-semibold">{entry.new_value}</td>
+                      <td className="px-3 py-2 text-pms-pass dark:text-emerald-400 font-semibold">{entry.new_value}</td>
                       <td className="px-3 py-2">
                         <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${entry.change_level === 3 ? 'bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400' : 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400'}`}>
                           L{entry.change_level}
@@ -535,14 +535,14 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
               key={t.key}
               onClick={() => { setActiveTable(t.key); setSearchTerm(''); setEditingKey(null); setIsAddingRow(false); }}
               className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border cursor-pointer ${isActive
-                ? 'bg-[#e0f2fe] text-[#0284c7] border-[#0284c7] font-bold shadow-xs dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-600'
-                : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-[#f8fafc] dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white hover:border-slate-400'
+                ? 'bg-pms-cobalt-light text-pms-cobalt border-pms-cobalt font-bold shadow-xs dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-600'
+                : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-pms-bg-subtle dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white hover:border-slate-400'
               }`}
             >
-              <Icon className={`w-4 h-4 ${isActive ? 'text-[#0284c7] dark:text-sky-300' : 'text-slate-400 dark:text-slate-500'}`} />
+              <Icon className={`w-4 h-4 ${isActive ? 'text-pms-cobalt dark:text-sky-300' : 'text-slate-400 dark:text-slate-500'}`} />
               <span>{t.label}</span>
-              <span className={`text-[10px] px-1.5 py-0.5 rounded font-sans ${isActive ? 'bg-[#0284c7]/20 text-[#0284c7] dark:text-sky-300' : 'bg-slate-200 dark:bg-slate-800 text-slate-500'}`}>{t.dept}</span>
-              <span className={`text-sm px-2 py-0.5 rounded-full font-mono font-bold ${isActive ? 'bg-[#0284c7] text-white dark:bg-sky-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>{t.count}</span>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded font-sans ${isActive ? 'bg-pms-cobalt/20 text-pms-cobalt dark:text-sky-300' : 'bg-slate-200 dark:bg-slate-800 text-slate-500'}`}>{t.dept}</span>
+              <span className={`text-sm px-2 py-0.5 rounded-full font-mono font-bold ${isActive ? 'bg-pms-cobalt text-white dark:bg-sky-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>{t.count}</span>
             </button>
           );
         })}
@@ -554,7 +554,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
         <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/80 dark:bg-slate-950/60">
           <div className="text-sm font-bold text-slate-900 dark:text-slate-200 flex items-center space-x-2 flex-wrap gap-1">
             <span>{tableMeta.label}</span>
-            <span className="bg-sky-100 dark:bg-sky-500/10 text-[#0284c7] dark:text-sky-400 border border-sky-300 dark:border-sky-500/20 text-sm px-2 py-0.5 rounded font-sans font-semibold">
+            <span className="bg-pms-cobalt-light text-pms-cobalt border border-sky-300 dark:border-sky-500/20 text-sm px-2 py-0.5 rounded font-sans font-semibold">
               權責: {tablesMeta.find(t => t.key === activeTable)?.dept}
             </span>
             <span className="text-slate-500 dark:text-slate-400 font-mono text-sm">({activeTable})</span>
@@ -566,7 +566,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
             <span className="text-sm text-slate-500 dark:text-slate-400 font-mono">共 {tableData.length} 筆</span>
             <button
               onClick={handleStartAdd}
-              className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#0284c7] hover:bg-sky-600 text-white rounded-xl text-sm font-bold shadow-sm shadow-sky-600/20 transition-colors cursor-pointer"
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-pms-cobalt hover:bg-pms-cobalt-hover text-white rounded-xl text-sm font-bold shadow-sm shadow-sky-600/20 transition-colors cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>新增一筆</span>
@@ -603,7 +603,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
               {/* ── Add Row ─────────────────────────────────────────────── */}
               {isAddingRow && (
-                <tr className="bg-sky-50/60 dark:bg-sky-950/30 border-b-2 border-[#0284c7]/30">
+                <tr className="bg-sky-50/60 dark:bg-sky-950/30 border-b-2 border-pms-cobalt/30">
                   {tableMeta.fields.map(field => (
                     <td key={field.key} className="px-3 py-2.5">
                       {field.editability === 'computed' ? (
@@ -618,7 +618,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
                   ))}
                   <td className="px-3 py-2.5 text-center">
                     <div className="flex items-center justify-center space-x-1">
-                      <button onClick={handleConfirmAdd} className="flex items-center space-x-1 px-2.5 py-1 bg-[#059669] hover:bg-emerald-500 text-white rounded-lg text-sm font-bold cursor-pointer"><CheckCircle2 className="w-3 h-3" /><span>確認新增</span></button>
+                      <button onClick={handleConfirmAdd} className="flex items-center space-x-1 px-2.5 py-1 bg-pms-pass hover:bg-emerald-500 text-white rounded-lg text-sm font-bold cursor-pointer"><CheckCircle2 className="w-3 h-3" /><span>確認新增</span></button>
                       <button onClick={handleCancelAdd} className="flex items-center space-x-1 px-2 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-sm cursor-pointer"><XCircle className="w-3 h-3" /></button>
                     </div>
                   </td>
@@ -664,7 +664,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
                         <div className="flex items-center justify-center space-x-1">
                           <button
                             onClick={() => handleSave(record)}
-                            className="flex items-center space-x-1 px-2.5 py-1 bg-[#059669] hover:bg-emerald-500 text-white rounded-lg text-sm font-bold cursor-pointer shadow-sm"
+                            className="flex items-center space-x-1 px-2.5 py-1 bg-pms-pass hover:bg-emerald-500 text-white rounded-lg text-sm font-bold cursor-pointer shadow-sm"
                           >
                             <CheckCircle2 className="w-3 h-3" />
                             <span>儲存</span>
@@ -680,7 +680,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
                         <div className="flex items-center justify-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => handleStartEdit(record)}
-                            className="text-slate-400 hover:text-[#0284c7] dark:hover:text-sky-400 p-1.5 rounded-lg hover:bg-sky-50 dark:hover:bg-sky-950/40 transition-colors cursor-pointer"
+                            className="text-slate-400 hover:text-pms-cobalt dark:hover:text-sky-400 p-1.5 rounded-lg hover:bg-sky-50 dark:hover:bg-sky-950/40 transition-colors cursor-pointer"
                             title="編輯此筆"
                           >
                             <Pencil className="w-3.5 h-3.5" />
@@ -790,7 +790,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
                   <div className="flex items-center space-x-2 font-mono">
                     <span className="text-red-600 dark:text-red-400 line-through">{field.formatDisplay ? field.formatDisplay(oldVal) : String(oldVal ?? '—')}</span>
                     <span className="text-slate-400">→</span>
-                    <span className="text-[#059669] dark:text-emerald-400 font-bold">{field.formatDisplay ? field.formatDisplay(newVal) : String(newVal ?? '—')}</span>
+                    <span className="text-pms-pass dark:text-emerald-400 font-bold">{field.formatDisplay ? field.formatDisplay(newVal) : String(newVal ?? '—')}</span>
                   </div>
                 </div>
               ))}

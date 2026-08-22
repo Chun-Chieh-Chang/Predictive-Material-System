@@ -179,7 +179,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
       <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xl shadow-black/5 dark:shadow-black/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="bg-emerald-50 dark:bg-emerald-950 text-[#059669] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 text-sm font-bold px-2.5 py-0.5 rounded-md font-mono">
+            <span className="bg-emerald-50 dark:bg-emerald-950 text-pms-pass dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 text-sm font-bold px-2.5 py-0.5 rounded-md font-mono">
               LOSSLESS DATA GATEWAY
             </span>
             <span className="text-sm text-slate-500">雙向資料交換中心</span>
@@ -195,9 +195,9 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
             onClick={handleLoadDemoSample}
             id="exchange-load-demo-btn"
             title="載入包含品號與訂單的完整演練資料包"
-            className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-sm font-semibold bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/80 dark:hover:bg-sky-900 text-[#0284c7] dark:text-sky-300 border border-sky-200 dark:border-sky-800/60 transition-colors cursor-pointer"
+            className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-sm font-semibold bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/80 dark:hover:bg-sky-900 text-pms-cobalt dark:text-sky-300 border border-sky-200 dark:border-sky-800/60 transition-colors cursor-pointer"
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#0284c7] dark:text-sky-400" />
+            <Sparkles className="w-3.5 h-3.5 text-pms-cobalt dark:text-sky-400" />
             <span>載入示範演練數據 (SAMPLE)</span>
           </button>
 
@@ -219,13 +219,13 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
         {/* Card 1: Formal Production Excel */}
         <div className="col-span-12 xl:col-span-3 bg-white dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-4">
           <div className="flex items-center space-x-3 pb-3 border-b border-slate-200 dark:border-slate-800">
-            <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-[#059669] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-pms-pass dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center shrink-0">
               <FileSpreadsheet className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">正式生產部署專區</h3>
-                <span className="text-[10px] bg-emerald-50 dark:bg-emerald-950 text-[#059669] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 px-1.5 py-0.5 rounded font-mono font-bold whitespace-nowrap">PROD</span>
+                <span className="text-[10px] bg-emerald-50 dark:bg-emerald-950 text-pms-pass dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 px-1.5 py-0.5 rounded font-mono font-bold whitespace-nowrap">PROD</span>
               </div>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">供各權責單位填報真實資料</p>
             </div>
@@ -269,13 +269,13 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
         {/* Card 2: Offline Demo / Training Sample Package */}
         <div className="col-span-12 xl:col-span-3 bg-white dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-4">
           <div className="flex items-center space-x-3 pb-3 border-b border-slate-200 dark:border-slate-800">
-            <div className="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-500/10 text-[#0284c7] dark:text-sky-400 border border-sky-200 dark:border-sky-500/20 flex items-center justify-center shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-500/10 text-pms-cobalt dark:text-sky-400 border border-sky-200 dark:border-sky-500/20 flex items-center justify-center shrink-0">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">離線示範演練測試包</h3>
-                <span className="text-[10px] bg-sky-50 dark:bg-sky-950 text-[#0284c7] dark:text-sky-400 border border-sky-200 dark:border-sky-800/60 px-1.5 py-0.5 rounded font-mono font-bold whitespace-nowrap">SAMPLE</span>
+                <span className="text-[10px] bg-sky-50 dark:bg-sky-950 text-pms-cobalt dark:text-sky-400 border border-sky-200 dark:border-sky-800/60 px-1.5 py-0.5 rounded font-mono font-bold whitespace-nowrap">SAMPLE</span>
               </div>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">人員培訓、系統演練、功能驗證</p>
             </div>
@@ -292,9 +292,9 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
                 onNotify('離線示範演練測試包已成功匯出，標明 SAMPLE 供演練使用！', 'success');
               }}
               id="exchange-download-demo-btn"
-              className="w-full flex items-center justify-center space-x-2 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/60 dark:hover:bg-sky-900/80 text-[#0284c7] dark:text-sky-200 font-semibold text-sm border border-sky-200 dark:border-sky-800/60 transition-colors cursor-pointer"
+              className="w-full flex items-center justify-center space-x-2 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/60 dark:hover:bg-sky-900/80 text-pms-cobalt dark:text-sky-200 font-semibold text-sm border border-sky-200 dark:border-sky-800/60 transition-colors cursor-pointer"
             >
-              <Upload className="w-3.5 h-3.5 text-[#0284c7] dark:text-sky-400" />
+              <Upload className="w-3.5 h-3.5 text-pms-cobalt dark:text-sky-400" />
               <span>匯出示範演練數據包 (.xlsx)</span>
             </button>
           </div>
@@ -303,7 +303,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
         {/* Card 3: JSON Export */}
         <div className="col-span-12 xl:col-span-3 bg-white dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-4">
           <div className="flex items-center space-x-3 pb-3 border-b border-slate-200 dark:border-slate-800">
-            <div className="w-9 h-9 rounded-xl bg-sky-50 dark:bg-blue-500/10 text-[#0284c7] dark:text-blue-400 border border-sky-200 dark:border-blue-500/20 flex items-center justify-center shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-sky-50 dark:bg-blue-500/10 text-pms-cobalt dark:text-blue-400 border border-sky-200 dark:border-blue-500/20 flex items-center justify-center shrink-0">
               <FileCode className="w-5 h-5" />
             </div>
             <div>
@@ -347,8 +347,8 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
               </div>
 
               <div className="flex items-center space-x-1 shrink-0 ml-2">
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-[#059669] dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">.xlsx</span>
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sky-50 dark:bg-blue-950 text-[#0284c7] dark:text-blue-400 border border-sky-200 dark:border-blue-800">.json</span>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-pms-pass dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">.xlsx</span>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sky-50 dark:bg-blue-950 text-pms-cobalt dark:text-blue-400 border border-sky-200 dark:border-blue-800">.json</span>
               </div>
             </div>
 
@@ -374,11 +374,11 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
 
               <div className="flex items-center justify-center space-x-2 mb-2">
                 <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800/80 flex items-center justify-center">
-                  <FileSpreadsheet className="w-4 h-4 text-[#059669] dark:text-emerald-400" />
+                  <FileSpreadsheet className="w-4 h-4 text-pms-pass dark:text-emerald-400" />
                 </div>
                 <div className="text-slate-400 font-bold text-sm">+</div>
                 <div className="w-8 h-8 rounded-lg bg-sky-50 dark:bg-blue-950/60 border border-sky-300 dark:border-blue-800/80 flex items-center justify-center">
-                  <FileCode className="w-4 h-4 text-[#0284c7] dark:text-blue-400" />
+                  <FileCode className="w-4 h-4 text-pms-cobalt dark:text-blue-400" />
                 </div>
               </div>
 
@@ -415,13 +415,13 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
             <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-sm space-y-2">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-slate-900 dark:text-white flex items-center space-x-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#059669] dark:text-emerald-400" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-pms-pass dark:text-emerald-400" />
                   <span>Dry-Run 預檢報告</span>
                 </span>
                 <span
                   className={`text-[10px] font-semibold px-2 py-0.5 rounded border shrink-0 ${
                     dryRunReport.success
-                      ? 'text-[#059669] bg-emerald-50 dark:bg-emerald-950 border-emerald-200 dark:border-emerald-800/60'
+                      ? 'text-pms-pass bg-emerald-50 dark:bg-emerald-950 border-pms-pass-border dark:border-emerald-800/60'
                       : 'text-red-600 bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800/60'
                   }`}
                 >

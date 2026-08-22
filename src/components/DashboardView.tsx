@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿/**
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -272,12 +272,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {db.item_master.length === 0 && (
         <div className="bg-white dark:bg-slate-900/90 border border-sky-300 dark:border-sky-800/60 rounded-2xl p-6 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-xl bg-sky-50 dark:bg-sky-500/10 text-[#0284c7] dark:text-sky-400 border border-sky-200 dark:border-sky-500/20 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-sky-50 dark:bg-sky-500/10 text-pms-cobalt dark:text-sky-400 border border-sky-200 dark:border-sky-500/20 flex items-center justify-center shrink-0">
               <Sparkles className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="text-sm bg-sky-100 dark:bg-sky-950 text-[#0284c7] dark:text-sky-300 border border-sky-300 dark:border-sky-800/60 font-bold px-2 py-0.5 rounded font-mono">
+                <span className="text-sm bg-sky-100 dark:bg-sky-950 text-pms-cobalt dark:text-sky-300 border border-sky-300 dark:border-sky-800/60 font-bold px-2 py-0.5 rounded font-mono">
                   PURE DATABASE READY
                 </span>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">目前系統為純淨空資料庫狀態</h3>
@@ -290,7 +290,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div className="flex items-center space-x-2 shrink-0">
             <button
               onClick={onNavigateToExchange ?? onNavigateToSettings}
-              className="px-4 py-2 bg-[#059669] hover:bg-emerald-600 text-white rounded-xl text-sm font-bold transition-all shadow-md cursor-pointer"
+              className="px-4 py-2 bg-pms-pass hover:bg-emerald-600 text-white rounded-xl text-sm font-bold transition-all shadow-md cursor-pointer"
             >
               前往資料交換中心匯入
             </button>
@@ -301,7 +301,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* 1. Top Metrics Bento Grid Quick View (4 Tiles with QC Accent Borders) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1: Shortage Count */}
-        <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 border-l-4 border-l-[#dc2626] rounded-2xl p-5 flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-lg shadow-black/5 dark:shadow-black/20">
+        <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 border-l-4 border-l-pms-alert rounded-2xl p-5 flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-lg shadow-black/5 dark:shadow-black/20">
           <div className="flex flex-col">
             <span className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">
               預期缺料 Shortage Risk
@@ -319,7 +319,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* Metric 2: Overstock / Excess & Capacity Count */}
-        <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 border-l-4 border-l-[#d97706] rounded-2xl p-5 flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-lg shadow-black/5 dark:shadow-black/20">
+        <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 border-l-4 border-l-pms-warning rounded-2xl p-5 flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-lg shadow-black/5 dark:shadow-black/20">
           <div className="flex flex-col">
             <span className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">
               超備呆滯 / 實體爆倉
@@ -343,12 +343,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* Metric 3: Total Forecast Demand */}
-        <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 border-l-4 border-l-[#0284c7] rounded-2xl p-5 flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-lg shadow-black/5 dark:shadow-black/20">
+        <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 border-l-4 border-l-pms-cobalt rounded-2xl p-5 flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-lg shadow-black/5 dark:shadow-black/20">
           <div className="flex flex-col">
             <span className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">
               業務監控總需求 Total Demand
             </span>
-            <span className="text-2xl font-mono font-bold text-[#0284c7] dark:text-blue-400 mt-1">
+            <span className="text-2xl font-mono font-bold text-pms-cobalt dark:text-blue-400 mt-1">
               {totalForecastPCS.toLocaleString()} <span className="text-sm font-normal text-slate-500 dark:text-slate-400">PCS</span>
             </span>
             <span className="text-sm text-slate-500 dark:text-slate-400 mt-1">
@@ -356,17 +356,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </span>
           </div>
           <div className="w-12 h-12 bg-sky-50 dark:bg-blue-500/10 border border-sky-200 dark:border-blue-500/20 rounded-xl flex items-center justify-center">
-            <Package className="w-6 h-6 text-[#0284c7] dark:text-blue-400" />
+            <Package className="w-6 h-6 text-pms-cobalt dark:text-blue-400" />
           </div>
         </div>
 
         {/* Metric 4: Molds & Cavities Status */}
-        <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 border-l-4 border-l-[#4f46e5] rounded-2xl p-5 flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-lg shadow-black/5 dark:shadow-black/20">
+        <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 border-l-4 border-l-pms-iso rounded-2xl p-5 flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-lg shadow-black/5 dark:shadow-black/20">
           <div className="flex flex-col">
             <span className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">
               模具妥善監控 Molds Active
             </span>
-            <span className="text-2xl font-mono font-bold text-[#4f46e5] dark:text-purple-400 mt-1">
+            <span className="text-2xl font-mono font-bold text-pms-iso dark:text-purple-400 mt-1">
               0{db.mold_master.length} <span className="text-sm font-normal text-slate-500 dark:text-slate-400">套模具</span>
             </span>
             <span className="text-sm text-amber-600 dark:text-amber-400/90 mt-1 flex items-center gap-1.5 font-medium">
@@ -375,7 +375,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </span>
           </div>
           <div className="w-12 h-12 bg-purple-50 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-500/20 rounded-xl flex items-center justify-center">
-            <Cpu className="w-6 h-6 text-[#4f46e5] dark:text-purple-400" />
+            <Cpu className="w-6 h-6 text-pms-iso dark:text-purple-400" />
           </div>
         </div>
       </div>
@@ -527,8 +527,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   onClick={() => setSandboxTab('demand')}
                   className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
                     sandboxTab === 'demand'
-                      ? 'bg-[#e0f2fe] text-[#0284c7] border-[#0284c7] shadow-xs dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-600'
-                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:text-slate-900 hover:bg-[#f8fafc]'
+                      ? 'bg-pms-cobalt-light text-pms-cobalt border-pms-cobalt shadow-xs dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-600'
+                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:text-slate-900 hover:bg-pms-bg-subtle'
                   }`}
                 >
                   <Package className="w-3.5 h-3.5" />
@@ -539,8 +539,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   onClick={() => setSandboxTab('molding')}
                   className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
                     sandboxTab === 'molding'
-                      ? 'bg-[#eef2ff] text-[#4f46e5] border-[#4f46e5] shadow-xs dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-600'
-                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:text-slate-900 hover:bg-[#f8fafc]'
+                      ? 'bg-pms-iso-bg text-pms-iso border-pms-iso shadow-xs dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-600'
+                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:text-slate-900 hover:bg-pms-bg-subtle'
                   }`}
                 >
                   <Cpu className="w-3.5 h-3.5" />
@@ -551,8 +551,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   onClick={() => setSandboxTab('quality_stock')}
                   className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
                     sandboxTab === 'quality_stock'
-                      ? 'bg-[#ecfdf5] text-[#059669] border-[#059669] shadow-xs dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-600'
-                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:text-slate-900 hover:bg-[#f8fafc]'
+                      ? 'bg-pms-pass-bg text-pms-pass border-pms-pass shadow-xs dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-600'
+                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:text-slate-900 hover:bg-pms-bg-subtle'
                   }`}
                 >
                   <Warehouse className="w-3.5 h-3.5" />
@@ -563,8 +563,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   onClick={() => setSandboxTab('procure')}
                   className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
                     sandboxTab === 'procure'
-                      ? 'bg-[#ecfeff] text-[#0891b2] border-[#0891b2] shadow-xs dark:bg-cyan-950/60 dark:text-cyan-300 dark:border-cyan-600'
-                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:text-slate-900 hover:bg-[#f8fafc]'
+                      ? 'bg-pms-cyan-light text-pms-cyan border-pms-cyan shadow-xs dark:bg-cyan-950/60 dark:text-cyan-300 dark:border-cyan-600'
+                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:text-slate-900 hover:bg-pms-bg-subtle'
                   }`}
                 >
                   <Truck className="w-3.5 h-3.5" />
@@ -1316,17 +1316,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 key={idx}
                 className={`rounded-xl p-5 border transition-all flex flex-col justify-between shadow-xs ${
                   isRed
-                    ? 'bg-white dark:bg-red-950/20 border-slate-200 dark:border-red-500/30 border-l-4 border-l-[#dc2626]'
+                    ? 'bg-white dark:bg-red-950/20 border-slate-200 dark:border-red-500/30 border-l-4 border-l-pms-alert'
                     : isYellow
-                    ? 'bg-white dark:bg-amber-950/20 border-slate-200 dark:border-amber-500/30 border-l-4 border-l-[#d97706]'
+                    ? 'bg-white dark:bg-amber-950/20 border-slate-200 dark:border-amber-500/30 border-l-4 border-l-pms-warning'
                     : isPurple
-                    ? 'bg-white dark:bg-purple-950/20 border-slate-200 dark:border-purple-500/30 border-l-4 border-l-[#4f46e5]'
-                    : 'bg-white dark:bg-emerald-950/20 border-slate-200 dark:border-emerald-500/30 border-l-4 border-l-[#059669]'
+                    ? 'bg-white dark:bg-purple-950/20 border-slate-200 dark:border-purple-500/30 border-l-4 border-l-pms-iso'
+                    : 'bg-white dark:bg-emerald-950/20 border-slate-200 dark:border-emerald-500/30 border-l-4 border-l-pms-pass'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold font-mono bg-[#eff6ff] dark:bg-slate-900 px-2.5 py-1 rounded-md border border-[#bae6fd] dark:border-slate-700 text-[#0284c7] dark:text-sky-300 shadow-xs">
+                    <span className="text-sm font-bold font-mono bg-pms-cobalt-light dark:bg-slate-900 px-2.5 py-1 rounded-md border border-pms-cobalt-border dark:border-slate-700 text-pms-cobalt dark:text-sky-300 shadow-xs">
                       {alert.sku}
                     </span>
                     <span className="text-sm font-bold text-slate-500 dark:text-slate-400 font-mono">{alert.customer}</span>

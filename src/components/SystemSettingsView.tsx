@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -309,8 +309,8 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
           onClick={() => setActiveTab('all')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
             activeTab === 'all'
-              ? 'bg-[#eef2ff] text-[#4f46e5] border-[#4f46e5] shadow-xs dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-600'
-              : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-[#f8fafc] dark:hover:bg-slate-900 hover:text-slate-900'
+              ? 'bg-pms-iso-bg text-pms-iso border-pms-iso shadow-xs dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-600'
+              : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-pms-bg-subtle dark:hover:bg-slate-900 hover:text-slate-900'
           }`}
         >
           <Sliders className="w-3.5 h-3.5" />
@@ -321,8 +321,8 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
           onClick={() => setActiveTab('alerts')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
             activeTab === 'alerts'
-              ? 'bg-[#fef2f2] text-[#dc2626] border-[#dc2626] shadow-xs dark:bg-red-950/60 dark:text-red-300 dark:border-red-600'
-              : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-[#f8fafc] dark:hover:bg-slate-900 hover:text-slate-900'
+              ? 'bg-pms-alert-bg text-pms-alert border-pms-alert shadow-xs dark:bg-red-950/60 dark:text-red-300 dark:border-red-600'
+              : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-pms-bg-subtle dark:hover:bg-slate-900 hover:text-slate-900'
           }`}
         >
           <AlertTriangle className="w-3.5 h-3.5" />
@@ -333,8 +333,8 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
           onClick={() => setActiveTab('mrp')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
             activeTab === 'mrp'
-              ? 'bg-[#e0f2fe] text-[#0284c7] border-[#0284c7] shadow-xs dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-600'
-              : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-[#f8fafc] dark:hover:bg-slate-900 hover:text-slate-900'
+              ? 'bg-pms-cobalt-light text-pms-cobalt border-pms-cobalt shadow-xs dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-600'
+              : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-pms-bg-subtle dark:hover:bg-slate-900 hover:text-slate-900'
           }`}
         >
           <Layers className="w-3.5 h-3.5" />
@@ -345,8 +345,8 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
           onClick={() => setActiveTab('yield')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
             activeTab === 'yield'
-              ? 'bg-[#ecfdf5] text-[#059669] border-[#059669] shadow-xs dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-600'
-              : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-[#f8fafc] dark:hover:bg-slate-900 hover:text-slate-900'
+              ? 'bg-pms-pass-bg text-pms-pass border-pms-pass shadow-xs dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-600'
+              : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-pms-bg-subtle dark:hover:bg-slate-900 hover:text-slate-900'
           }`}
         >
           <Percent className="w-3.5 h-3.5" />
@@ -636,7 +636,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                   <div>
                     <div className="font-bold text-white flex items-center space-x-1.5">
                       <span>保守最重克重原則 (Conservative Max Weight)</span>
-                      <span className="text-[10px] bg-[#e0f2fe] dark:bg-blue-950/60 text-[#0284c7] dark:text-blue-300 border border-[#bae6fd] dark:border-blue-800/60 px-1.5 py-0.5 rounded font-mono font-bold">
+                      <span className="text-[10px] bg-pms-cobalt-light dark:bg-blue-950/60 text-pms-cobalt dark:text-blue-300 border border-pms-cobalt-border dark:border-blue-800/60 px-1.5 py-0.5 rounded font-mono font-bold">
                         PRD 預設
                       </span>
                     </div>

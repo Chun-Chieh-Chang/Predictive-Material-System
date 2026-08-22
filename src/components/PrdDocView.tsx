@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -204,8 +204,8 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
           onClick={() => setActiveTab('rich')}
           className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
             activeTab === 'rich'
-              ? 'bg-[#e0f2fe] text-[#0284c7] border-[#0284c7] shadow-xs dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-600'
-              : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-[#f8fafc] dark:hover:bg-slate-900 hover:text-slate-900'
+              ? 'bg-pms-cobalt-light text-pms-cobalt border-pms-cobalt shadow-xs dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-600'
+              : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-pms-bg-subtle dark:hover:bg-slate-900 hover:text-slate-900'
           }`}
         >
           <BookOpen className="w-4 h-4" />
@@ -216,10 +216,10 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
           onClick={() => setActiveTab('dictionary')}
           className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
             activeTab === 'dictionary'
-              ? 'bg-[#eef2ff] text-[#4f46e5] border-[#4f46e5] shadow-xs dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-600'
-              : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-[#f8fafc] dark:hover:bg-slate-900 hover:text-slate-900'
-          }`}
-        >
+              ? 'bg-pms-iso-bg text-pms-iso border-pms-iso-border shadow-xs dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-600'
+              : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-pms-bg-subtle dark:hover:bg-slate-900 hover:text-slate-900'
+            }`}
+          >
           <ShieldCheck className="w-4 h-4" />
           <span>統一用詞辭典 (Terminology)</span>
         </button>
@@ -229,7 +229,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
           className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all border cursor-pointer ${
             activeTab === 'markdown'
               ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border-slate-400 dark:border-slate-700 shadow-xs'
-              : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-[#f8fafc] dark:hover:bg-slate-900 hover:text-slate-900'
+              : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-pms-bg-subtle dark:hover:bg-slate-900 hover:text-slate-900'
           }`}
         >
           <Code className="w-4 h-4" />
@@ -426,7 +426,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
             <div className="p-5 bg-purple-950/60 rounded-xl border border-purple-500/40">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-purple-200 text-sm">妥善穴數 (Active Cavities)</span>
-                <span className="text-sm bg-[#eef2ff] dark:bg-purple-950/60 text-[#4f46e5] dark:text-purple-300 border border-[#c7d2fe] dark:border-purple-800/60 px-2 py-0.5 rounded font-mono font-bold">
+                <span className="text-sm bg-pms-iso-bg dark:bg-purple-950/60 text-pms-iso dark:text-purple-300 border border-pms-iso-border dark:border-purple-800/60 px-2 py-0.5 rounded font-mono font-bold">
                   原: 現況穴數
                 </span>
               </div>

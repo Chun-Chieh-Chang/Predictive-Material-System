@@ -147,7 +147,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center justify-between py-3 border-b border-slate-200 dark:border-slate-800/50">
           {/* Brand & Version */}
           <div className="flex items-center space-x-3.5">
-            <div className="w-10 h-10 bg-[#0284c7] rounded-xl flex items-center justify-center font-bold text-white text-xl shadow-md shadow-sky-600/25 shrink-0">
+            <div className="w-10 h-10 bg-pms-cobalt rounded-xl flex items-center justify-center font-bold text-white text-xl shadow-md shadow-sky-600/25 shrink-0">
               料
             </div>
             <div>
@@ -163,7 +163,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   className={`text-sm font-mono px-2 py-0.5 rounded-md font-semibold tracking-wide transition-all cursor-pointer select-none ${
                     adminUnlocked
                       ? 'bg-gradient-to-r from-amber-500 to-yellow-400 text-amber-950 border-amber-400 shadow-lg shadow-amber-500/30 animate-pulse'
-                      : 'bg-[#eef2ff] dark:bg-indigo-950/60 text-[#4f46e5] dark:text-indigo-400 border border-[#c7d2fe] dark:border-indigo-800/60 hover:border-[#4f46e5] dark:hover:border-indigo-400'
+                      : 'bg-pms-iso-bg dark:bg-indigo-950/60 text-pms-iso dark:text-indigo-400 border border-pms-iso-border dark:border-indigo-800/60 hover:border-pms-iso dark:hover:border-indigo-400'
                   }`}
                   title={adminUnlocked ? 'Admin 管理模式已啟用（點擊重新鎖定）' : 'ISO 標準認證版號標籤'}
                 >
@@ -182,15 +182,15 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Telemetry Status & Actions */}
           <div className="flex items-center space-x-3 sm:space-x-4">
             {/* Connection Status Indicator */}
-            <div className="hidden lg:flex items-center space-x-2 bg-[#ecfdf5] dark:bg-emerald-950/40 border border-[#a7f3d0] dark:border-emerald-800/60 text-[#065f46] dark:text-emerald-400 px-2.5 py-1 rounded-md shadow-xs">
+            <div className="hidden lg:flex items-center space-x-2 bg-pms-pass-bg dark:bg-emerald-950/40 border border-pms-pass-border dark:border-emerald-800/60 text-pms-pass-text dark:text-emerald-400 px-2.5 py-1 rounded-md shadow-xs">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#059669]"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-pms-pass"></span>
               </span>
               <span className="text-sm font-semibold">
                 內網伺服器連線中
               </span>
-              <span className="text-[11px] text-[#059669]/80 dark:text-emerald-400/80 font-mono ml-1">
+              <span className="text-[11px] text-pms-pass/80 dark:text-emerald-400/80 font-mono ml-1">
                 <TaiwanDate />
               </span>
             </div>

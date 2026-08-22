@@ -2,6 +2,59 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  /* ── PMS Brand Core Colors ─────────────────────────────────────── */
+  --color-pms-cobalt: var(--med-cobalt);
+  --color-pms-cobalt-hover: var(--med-cobalt-hover);
+  --color-pms-cobalt-light: var(--med-cobalt-light);
+  --color-pms-cobalt-border: var(--med-cobalt-border);
+
+  --color-pms-cyan: var(--med-cyan);
+  --color-pms-cyan-light: var(--med-cyan-light);
+
+  --color-pms-pass: var(--med-pass);
+  --color-pms-pass-bg: var(--med-pass-bg);
+  --color-pms-pass-border: var(--med-pass-border);
+  --color-pms-pass-text: var(--med-pass-text);
+
+  --color-pms-warning: var(--med-warning);
+  --color-pms-warning-bg: var(--med-warning-bg);
+  --color-pms-warning-border: var(--med-warning-border);
+  --color-pms-warning-text: var(--med-warning-text);
+
+  --color-pms-alert: var(--med-alert);
+  --color-pms-alert-bg: var(--med-alert-bg);
+  --color-pms-alert-border: var(--med-alert-border);
+  --color-pms-alert-text: var(--med-alert-text);
+
+  --color-pms-iso: var(--med-iso-badge);
+  --color-pms-iso-bg: var(--med-iso-bg);
+  --color-pms-iso-border: var(--med-iso-border);
+
+  /* ── Surface Tokens ────────────────────────────────────────────── */
+  --color-pms-bg-app: var(--bg-app);
+  --color-pms-bg-workbench: var(--bg-workbench);
+  --color-pms-bg-surface: var(--bg-surface);
+  --color-pms-bg-subtle: var(--bg-surface-subtle);
+  --color-pms-bg-card-dark: var(--bg-card-dark);
+
+  /* ── Typography Tokens ─────────────────────────────────────────── */
+  --color-pms-text-primary: var(--text-primary);
+  --color-pms-text-secondary: var(--text-secondary);
+  --color-pms-text-muted: var(--text-muted);
+  --color-pms-text-light: var(--text-light);
+
+  /* ── Border & Shadow Tokens ────────────────────────────────────── */
+  --color-pms-border-precision: var(--border-precision);
+  --color-pms-border-subtle: var(--border-subtle);
+  --color-pms-border-dark: var(--border-dark);
+
+  --shadow-pms-instrument: var(--shadow-instrument);
+  --shadow-pms-card: var(--shadow-card);
+  --shadow-pms-popover: var(--shadow-popover);
+  --shadow-pms-modal: var(--shadow-modal);
+}
+
 :root {
   /* QC Annual Summary Design Tokens */
   --bg-app: #0b132b;
