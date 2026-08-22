@@ -20,6 +20,7 @@ export const EMPTY_DATABASE: SystemDatabase = {
   audit_log: [],
   material_classes: DEFAULT_MATERIAL_CLASSES,
   sorting_actual_yield_log: [], // Phase 3 初期為空，待實際全檢紀錄匯入
+  color_mixing_log: [], // 色母/色粉混合製程紀錄（Phase 1 初期為空，待現場作業後填入）
 };
 
 // 2. 離線示範演練數據庫 (Demo / Training Sample Database - 嚴禁與正式資料混淆)
@@ -95,6 +96,48 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       color: '本白',
       unit: 'KG',
       description: '台塑化高流動性醫療包裝級 PP 原料'
+    },
+    // Color Masterbatch (色母) -  pellet form color concentrate
+    {
+      sku: 'CB-BLACK-01',
+      alt_sku: null,
+      customer_id: '廠內',
+      material_class: 'RAW',
+      category: '黑色色母 (Black Masterbatch)',
+      color: '黑色',
+      unit: 'KG',
+      description: '高濃度黑色色母粒，添加比例 2~3%，適用於所有 SET 色系需求'
+    },
+    {
+      sku: 'CB-WHITE-01',
+      alt_sku: null,
+      customer_id: '廠內',
+      material_class: 'RAW',
+      category: '白色色母 (White Masterbatch)',
+      color: '白色',
+      unit: 'KG',
+      description: '高濃度白色色母粒，添加比例 2~3%，適用於白底 SET 需求'
+    },
+    // Color Powder (色粉) -  powder form color additive
+    {
+      sku: 'CP-RED-01',
+      alt_sku: null,
+      customer_id: '廠內',
+      material_class: 'RAW',
+      category: '紅色色粉 (Red Color Powder)',
+      color: '鮮紅',
+      unit: 'KG',
+      description: '水性紅色色粉，添加比例 0.5~1.0%，需與基礎樹脂預先混合後射出'
+    },
+    {
+      sku: 'CP-BLUE-01',
+      alt_sku: null,
+      customer_id: '廠內',
+      material_class: 'RAW',
+      category: '藍色色粉 (Blue Color Powder)',
+      color: '寶藍',
+      unit: 'KG',
+      description: '水性藍色色粉，添加比例 0.5~1.0%，需與基礎樹脂預先混合後射出'
     }
   ],
 
@@ -188,6 +231,19 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       std_mfg_scrap_rate: 0.02,
       remarks: '高產能 24 穴模 (目前妥善 22 穴)',
       valid_from: '2025-01-01', valid_to: null
+    },
+    // 色母配色 BOM 範例：A01-200-131 黑色色系（添加 2% 黑色色母）
+    {
+      sku: 'A01-200-131',
+      mold_id: 'MI17193',
+      rm_sku: 'CB-BLACK-01',
+      net_mold_weight_g: 9.63,
+      runner_weight_g: 8.32,
+      is_primary_mold: false,
+      std_mfg_scrap_rate: 0.03,
+      color_mixing_ratio_pct: 2.0,
+      remarks: '黑色配色版本，色母添加量 2%，基礎樹脂為 TERLUX 2802（需同步於混合紀錄檔記錄）',
+      valid_from: '2025-06-01', valid_to: null
     }
   ],
 
@@ -241,6 +297,47 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       safety_stock_kg: 800,
       max_storage_capacity_kg: 12000, // 原料倉實體上限 12 噸
       unit_price_usd: 1.65
+    },
+    // 色母/色粉供應商規則（廠內调配，無需外部採購）
+    {
+      rm_sku: 'CB-BLACK-01',
+      supplier_name: '廠內色母庫存',
+      lead_time_days: 1,
+      moq_kg: 10,
+      safety_stock_kg: 50,
+      max_storage_capacity_kg: 500,
+      unit_price_usd: 8.50,
+      unit_price_twd: 270
+    },
+    {
+      rm_sku: 'CB-WHITE-01',
+      supplier_name: '廠內色母庫存',
+      lead_time_days: 1,
+      moq_kg: 10,
+      safety_stock_kg: 50,
+      max_storage_capacity_kg: 500,
+      unit_price_usd: 8.50,
+      unit_price_twd: 270
+    },
+    {
+      rm_sku: 'CP-RED-01',
+      supplier_name: '廠內色粉庫存',
+      lead_time_days: 1,
+      moq_kg: 5,
+      safety_stock_kg: 20,
+      max_storage_capacity_kg: 200,
+      unit_price_usd: 12.00,
+      unit_price_twd: 380
+    },
+    {
+      rm_sku: 'CP-BLUE-01',
+      supplier_name: '廠內色粉庫存',
+      lead_time_days: 1,
+      moq_kg: 5,
+      safety_stock_kg: 20,
+      max_storage_capacity_kg: 200,
+      unit_price_usd: 12.00,
+      unit_price_twd: 380
     }
   ],
 
@@ -402,6 +499,43 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
   audit_log: [],
   material_classes: DEFAULT_MATERIAL_CLASSES,
   sorting_actual_yield_log: [], // Phase 3 初期為空，待實際全檢紀錄匯入
+  color_mixing_log: [
+    // 示範：黑色色母預先混合紀錄
+    {
+      mix_log_id: 'MIX-20260820-001',
+      batch_no: 'BATCH-BLK-20260820',
+      mixing_date: '2026-08-20',
+      operator_id: 'op_tony',
+      base_resin_sku: 'TERLUX 2802',
+      base_resin_kg: 49.0,
+      colorant_sku: 'CB-BLACK-01',
+      colorant_kg: 1.0,
+      mixing_ratio_pct: 2.04,
+      total_batch_kg: 50.0,
+      mold_id: 'MI17193',
+      sku: 'A01-200-131',
+      process_tag: 'mixed',
+      notes: '黑色 T接頭前導混合批次',
+      created_at: '2026-08-20T08:30:00Z'
+    },
+    {
+      mix_log_id: 'MIX-20260818-002',
+      batch_no: 'BATCH-RD-20260818',
+      mixing_date: '2026-08-18',
+      operator_id: 'op_lisa',
+      base_resin_sku: 'PP-5011',
+      base_resin_kg: 99.5,
+      colorant_sku: 'CP-RED-01',
+      colorant_kg: 0.5,
+      mixing_ratio_pct: 0.50,
+      total_batch_kg: 100.0,
+      mold_id: 'MI20224',
+      sku: 'B02-100-011',
+      process_tag: 'mixed',
+      notes: '紅色 PP 直管試模用預混料',
+      created_at: '2026-08-18T14:15:00Z'
+    }
+  ],
 };
 
 // 預設初次啟動為純淨空庫，不強行硬編碼假資料

@@ -137,6 +137,15 @@ export function calculateMRPForSKU(
   );
 
   const rmSku = activeBOM.rm_sku;
+  const mixingRatioPct = activeBOM.color_mixing_ratio_pct ?? 0;
+
+  // ─── Color Mixing Adjusted RM Calculation ────────────────────────────────────
+  // When color_mixing_ratio_pct > 0, the rm_sku represents a colorant (色母/色粉).
+  // The true base resin requirement must be derived by dividing by (1 + ratio/100).
+  let effectiveResinGrossKg = rmGrossRequirementKg;
+  if (mixingRatioPct > 0) {
+    effectiveResinGrossKg = Number((rmGrossRequirementKg / (1 + mixingRatioPct / 100)).toFixed(2));
+  }
 
   // Phase 3: Raw Material Inventory & PO
   const rmSnapshot = db.inventory_wip_snapshot
@@ -162,14 +171,49 @@ export function calculateMRPForSKU(
   const leadTimeDays = supplierRule.lead_time_days || params.defaultProcurementLeadTimeDays;
 
   // Formula: Net RM Requirement (KG) = Gross RM - OnHand - InTransit + SafetyStock
+  // Note: when mixingRatioPct > 0, rmSku is the colorant; rmNetRequirementKg is colorant net req.
   const rmNetRequirementKg = Math.max(
     0,
-    Number((rmGrossRequirementKg - rmOnHandKg - rmInTransitKg + safetyStockKg).toFixed(2))
+    Number((effectiveResinGrossKg - rmOnHandKg - rmInTransitKg + safetyStockKg).toFixed(2))
   );
 
   // Round up to MOQ
   const suggestedOrderQtyKg =
     rmNetRequirementKg > 0 ? Math.ceil(rmNetRequirementKg / moqKg) * moqKg : 0;
+
+  // ─── Colorant Detail (when mixingRatioPct > 0) ──────────────────────────────
+  let colorantDetail: {
+    colorantSku: string;
+    colorantGrossKg: number;
+    colorantOnHandKg: number;
+    colorantInTransitKg: number;
+    colorantNetRequirementKg: number;
+    colorantSuggestedQtyKg: number;
+    colorantLeadTimeDays: number;
+  } | null = null;
+
+  if (mixingRatioPct > 0) {
+    const colorantGrossKg = Number((rmGrossRequirementKg - effectiveResinGrossKg).toFixed(2));
+    const colorantSnapshot = db.inventory_wip_snapshot
+      .filter((s) => s.sku === rmSku)
+      .sort((a, b) => new Date(b.snapshot_date).getTime() - new Date(a.snapshot_date).getTime())[0];
+    const colorantOnHandKg = colorantSnapshot ? colorantSnapshot.rm_on_hand_kg : 0;
+    const colorantPOs = db.po_in_transit.filter((p) => p.rm_sku === rmSku);
+    const colorantInTransitKg = colorantPOs.reduce((sum, p) => sum + p.in_transit_qty_kg, 0);
+    const colorantRule = db.supplier_rule_master.find((s) => s.rm_sku === rmSku) || {
+      moq_kg: params.defaultMoqKg, lead_time_days: params.defaultProcurementLeadTimeDays, safety_stock_kg: 1000
+    };
+    const colorantNetKg = Math.max(0, Number((colorantGrossKg - colorantOnHandKg - colorantInTransitKg + (colorantRule.safety_stock_kg || 1000)).toFixed(2)));
+    colorantDetail = {
+      colorantSku: rmSku,
+      colorantGrossKg,
+      colorantOnHandKg,
+      colorantInTransitKg,
+      colorantNetRequirementKg: colorantNetKg,
+      colorantSuggestedQtyKg: colorantNetKg > 0 ? Math.ceil(colorantNetKg / (colorantRule.moq_kg || params.defaultMoqKg)) * (colorantRule.moq_kg || params.defaultMoqKg) : 0,
+      colorantLeadTimeDays: colorantRule.lead_time_days || params.defaultProcurementLeadTimeDays,
+    };
+  }
 
   // Suggested Order Date calculation
   const targetDateObj = new Date(targetDate);
@@ -296,6 +340,7 @@ export function calculateMRPForSKU(
     stdScrapRate,
     rmSku,
     rmGrossRequirementKg,
+    colorMixingRatioPct: mixingRatioPct,
     rmOnHandKg,
     rmInTransitKg,
     safetyStockKg,
@@ -308,6 +353,7 @@ export function calculateMRPForSKU(
     daysToDeliver,
     requiredProdDays,
     capacityDeficitDays,
+    colorantDetail,
     alerts
   };
 }

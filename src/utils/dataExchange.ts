@@ -14,7 +14,8 @@ import {
   DemandForecastLog,
   ActualOrder,
   InventoryWIPSnapshot,
-  POInTransit
+  POInTransit,
+  ColorMixingLog
 } from '../types';
 import { DEMO_SAMPLE_DATABASE } from '../data/seedData';
 
@@ -176,6 +177,7 @@ export function exportToExcel(db: SystemDatabase, filename = '料事如神系統
       '單穴克重_克(系統計算)': unitWeight,
       '是否為主模': b.is_primary_mold ? 'TRUE' : 'FALSE',
       '標準生產損耗率': b.std_mfg_scrap_rate,
+      '色母/色粉配比(%)': b.color_mixing_ratio_pct ? Number(b.color_mixing_ratio_pct).toFixed(1) : '—',
       '備註驗證狀態': b.remarks || ''
     };
   });
@@ -281,7 +283,33 @@ export function exportToExcel(db: SystemDatabase, filename = '料事如神系統
   const wsPO = XLSX.utils.json_to_sheet(poData);
   XLSX.utils.book_append_sheet(wb, wsPO, '在途採購訂單檔');
 
-  // Sheet 10: 變更稽核日誌 (唯讀匯出，不可從此工作表匯入覆蓋)
+  // Sheet 10: 色母/色粉混合製程紀錄檔 (製造)
+  const mixLogData = (db.color_mixing_log || []).map((m) => {
+    const baseItem = itemMap.get(m.base_resin_sku);
+    const colorItem = itemMap.get(m.colorant_sku);
+    return {
+      '紀錄ID': m.mix_log_id,
+      '混合批次號': m.batch_no || '',
+      '混合日期': m.mixing_date,
+      '混合作業員ID': m.operator_id,
+      '基礎樹脂品號': m.base_resin_sku,
+      '基礎樹脂說明(參考)': baseItem?.description || baseItem?.category || '',
+      '基礎樹脂用量_KG': m.base_resin_kg,
+      '色母/色粉品號': m.colorant_sku,
+      '色母/色粉說明(參考)': colorItem?.description || colorItem?.category || '',
+      '色母/色粉用量_KG': m.colorant_kg,
+      '混合配比(%)（計算值）': m.mixing_ratio_pct ? Number(m.mixing_ratio_pct).toFixed(2) : '',
+      '混合後總重量_KG（計算值）': m.total_batch_kg ? Number(m.total_batch_kg).toFixed(2) : '',
+      '成型模具編號(FK)': m.mold_id || '',
+      '對應SET品號(FK)': m.sku || '',
+      '製程標籤': m.process_tag || 'mixed',
+      '備註': m.notes || ''
+    };
+  });
+  const wsMixLog = XLSX.utils.json_to_sheet(mixLogData.length > 0 ? mixLogData : [{ '紀錄ID': '(尚無混合紀錄)', '混合批次號': '', '混合日期': '', '混合作業員ID': '', '基礎樹脂品號': '', '基礎樹脂說明(參考)': '', '基礎樹脂用量_KG': '', '色母/色粉品號': '', '色母/色粉說明(參考)': '', '色母/色粉用量_KG': '', '混合配比(%)': '', '混合後總重量_KG': '', '成型模具編號': '', '對應SET品號': '', '製程標籤': '', '備註': '' }]);
+  XLSX.utils.book_append_sheet(wb, wsMixLog, '色母色粉混合製程紀錄');
+
+  // Sheet 11: 變更稽核日誌 (唯讀匯出，不可從此工作表匯入覆蓋)
   const auditLog = db.audit_log || [];
   const auditData = auditLog.length > 0
     ? auditLog.map((entry) => ({
@@ -452,6 +480,7 @@ export function importFromJSON(jsonText: string, currentDB: SystemDatabase): { d
           remarks: row.remarks || '',
           valid_from: String(row.valid_from || '2025-01-01'),
           valid_to: row.valid_to ? String(row.valid_to) : null,
+          color_mixing_ratio_pct: row.color_mixing_ratio_pct != null ? Number(row.color_mixing_ratio_pct) : null,
         };
         if (existingIdx >= 0) {
           newDB.product_mold_bom[existingIdx] = bom;
@@ -461,6 +490,39 @@ export function importFromJSON(jsonText: string, currentDB: SystemDatabase): { d
         count++;
       });
       report.importedCounts['產品模具成型關聯檔'] = count;
+    }
+
+    // Validate and Upsert color_mixing_log
+    if (Array.isArray(parsed.color_mixing_log)) {
+      let count = 0;
+      parsed.color_mixing_log.forEach((row: any) => {
+        if (!row.mix_log_id) return;
+        const existingIdx = newDB.color_mixing_log.findIndex((m) => m.mix_log_id === row.mix_log_id);
+        const mixLog: ColorMixingLog = {
+          mix_log_id: String(row.mix_log_id).trim(),
+          batch_no: row.batch_no ? String(row.batch_no).trim() : null,
+          mixing_date: String(row.mixing_date || new Date().toISOString().slice(0, 10)),
+          operator_id: row.operator_id ? String(row.operator_id).trim() : '',
+          base_resin_sku: row.base_resin_sku ? String(row.base_resin_sku).trim() : '',
+          base_resin_kg: Number(row.base_resin_kg) || 0,
+          colorant_sku: row.colorant_sku ? String(row.colorant_sku).trim() : '',
+          colorant_kg: Number(row.colorant_kg) || 0,
+          mixing_ratio_pct: Number(row.mixing_ratio_pct) || 0,
+          total_batch_kg: Number(row.total_batch_kg) || 0,
+          mold_id: row.mold_id ? String(row.mold_id).trim() : null,
+          sku: row.sku ? String(row.sku).trim() : null,
+          process_tag: ['mixed', 'pre_mix', 'direct'].includes(row.process_tag) ? row.process_tag : 'mixed',
+          notes: row.notes ? String(row.notes).trim() : null,
+          created_at: row.created_at || new Date().toISOString(),
+        };
+        if (existingIdx >= 0) {
+          newDB.color_mixing_log[existingIdx] = mixLog;
+        } else {
+          newDB.color_mixing_log.push(mixLog);
+        }
+        count++;
+      });
+      report.importedCounts['色母色粉混合製程紀錄'] = count;
     }
 
     // Validate other tables
@@ -587,6 +649,7 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
           remarks: r['備註驗證狀態'] || r['remarks'] || '',
           valid_from: String(r['BOM生效起始日'] || r['valid_from'] || '2025-01-01'),
           valid_to: r['BOM失效日'] || r['valid_to'] || null,
+          color_mixing_ratio_pct: r['色母/色粉配比(%)'] && r['色母/色粉配比(%)'] !== '—' ? Number(r['色母/色粉配比(%)']) : null,
         };
         const idx = newDB.product_mold_bom.findIndex((b) => b.sku === bom.sku && b.mold_id === bom.mold_id);
         if (idx >= 0) newDB.product_mold_bom[idx] = bom;
@@ -745,6 +808,39 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
         count++;
       });
       report.importedCounts['在途採購訂單檔'] = count;
+    }
+
+    // Sheet: 色母/色粉混合製程紀錄檔
+    const sheetMixLog = workbook.Sheets['色母色粉混合製程紀錄'] || workbook.Sheets['color_mixing_log'];
+    if (sheetMixLog) {
+      const rows: any[] = XLSX.utils.sheet_to_json(sheetMixLog);
+      let count = 0;
+      rows.forEach((r) => {
+        const mixLogId = r['紀錄ID'] || r['mix_log_id'];
+        if (!mixLogId) return;
+        const mixLog: ColorMixingLog = {
+          mix_log_id: String(mixLogId).trim(),
+          batch_no: r['混合批次號'] || r['batch_no'] || null,
+          mixing_date: String(r['混合日期'] || r['mixing_date'] || new Date().toISOString().slice(0, 10)),
+          operator_id: String(r['混合作業員ID'] || r['operator_id'] || '').trim(),
+          base_resin_sku: String(r['基礎樹脂品號'] || r['base_resin_sku'] || '').trim(),
+          base_resin_kg: Number(r['基礎樹脂用量_KG'] || r['base_resin_kg'] || 0),
+          colorant_sku: String(r['色母/色粉品號'] || r['colorant_sku'] || '').trim(),
+          colorant_kg: Number(r['色母/色粉用量_KG'] || r['colorant_kg'] || 0),
+          mixing_ratio_pct: Number(r['混合配比(%)（計算值）'] || r['mixing_ratio_pct'] || 0),
+          total_batch_kg: Number(r['混合後總重量_KG（計算值）'] || r['total_batch_kg'] || 0),
+          mold_id: r['成型模具編號(FK)'] || r['mold_id'] || null,
+          sku: r['對應SET品號(FK)'] || r['sku'] || null,
+          process_tag: ['mixed', 'pre_mix', 'direct'].includes(String(r['製程標籤'] || r['process_tag'] || 'mixed').toLowerCase()) ? String(r['製程標籤'] || r['process_tag'] || 'mixed').toLowerCase() as 'mixed' | 'pre_mix' | 'direct' : 'mixed',
+          notes: r['備註'] || r['notes'] || null,
+          created_at: r['created_at'] || new Date().toISOString(),
+        };
+        const idx = newDB.color_mixing_log.findIndex((m) => m.mix_log_id === mixLog.mix_log_id);
+        if (idx >= 0) newDB.color_mixing_log[idx] = mixLog;
+        else newDB.color_mixing_log.push(mixLog);
+        count++;
+      });
+      report.importedCounts['色母色粉混合製程紀錄'] = count;
     }
 
     // Execute deep relational chain audit

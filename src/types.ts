@@ -62,6 +62,7 @@ export interface ProductMoldBOM {
   unit_weight_g?: number; // 系統動態計算: (net_mold_weight_g + runner_weight_g) / active_cavities
   is_primary_mold: boolean; // 是否為主模 (Primary)
   std_mfg_scrap_rate: number; // 標準生產損耗率 (e.g. 0.03 for 3%)
+  color_mixing_ratio_pct?: number | null; // 色母/色粉混合配比百分比 (e.g. 0.03 = 3%，null/0 = 純原料無配色)
   remarks?: string; // 驗證狀態備註
   valid_from: string;   // BOM 生效起始日 (YYYY-MM-DD, M-05)
   valid_to: string | null; // BOM 失效日，null = 至今有效 (M-05)
@@ -146,6 +147,25 @@ export interface SortingActualYieldLog {
   created_at: string;         // ISO timestamp
 }
 
+// 11. Color Mixing Log (色母/色粉預先混合製程紀錄檔)
+export interface ColorMixingLog {
+  mix_log_id: string;         // PK: MIX-{YYYYMMDDHHmmss}-{SEQ}
+  batch_no: string;           // 混合批次號（與生产批號關聯）
+  mixing_date: string;        // YYYY-MM-DD
+  operator_id: string;        // 混合作業員 ID
+  base_resin_sku: string;     // FK → item_master.sku（BASE RESIN，RAW 類）
+  base_resin_kg: number;      // 基礎樹脂用量 (KG)
+  colorant_sku: string;       // FK → item_master.sku（色母 CB- 或色粉 CP-，RAW 類）
+  colorant_kg: number;        // 色母/色粉用量 (KG)
+  mixing_ratio_pct: number;   // computed: (colorant_kg / base_resin_kg) * 100
+  total_batch_kg: number;     // computed: base_resin_kg + colorant_kg
+  mold_id?: string | null;    // FK → mold_master.mold_id（對應該成型模具）
+  sku?: string | null;        // FK → item_master.sku（對應的 SET 品號，可選）
+  process_tag?: 'mixed' | 'pre_mix' | 'direct'; // 製程標籤：直接成型/預先混合
+  notes?: string | null;
+  created_at: string;         // ISO timestamp
+}
+
 // Change Audit Log Entry (for Level 2 & Level 3 edits)
 // Level 3 = Engineering Change (Method A: mandatory reason)
 // Reserved: Level 3B = PIN approval, Level 3C = ECN workflow (future backend)
@@ -177,6 +197,7 @@ export interface SystemDatabase {
   audit_log: ChangeAuditEntry[]; // Change audit trail (export-only, never import-overwrite)
   material_classes: MaterialClass[]; // 物料分類樹（匯出時包含，匯入時若無此欄位則保留現有分類）
   sorting_actual_yield_log: SortingActualYieldLog[]; // Phase 3 動態回饋閉環（初期為空陣列）
+  color_mixing_log: ColorMixingLog[]; // 色母/色粉混合製程紀錄（可為空陣列）
 }
 
 
@@ -211,6 +232,7 @@ export interface MRPCalculationResult {
   stdScrapRate: number;
   rmSku: string;
   rmGrossRequirementKg: number; // 原料毛需求 (KG)
+  colorMixingRatioPct: number; // 色母/色粉配比 (%)（0 = 純原料）
 
   // Phase 3: Procurement & Alerts
   rmOnHandKg: number;
@@ -222,6 +244,15 @@ export interface MRPCalculationResult {
   suggestedOrderQtyKg: number; // 建議採購量 (向上取整 MOQ)
   suggestedOrderDate: string; // 建議下單日 (Target Date - Lead Time)
   daysUntilLatestOrder: number; // 距離最晚下單日天數
+  colorantDetail?: {
+    colorantSku: string;         // 色母/色粉品號 (CB-/CP- 前綴)
+    colorantGrossKg: number;     // 色母/色粉毛需求 (KG)
+    colorantOnHandKg: number;    // 色母/色粉在庫 (KG)
+    colorantInTransitKg: number; // 色母/色粉在途 (KG)
+    colorantNetRequirementKg: number; // 色母/色粉淨需求 (KG)
+    colorantSuggestedQtyKg: number;    // 色母/色粉建議採購量 (KG)
+    colorantLeadTimeDays: number;      // 色母/色粉交期 (天)
+  } | null;
 
   // Capacity Analysis
   daysToDeliver: number; // 距離交期天數
@@ -359,4 +390,5 @@ export const BACKUP_CONFIG_STORAGE_KEY = 'PMS_BACKUP_CONFIG_V1';
 export const BACKUP_LOG_STORAGE_KEY    = 'PMS_BACKUP_LOG_V1';
 export const MATERIAL_CLASSES_STORAGE_KEY = 'PMS_MATERIAL_CLASSES_V1';
 export const SORTING_YIELD_LOG_STORAGE_KEY = 'PMS_SORTING_YIELD_LOG_V1';
+export const COLOR_MIXING_LOG_STORAGE_KEY  = 'PMS_COLOR_MIXING_LOG_V1';
 

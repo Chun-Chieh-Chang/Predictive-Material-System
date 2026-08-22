@@ -12,7 +12,7 @@ import type { MaterialClass, MaterialClassCode, ItemMaster, ProductMoldBOM } fro
 
 // ─── 預設 SKU 前綴規範（可匯入時覆寫）──
 export const SKU_PREFIX_RULES: Record<MaterialClassCode, string[]> = {
-  RAW:  ['RM-', 'RAW-', 'MABS-', 'PP-', 'PVC-', 'PE-'],
+  RAW:  ['RM-', 'RAW-', 'MABS-', 'PP-', 'PVC-', 'PE-', 'CB-', 'CP-', 'COLOR-'],
   MAT:  ['PKG-', 'MAT-', 'LABEL-', 'BAG-', 'BOX-'],
   PART: ['PT-', 'PART-', 'CONN-', 'VALVE-', 'FITTING-'],
   COMP: ['ASM-', 'COMP-', 'SUB-'],
@@ -220,7 +220,7 @@ function validateSkuClass(
   return { valid: false, hint: `料號「${sku}」屬於 ${cls} 類，不屬於 ${expected.join('/')} 允許範圍` };
 }
 
-/** H-01：product_mold_bom.rm_sku 僅接受 RAW 類 */
+/** H-01：product_mold_bom.rm_sku 僅接受 RAW 類（含色母 CB-/CP- 前綴）*/
 function validateRmSkuAsRaw(
   rm_sku: string, itemMaster: ItemMaster[]
 ): { valid: boolean; hint: string } {

@@ -92,10 +92,15 @@ export const PRODUCT_MOLD_BOM_META: TableMeta = {
     { key: 'net_mold_weight_g', label: '整模淨重 (g)', editability: 3, inputType: 'number', required: true, min: 0.001, step: 0.001, validate: (v) => { const val = Number(v); return (isFinite(val) && val > 0) ? null : '整模淨重必須 > 0 克'; } },
     { key: 'runner_weight_g', label: '流道重量 (g)', editability: 3, inputType: 'number', required: true, min: 0, step: 0.001, validate: (v) => { const val = Number(v); return (isFinite(val) && val >= 0) ? null : '流道重量必須 ≥ 0 克'; } },
     { key: 'is_primary_mold', label: '主模標記', editability: 3, inputType: 'checkbox' },
-    {
-      key: 'std_mfg_scrap_rate', label: '成型損耗率', editability: 3, inputType: 'number', required: true, min: 0, max: 0.5, step: 0.001,
+    { key: 'std_mfg_scrap_rate', label: '成型損耗率', editability: 3, inputType: 'number', required: true, min: 0, max: 0.5, step: 0.001,
       validate: (v) => { const val = Number(v); return (isFinite(val) && val >= 0 && val <= 0.5) ? null : '損耗率須介於 0 ~ 0.5'; },
       formatDisplay: (v) => `${(Number(v) * 100).toFixed(1)}%`,
+    },
+    {
+      key: 'color_mixing_ratio_pct', label: '色母/色粉配比 (%)', editability: 2, inputType: 'number', min: 0, max: 50, step: 0.1,
+      placeholder: '0 = 純原料無配色 / 3 = 3% 色母添加量',
+      validate: (v) => { const val = Number(v); return (isFinite(val) && val >= 0 && val <= 50) ? null : '配比須介於 0 ~ 50%'; },
+      formatDisplay: (v) => v ? `${Number(v).toFixed(1)}%` : '—（純原料）',
     },
     { key: 'valid_from', label: 'BOM 生效起始日', editability: 1, inputType: 'date', required: true }, // M-05
     { key: 'valid_to', label: 'BOM 失效日（null = 至今有效）', editability: 1, inputType: 'date' }, // M-05
@@ -210,10 +215,43 @@ export const SORTING_ACTUAL_YIELD_LOG_META: TableMeta = {
   ],
 };
 
+// 12. Color Mixing Log (色母/色粉混合製程紀錄檔)
+export const COLOR_MIXING_LOG_META: TableMeta = {
+  key: 'color_mixing_log', label: '色母/色粉混合製程紀錄檔', pkFields: ['mix_log_id'],
+  fields: [
+    { key: 'mix_log_id', label: '紀錄 ID (PK)', editability: 'locked', inputType: 'text', required: true },
+    { key: 'batch_no', label: '混合批次號', editability: 1, inputType: 'text', required: true, maxLength: 30, placeholder: 'e.g. MIX-20260821-001' },
+    { key: 'mixing_date', label: '混合日期', editability: 1, inputType: 'date', required: true },
+    { key: 'operator_id', label: '混合作業員 ID', editability: 1, inputType: 'text', required: true, maxLength: 30, placeholder: 'e.g. op_001' },
+    { key: 'base_resin_sku', label: '基礎樹脂品號 (FK，RAW)', editability: 2, inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku', required: true },
+    { key: 'base_resin_kg', label: '基礎樹脂用量 (KG)', editability: 2, inputType: 'number', required: true, min: 0.01, step: 0.1,
+      validate: (v) => { const val = Number(v); return (isFinite(val) && val > 0) ? null : '基礎樹脂用量必須 > 0 KG'; } },
+    { key: 'colorant_sku', label: '色母/色粉品號 (FK，RAW)', editability: 2, inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku', required: true },
+    { key: 'colorant_kg', label: '色母/色粉用量 (KG)', editability: 2, inputType: 'number', required: true, min: 0.001, step: 0.001,
+      validate: (v) => { const val = Number(v); return (isFinite(val) && val > 0) ? null : '色母/色粉用量必須 > 0 KG'; } },
+    { key: 'mixing_ratio_pct', label: '混合配比 (%)（計算值）', editability: 'computed', inputType: 'computed',
+      formatDisplay: (v) => v ? `${Number(v).toFixed(2)}%` : '—' },
+    { key: 'total_batch_kg', label: '混合後總重量 (KG)（計算值）', editability: 'computed', inputType: 'computed',
+      formatDisplay: (v) => v ? `${Number(v).toFixed(2)} KG` : '—' },
+    { key: 'mold_id', label: '成型模具編號 (FK)', editability: 1, inputType: 'fk_select', fkTable: 'mold_master', fkValueKey: 'mold_id', fkLabelKey: 'mold_id' },
+    { key: 'sku', label: '對應 SET 品號 (FK)', editability: 1, inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku' },
+    {
+      key: 'process_tag', label: '製程標籤', editability: 2, inputType: 'select', required: true,
+      options: [
+        { value: 'mixed',       label: '🔄 預先混合（色母/色粉先與樹脂混合）' },
+        { value: 'pre_mix',     label: '🧪 預混樣品（試模/小批量）' },
+        { value: 'direct',      label: '➡️ 直接成型（色母滴注/色粉噴灑，非預混）' },
+      ]
+    },
+    { key: 'notes', label: '備註', editability: 1, inputType: 'text', maxLength: 200 },
+  ],
+};
+
 export const ALL_TABLE_METAS: TableMeta[] = [
   ITEM_MASTER_META, MOLD_MASTER_META, PRODUCT_MOLD_BOM_META, YIELD_MASTER_META,
   SUPPLIER_RULE_MASTER_META, DEMAND_FORECAST_LOG_META, ACTUAL_ORDER_META,
   INVENTORY_WIP_SNAPSHOT_META, PO_IN_TRANSIT_META, SORTING_ACTUAL_YIELD_LOG_META,
+  COLOR_MIXING_LOG_META,
 ];
 
 export function getTableMeta(key: string): TableMeta | undefined {
