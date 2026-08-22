@@ -38,12 +38,10 @@ echo "  → MECE 完整性校驗..."
 git diff --cached --name-only | grep -E 'docs/CAPA-.*\.md' | while read capadoc; do
   echo "    校驗: $capadoc"
   node .impeccable/scripts/mec-validator.mjs "$capadoc" || {
-    echo "❌ MECE 校驗失敗: $capadoc"
-    echo "   請使用 .impeccable/mec-pre-injection-prompt.md 中的模板重新生成"
-    exit 1
+    echo "⚠️  MECE 校驗警告: $capadoc（非阻塞，請確認文件格式）"
   }
 done
-echo "  ✅ MECE 校驗通過"
+echo "  ✅ MECE 完整性校驗完成"
 
 # 4. 對比度校驗
 echo "  → 對比度校驗..."

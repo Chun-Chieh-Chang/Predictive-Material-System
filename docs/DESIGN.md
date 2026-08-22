@@ -91,8 +91,8 @@ All colors are registered design tokens. Do not introduce new hex values without
 
 | Token | Size | 用途 |
 |-------|------|------|
-| `xs` | 14px | 最小字級（法規限制） |
-| `sm` | 14.5px | 次要說明文字 |
+| `xs` | 13px | 最小字級（WCAG AA 合法） |
+| `sm` | 14px | 次要說明文字 |
 | `base` | 15px | 正文 |
 | `lg` | 17px | 標題 |
 | `xl` | 19px | 大標題 |
@@ -101,7 +101,7 @@ All colors are registered design tokens. Do not introduce new hex values without
 
 ### Rules
 
-- 最小字級 **14px**（不低於 `text-xs`）
+- 最小字級 **13px**（符合 WCAG AA，對應 `text-xs`）
 - 字級階差至少 **1.25 倍率**
 - 禁止使用 Inter、Roboto、Arial 等過度常見字體
 

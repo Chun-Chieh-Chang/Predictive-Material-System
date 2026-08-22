@@ -14,7 +14,8 @@ import React, { useState, useMemo, useCallback } from 'react';
 import {
   Database, Search, Trash2, X, Layers, Cpu, ShieldCheck, Truck,
   PackageCheck, Boxes, FileSpreadsheet, Download, Plus, Pencil,
-  CheckCircle2, AlertTriangle, AlertCircle, History, Lock, XCircle
+  CheckCircle2, AlertTriangle, AlertCircle, History, Lock, XCircle,
+  ClipboardList, Beaker,
 } from 'lucide-react';
 import { SystemDatabase, ChangeAuditEntry } from '../types';
 import { exportToExcel } from '../utils/dataExchange';
@@ -26,7 +27,8 @@ import {
 export type TableKey =
   | 'item_master' | 'mold_master' | 'product_mold_bom' | 'yield_master'
   | 'supplier_rule_master' | 'demand_forecast_log' | 'actual_order'
-  | 'inventory_wip_snapshot' | 'po_in_transit';
+  | 'inventory_wip_snapshot' | 'po_in_transit'
+  | 'sorting_actual_yield_log' | 'color_mixing_log';
 
 interface DataTablesViewProps {
   db: SystemDatabase;
@@ -221,6 +223,8 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
     { key: 'actual_order' as TableKey, label: '實際訂單檔', dept: '業務', count: db.actual_order.length, icon: PackageCheck },
     { key: 'inventory_wip_snapshot' as TableKey, label: '庫存與待驗快照檔', dept: '資材(生管)', count: db.inventory_wip_snapshot.length, icon: Database },
     { key: 'po_in_transit' as TableKey, label: '在途採購訂單檔', dept: '資材(生管)', count: db.po_in_transit.length, icon: Truck },
+    { key: 'sorting_actual_yield_log' as TableKey, label: 'Sorting 實際良率紀錄檔', dept: '製造', count: (db as any).sorting_actual_yield_log?.length ?? 0, icon: ClipboardList },
+    { key: 'color_mixing_log' as TableKey, label: '色母/色粉混合製程紀錄檔', dept: '工程', count: (db as any).color_mixing_log?.length ?? 0, icon: Beaker },
   ];
 
   const getRecordKey = (record: Record<string, unknown>) =>

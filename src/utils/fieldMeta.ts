@@ -38,7 +38,7 @@ export interface TableMeta {
   fields: FieldMeta[];
 }
 
-export const ITEM_MASTER_META: TableMeta = {
+const ITEM_MASTER_META: TableMeta = {
   key: 'item_master', label: '料號基本主檔', pkFields: ['sku'],
   fields: [
     { key: 'sku', label: '品號 (SKU)', editability: 'locked', inputType: 'text', required: true },
@@ -59,7 +59,7 @@ export const ITEM_MASTER_META: TableMeta = {
   ],
 };
 
-export const MOLD_MASTER_META: TableMeta = {
+const MOLD_MASTER_META: TableMeta = {
   key: 'mold_master', label: '模具與產能主檔', pkFields: ['mold_id'],
   fields: [
     { key: 'mold_id', label: '模具編號', editability: 'locked', inputType: 'text', required: true },
@@ -83,7 +83,7 @@ export const MOLD_MASTER_META: TableMeta = {
   ],
 };
 
-export const PRODUCT_MOLD_BOM_META: TableMeta = {
+const PRODUCT_MOLD_BOM_META: TableMeta = {
   key: 'product_mold_bom', label: '產品模具成型關聯檔', pkFields: ['sku', 'mold_id'], compositeKey: true,
   fields: [
     { key: 'sku', label: '品號 (FK)', editability: 'locked', inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku', required: true },
@@ -108,7 +108,7 @@ export const PRODUCT_MOLD_BOM_META: TableMeta = {
   ],
 };
 
-export const YIELD_MASTER_META: TableMeta = {
+const YIELD_MASTER_META: TableMeta = {
   key: 'yield_master', label: 'Sorting良率標準檔', pkFields: ['sku'],
   fields: [
     { key: 'sku', label: '品號 (PK/FK)', editability: 'locked', inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku', required: true },
@@ -135,7 +135,7 @@ export const SUPPLIER_RULE_MASTER_META: TableMeta = {
   ],
 };
 
-export const DEMAND_FORECAST_LOG_META: TableMeta = {
+const DEMAND_FORECAST_LOG_META: TableMeta = {
   key: 'demand_forecast_log', label: '業務預估需求檔', pkFields: ['demand_id'],
   fields: [
     { key: 'demand_id', label: '需求序號 (PK)', editability: 'locked', inputType: 'text', required: true },
@@ -150,7 +150,7 @@ export const DEMAND_FORECAST_LOG_META: TableMeta = {
   ],
 };
 
-export const ACTUAL_ORDER_META: TableMeta = {
+const ACTUAL_ORDER_META: TableMeta = {
   key: 'actual_order', label: '實際訂單檔', pkFields: ['order_id'],
   fields: [
     { key: 'order_id', label: '訂單號 (PK)', editability: 'locked', inputType: 'text', required: true },
@@ -163,7 +163,7 @@ export const ACTUAL_ORDER_META: TableMeta = {
   ],
 };
 
-export const INVENTORY_WIP_SNAPSHOT_META: TableMeta = {
+const INVENTORY_WIP_SNAPSHOT_META: TableMeta = {
   key: 'inventory_wip_snapshot', label: '庫存與待驗快照檔', pkFields: ['snapshot_date', 'sku'], compositeKey: true,
   fields: [
     { key: 'snapshot_date', label: '快照結算日 (PK)', editability: 'locked', inputType: 'date', required: true },
@@ -174,7 +174,7 @@ export const INVENTORY_WIP_SNAPSHOT_META: TableMeta = {
   ],
 };
 
-export const PO_IN_TRANSIT_META: TableMeta = {
+const PO_IN_TRANSIT_META: TableMeta = {
   key: 'po_in_transit', label: '在途採購訂單檔', pkFields: ['po_number'],
   fields: [
     { key: 'po_number', label: '採購單號 (PK)', editability: 'locked', inputType: 'text', required: true },
@@ -216,7 +216,7 @@ export const SORTING_ACTUAL_YIELD_LOG_META: TableMeta = {
 };
 
 // 12. Color Mixing Log (色母/色粉混合製程紀錄檔)
-export const COLOR_MIXING_LOG_META: TableMeta = {
+const COLOR_MIXING_LOG_META: TableMeta = {
   key: 'color_mixing_log', label: '色母/色粉混合製程紀錄檔', pkFields: ['mix_log_id'],
   fields: [
     { key: 'mix_log_id', label: '紀錄 ID (PK)', editability: 'locked', inputType: 'text', required: true },

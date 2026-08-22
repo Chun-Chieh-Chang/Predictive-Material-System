@@ -368,7 +368,7 @@ npx tsc --noEmit        # TypeScript 零錯誤
 | 整合可行性評估報告 | `docs/ImpeccableIntegrationGuide.md`（此文件） | ✅ 已完成 |
 | 外部依賴克隆 | `src/extensions/impeccable/` | ✅ 已完成 |
 | 解耦腳本 | `scripts/impeccable-detach.mjs` | ⏳ 待實施 |
-| 語意解析模組 | `src/semantic-parser/` | ⏳ 待實施 |
+| 語意解析模組 | `src/semantic-parser/` | ✅ 已確認無用，2026-08-22 完整移除 |
 | Trae Hook 配置 | `.trae/hooks.json` | ⏳ 待實施 |
 | 設計上下文註冊 | `.impeccable/design.json` | ⏳ 待實施 |
 

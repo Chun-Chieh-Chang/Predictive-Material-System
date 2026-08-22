@@ -11,7 +11,7 @@
 import type { MaterialClass, MaterialClassCode, ItemMaster, ProductMoldBOM } from '../types';
 
 // ─── 預設 SKU 前綴規範（可匯入時覆寫）──
-export const SKU_PREFIX_RULES: Record<MaterialClassCode, string[]> = {
+const SKU_PREFIX_RULES: Record<MaterialClassCode, string[]> = {
   RAW:  ['RM-', 'RAW-', 'MABS-', 'PP-', 'PVC-', 'PE-', 'CB-', 'CP-', 'COLOR-'],
   MAT:  ['PKG-', 'MAT-', 'LABEL-', 'BAG-', 'BOX-'],
   PART: ['PT-', 'PART-', 'CONN-', 'VALVE-', 'FITTING-'],
@@ -26,13 +26,13 @@ export function isValidClassCode(code: string): code is MaterialClassCode {
   return ['RAW', 'MAT', 'PART', 'COMP', 'SET'].includes(code);
 }
 
-/** 檢查分類是否存在且啟用 */
-export function isActiveClass(classes: MaterialClass[], code: string): boolean {
+/** 檢查分類是否存在且啟用（內部使用） */
+function isActiveClass(classes: MaterialClass[], code: string): boolean {
   return classes.some(c => c.code === code && c.is_active);
 }
 
-/** 取得分類樹階層深度（RAW = 1, RAW>PART = 無，設定父節點後遞增） */
-export function getClassDepth(classes: MaterialClass[], code: string): number {
+/** 取得分類樹階層深度（RAW = 1, 遞增）（內部使用） */
+function getClassDepth(classes: MaterialClass[], code: string): number {
   if (!isValidClassCode(code)) return 0;
   const target = classes.find(c => c.code === code);
   if (!target) return 0;
@@ -60,7 +60,7 @@ export function buildClassPath(classes: MaterialClass[], code: string): string {
  * 根據 SKU 字首推測最可能分類。
  * 若無匹配則回傳 null，由匯入流程手動指定。
  */
-export function inferClassFromSku(sku: string, customPrefixRules?: Partial<Record<MaterialClassCode, string[]>>): MaterialClassCode | null {
+function inferClassFromSku(sku: string, customPrefixRules?: Partial<Record<MaterialClassCode, string[]>>): MaterialClassCode | null {
   const rules = { ...SKU_PREFIX_RULES, ...customPrefixRules };
   const upperSku = sku.toUpperCase();
   for (const [code, prefixes] of Object.entries(rules) as [MaterialClassCode, string[]][]) {

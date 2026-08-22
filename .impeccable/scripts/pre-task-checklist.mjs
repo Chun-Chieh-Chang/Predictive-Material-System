@@ -18,7 +18,7 @@
 
 import { execSync } from 'child_process';
 import { readFileSync, readdirSync, writeFileSync, mkdirSync, appendFileSync } from 'fs';
-import { resolve, dirname } from 'path';
+import { resolve, dirname, basename } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -110,7 +110,7 @@ console.log(`\n⚠️  偵測到 UI 變更（${uiFiles.length} 個檔案）。�
 
 // ── 搜尋 docs/ 中包含驗證標準的報告 ──────────────────────────────────────────
 const reportFiles = mdFiles(docsDir).filter(f =>
-  /CAPA-|UI-/.test(require('path').basename(f))
+  /CAPA-|UI-/.test(basename(f))
 );
 
 const VERIFICATION_KEYWORDS = [
@@ -130,7 +130,7 @@ for (const file of reportFiles) {
   try {
     const content = readFileSync(file, 'utf-8');
     if (hasVerificationStandard(content)) {
-      validReports.push(require('path').basename(file));
+      validReports.push(basename(file));
     }
   } catch { /* ignore */ }
 }

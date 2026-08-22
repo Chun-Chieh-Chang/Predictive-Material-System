@@ -41,7 +41,7 @@ export function exportToJSON(db: SystemDatabase, filename = 'Predictive_Material
 }
 
 // 0. Data Specification Dictionary (各權責單位填報規範與勾稽防呆清單 - 嚴格遵守 MECE 原則)
-export const DATA_SPECIFICATION_DICTIONARY = [
+const DATA_SPECIFICATION_DICTIONARY = [
   // 1. 料號基本主檔 (權責: 資材(生管))
   { '工作表': '料號基本主檔', '欄位名稱': '品號', '權責單位': '資材(生管)', '必填/選填': '必填 (PK)', '允許選項 / 資料型態': '文字 (英數，如 A01-200-131)', '勾稽與防呆規則': '全系統唯一識別碼，不可重複', '填寫範例': 'A01-200-131' },
   { '工作表': '料號基本主檔', '欄位名稱': '替代品號', '權責單位': '資材(生管)', '必填/選填': '選填', '允許選項 / 資料型態': '文字', '勾稽與防呆規則': '工程變更或舊料號對照', '填寫範例': 'R1-2355' },
@@ -547,8 +547,28 @@ export function importFromJSON(jsonText: string, currentDB: SystemDatabase): { d
       report.importedCounts['庫存與待驗快照檔'] = parsed.inventory_wip_snapshot.length;
     }
     if (Array.isArray(parsed.po_in_transit)) {
-      newDB.po_in_transit = parsed.po_in_transit;
-      report.importedCounts['在途採購訂單檔'] = parsed.po_in_transit.length;
+      // 同步計算 eta_variance_days 若 actual_arrival_date 已存在，并验证PO状态
+      const validPoStatuses = ['ordered', 'shipping', 'customs', 'arrived', 'delayed', 'partial_arrived'];
+      const validatedPOs: POInTransit[] = parsed.po_in_transit.map((p: any) => {
+        const item: POInTransit = { ...p };
+        // PO 在途状态 validate：仅允许合法选项
+        const rawStatus = String(p.status || 'shipping').trim().toLowerCase();
+        if (!validPoStatuses.includes(rawStatus)) {
+          item.status = 'shipping';
+        } else {
+          item.status = rawStatus as 'ordered' | 'shipping' | 'customs' | 'arrived' | 'delayed' | 'partial_arrived';
+        }
+        if (p.actual_arrival_date && p.eta_date) {
+          const eta = new Date(String(p.eta_date));
+          const actual = new Date(String(p.actual_arrival_date));
+          if (!isNaN(eta.getTime()) && !isNaN(actual.getTime())) {
+            item.eta_variance_days = Math.round((actual.getTime() - eta.getTime()) / (24 * 60 * 60 * 1000));
+          }
+        }
+        return item;
+      });
+      newDB.po_in_transit = validatedPOs;
+      report.importedCounts['在途採購訂單檔'] = validatedPOs.length;
     }
 
     // Execute deep relational chain audit
@@ -794,13 +814,31 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
         const poNum = r['採購單號'] || r['po_number'] || `PO-IMP-${Date.now()}-${i}`;
         const rmSku = r['原料品號'] || r['rm_sku'];
         if (!rmSku) return;
+        // PO 在途狀態 validate：僅允許合法選項
+        const validPoStatuses = ['ordered', 'shipping', 'customs', 'arrived', 'delayed', 'partial_arrived'];
+        const rawStatus = String(r['在途狀態'] || r['status'] || 'shipping').trim().toLowerCase();
+        const poStatus: 'ordered' | 'shipping' | 'customs' | 'arrived' | 'delayed' | 'partial_arrived' =
+          validPoStatuses.includes(rawStatus) ? rawStatus as 'ordered' | 'shipping' | 'customs' | 'arrived' | 'delayed' | 'partial_arrived' : 'shipping';
+        const etaDate = String(r['預計到廠日'] || r['eta_date'] || '2026-09-15').trim();
+        const actualArrivalDate = r['實際到廠日'] || r['actual_arrival_date'];
+        // eta_variance_days：若實際到廠日已填寫，自動計算偏差天數
+        let etaVarianceDays: number | null = null;
+        if (actualArrivalDate) {
+          const eta = new Date(etaDate);
+          const actual = new Date(String(actualArrivalDate).trim());
+          if (!isNaN(eta.getTime()) && !isNaN(actual.getTime())) {
+            etaVarianceDays = Math.round((actual.getTime() - eta.getTime()) / (24 * 60 * 60 * 1000));
+          }
+        }
         const poItem: POInTransit = {
           po_number: String(poNum).trim(),
           rm_sku: String(rmSku).trim(),
           in_transit_qty_kg: Number(r['在途採購量_KG'] || r['in_transit_qty_kg'] || 0),
-          eta_date: String(r['預計到廠日'] || r['eta_date'] || '2026-09-15').trim(),
+          eta_date: etaDate,
+          actual_arrival_date: actualArrivalDate ? String(actualArrivalDate).trim() : null,
+          eta_variance_days: etaVarianceDays,
           supplier_name: String(r['供應商名稱'] || r['supplier_name'] || '').trim(),
-          status: (r['在途狀態'] || r['status'] || 'shipping') as any
+          status: poStatus
         };
         const idx = newDB.po_in_transit.findIndex((p) => p.po_number === poItem.po_number);
         if (idx >= 0) newDB.po_in_transit[idx] = poItem;
@@ -931,5 +969,23 @@ function runRelationalAudit(db: SystemDatabase, report: ValidationReport) {
     if (s.moq_kg <= 0) {
       report.warnings.push(`[MOQ缺失] 原料「${s.rm_sku}」最小起訂量為 0 KG。`);
     }
+  });
+
+  // 7. Audit PO In Transit → Supplier Rule linkage
+  const supplierSkus = new Set(db.supplier_rule_master.map((s) => s.rm_sku));
+  db.po_in_transit.forEach((p) => {
+    if (!supplierSkus.has(p.rm_sku)) {
+      report.warnings.push(`[PO 採購規則缺失] 在途訂單「${p.po_number}」之原料「${p.rm_sku}」尚未於採購規則檔設定，MRP 將使用全廠預設參數。`);
+    }
+  });
+
+  // 8. Audit snapshot_date + sku uniqueness
+  const snapshotKeys = new Set<string>();
+  db.inventory_wip_snapshot.forEach((s) => {
+    const key = `${s.snapshot_date}|${s.sku}`;
+    if (snapshotKeys.has(key)) {
+      report.errors.push(`[快照重複] 料號「${s.sku}」於 ${s.snapshot_date} 存在多筆庫存快照，將影響 MRP 最新值取用！`);
+    }
+    snapshotKeys.add(key);
   });
 }

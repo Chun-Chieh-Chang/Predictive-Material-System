@@ -31,8 +31,8 @@ export function calculateMRPForSKU(
     ? forecasts.find((f) => f.version_no === selectedVersionNo) || forecasts[forecasts.length - 1]
     : forecasts[forecasts.length - 1];
 
-  // Actual orders for this SKU
-  const actualOrders = db.actual_order.filter((o) => o.sku === sku);
+  // Actual orders for this SKU (exclude cancelled orders per spec)
+  const actualOrders = db.actual_order.filter((o) => o.sku === sku && o.status !== 'cancelled');
   const actualOrderQty = actualOrders.reduce((sum, o) => sum + o.order_qty, 0);
 
   const forecastQty = activeForecast.demand_qty;
@@ -154,7 +154,8 @@ export function calculateMRPForSKU(
 
   const rmOnHandKg = rmSnapshot ? rmSnapshot.rm_on_hand_kg : 0;
 
-  const rmPOs = db.po_in_transit.filter((p) => p.rm_sku === rmSku);
+  // 只计入未到达的PO（排除已到达和分批到达的订单）
+  const rmPOs = db.po_in_transit.filter((p) => p.rm_sku === rmSku && !['arrived', 'partial_arrived'].includes(p.status));
   const rmInTransitKg = rmPOs.reduce((sum, p) => sum + p.in_transit_qty_kg, 0);
 
   const supplierRule = db.supplier_rule_master.find((s) => s.rm_sku === rmSku) || {
@@ -198,7 +199,7 @@ export function calculateMRPForSKU(
       .filter((s) => s.sku === rmSku)
       .sort((a, b) => new Date(b.snapshot_date).getTime() - new Date(a.snapshot_date).getTime())[0];
     const colorantOnHandKg = colorantSnapshot ? colorantSnapshot.rm_on_hand_kg : 0;
-    const colorantPOs = db.po_in_transit.filter((p) => p.rm_sku === rmSku);
+    const colorantPOs = db.po_in_transit.filter((p) => p.rm_sku === rmSku && !['arrived', 'partial_arrived'].includes(p.status));
     const colorantInTransitKg = colorantPOs.reduce((sum, p) => sum + p.in_transit_qty_kg, 0);
     const colorantRule = db.supplier_rule_master.find((s) => s.rm_sku === rmSku) || {
       moq_kg: params.defaultMoqKg, lead_time_days: params.defaultProcurementLeadTimeDays, safety_stock_kg: 1000

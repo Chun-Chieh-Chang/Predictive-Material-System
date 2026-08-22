@@ -51,6 +51,7 @@ Config           Module Build      & Hook Wiring     & Edge Cases      Deploymen
 ---
 
 ### Phase 2：語意解析模塊開發（Week 2–3）
+> ⚠️ **已取消**：2026-08-22 盤點確認 `src/semantic-parser/` 模組未被任何生產程式碼 import，判定為死碼，已整體移除。本節留作規劃記錄備查。
 
 #### 2.2.1 目標
 完成 `src/semantic-parser/` 模組，支援自然語言指令 → impeccable CLI 命令的轉譯。
@@ -167,7 +168,7 @@ Trae IDE 編輯 UI 檔案
 
 | 測試維度 | 測試範圍 | 驗收標準 |
 |----------|---------|---------|
-| **單元測試** | semantic-parser 25 用例 | ≥ 99% 通過 |
+| ~~**單元測試**~~ | ~~semantic-parser 25 用例~~ | ~~≥ 99% 通過~~ ⚠️ 已取消（模組移除） |
 | **集成測試** | Hook 觸發 → 結果回傳 | 100% 正常 |
 | **跨瀏覽器** | Chrome / Edge / Firefox | 無樣式異常 |
 | **跨裝置** | 1920px / 1366px / 768px / 375px | 無水平滾動/溢出 |

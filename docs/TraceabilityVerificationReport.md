@@ -60,7 +60,7 @@
 
 | 交付物件 | 檔案位置 | 狀態 |
 |---------|---------|------|
-| PRD.md（原始需求規格） | `/docs/PRD.md` | ✅ 存在 |
+| PRD.md（原始需求規格） | `/docs/PRD.md` | ❌ 不存在（已整合至 `PrdDocView.tsx` 內嵌文檔，請參閱 `docs/DESIGN.md` §Product Context） |
 | CAPA 問題記錄 | `/DEV_LOG.md` (CAPA-001~003) | ✅ 存在 |
 | 欄位架構審查報告 | `/docs/FieldArchitectureAudit_Report.md` | ✅ 存在 |
 
@@ -557,7 +557,7 @@ SET A01-200-131
 
 | 生命週期階段 | 交付物件 | 檔案位置 | 追溯標籤 | 狀態 |
 |------------|---------|---------|---------|------|
-| 需求提出 | PRD.md | `/docs/PRD.md` | V-20260820-12 origin | ✅ |
+| 需求提出 | PRD.md | `src/components/PrdDocView.tsx` 內嵌文檔 | V-20260820-12 origin | ✅ 已整合入元件 |
 | 需求提出 | FieldArchitectureAudit_Report | `/docs/FieldArchitectureAudit_Report.md` | H-01~H-05 / M-01~M-06 / L-01~L-04 | ✅ |
 | 需求提出 | CAPA-001~003 | `/DEV_LOG.md:111-133` | CAPA-NNN | ✅ |
 | 設計規劃 | fieldMeta.ts (12 表欄位定義) | `/src/utils/fieldMeta.ts` | COLOR_MIXING_LOG_META 等 | ✅ |
