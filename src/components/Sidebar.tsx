@@ -129,8 +129,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-all duration-150 cursor-pointer',
           'group relative',
           isActive
-            ? 'bg-sky-600/15 text-sky-200 font-semibold'
-            : 'text-slate-400 hover:bg-sky-500/10 hover:text-slate-200',
+            ? 'bg-sky-600 text-white font-semibold'
+            : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200',
         ].join(' ')}
       >
         {/* Active left accent bar */}
@@ -144,12 +144,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <Icon
           className={[
             'w-4 h-4 shrink-0 transition-colors duration-150',
-            isActive ? 'text-sky-400' : 'text-slate-500 group-hover:text-sky-300',
+            isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200',
           ].join(' ')}
         />
 
         <div className="flex-1 min-w-0">
-          <div className={['text-sm truncate', isActive ? 'text-sky-100' : ''].join(' ')}>
+          <div className={['text-sm truncate font-semibold', isActive ? 'text-white' : ''].join(' ')}>
             {item.label}
           </div>
           <div className="text-[10px] text-slate-500 truncate font-mono">
@@ -280,15 +280,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 className={[
                   'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-all duration-150 cursor-pointer group',
                   activeTab === 'backup_settings'
-                    ? 'bg-emerald-600/15 text-emerald-200 font-semibold'
-                    : 'text-slate-400 hover:bg-emerald-500/10 hover:text-slate-200',
+                    ? 'bg-emerald-600 text-white font-semibold'
+                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200',
                 ].join(' ')}
                 title="自動化備份系統"
               >
                 <ShieldCheck
                   className={[
                     'w-4 h-4 shrink-0 transition-colors duration-150',
-                    activeTab === 'backup_settings' ? 'text-emerald-400' : 'text-slate-500 group-hover:text-emerald-300',
+                    activeTab === 'backup_settings' ? 'text-white' : 'text-slate-400 group-hover:text-emerald-300',
                   ].join(' ')}
                 />
                 <div className="flex-1 min-w-0">
