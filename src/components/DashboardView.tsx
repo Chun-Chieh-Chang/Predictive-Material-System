@@ -1,4 +1,4 @@
-﻿﻿/**
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -73,6 +73,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   // ==========================================
   const [selectedSku, setSelectedSku] = useState<string>(mrpResults[0]?.sku || 'A01-200-131');
   const [sandboxTab, setSandboxTab] = useState<'demand' | 'molding' | 'quality_stock' | 'procure'>('demand');
+  // Collapsible section tracking (default: all open)
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
+  const toggleSection = (id: string) => {
+    setCollapsedSections(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+  const isCollapsed = (id: string) => collapsedSections.has(id);
 
   // Baseline data for selected SKU
   const activeMrp = mrpResults.find((r) => r.sku === selectedSku) || mrpResults[0];
@@ -1192,8 +1202,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <Download className="w-3.5 h-3.5 text-emerald-400" />
             <span>匯出建議採購清單 Excel</span>
           </button>
+          <button
+            onClick={() => toggleSection('warroom')}
+            className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 transition-colors shrink-0 cursor-pointer"
+            title={isCollapsed('warroom') ? '展開' : '收合'}
+          >
+            {isCollapsed('warroom') ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
+            <span>{isCollapsed('warroom') ? '展開' : '收合'}</span>
+          </button>
         </div>
 
+        {!isCollapsed('warroom') && (
+        <>
         {/* War Room Priority Table */}
         <div className="overflow-x-auto mt-4">
           <table className="w-full text-left text-sm">
@@ -1259,6 +1279,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </tbody>
           </table>
         </div>
+        </>
+        )}
       </section>
 
       {/* 4. Risk Alerts Bento Grid (3 Cols) */}
@@ -1280,6 +1302,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </span>
         </div>
 
+        {!isCollapsed('alerts') && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
           {allAlerts.map((alert, idx) => {
             const isRed = alert.level === 'red';
@@ -1326,6 +1349,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             );
           })}
         </div>
+        )}
       </section>
 
       {/* 5. Full Procurement Schedule Bento Table */}
@@ -1347,6 +1371,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </button>
         </div>
 
+        {!isCollapsed('procurement') && (
         <div className="overflow-x-auto mt-4">
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-950/60 text-slate-400 font-semibold uppercase border-b border-slate-800">
@@ -1426,6 +1451,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </tbody>
           </table>
         </div>
+        )}
       </section>
     </div>
   );

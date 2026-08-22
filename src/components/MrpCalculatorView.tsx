@@ -18,7 +18,9 @@ import {
   Boxes,
   Truck,
   Sparkles,
-  SlidersHorizontal
+  SlidersHorizontal,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { SystemDatabase, MRPCalculationResult, SystemParameters } from '../types';
 import { calculateMRPForSku } from '../utils/mrpEngine';
@@ -38,6 +40,15 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
 }) => {
   const [selectedSku, setSelectedSku] = useState<string>(initialSku);
   const [activeMoldId, setActiveMoldId] = useState<string | null>(null);
+  const [collapsedStages, setCollapsedStages] = useState<Set<string>>(new Set(['stage2', 'stage3']));
+  const toggleStage = (id: string) => {
+    setCollapsedStages(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+  const isStageCollapsed = (id: string) => collapsedStages.has(id);
 
   // Available finished goods SKUs (SET 類成品)
   const availableSkus = db.item_master.filter((i) => i.material_class === 'SET');
@@ -202,19 +213,31 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
       {/* STAGE 1: Finished Goods (FG) Net Requirement */}
       {/* ========================================================================= */}
       <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 shadow-xl shadow-black/20">
-        <div className="flex items-center space-x-3 pb-4 border-b border-slate-800">
-          <div className="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold flex items-center justify-center text-sm font-mono">
-            01
+        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold flex items-center justify-center text-sm font-mono">
+              01
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-white">
+                第 1 階：成品淨需求運算 (FG Net Requirement Calculation)
+              </h3>
+              <p className="text-sm text-slate-400">
+                公式：Max(0, (預估需求 + 實際訂單) - 在庫良品 - (Sorting 待驗品 × 全檢良率))
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-base font-bold text-white">
-              第 1 階：成品淨需求運算 (FG Net Requirement Calculation)
-            </h3>
-            <p className="text-sm text-slate-400">
-              公式：Max(0, (預估需求 + 實際訂單) - 在庫良品 - (Sorting 待驗品 × 全檢良率))
-            </p>
-          </div>
+          <button
+            onClick={() => toggleStage('stage1')}
+            className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 transition-colors shrink-0 cursor-pointer"
+            title={isStageCollapsed('stage1') ? '展開' : '收合'}
+          >
+            {isStageCollapsed('stage1') ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
+            <span>{isStageCollapsed('stage1') ? '展開' : '收合'}</span>
+          </button>
         </div>
+
+        {!isStageCollapsed('stage1') && (<>
 
         {/* Calculation Visual Flow */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-3 my-6 items-center">
@@ -278,25 +301,39 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
             = Max(0, {result.forecastQty + result.actualOrderQty} - {result.fgReadyQty} - {result.wipEffectiveQty})
           </span>
         </div>
+        </>
+        )}
       </div>
 
       {/* ========================================================================= */}
       {/* STAGE 2: Mold BOM Explosion & Cavities Analysis */}
       {/* ========================================================================= */}
       <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 shadow-xl shadow-black/20">
-        <div className="flex items-center space-x-3 pb-4 border-b border-slate-800">
-          <div className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 font-bold flex items-center justify-center text-sm font-mono">
-            02
+        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 font-bold flex items-center justify-center text-sm font-mono">
+              02
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-white">
+                第 2 階：模具 M:N 關聯展開與妥善穴數 (Mold BOM Explosion)
+              </h3>
+              <p className="text-sm text-slate-400">
+                單穴耗料克重 = (整模成品重 + 流道重) ÷ 妥善穴數 (Active Cavities)
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-base font-bold text-white">
-              第 2 階：模具 M:N 關聯展開與妥善穴數 (Mold BOM Explosion)
-            </h3>
-            <p className="text-sm text-slate-400">
-              單穴耗料克重 = (整模成品重 + 流道重) ÷ 妥善穴數 (Active Cavities)
-            </p>
-          </div>
+          <button
+            onClick={() => toggleStage('stage2')}
+            className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 transition-colors shrink-0 cursor-pointer"
+            title={isStageCollapsed('stage2') ? '展開' : '收合'}
+          >
+            {isStageCollapsed('stage2') ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
+            <span>{isStageCollapsed('stage2') ? '展開' : '收合'}</span>
+          </button>
         </div>
+
+        {!isStageCollapsed('stage2') && (<>
 
         {/* Mold Switchers if Multi-Mold */}
         <div className="mt-4">
@@ -393,25 +430,39 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
             </span>
           </div>
         </div>
+        </>
+        )}
       </div>
 
       {/* ========================================================================= */}
       {/* STAGE 3: Raw Material Net Requirement & Procurement */}
       {/* ========================================================================= */}
       <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 shadow-xl shadow-black/20">
-        <div className="flex items-center space-x-3 pb-4 border-b border-slate-800">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold flex items-center justify-center text-sm font-mono">
-            03
+        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold flex items-center justify-center text-sm font-mono">
+              03
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-white">
+                第 3 階：原料淨需求與採購建議排程 (RM Net Requirement & PO Recommendation)
+              </h3>
+              <p className="text-sm text-slate-400">
+                考量製程損耗、原料在手庫存、在途採購 PO、安全庫存與最小起訂量 (MOQ)
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-base font-bold text-white">
-              第 3 階：原料淨需求與採購建議排程 (RM Net Requirement & PO Recommendation)
-            </h3>
-            <p className="text-sm text-slate-400">
-              考量製程損耗、原料在手庫存、在途採購 PO、安全庫存與最小起訂量 (MOQ)
-            </p>
-          </div>
+          <button
+            onClick={() => toggleStage('stage3')}
+            className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 transition-colors shrink-0 cursor-pointer"
+            title={isStageCollapsed('stage3') ? '展開' : '收合'}
+          >
+            {isStageCollapsed('stage3') ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
+            <span>{isStageCollapsed('stage3') ? '展開' : '收合'}</span>
+          </button>
         </div>
+
+        {!isStageCollapsed('stage3') && (<>
 
         {/* Calculation Matrix */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 my-6">
@@ -482,6 +533,8 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
             </div>
           </div>
         </div>
+        </>
+        )}
       </div>
     </div>
   );

@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   Crown,
   Layers,
+  HelpCircle,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
@@ -58,6 +59,7 @@ interface NavbarProps {
   adminUnlocked: boolean;
   onAdminUnlock: () => void;
   onAdminLock: () => void;
+  onHelp: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -69,6 +71,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   adminUnlocked,
   onAdminUnlock,
   onAdminLock,
+  onHelp,
 }) => {
   const { theme, toggleTheme } = useTheme();
 
@@ -231,6 +234,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                   )}
                 </button>
               )}
+              {/* Help / Glossary Button */}
+              <button
+                onClick={onHelp}
+                id="nav-help-btn"
+                title="開啟專業術語辭典（FK、SKU、MRP 等術語一覽）"
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white border border-slate-300 dark:border-slate-800 transition-all cursor-pointer shadow-xs"
+              >
+                <HelpCircle className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
+                <span className="hidden sm:inline font-semibold">術語辭典</span>
+              </button>
             </div>
           </div>
         </div>
