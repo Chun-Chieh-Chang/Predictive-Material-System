@@ -11,6 +11,14 @@
 
 echo "🔍 PMS Pre-commit Checks..."
 
+# 0. UI 變更 → 驗證標準前置檢查（PA-01）
+echo "  → UI 驗證標準檢查..."
+node .impeccable/scripts/pre-task-checklist.mjs || {
+  echo "❌ UI 驗證標準檢查失敗，請先定義驗證標準再提交"
+  exit 1
+}
+echo "  ✅ UI 驗證標準檢查通過"
+
 # 1. TypeScript 檢查
 echo "  → TypeScript check..."
 npx tsc --noEmit

@@ -93,3 +93,32 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+
+  # ─────────────────────────────────────────
+  # Job: Deploy Verification（部署後自動驗證網站可用性）
+  # PA-02：推送成功 = git push + Actions success + URL 200 OK
+  # ─────────────────────────────────────────
+  verify-deploy:
+    name: Verify Deployment
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - name: Wait for Pages propagation
+        run: sleep 30
+
+      - name: Check deployment URL
+        run: |
+          URL="https://chun-chieh-chang.github.io/Predictive-Material-System/"
+          echo "  → 驗證部署網址: $URL"
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "$URL" || echo "000")
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ 部署驗證失敗：HTTP $HTTP_CODE"
+            exit 1
+          fi
+          BODY=$(curl -s --max-time 15 "$URL")
+          if ! echo "$BODY" | grep -q "料事如神"; then
+            echo "❌ 部署驗證失敗：頁面內容不正確（未發現 '料事如神'）"
+            exit 1
+          fi
+          echo "  ✅ 部署驗證通過：$URL（HTTP $HTTP_CODE，內容正確）"
