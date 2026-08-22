@@ -52,12 +52,14 @@ const GlossaryPanel: React.FC<GlossaryPanelProps> = ({ open, onClose }) => {
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex" role="dialog" aria-modal="true" aria-label="專業術語辭典">
+    <div className="fixed inset-0 z-50 flex">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Panel */}
-      <div className="relative ml-auto w-full max-w-lg md:max-w-xl lg:max-w-2xl bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200 dark:border-slate-700">
+      {/* Panel wrapper: scrollable when content exceeds viewport width */}
+      <div className="relative ml-auto w-full min-w-fit flex flex-col border-l border-slate-200 dark:border-slate-700 shadow-2xl overflow-x-auto scrollbar-none">
+        {/* Panel */}
+        <div className="w-full max-w-[calc(100vw-1rem)] sm:max-w-[calc(100vw-2rem)] md:max-w-xl lg:max-w-2xl bg-white dark:bg-slate-900 flex flex-col shrink-0">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60">
           <div className="flex items-center gap-2.5">
@@ -95,8 +97,8 @@ const GlossaryPanel: React.FC<GlossaryPanelProps> = ({ open, onClose }) => {
         </div>
 
         {/* Category Tabs */}
-        <div className="px-5 pb-3 overflow-x-auto scrollbar-none">
-          <div className="flex gap-1.5 min-w-max">
+        <div className="px-5 pb-3">
+          <div className="flex gap-1.5 flex-nowrap">
             <button
               onClick={() => setActiveCategory('all')}
               className={`px-3 py-1.5 rounded-md text-xs font-semibold whitespace-nowrap transition-colors ${
@@ -175,6 +177,7 @@ const GlossaryPanel: React.FC<GlossaryPanelProps> = ({ open, onClose }) => {
           <span>按 「全部」可瀏覽完整 {GLOSSARY_ENTRIES.length} 個術語</span>
           <span>每次新增術語請同步更新 glossaryData.ts</span>
         </div>
+      </div>
       </div>
     </div>
   )
