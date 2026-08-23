@@ -2,20 +2,43 @@
  * vite-plugin-git-version.ts
  *
  * 建構階段自動讀取 git 狀態，注入動態版號到 import.meta.env.VITE_PMS_VERSION：
- *   - 若 .git 存在 → 今日本地日期 + 今日提交序號
+ *   - CI 環境（GitHub Actions）→ 直接讀取已提交的 src/utils/version.ts，避免 UTC/本地時區差異導致版號跳變
+ *   - 本地開發環境 → 今日本地日期 + 今日提交序號（保持 HMR 即時更新能力）
  *   - 若 .git 不存在 → fallback 為 V-{local-date}-00
  *
  * 輸出格式：V-YYYYMMDD-{dailyCommitCount}
  * 例：V-20260823-01
- *
- * 說明：版號使用本地時區，與使用者電腦時間一致。
- * CI（GitHub Actions）使用 UTC，與本地可能相差 ±1 天，屬預期行為。
  */
 
 import type { Plugin } from 'vite';
 import { execSync } from 'child_process';
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
+
+const VERSION_FILE = 'src/utils/version.ts';
+const VERSION_REGEX = /PMS_VERSION:\s*string\s*=\s*'([^']+)'/;
+
+/** 判斷是否為 CI 環境 */
+function isCI(): boolean {
+  return (
+    process.env.CI === 'true' ||
+    process.env.GITHUB_ACTIONS === 'true' ||
+    process.env.CONTINUOUS_INTEGRATION === 'true'
+  );
+}
+
+/** 從 version.ts 讀取已提交的版號 */
+function readCommittedVersion(root: string): string | null {
+  const filePath = resolve(root, VERSION_FILE);
+  if (!existsSync(filePath)) return null;
+  try {
+    const content = readFileSync(filePath, 'utf-8');
+    const match = content.match(VERSION_REGEX);
+    return match ? match[1] : null;
+  } catch {
+    return null;
+  }
+}
 
 /** 將 Date 轉為本地 YYYYMMDD 字串（與使用者電腦時間一致） */
 function formatLocalDate(date: Date = new Date()): string {
@@ -40,13 +63,32 @@ function resolveDailyCommitCount(root: string): number {
   }
 }
 
-function syncVersionFile(root: string) {
+/**
+ * 計算版號：
+ *   - CI 環境：讀取已提交的 version.ts，保證部署版本與 commit 一致
+ *   - 本地環境：基於今日 commit 數即時計算
+ */
+function resolveVersion(root: string): string {
+  if (isCI()) {
+    const committed = readCommittedVersion(root);
+    if (committed) {
+      console.log(`[git-version] CI 環境 — 讀取已提交版號: ${committed}`);
+      return committed;
+    }
+    // CI 讀取失敗時的 safe fallback
+    return `V-${formatLocalDate()}-00`;
+  }
+
   const today = formatLocalDate();
   const count = resolveDailyCommitCount(root);
   const seq = count === 0 ? 1 : count;
-  const version = `V-${today}-${String(seq).padStart(2, '0')}`;
+  return `V-${today}-${String(seq).padStart(2, '0')}`;
+}
 
-  const versionFilePath = resolve(root, 'src/utils/version.ts');
+function syncVersionFile(root: string): string {
+  const version = resolveVersion(root);
+
+  const versionFilePath = resolve(root, VERSION_FILE);
   try {
     const currentContent = readFileSync(versionFilePath, 'utf-8');
     const newContent = `/**
