@@ -38,6 +38,12 @@
   - 實裝 `🎮 一鍵載入 52 筆示範演練庫` 與 `🧹 一鍵清空資料庫 (切換為純淨空白)` 按鈕組。
   - 匯入真實 Excel / JSON 成功後自動切換為正式生產模式並發送系統通知。
 
+**[階段三：消除通配選擇器改A錯B (CAPA-011 Regression Closure)]**
+- `index.css` — **精確收斂實心按鈕白色文字規則，根除淺色卡片泛白**
+  - 根因分析 (RCA)：`[class*="from-blue-"] *` 屬性通配選擇器意外匹配了卡片上的 `dark:from-blue-950` class，導致在 Light Mode 下將整個卡片內部所有深藍色文字（如 `text-sky-900`）強制覆蓋為純白 `#ffffff !important`。
+  - 矯正措施 (CAPA)：將按鈕白字規則精確限定於 `button.bg-*` 與 `.btn-primary`，徹底刪除 `[class*="from-*"] *`。
+  - 產出 [CAPA-011 報告](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/CAPA-011-WildcardSelectorCardContamination.md) 通過 MECE 100/100 滿分校驗，並升級 `contrast-check.mjs` 靜態語法禁令防呆。
+
 ---
 
 ### V-20260823-16 (2026-08-23) — 第一次需求會議 Gap Analysis 優化與決策賦能版

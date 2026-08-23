@@ -31,15 +31,15 @@
 | 備份與復原設定 | `BackupSettingsView.tsx` | ✅ | 自動排程備份與 JSON 備份還原 |
 | PRD 規格文件 | `PrdDocView.tsx` | ✅ | 完整系統規格文件與 Roadmap 檢視 |
 
-#### 全自動自進化體系與對比度防護 (V-20260823-27 ~ 28)
+#### 52 筆代表性數據鏈與對比度改A錯B根除 (V-20260823-29)
 | 項目 | 狀態 | 說明 |
 |------|------|------|
-| 全自動自進化門禁 (Auto-Evolution Gate) | ✅ | `.impeccable/scripts/auto-evolution-gate.mjs` 整合進 `.husky/pre-commit`，每次 commit 自動萃取知識庫、自動 MECE 100 滿分校驗、自動升級防禦工具 |
-| 深底色按鈕純白字體保護 (CAPA-010) | ✅ | `src/index.css` 為實心/漸變按鈕強制宣告 `#ffffff !important`，修復綠色/藍色/紫色按鈕文字對比度，並以 MECE 6 維度完成 CAPA-010 |
-| 按鈕對比度反向防呆工具鏈 | ✅ | `.impeccable/scripts/contrast-check.mjs` 實裝「實心按鈕白色文字保證檢測」規則 |
-| 業務人員稱謂標準化與去個資 | ✅ | `seedData.ts`、`dataExchange.ts`、`ShipScheduleClearanceView.tsx` 與文件全面移除具體人名，統一為俐落專業的「業務人員」(`usr_sales`) |
-| 雙主題視覺與卡片 Token 標準化 | ✅ | 10 大核心視圖外層卡片統一 `bg-white dark:bg-slate-900`，工作台底色溫潤分離 `--bg-workbench: #EBF0F5` |
-| 側邊欄預設收合 | ✅ | `Sidebar.tsx` 4 大導航群組預設收合（`expandedGroups` 初始值 `false`），提供極簡入場視野 |
+| 52 筆全階層代表性品號數據鏈 | ✅ | `seedData.ts`：涵蓋 RAW(12)、MAT(8)、PART(18)、COMP(8)、SET(6) 與 15 組模具/良率/在途訂單 |
+| 智慧雙模換檔機制 (Demo ↔ Prod) | ✅ | 開箱即用示範模式，頂部 Telemetry 模式指示燈，無損資料中心匯入真實資料自動換檔 |
+| 通配選擇器污染根除 (CAPA-011) | ✅ | 刪除 `[class*="from-*"] *`，精確收斂按鈕白字規則至 `button.bg-*`，徹底修復 Light Mode 淺色卡片泛白問題 |
+| 自進化檢測工具鏈升級 | ✅ | `contrast-check.mjs` 加入通配選擇器禁令靜態掃描，`CAPA-011` 通過 MECE 100/100 滿分校驗 |
+| 全自動自進化門禁 (Auto-Evolution Gate) | ✅ | `.impeccable/scripts/auto-evolution-gate.mjs` 每次 commit 自動抽取知識庫並校驗 MECE 評分 |
+| 業務人員稱謂標準化與去個資 | ✅ | 全系統特定個人姓名清理完成，統一為「業務人員」(`usr_sales`) |
 
 ---
 

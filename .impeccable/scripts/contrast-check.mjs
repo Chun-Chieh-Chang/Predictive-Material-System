@@ -78,6 +78,25 @@ const DEFECT_PATTERNS = [
     },
     severity: 'HIGH',
     message: '深底色與高飽和度實心按鈕必須顯式包含 text-white，以確保在所有主題下具備最高對比度 (WCAG AA)。'
+  },
+  {
+    name: '通配屬性選擇器污染卡片文字防呆 (Wildcard Attribute Selector Ban - CAPA-011)',
+    check: (content, filePath) => {
+      if (!filePath.endsWith('index.css')) return [];
+      const findings = [];
+      const lines = content.split('\n');
+      lines.forEach((line, index) => {
+        if (/\[class\*=["'](from|bg)-[^"']*\]\s*\*/.test(line)) {
+          findings.push({
+            line: index + 1,
+            snippet: line.trim()
+          });
+        }
+      });
+      return findings;
+    },
+    severity: 'HIGH',
+    message: '禁止在 CSS 中使用 [class*="from-*"] * 等通配屬性選擇器，會誤傷包含 dark:from-* 的淺色卡片內部文字。'
   }
 ];
 
@@ -98,7 +117,7 @@ function checkFile(filePath) {
         });
       }
     } else if (p.check) {
-      const results = p.check(content);
+      const results = p.check(content, filePath);
       if (results.length > 0) {
         fileFindings.push({
           file: filePath,
