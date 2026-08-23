@@ -163,18 +163,18 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
   return (
     <div className="space-y-6 pb-12">
       {/* Header Bento Card */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-xl shadow-black/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="bg-blue-950 text-blue-400 border border-blue-800/60 text-sm font-bold px-2.5 py-0.5 rounded-md font-mono">
+            <span className="bg-sky-50 dark:bg-blue-950 text-sky-700 dark:text-blue-400 border border-sky-200 dark:border-blue-800/60 text-xs font-bold px-2.5 py-0.5 rounded-md font-mono">
               PRD {PMS_VERSION}
             </span>
-            <span className="text-sm text-slate-500">產品需求與規格白皮書</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400">產品需求與規格白皮書</span>
           </div>
-          <h2 className="text-xl font-bold text-white mt-1">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-1">
             料事如神圈 — 系統需求規範與統一用詞標準
           </h2>
-          <p className="text-sm text-slate-400 mt-0.5">
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">
             完整收錄 3-Stage MRP 數學公式、10大資料表結構、用詞標準化（設計穴數 / 妥善穴數）與風險預警機制
           </p>
         </div>
@@ -183,15 +183,15 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
           <button
             onClick={handleCopyMarkdown}
             id="prd-copy-md-btn"
-            className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-sm font-medium bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-colors"
+            className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer"
           >
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
             <span>複製 Markdown</span>
           </button>
           <button
             onClick={handleDownloadMarkdown}
             id="prd-download-md-btn"
-            className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-sm font-medium bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow-md shadow-blue-600/20"
+            className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-sky-600 text-white hover:bg-sky-700 transition-colors shadow-xs cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
             <span>匯出 PRD (.md)</span>
@@ -407,53 +407,53 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 
       {/* Dictionary View */}
       {activeTab === 'dictionary' && (
-        <div className="bg-slate-900/50 rounded-2xl p-4 sm:p-6 md:p-8 border border-slate-800 shadow-xl shadow-black/20 space-y-6 text-sm">
-          <div className="border-b border-slate-800 pb-4">
-            <h3 className="text-lg font-bold text-white">統一用詞與名詞定義規範 (Terminology Dictionary)</h3>
-            <p className="text-sm text-slate-400 mt-1">已嚴格依據 PRD 規範將「完整穴數」統一為「設計穴數」，「現況穴數」統一為「妥善穴數」</p>
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 md:p-8 border border-slate-200 dark:border-slate-800 shadow-xs space-y-6 text-sm">
+          <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">統一用詞與名詞定義規範 (Terminology Dictionary)</h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">已嚴格依據 PRD 規範將「完整穴數」統一為「設計穴數」，「現況穴數」統一為「妥善穴數」</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-5 bg-slate-950/70 rounded-xl border border-slate-800">
+            <div className="p-5 bg-slate-50 dark:bg-slate-950/70 rounded-xl border border-slate-200 dark:border-slate-800">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-white text-sm">設計穴數 (Design Cavities)</span>
-                <span className="text-sm bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">原: 完整穴數</span>
+                <span className="font-bold text-slate-900 dark:text-white text-sm">設計穴數 (Design Cavities)</span>
+                <span className="text-xs bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded font-mono">原: 完整穴數</span>
               </div>
-              <p className="text-sm text-slate-400 mt-2 leading-relaxed">
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
                 模具出廠原裝設計之總穴數。代表該模具之物理最高潛在產能。
               </p>
             </div>
 
-            <div className="p-5 bg-purple-950/60 rounded-xl border border-purple-500/40">
+            <div className="p-5 bg-purple-50 dark:bg-purple-950/40 rounded-xl border border-purple-200 dark:border-purple-500/40">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-purple-200 text-sm">妥善穴數 (Active Cavities)</span>
-                <span className="text-sm bg-pms-iso-bg dark:bg-purple-950/60 text-pms-iso dark:text-purple-300 border border-pms-iso-border dark:border-purple-800/60 px-2 py-0.5 rounded font-mono font-bold">
+                <span className="font-bold text-purple-900 dark:text-purple-200 text-sm">妥善穴數 (Active Cavities)</span>
+                <span className="text-xs bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-800/60 px-2 py-0.5 rounded font-mono font-bold">
                   原: 現況穴數
                 </span>
               </div>
-              <p className="text-sm text-purple-100 mt-2 leading-relaxed">
+              <p className="text-sm text-purple-950 dark:text-purple-100 mt-2 leading-relaxed">
                 產線現場目前可正常射出注膠之有效穴數。若發生塞穴，此數值動態降低，系統將自動調升「單穴克重」並下修「日產能」。
               </p>
             </div>
 
-            <div className="p-5 bg-slate-950/70 rounded-xl border border-slate-800">
-              <div className="font-bold text-white text-sm">WIP 待驗品 (Sorting WIP)</div>
-              <p className="text-sm text-slate-400 mt-2 leading-relaxed">
+            <div className="p-5 bg-slate-50 dark:bg-slate-950/70 rounded-xl border border-slate-200 dark:border-slate-800">
+              <div className="font-bold text-slate-900 dark:text-white text-sm">WIP 待驗品 (Sorting WIP)</div>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
                 已製造射出完成，集中於 Sorting 檢驗區等待進行 100% 全檢之準成品。在 MRP 運算中依據「標準全檢良率」折算有效成品供給。
               </p>
             </div>
 
-            <div className="p-5 bg-slate-950/70 rounded-xl border border-slate-800">
-              <div className="font-bold text-white text-sm">Conservative Max Weight Principle (最重克重原則)</div>
-              <p className="text-sm text-slate-400 mt-2 leading-relaxed">
+            <div className="p-5 bg-slate-50 dark:bg-slate-950/70 rounded-xl border border-slate-200 dark:border-slate-800">
+              <div className="font-bold text-slate-900 dark:text-white text-sm">Conservative Max Weight Principle (最重克重原則)</div>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
                 當成品對應多副模具（M:N 關聯）且未指定主模時，系統預設採用單穴克重最大之模具進行備料推算，杜絕原料短缺。
               </p>
             </div>
 
-            <div className="p-5 bg-slate-950/70 rounded-xl border border-slate-800">
-              <div className="font-bold text-white text-sm">Multi-Mold Strategy (多模備料策略)</div>
-              <p className="text-sm text-slate-400 mt-2 leading-relaxed">
-                系統支援三種備料原則：\`conservative_max_weight\`（最重克重，預設）、\`primary_mold_only\`（僅主模）、\`lowest_weight\`（最輕克重），可在系統參數中切換。
+            <div className="p-5 bg-slate-50 dark:bg-slate-950/70 rounded-xl border border-slate-200 dark:border-slate-800">
+              <div className="font-bold text-slate-900 dark:text-white text-sm">Multi-Mold Strategy (多模備料策略)</div>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+                系統支援三種備料原則：`conservative_max_weight`（最重克重，預設）、`primary_mold_only`（僅主模）、`lowest_weight`（最輕克重），可在系統參數中切換。
               </p>
             </div>
           </div>
@@ -462,7 +462,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 
       {/* Raw Markdown */}
       {activeTab === 'markdown' && (
-        <div className="bg-slate-950 rounded-2xl p-6 border border-slate-800 text-cyan-300 font-mono text-sm overflow-x-auto shadow-xl">
+        <div className="bg-slate-900 dark:bg-slate-950 rounded-2xl p-6 border border-slate-700 dark:border-slate-800 text-cyan-300 font-mono text-sm overflow-x-auto shadow-xs">
           <pre className="whitespace-pre-wrap">{prdMarkdownContent}</pre>
         </div>
       )}

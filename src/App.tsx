@@ -173,7 +173,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f1f5f9] dark:bg-slate-950 text-slate-900 dark:text-slate-200 flex flex-col font-sans antialiased selection:bg-[#0284c7] selection:text-white transition-colors duration-200">
+    <div className="min-h-screen bg-[#ebf0f5] dark:bg-slate-950 text-slate-900 dark:text-slate-200 flex flex-col font-sans antialiased selection:bg-[#0284c7] selection:text-white transition-colors duration-200">
       {/* Left Sidebar (desktop fixed, mobile overlay drawer) */}
       <Sidebar
         activeTab={activeTab}

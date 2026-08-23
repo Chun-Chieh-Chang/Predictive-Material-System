@@ -49,6 +49,9 @@ assets/.aistudio/
 # Sync files
 sync.ffs_db
 
+# Raw business data (sensitive customer & supplier data, never commit)
+rawdata/
+
 # Metadata（保留版控）
 # metadata.json
 

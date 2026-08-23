@@ -345,7 +345,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
             </div>
           </div>
 
-          <div className="p-3 bg-slate-900 text-cyan-300 rounded-xl font-mono text-sm overflow-hidden max-h-20 border border-slate-800">
+          <div className="p-3 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-cyan-300 rounded-xl font-mono text-xs overflow-hidden max-h-20 border border-slate-200 dark:border-slate-800">
             <pre>{JSON.stringify(db, null, 2).slice(0, 200)} ...</pre>
           </div>
 
@@ -674,20 +674,20 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
       {/* Modal for Raw JSON Text Paste */}
       {showPasteModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center space-x-2.5">
-                <div className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-sky-50 dark:bg-blue-500/10 text-sky-600 dark:text-blue-400 border border-sky-200 dark:border-blue-500/20 flex items-center justify-center">
                   <FileCode className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">直接貼上 JSON 原始代碼</h4>
-                  <p className="text-sm text-slate-400">支援貼上包含 10 大主檔陣列之標準 JSON 物件</p>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">直接貼上 JSON 原始代碼</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">支援貼上包含 10 大主檔陣列之標準 JSON 物件</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowPasteModal(false)}
-                className="text-slate-400 hover:text-white text-sm px-2 py-1"
+                className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white text-sm px-2 py-1 cursor-pointer"
               >
                 ✕ 關閉
               </button>
@@ -698,7 +698,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
               placeholder='請在此貼上完整 JSON 物件，例如: { "item_master": [...], "mold_master": [...] }'
               value={jsonInput}
               onChange={(e) => setJsonInput(e.target.value)}
-              className="w-full p-3.5 bg-slate-950 text-cyan-300 font-mono text-sm rounded-xl border border-slate-800 focus:border-blue-500 focus:outline-hidden placeholder:text-slate-700"
+              className="w-full p-3.5 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-cyan-300 font-mono text-xs rounded-xl border border-slate-300 dark:border-slate-800 focus:border-sky-500 focus:outline-hidden placeholder:text-slate-400"
             />
 
             <div className="flex items-center justify-between pt-2">
@@ -713,7 +713,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
               <div className="flex items-center space-x-2 ml-auto">
                 <button
                   onClick={() => setShowPasteModal(false)}
-                  className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-400 hover:text-slate-200 bg-slate-950 border border-slate-800"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 cursor-pointer"
                 >
                   取消
                 </button>

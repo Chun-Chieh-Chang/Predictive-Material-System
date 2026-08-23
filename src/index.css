@@ -58,7 +58,7 @@
 :root {
   /* QC Annual Summary Design Tokens */
   --bg-app: #0b132b;
-  --bg-workbench: #f1f5f9;
+  --bg-workbench: #ebf0f5;
   --bg-surface: #ffffff;
   --bg-surface-subtle: #f8fafc;
   --bg-card-dark: #1e293b;
@@ -225,7 +225,7 @@ html:not(.dark) {
 }
 
 html:not(.dark) body {
-  background-color: #f1f5f9;
+  background-color: #ebf0f5;
   color: #0f172a;
 }
 

@@ -189,22 +189,21 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
   return (
     <div className="space-y-6 pb-12">
       {/* 1. Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-800 text-white rounded-2xl p-6 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs relative overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2.5 mb-2">
-              <span className="p-2 bg-indigo-500/20 text-indigo-300 rounded-xl border border-indigo-500/30">
-                <CalendarCheck className="w-6 h-6" />
+              <span className="p-2 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-xl border border-indigo-200 dark:border-indigo-800">
+                <CalendarCheck className="w-5 h-5" />
               </span>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
                 週二雙週出貨排程可行性審查看板
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                 業務協調專用
               </span>
             </div>
-            <p className="text-sm text-slate-300 max-w-3xl leading-relaxed">
+            <p className="text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
               專為業務（Iris / AB）與廠長每週二出貨協調會設計。依據最新 2 週出貨排程（Ship Schedule），即時比對成品良品現貨與 3 樓待驗 WIP，5 分鐘內決策可承接出貨量與急迫挑選工單。
             </p>
           </div>
@@ -213,14 +212,14 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
             {Object.keys(simulatedMultipliers).length > 0 && (
               <button
                 onClick={handleResetSimulations}
-                className="px-3.5 py-2 text-sm font-semibold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all cursor-pointer"
+                className="px-3.5 py-2 text-sm font-semibold rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 transition-all cursor-pointer"
               >
                 重置模擬量
               </button>
             )}
             <button
               onClick={() => window.print()}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all cursor-pointer"
             >
               <Printer className="w-4 h-4" />
               <span>列印週二決策清單</span>

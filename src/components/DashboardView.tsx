@@ -432,25 +432,25 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </div>
 
       {/* 2. Full-Featured High-Caliber What-If Simulation Sandbox */}
-      <section className="bg-slate-900/60 border border-blue-500/40 rounded-3xl p-6 lg:p-7 shadow-2xl shadow-blue-950/40 relative overflow-hidden">
+      <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-blue-500/40 rounded-3xl p-6 lg:p-7 shadow-xs relative overflow-hidden">
         {/* Ambient Top Glow */}
         <div className="absolute top-0 left-1/4 right-1/4 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
 
         {/* Sandbox Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-800">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-100 dark:border-slate-800">
           <div>
             <div className="flex items-center space-x-2.5">
-              <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-600/30">
+              <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
                 <SlidersHorizontal className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                   <span>多維度 What-If 模擬試算沙盒</span>
-                  <span className="text-sm font-mono px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                  <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-sky-50 dark:bg-blue-500/20 text-sky-700 dark:text-blue-400 border border-sky-200 dark:border-blue-500/30">
                     Full Parameter Simulator
                   </span>
                 </h2>
-                <p className="text-sm text-slate-400 mt-0.5">
+                <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">
                   全方位自由調校「需求、訂單、模具穴數、成型週期、全檢良率、在庫在途、交期與 MOQ」，即時推演對 MRP 採購與產能的量化衝擊
                 </p>
               </div>
@@ -501,67 +501,67 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
             <button
               onClick={() => applyPreset('clogged_cavities')}
-              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-red-950/40 border border-slate-800 hover:border-red-500/40 text-slate-300 hover:text-red-300 transition-all text-sm font-medium text-left cursor-pointer group"
+              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-50 hover:bg-red-50 dark:bg-slate-950/80 dark:hover:bg-red-950/40 border border-slate-200 hover:border-red-300 dark:border-slate-800 dark:hover:border-red-500/40 text-slate-700 dark:text-slate-300 hover:text-red-700 dark:hover:text-red-300 transition-all text-xs font-medium text-left cursor-pointer group"
             >
-              <Flame className="w-4 h-4 text-red-400 shrink-0 group-hover:scale-110 transition-transform" />
+              <Flame className="w-4 h-4 text-red-500 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
-                <div className="font-bold text-white group-hover:text-red-200">極限塞 2 穴</div>
-                <div className="text-[11px] text-slate-400 truncate">克重飆升/日產能降</div>
+                <div className="font-bold text-slate-900 dark:text-white group-hover:text-red-700 dark:group-hover:text-red-200">極限塞 2 穴</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">克重飆升/日產能降</div>
               </div>
             </button>
 
             <button
               onClick={() => applyPreset('peak_demand')}
-              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-blue-950/40 border border-slate-800 hover:border-blue-500/40 text-slate-300 hover:text-blue-300 transition-all text-sm font-medium text-left cursor-pointer group"
+              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-50 hover:bg-sky-50 dark:bg-slate-950/80 dark:hover:bg-blue-950/40 border border-slate-200 hover:border-sky-300 dark:border-slate-800 dark:hover:border-blue-500/40 text-slate-700 dark:text-slate-300 hover:text-sky-700 dark:hover:text-blue-300 transition-all text-xs font-medium text-left cursor-pointer group"
             >
-              <TrendingUp className="w-4 h-4 text-blue-400 shrink-0 group-hover:scale-110 transition-transform" />
+              <TrendingUp className="w-4 h-4 text-sky-600 dark:text-blue-400 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
-                <div className="font-bold text-white group-hover:text-blue-200">旺季爆單 (+50%)</div>
-                <div className="text-[11px] text-slate-400 truncate">需求急增/交期提前</div>
+                <div className="font-bold text-slate-900 dark:text-white group-hover:text-sky-700 dark:group-hover:text-blue-200">旺季爆單 (+50%)</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">需求急增/交期提前</div>
               </div>
             </button>
 
             <button
               onClick={() => applyPreset('shipping_delay')}
-              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-amber-950/40 border border-slate-800 hover:border-amber-500/40 text-slate-300 hover:text-amber-300 transition-all text-sm font-medium text-left cursor-pointer group"
+              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-50 hover:bg-amber-50 dark:bg-slate-950/80 dark:hover:bg-amber-950/40 border border-slate-200 hover:border-amber-300 dark:border-slate-800 dark:hover:border-amber-500/40 text-slate-700 dark:text-slate-300 hover:text-amber-700 dark:hover:text-amber-300 transition-all text-xs font-medium text-left cursor-pointer group"
             >
-              <Truck className="w-4 h-4 text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
+              <Truck className="w-4 h-4 text-amber-500 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
-                <div className="font-bold text-white group-hover:text-amber-200">海運延誤 (+30天)</div>
-                <div className="text-[11px] text-slate-400 truncate">倒推下單日告急</div>
+                <div className="font-bold text-slate-900 dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-200">海運延誤 (+30天)</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">倒推下單日告急</div>
               </div>
             </button>
 
             <button
               onClick={() => applyPreset('wip_defect')}
-              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-orange-950/40 border border-slate-800 hover:border-orange-500/40 text-slate-300 hover:text-orange-300 transition-all text-sm font-medium text-left cursor-pointer group"
+              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-50 hover:bg-orange-50 dark:bg-slate-950/80 dark:hover:bg-orange-950/40 border border-slate-200 hover:border-orange-300 dark:border-slate-800 dark:hover:border-orange-500/40 text-slate-700 dark:text-slate-300 hover:text-orange-700 dark:hover:text-orange-300 transition-all text-xs font-medium text-left cursor-pointer group"
             >
-              <ShieldAlert className="w-4 h-4 text-orange-400 shrink-0 group-hover:scale-110 transition-transform" />
+              <ShieldAlert className="w-4 h-4 text-orange-500 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
-                <div className="font-bold text-white group-hover:text-orange-200">WIP 良率降 (80%)</div>
-                <div className="text-[11px] text-slate-400 truncate">挑檢損耗激增</div>
+                <div className="font-bold text-slate-900 dark:text-white group-hover:text-orange-700 dark:group-hover:text-orange-200">WIP 良率降 (80%)</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">挑檢損耗激增</div>
               </div>
             </button>
 
             <button
               onClick={() => applyPreset('zero_inventory')}
-              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-purple-950/40 border border-slate-800 hover:border-purple-500/40 text-slate-300 hover:text-purple-300 transition-all text-sm font-medium text-left cursor-pointer group"
+              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-50 hover:bg-purple-50 dark:bg-slate-950/80 dark:hover:bg-purple-950/40 border border-slate-200 hover:border-purple-300 dark:border-slate-800 dark:hover:border-purple-500/40 text-slate-700 dark:text-slate-300 hover:text-purple-700 dark:hover:text-purple-300 transition-all text-xs font-medium text-left cursor-pointer group"
             >
-              <Warehouse className="w-4 h-4 text-purple-400 shrink-0 group-hover:scale-110 transition-transform" />
+              <Warehouse className="w-4 h-4 text-purple-500 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
-                <div className="font-bold text-white group-hover:text-purple-200">零在庫斷料</div>
-                <div className="text-[11px] text-slate-400 truncate">無在手無在途</div>
+                <div className="font-bold text-slate-900 dark:text-white group-hover:text-purple-700 dark:group-hover:text-purple-200">零在庫斷料</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">無在手無在途</div>
               </div>
             </button>
 
             <button
               onClick={() => applyPreset('full_overtime')}
-              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-950/80 hover:bg-emerald-950/40 border border-slate-800 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-300 transition-all text-sm font-medium text-left cursor-pointer group"
+              className="flex items-center space-x-1.5 p-2.5 rounded-xl bg-slate-50 hover:bg-emerald-50 dark:bg-slate-950/80 dark:hover:bg-emerald-950/40 border border-slate-200 hover:border-emerald-300 dark:border-slate-800 dark:hover:border-emerald-500/40 text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-300 transition-all text-xs font-medium text-left cursor-pointer group"
             >
-              <Sparkles className="w-4 h-4 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
+              <Sparkles className="w-4 h-4 text-emerald-500 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
-                <div className="font-bold text-white group-hover:text-emerald-200">24h 滿載加班</div>
-                <div className="text-[11px] text-slate-400 truncate">全穴滿載/縮短週期</div>
+                <div className="font-bold text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-200">24h 滿載加班</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">全穴滿載/縮短週期</div>
               </div>
             </button>
           </div>
@@ -570,7 +570,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {/* Simulator Workspace Grid: Controls on Left (7 cols), Comparison Matrix & Live Delta on Right (5 cols) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
           {/* Controls Container (7 Cols) */}
-          <div className="lg:col-span-7 bg-slate-950/60 rounded-2xl border border-slate-800 p-5 flex flex-col justify-between">
+          <div className="lg:col-span-7 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 flex flex-col justify-between">
             <div>
               {/* Category Navigation Tabs */}
               <div className="flex flex-wrap items-center gap-1.5 pb-4 border-b border-slate-200 dark:border-slate-800">
@@ -628,10 +628,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <div className="space-y-4 pt-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Forecast Qty */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="font-semibold text-slate-200">業務預估量 Forecast (PCS)</span>
-                        <span className="font-mono font-bold text-blue-400 text-sm">
+                        <span className="font-semibold text-slate-900 dark:text-slate-200">業務預估量 Forecast (PCS)</span>
+                        <span className="font-mono font-bold text-sky-600 dark:text-blue-400 text-sm">
                           {simForecast.toLocaleString()}
                         </span>
                       </div>
@@ -642,7 +642,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         step="5000"
                         value={simForecast}
                         onChange={(e) => setOverrideForecast(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                        className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-sky-500"
                       />
                       <div className="flex justify-between text-[11px] text-slate-500 font-mono">
                         <span>5,000</span>
@@ -652,10 +652,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     </div>
 
                     {/* Actual PO Qty */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="font-semibold text-slate-200">實際訂單量 PO Qty (PCS)</span>
-                        <span className="font-mono font-bold text-cyan-400 text-sm">
+                        <span className="font-semibold text-slate-900 dark:text-slate-200">實際訂單量 PO Qty (PCS)</span>
+                        <span className="font-mono font-bold text-sky-600 dark:text-cyan-400 text-sm">
                           {simActualOrder.toLocaleString()}
                         </span>
                       </div>
@@ -666,7 +666,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         step="5000"
                         value={simActualOrder}
                         onChange={(e) => setOverrideActualOrder(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                        className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-sky-500"
                       />
                       <div className="flex justify-between text-[11px] text-slate-500 font-mono">
                         <span>0</span>
@@ -678,28 +678,28 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Demand Consumption Mode */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <label className="text-sm font-semibold text-slate-200 block">需求沖銷模式 (Consumption Mode)</label>
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+                      <label className="text-sm font-semibold text-slate-900 dark:text-slate-200 block">需求沖銷模式 (Consumption Mode)</label>
                       <select
                         value={simDemandMode}
                         onChange={(e) => setOverrideDemandMode(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-slate-200 font-medium focus:outline-hidden cursor-pointer"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-slate-200 font-medium focus:outline-hidden cursor-pointer"
                       >
                         <option value="additive">疊加模式 (Forecast + 實際訂單 PO)</option>
                         <option value="po_consume">實單沖銷 (Max[Forecast, 實際訂單])</option>
                         <option value="forecast_only">僅計預估需求 (Forecast Only)</option>
                         <option value="actual_only">僅計正式實單 (Actual PO Only)</option>
                       </select>
-                      <span className="text-[11px] text-slate-400 block">
-                        目前總需求計算值: <strong className="text-white font-mono">{simTotalDemand.toLocaleString()} PCS</strong>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400 block">
+                        目前總需求計算值: <strong className="text-slate-900 dark:text-white font-mono">{simTotalDemand.toLocaleString()} PCS</strong>
                       </span>
                     </div>
 
                     {/* Delivery Target Date Offset */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="font-semibold text-slate-200">交期調整 (Offset Days)</span>
-                        <span className="font-mono font-bold text-amber-400 text-sm">
+                        <span className="font-semibold text-slate-900 dark:text-slate-200">交期調整 (Offset Days)</span>
+                        <span className="font-mono font-bold text-amber-600 dark:text-amber-400 text-sm">
                           {overrideDateOffsetDays > 0 ? `+${overrideDateOffsetDays}` : overrideDateOffsetDays} 天 ({simTargetDateStr})
                         </span>
                       </div>
@@ -710,7 +710,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         step="5"
                         value={overrideDateOffsetDays}
                         onChange={(e) => setOverrideDateOffsetDays(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                        className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-amber-500"
                       />
                       <div className="flex justify-between text-[11px] text-slate-500 font-mono">
                         <span>提前 30 天</span>
@@ -727,15 +727,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <div className="space-y-4 pt-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Mold Switcher (If multi-mold available) */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <label className="text-sm font-semibold text-slate-200 block">成型模具選擇 (Mold Selection)</label>
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+                      <label className="text-sm font-semibold text-slate-900 dark:text-slate-200 block">成型模具選擇 (Mold Selection)</label>
                       <select
                         value={currentMoldId}
                         onChange={(e) => {
                           setOverrideMoldId(e.target.value);
                           setOverrideCavities(null);
                         }}
-                        className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-purple-300 font-mono font-semibold focus:outline-hidden cursor-pointer"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg p-2 text-sm text-purple-700 dark:text-purple-300 font-mono font-semibold focus:outline-hidden cursor-pointer"
                       >
                         {relatedBoms.map((b) => {
                           const m = db.mold_master.find((mold) => mold.mold_id === b.mold_id);
@@ -746,16 +746,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                           );
                         })}
                       </select>
-                      <span className="text-[11px] text-slate-400 block">
-                        目前模具: <strong className="text-white font-mono">{currentMoldId}</strong> (整模淨重 {simNetMoldWeight}g)
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400 block">
+                        目前模具: <strong className="text-slate-900 dark:text-white font-mono">{currentMoldId}</strong> (整模淨重 {simNetMoldWeight}g)
                       </span>
                     </div>
 
                     {/* Active Cavities */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="font-semibold text-slate-200">妥善穴數 (Active Cavities)</span>
-                        <span className="font-mono font-bold text-purple-400 text-sm">
+                        <span className="font-semibold text-slate-900 dark:text-slate-200">妥善穴數 (Active Cavities)</span>
+                        <span className="font-mono font-bold text-purple-600 dark:text-purple-400 text-sm">
                           {simActiveCav} / {simDesignCav} 穴 {simActiveCav < simDesignCav ? `(塞 ${simDesignCav - simActiveCav} 穴)` : '(全穴正常)'}
                         </span>
                       </div>
@@ -766,7 +766,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         step="1"
                         value={simActiveCav}
                         onChange={(e) => setOverrideCavities(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-purple-500"
+                        className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-purple-500"
                       />
                       <div className="flex justify-between text-[11px] text-slate-500 font-mono">
                         <span>1 穴 (極限)</span>
@@ -778,10 +778,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {/* Cycle Time */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="font-semibold text-slate-200">成型週期 Cycle Time</span>
-                        <span className="font-mono font-bold text-white text-sm">
+                        <span className="font-semibold text-slate-900 dark:text-slate-200">成型週期 Cycle Time</span>
+                        <span className="font-mono font-bold text-slate-900 dark:text-white text-sm">
                           {simCycleTime}s
                         </span>
                       </div>
@@ -792,7 +792,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         step="0.5"
                         value={simCycleTime}
                         onChange={(e) => setOverrideCycleTime(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-slate-400"
+                        className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-slate-400"
                       />
                       <div className="flex justify-between text-[11px] text-slate-500 font-mono">
                         <span>10s</span>
@@ -802,10 +802,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     </div>
 
                     {/* Daily Operating Hours */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="font-semibold text-slate-200">日稼動工時</span>
-                        <span className="font-mono font-bold text-cyan-300 text-sm">
+                        <span className="font-semibold text-slate-900 dark:text-slate-200">日稼動工時</span>
+                        <span className="font-mono font-bold text-sky-600 dark:text-cyan-300 text-sm">
                           {simDailyHours} 小時/日
                         </span>
                       </div>
@@ -816,7 +816,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         step="2"
                         value={simDailyHours}
                         onChange={(e) => setOverrideDailyHours(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                        className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-sky-400"
                       />
                       <div className="flex justify-between text-[11px] text-slate-500 font-mono">
                         <span>8h (單班)</span>
@@ -826,10 +826,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     </div>
 
                     {/* Mfg Scrap Rate */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="font-semibold text-slate-200">射出生產損耗率</span>
-                        <span className="font-mono font-bold text-red-300 text-sm">
+                        <span className="font-semibold text-slate-900 dark:text-slate-200">射出生產損耗率</span>
+                        <span className="font-mono font-bold text-red-600 dark:text-red-300 text-sm">
                           {(simScrap * 100).toFixed(1)}%
                         </span>
                       </div>
@@ -840,7 +840,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         step="0.005"
                         value={simScrap}
                         onChange={(e) => setOverrideScrap(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-red-400"
+                        className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-red-400"
                       />
                       <div className="flex justify-between text-[11px] text-slate-500 font-mono">
                         <span>0%</span>
@@ -857,10 +857,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <div className="space-y-4 pt-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Sorting Yield */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="font-semibold text-slate-200">Sorting 全檢良率</span>
-                        <span className="font-mono font-bold text-emerald-400 text-sm">
+                        <span className="font-semibold text-slate-900 dark:text-slate-200">Sorting 全檢良率</span>
+                        <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-sm">
                           {(simYield * 100).toFixed(1)}%
                         </span>
                       </div>
@@ -871,7 +871,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         step="0.01"
                         value={simYield}
                         onChange={(e) => setOverrideYield(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                        className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                       />
                       <div className="flex justify-between text-[11px] text-slate-500 font-mono">
                         <span>60%</span>
@@ -881,10 +881,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     </div>
 
                     {/* WIP Pending Qty */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="font-semibold text-slate-200">待驗品庫存 WIP (PCS)</span>
-                        <span className="font-mono font-bold text-white text-sm">
+                        <span className="font-semibold text-slate-900 dark:text-slate-200">待驗品庫存 WIP (PCS)</span>
+                        <span className="font-mono font-bold text-slate-900 dark:text-white text-sm">
                           {simWipQty.toLocaleString()} (有效良品: {simWipEffective.toLocaleString()})
                         </span>
                       </div>
@@ -895,7 +895,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         step="1000"
                         value={simWipQty}
                         onChange={(e) => setOverrideWipQty(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-slate-400"
+                        className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-slate-400"
                       />
                       <div className="flex justify-between text-[11px] text-slate-500 font-mono">
                         <span>0</span>
@@ -907,10 +907,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {/* FG Ready Qty */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="font-semibold text-slate-200">成品良品庫存 (PCS)</span>
-                        <span className="font-mono font-bold text-blue-300 text-sm">
+                        <span className="font-semibold text-slate-900 dark:text-slate-200">成品良品庫存 (PCS)</span>
+                        <span className="font-mono font-bold text-sky-600 dark:text-blue-300 text-sm">
                           {simFgReady.toLocaleString()}
                         </span>
                       </div>
@@ -921,7 +921,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         step="1000"
                         value={simFgReady}
                         onChange={(e) => setOverrideFgReadyQty(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-blue-400"
+                        className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-sky-400"
                       />
                       <div className="flex justify-between text-[11px] text-slate-500 font-mono">
                         <span>0</span>
@@ -931,10 +931,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     </div>
 
                     {/* RM On-Hand */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="font-semibold text-slate-200">原料在庫庫存 (KG)</span>
-                        <span className="font-mono font-bold text-purple-300 text-sm">
+                        <span className="font-semibold text-slate-900 dark:text-slate-200">原料在庫庫存 (KG)</span>
+                        <span className="font-mono font-bold text-purple-600 dark:text-purple-300 text-sm">
                           {simRmOnHand.toLocaleString()}
                         </span>
                       </div>
@@ -945,7 +945,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         step="200"
                         value={simRmOnHand}
                         onChange={(e) => setOverrideRmOnHand(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-purple-400"
+                        className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-purple-400"
                       />
                       <div className="flex justify-between text-[11px] text-slate-500 font-mono">
                         <span>0</span>
@@ -955,10 +955,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     </div>
 
                     {/* RM In-Transit */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="font-semibold text-slate-200">原料在途訂單 (KG)</span>
-                        <span className="font-mono font-bold text-amber-300 text-sm">
+                        <span className="font-semibold text-slate-900 dark:text-slate-200">原料在途訂單 (KG)</span>
+                        <span className="font-mono font-bold text-amber-600 dark:text-amber-300 text-sm">
                           {simRmInTransit.toLocaleString()}
                         </span>
                       </div>
@@ -969,7 +969,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         step="200"
                         value={simRmInTransit}
                         onChange={(e) => setOverrideRmInTransit(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-amber-400"
+                        className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-amber-400"
                       />
                       <div className="flex justify-between text-[11px] text-slate-500 font-mono">
                         <span>0</span>
@@ -986,10 +986,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <div className="space-y-4 pt-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Lead Time Days */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="font-semibold text-slate-200">採購交期 Lead Time</span>
-                        <span className="font-mono font-bold text-amber-400 text-sm">
+                        <span className="font-semibold text-slate-900 dark:text-slate-200">採購交期 Lead Time</span>
+                        <span className="font-mono font-bold text-amber-600 dark:text-amber-400 text-sm">
                           {simLeadTime} 天 (海運/空運)
                         </span>
                       </div>
@@ -1000,7 +1000,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         step="1"
                         value={simLeadTime}
                         onChange={(e) => setOverrideLeadTime(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                        className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-amber-500"
                       />
                       <div className="flex justify-between text-[11px] text-slate-500 font-mono">
                         <span>7天 (特急空運)</span>
@@ -1010,10 +1010,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     </div>
 
                     {/* MOQ (KG) */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="font-semibold text-slate-200">最小起訂量 MOQ (KG)</span>
-                        <span className="font-mono font-bold text-cyan-400 text-sm">
+                        <span className="font-semibold text-slate-900 dark:text-slate-200">最小起訂量 MOQ (KG)</span>
+                        <span className="font-mono font-bold text-sky-600 dark:text-cyan-400 text-sm">
                           {simMoq.toLocaleString()} KG
                         </span>
                       </div>
@@ -1024,7 +1024,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         step="100"
                         value={simMoq}
                         onChange={(e) => setOverrideMoq(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                        className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-sky-500"
                       />
                       <div className="flex justify-between text-[11px] text-slate-500 font-mono">
                         <span>100 KG</span>
@@ -1036,10 +1036,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Safety Stock (KG) */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="font-semibold text-slate-200">安全庫存量 Safety Stock (KG)</span>
-                        <span className="font-mono font-bold text-emerald-400 text-sm">
+                        <span className="font-semibold text-slate-900 dark:text-slate-200">安全庫存量 Safety Stock (KG)</span>
+                        <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-sm">
                           {simSafetyStock.toLocaleString()} KG
                         </span>
                       </div>
@@ -1050,7 +1050,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         step="50"
                         value={simSafetyStock}
                         onChange={(e) => setOverrideSafetyStock(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                        className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                       />
                       <div className="flex justify-between text-[11px] text-slate-500 font-mono">
                         <span>0 KG</span>
@@ -1060,10 +1060,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     </div>
 
                     {/* Unit Price (USD) */}
-                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div className="bg-white dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="font-semibold text-slate-200">原料預估單價 Unit Price</span>
-                        <span className="font-mono font-bold text-blue-300 text-sm">
+                        <span className="font-semibold text-slate-900 dark:text-slate-200">原料預估單價 Unit Price</span>
+                        <span className="font-mono font-bold text-sky-600 dark:text-blue-300 text-sm">
                           ${simUnitPrice.toFixed(2)} USD/KG
                         </span>
                       </div>
@@ -1074,7 +1074,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         step="0.1"
                         value={simUnitPrice}
                         onChange={(e) => setOverrideUnitPrice(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-blue-400"
+                        className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-sky-400"
                       />
                       <div className="flex justify-between text-[11px] text-slate-500 font-mono">
                         <span>$1.00</span>
@@ -1088,14 +1088,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
 
             {/* Bottom Status Tip */}
-            <div className="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-sm text-slate-400">
+            <div className="mt-5 pt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
               <span className="flex items-center space-x-1.5">
-                <Info className="w-3.5 h-3.5 text-blue-400" />
+                <Info className="w-3.5 h-3.5 text-sky-600 dark:text-blue-400" />
                 <span>所有滑桿與選單皆即時驅動 MRP 核心數學模型計算</span>
               </span>
               <button
                 onClick={() => onNavigateToMRP(selectedSku)}
-                className="text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1 cursor-pointer"
+                className="text-sky-600 dark:text-cyan-400 hover:text-sky-700 dark:hover:text-cyan-300 font-semibold flex items-center gap-1 cursor-pointer"
               >
                 <span>前往 3 階推導明細</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -1104,20 +1104,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
 
           {/* Impact Comparison Matrix & Live Delta (5 Cols) */}
-          <div className="lg:col-span-5 bg-gradient-to-b from-blue-950/70 to-slate-950/90 rounded-2xl border border-blue-500/30 p-5 flex flex-col justify-between shadow-xl">
+          <div className="lg:col-span-5 bg-sky-50/50 dark:bg-gradient-to-b dark:from-blue-950/70 dark:to-slate-950/90 rounded-2xl border border-sky-200 dark:border-blue-500/30 p-5 flex flex-col justify-between shadow-xs">
             <div>
-              <div className="flex items-center justify-between pb-3 border-b border-blue-500/20">
-                <span className="text-sm font-bold uppercase tracking-wider text-blue-200 flex items-center gap-1.5">
-                  <TrendingUp className="w-4 h-4 text-cyan-400" />
+              <div className="flex items-center justify-between pb-3 border-b border-sky-200 dark:border-blue-500/20">
+                <span className="text-xs font-bold uppercase tracking-wider text-sky-900 dark:text-blue-200 flex items-center gap-1.5">
+                  <TrendingUp className="w-4 h-4 text-sky-600 dark:text-cyan-400" />
                   <span>基準 vs 模擬 Δ 差異衝擊推演</span>
                 </span>
                 <span
-                  className={`text-sm font-mono font-bold px-2.5 py-0.5 rounded-full border ${
+                  className={`text-xs font-mono font-bold px-2.5 py-0.5 rounded-full border ${
                     simDaysUntilLatestOrder < 0
-                      ? 'bg-red-950/80 text-red-400 border-red-500/40'
+                      ? 'bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-400 border-red-300 dark:border-red-500/40'
                       : simDaysUntilLatestOrder <= 15
-                      ? 'bg-amber-950/80 text-amber-400 border-amber-500/40'
-                      : 'bg-emerald-950/80 text-emerald-400 border-emerald-500/40'
+                      ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-500/40'
+                      : 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-500/40'
                   }`}
                 >
                   {simDaysUntilLatestOrder < 0 ? '🔴 下單逾期' : simDaysUntilLatestOrder <= 15 ? '🟡 即刻發單' : '🟢 排程充裕'}
@@ -1127,52 +1127,52 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               {/* Comparison Tiles */}
               <div className="grid grid-cols-2 gap-3 mt-3.5 text-sm">
                 {/* Tile 1: Unit Weight */}
-                <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                  <span className="text-slate-400 block text-[11px]">動態單穴克重</span>
+                <div className="bg-white dark:bg-slate-900/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <span className="text-slate-500 dark:text-slate-400 block text-[11px]">動態單穴克重</span>
                   <div className="flex items-baseline justify-between mt-1">
-                    <span className="text-base font-bold font-mono text-cyan-300">
-                      {simUnitWeight.toFixed(3)} <span className="text-sm font-normal">g</span>
+                    <span className="text-base font-bold font-mono text-sky-700 dark:text-cyan-300">
+                      {simUnitWeight.toFixed(3)} <span className="text-xs font-normal">g</span>
                     </span>
-                    <span className={`font-mono text-[11px] font-bold ${deltaUnitWeight > 0 ? 'text-red-400' : deltaUnitWeight < 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
+                    <span className={`font-mono text-[11px] font-bold ${deltaUnitWeight > 0 ? 'text-red-600 dark:text-red-400' : deltaUnitWeight < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`}>
                       {deltaUnitWeight > 0 ? `+${deltaUnitWeight}` : deltaUnitWeight === 0 ? '±0' : deltaUnitWeight}
                     </span>
                   </div>
                 </div>
 
                 {/* Tile 2: Daily Capacity */}
-                <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                  <span className="text-slate-400 block text-[11px]">日射出產能</span>
+                <div className="bg-white dark:bg-slate-900/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <span className="text-slate-500 dark:text-slate-400 block text-[11px]">日射出產能</span>
                   <div className="flex items-baseline justify-between mt-1">
-                    <span className="text-base font-bold font-mono text-white">
-                      {simDailyCap.toLocaleString()} <span className="text-sm font-normal">PCS</span>
+                    <span className="text-base font-bold font-mono text-slate-900 dark:text-white">
+                      {simDailyCap.toLocaleString()} <span className="text-xs font-normal">PCS</span>
                     </span>
-                    <span className={`font-mono text-[11px] font-bold ${deltaDailyCap > 0 ? 'text-emerald-400' : deltaDailyCap < 0 ? 'text-red-400' : 'text-slate-500'}`}>
+                    <span className={`font-mono text-[11px] font-bold ${deltaDailyCap > 0 ? 'text-emerald-600 dark:text-emerald-400' : deltaDailyCap < 0 ? 'text-red-600 dark:text-red-400' : 'text-slate-400 dark:text-slate-500'}`}>
                       {deltaDailyCap > 0 ? `+${deltaDailyCap.toLocaleString()}` : deltaDailyCap === 0 ? '±0' : deltaDailyCap.toLocaleString()}
                     </span>
                   </div>
                 </div>
 
                 {/* Tile 3: FG Net Gap */}
-                <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                  <span className="text-slate-400 block text-[11px]">成品淨缺口</span>
+                <div className="bg-white dark:bg-slate-900/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <span className="text-slate-500 dark:text-slate-400 block text-[11px]">成品淨缺口</span>
                   <div className="flex items-baseline justify-between mt-1">
-                    <span className="text-base font-bold font-mono text-blue-400">
-                      {simFgGap.toLocaleString()} <span className="text-sm font-normal">PCS</span>
+                    <span className="text-base font-bold font-mono text-sky-600 dark:text-blue-400">
+                      {simFgGap.toLocaleString()} <span className="text-xs font-normal">PCS</span>
                     </span>
-                    <span className={`font-mono text-[11px] font-bold ${deltaFgGap > 0 ? 'text-red-400' : deltaFgGap < 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
+                    <span className={`font-mono text-[11px] font-bold ${deltaFgGap > 0 ? 'text-red-600 dark:text-red-400' : deltaFgGap < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`}>
                       {deltaFgGap > 0 ? `+${deltaFgGap.toLocaleString()}` : deltaFgGap === 0 ? '±0' : deltaFgGap.toLocaleString()}
                     </span>
                   </div>
                 </div>
 
                 {/* Tile 4: Net Raw Material */}
-                <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                  <span className="text-slate-400 block text-[11px]">原料淨需求 (KG)</span>
+                <div className="bg-white dark:bg-slate-900/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <span className="text-slate-500 dark:text-slate-400 block text-[11px]">原料淨需求 (KG)</span>
                   <div className="flex items-baseline justify-between mt-1">
-                    <span className="text-base font-bold font-mono text-purple-300">
-                      {simNetRMKg.toLocaleString()} <span className="text-sm font-normal">KG</span>
+                    <span className="text-base font-bold font-mono text-purple-700 dark:text-purple-300">
+                      {simNetRMKg.toLocaleString()} <span className="text-xs font-normal">KG</span>
                     </span>
-                    <span className={`font-mono text-[11px] font-bold ${deltaNetRM > 0 ? 'text-red-400' : deltaNetRM < 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
+                    <span className={`font-mono text-[11px] font-bold ${deltaNetRM > 0 ? 'text-red-600 dark:text-red-400' : deltaNetRM < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`}>
                       {deltaNetRM > 0 ? `+${deltaNetRM.toLocaleString()}` : deltaNetRM === 0 ? '±0' : deltaNetRM.toLocaleString()}
                     </span>
                   </div>
@@ -1180,51 +1180,51 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
 
               {/* Major PO Impact Banner */}
-              <div className="mt-3.5 bg-blue-900/40 p-4 rounded-xl border border-blue-400/30 space-y-2">
+              <div className="mt-3.5 bg-sky-100/60 dark:bg-blue-900/40 p-4 rounded-xl border border-sky-300 dark:border-blue-400/30 space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-blue-200 font-semibold">建議發單採購量 (MOQ取整):</span>
-                  <span className="text-lg font-bold font-mono text-white">
+                  <span className="text-sky-900 dark:text-blue-200 font-semibold">建議發單採購量 (MOQ取整):</span>
+                  <span className="text-lg font-bold font-mono text-sky-950 dark:text-white">
                     {simSuggestedPOKg.toLocaleString()} KG
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-sm pt-1 border-t border-blue-500/20">
-                  <span className="text-blue-300">預估採購總金額 (USD):</span>
-                  <span className="font-mono font-bold text-cyan-300">
+                <div className="flex items-center justify-between text-sm pt-1 border-t border-sky-200 dark:border-blue-500/20">
+                  <span className="text-sky-800 dark:text-blue-300">預估採購總金額 (USD):</span>
+                  <span className="font-mono font-bold text-sky-900 dark:text-cyan-300">
                     ${simTotalCostUsd.toLocaleString()} USD
-                    <span className={`ml-2 text-[11px] ${deltaCost > 0 ? 'text-red-400' : deltaCost < 0 ? 'text-emerald-400' : 'text-slate-400'}`}>
+                    <span className={`ml-2 text-[11px] ${deltaCost > 0 ? 'text-red-600 dark:text-red-400' : deltaCost < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`}>
                       ({deltaCost > 0 ? `+$${deltaCost.toLocaleString()}` : deltaCost === 0 ? '±$0' : `-$${Math.abs(deltaCost).toLocaleString()}`})
                     </span>
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-sm pt-1 border-t border-blue-500/20">
-                  <span className="text-blue-300">最晚下單期限 (Order Date):</span>
-                  <span className="font-mono font-bold text-amber-300">
+                <div className="flex items-center justify-between text-sm pt-1 border-t border-sky-200 dark:border-blue-500/20">
+                  <span className="text-sky-800 dark:text-blue-300">最晚下單期限 (Order Date):</span>
+                  <span className="font-mono font-bold text-amber-700 dark:text-amber-300">
                     {simSuggestedOrderDate} ({simDaysUntilLatestOrder >= 0 ? `剩 ${simDaysUntilLatestOrder} 天` : `逾期 ${Math.abs(simDaysUntilLatestOrder)} 天`})
                   </span>
                 </div>
               </div>
 
               {/* Decision Protocol Recommendation */}
-              <div className="mt-3.5 p-3 bg-slate-950/70 rounded-xl border border-slate-800 text-sm space-y-1">
-                <div className="font-bold text-slate-200 flex items-center space-x-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+              <div className="mt-3.5 p-3 bg-white dark:bg-slate-950/70 rounded-xl border border-slate-200 dark:border-slate-800 text-sm space-y-1">
+                <div className="font-bold text-slate-900 dark:text-slate-200 flex items-center space-x-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-sky-600 dark:text-cyan-400" />
                   <span>沙盒推演決策建言：</span>
                 </div>
-                <p className="text-slate-300 text-[11px] leading-relaxed">
+                <p className="text-slate-700 dark:text-slate-300 text-[11px] leading-relaxed">
                   {simDaysUntilLatestOrder < 0 ? (
-                    <span className="text-red-300 font-medium">
+                    <span className="text-red-600 dark:text-red-300 font-medium">
                       ⚠️ 警報：因交期 ({simLeadTime}天) 或需求調整，最晚下單日 ({simSuggestedOrderDate}) 已逾期 {Math.abs(simDaysUntilLatestOrder)} 天。建議立即啟動原廠空運特急件或自其他料號調撥在庫！
                     </span>
                   ) : simActiveCav < simDesignCav ? (
-                    <span className="text-amber-300 font-medium">
+                    <span className="text-amber-600 dark:text-amber-300 font-medium">
                       ⚠️ 注意：因塞 {simDesignCav - simActiveCav} 穴，單穴克重提升至 {simUnitWeight.toFixed(3)}g/穴（+{deltaUnitWeight}g），日產能損失 {Math.abs(deltaDailyCap).toLocaleString()} PCS/日。建議排入模具保養或切換備用模。
                     </span>
                   ) : deltaSuggestedPO > 0 ? (
-                    <span className="text-blue-300 font-medium">
+                    <span className="text-sky-700 dark:text-blue-300 font-medium">
                       📈 需求擴增：建議採購量增加 {deltaSuggestedPO.toLocaleString()} KG，請儘速向供應商確認產能並在 {simSuggestedOrderDate} 前完成發單。
                     </span>
                   ) : (
-                    <span className="text-emerald-300 font-medium">
+                    <span className="text-emerald-700 dark:text-emerald-300 font-medium">
                       ✅ 狀態平穩：排程餘裕充裕 ({simDaysUntilLatestOrder} 天)，物料供需平衡在安全指標內。
                     </span>
                   )}
@@ -1236,23 +1236,23 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </section>
 
       {/* 3. Decision War Room Priority Table (Full Width) */}
-      <section className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 shadow-xl shadow-black/30">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+      <section className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
           <div>
-            <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <span>📊 決策戰情室</span>
-              <span className="text-slate-500 text-sm font-normal font-mono">Decision War Room</span>
+              <span className="text-slate-400 dark:text-slate-500 text-xs font-normal font-mono">Decision War Room</span>
             </h2>
-            <p className="text-sm text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               自動辨識長交期物料，倒推最晚採購下單排程與風險處置建議
             </p>
           </div>
           <button
             onClick={() => exportToExcel(db)}
             id="war-room-export-btn"
-            className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-sm rounded-xl border border-slate-700 text-slate-200 transition-colors shrink-0 cursor-pointer"
+            className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 transition-colors shrink-0 cursor-pointer"
           >
-            <Download className="w-3.5 h-3.5 text-emerald-400" />
+            <Download className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>匯出建議採購清單 Excel</span>
           </button>
           <button
@@ -1494,15 +1494,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </section>
 
       {/* 4. Risk Alerts Bento Grid (3 Cols) */}
-      <section className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 shadow-xl shadow-black/30">
-        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+      <section className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20 flex items-center justify-center">
               <ShieldAlert className="w-4.5 h-4.5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white">即時物料與產能預警中心</h3>
-              <p className="text-sm text-slate-400">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">即時物料與產能預警中心</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 自動監控海運交期倒數、在途採購 PO、妥善穴數塞穴產能與 Forecast 下修呆滯
               </p>
             </div>
@@ -1516,7 +1516,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <span>🔍 檢索緊張訂單與卡關環節</span>
               </button>
             )}
-            <span className="text-sm font-mono font-semibold text-slate-300 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+            <span className="text-xs font-mono font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-300 dark:border-slate-700">
               {allAlerts.length} 項預警狀態
             </span>
           </div>
@@ -1544,7 +1544,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               >
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold font-mono bg-pms-cobalt-light dark:bg-slate-900 px-2.5 py-1 rounded-md border border-pms-cobalt-border dark:border-slate-700 text-pms-cobalt dark:text-sky-300 shadow-xs">
+                    <span className="text-sm font-bold font-mono bg-sky-50 dark:bg-slate-900 px-2.5 py-1 rounded-md border border-sky-200 dark:border-slate-700 text-sky-700 dark:text-sky-300 shadow-xs">
                       {alert.sku}
                     </span>
                     <span className="text-sm font-bold text-slate-500 dark:text-slate-400 font-mono">{alert.customer}</span>
@@ -1557,11 +1557,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   </p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800/80 bg-slate-50/70 dark:bg-slate-950/40 p-2.5 rounded-lg">
-                  <div className="text-sm font-bold text-slate-700 dark:text-slate-400 flex items-center space-x-1">
+                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/40 p-2.5 rounded-lg">
+                  <div className="text-xs font-bold text-slate-700 dark:text-slate-400 flex items-center space-x-1">
                     <span>💡 處置對策建議：</span>
                   </div>
-                  <p className="text-sm font-medium mt-1 text-slate-800 dark:text-slate-200 leading-relaxed">
+                  <p className="text-xs font-medium mt-1 text-slate-800 dark:text-slate-200 leading-relaxed">
                     {alert.actionRecommendation}
                   </p>
                 </div>
@@ -1573,18 +1573,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </section>
 
       {/* 5. Full Procurement Schedule Bento Table */}
-      <section className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 shadow-xl shadow-black/30">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800 gap-2">
+      <section className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 gap-2">
           <div>
-            <h3 className="text-base font-bold text-white">MRP 建議採購下單排程表</h3>
-            <p className="text-sm text-slate-400">
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">MRP 建議採購下單排程表</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               整合原料單價、MOQ 取整、安全庫存與海運 Lead Time 倒推排程
             </p>
           </div>
           <button
             onClick={() => onNavigateToTables('supplier_rule_master')}
             id="view-supplier-rules-btn"
-            className="text-sm text-cyan-400 font-semibold hover:text-cyan-300 flex items-center space-x-1 cursor-pointer"
+            className="text-xs text-sky-600 dark:text-cyan-400 font-semibold hover:text-sky-700 dark:hover:text-cyan-300 flex items-center space-x-1 cursor-pointer"
           >
             <span>維護供應商交期規則</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -1594,50 +1594,50 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {!isCollapsed('procurement') && (
         <div className="overflow-x-auto scrollbar-sm mt-4">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-950/60 text-slate-400 font-semibold uppercase border-b border-slate-800">
+            <thead className="bg-slate-50 dark:bg-slate-950/60 text-slate-600 dark:text-slate-400 font-semibold uppercase border-b border-slate-200 dark:border-slate-800">
               <tr>
                 <th className="px-3.5 py-3">需求品號 / 客戶</th>
                 <th className="px-3.5 py-3">預估版本</th>
                 <th className="px-3.5 py-3">使用原料</th>
                 <th className="px-3.5 py-3 text-right">成品缺口 (PCS)</th>
                 <th className="px-3.5 py-3 text-right">原料淨需求 (KG)</th>
-                <th className="px-3.5 py-3 text-right font-bold text-blue-400">建議下單量 (KG)</th>
+                <th className="px-3.5 py-3 text-right font-bold text-sky-600 dark:text-blue-400">建議下單量 (KG)</th>
                 <th className="px-3.5 py-3">交期 Lead Time</th>
                 <th className="px-3.5 py-3">最晚下單日</th>
                 <th className="px-3.5 py-3 text-center">排程狀態</th>
                 <th className="px-3.5 py-3 text-center">操作</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/50 font-mono">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 font-mono">
               {mrpResults.map((item) => (
-                <tr key={item.sku} className="hover:bg-slate-800/30 transition-colors">
+                <tr key={item.sku} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                   <td className="px-3.5 py-3.5">
-                    <div className="font-bold text-white text-sm">{item.sku}</div>
-                    <div className="text-sm text-slate-400 font-sans mt-0.5">{item.productName} ({item.customerId})</div>
+                    <div className="font-bold text-slate-900 dark:text-white text-sm">{item.sku}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 font-sans mt-0.5">{item.productName} ({item.customerId})</div>
                   </td>
                   <td className="px-3.5 py-3.5">
-                    <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-sm">
+                    <span className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded text-xs">
                       {item.versionNo}
                     </span>
                   </td>
                   <td className="px-3.5 py-3.5">
-                    <div className="font-semibold text-purple-400 text-sm">{item.rmSku}</div>
+                    <div className="font-semibold text-purple-700 dark:text-purple-400 text-sm">{item.rmSku}</div>
                   </td>
-                  <td className="px-3.5 py-3.5 text-right font-medium text-slate-200 text-sm">
+                  <td className="px-3.5 py-3.5 text-right font-medium text-slate-800 dark:text-slate-200 text-sm">
                     {item.fgNetRequirementQty.toLocaleString()}
                   </td>
-                  <td className="px-3.5 py-3.5 text-right font-medium text-slate-200 text-sm">
+                  <td className="px-3.5 py-3.5 text-right font-medium text-slate-800 dark:text-slate-200 text-sm">
                     {item.rmNetRequirementKg.toLocaleString()}
                   </td>
-                  <td className="px-3.5 py-3.5 text-right font-bold text-blue-400 text-sm">
+                  <td className="px-3.5 py-3.5 text-right font-bold text-sky-600 dark:text-blue-400 text-sm">
                     {item.suggestedOrderQtyKg.toLocaleString()}
                   </td>
-                  <td className="px-3.5 py-3.5 text-slate-300 font-sans text-sm">
+                  <td className="px-3.5 py-3.5 text-slate-600 dark:text-slate-300 font-sans text-xs">
                     {item.leadTimeDays} 天 (MOQ: {item.moqKg} KG)
                   </td>
                   <td className="px-3.5 py-3.5">
-                    <div className="font-semibold text-white text-sm">{item.suggestedOrderDate}</div>
-                    <div className="text-sm text-slate-400 font-sans mt-0.5">
+                    <div className="font-semibold text-slate-900 dark:text-white text-sm">{item.suggestedOrderDate}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 font-sans mt-0.5">
                       {item.daysUntilLatestOrder >= 0
                         ? `剩餘 ${item.daysUntilLatestOrder} 天`
                         : `已逾期 ${Math.abs(item.daysUntilLatestOrder)} 天`}
@@ -1645,15 +1645,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   </td>
                   <td className="px-3.5 py-3.5 text-center font-sans">
                     {item.daysUntilLatestOrder < 0 ? (
-                      <span className="bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1 rounded-md text-sm font-bold whitespace-nowrap">
+                      <span className="bg-red-100 dark:bg-red-500/10 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-500/20 px-2.5 py-1 rounded-md text-xs font-bold whitespace-nowrap">
                         緊急逾期
                       </span>
                     ) : item.daysUntilLatestOrder < 15 ? (
-                      <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-md text-sm font-bold whitespace-nowrap">
+                      <span className="bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20 px-2.5 py-1 rounded-md text-xs font-bold whitespace-nowrap">
                         即刻發單
                       </span>
                     ) : (
-                      <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-md text-sm font-bold whitespace-nowrap">
+                      <span className="bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 px-2.5 py-1 rounded-md text-xs font-bold whitespace-nowrap">
                         排程充裕
                       </span>
                     )}
@@ -1661,7 +1661,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <td className="px-3.5 py-3.5 text-center font-sans">
                     <button
                       onClick={() => onNavigateToMRP(item.sku)}
-                      className="px-2.5 py-1 text-sm font-semibold text-cyan-400 bg-cyan-950/50 hover:bg-cyan-900/50 border border-cyan-800/60 rounded-lg transition-colors cursor-pointer"
+                      className="px-2.5 py-1 text-xs font-semibold text-sky-700 dark:text-cyan-400 bg-sky-50 dark:bg-cyan-950/50 hover:bg-sky-100 dark:hover:bg-cyan-900/50 border border-sky-200 dark:border-cyan-800/60 rounded-lg transition-colors cursor-pointer"
                     >
                       MRP 明細
                     </button>

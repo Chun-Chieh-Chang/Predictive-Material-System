@@ -143,7 +143,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // ── Collapse state per group ──────────────────────────────────────────────
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() => {
     const init: Record<string, boolean> = {};
-    NAV_GROUPS.forEach((g) => { init[g.title] = true; });
+    NAV_GROUPS.forEach((g) => { init[g.title] = false; });
     return init;
   });
 
@@ -378,7 +378,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // ── Desktop: persistent left sidebar ──────────────────────────────────────
   const desktopSidebar = (
     <aside
-      className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:left-0 lg:z-30 bg-slate-950 border-r border-slate-800"
+      className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:left-0 lg:z-30 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800"
       aria-label="桌面端導航側邊欄"
     >
       {sidebarContent}
@@ -391,7 +391,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {overlay}
       <aside
         className={[
-          'fixed top-0 left-0 z-50 flex flex-col h-full w-72 bg-slate-950 border-r border-slate-800 shadow-2xl shadow-black/60 transition-transform duration-200',
+          'fixed top-0 left-0 z-50 flex flex-col h-full w-72 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 shadow-2xl shadow-black/60 transition-transform duration-200',
           mobileOpen ? 'translate-x-0' : '-translate-x-full',
         ].join(' ')}
         aria-label="行動端導航抽屜"

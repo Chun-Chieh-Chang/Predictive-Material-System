@@ -1,79 +1,96 @@
 #!/usr/bin/env node
 /**
- * 對比度校驗腳本
+ * 嚴謹對比度與卡片配色校驗腳本 (Rigorous Contrast & Card Theme Checker)
  *
- * 用途：掃描 TSX 文件中的潛在低對比度組合
- * 用法：node .impeccable/scripts/contrast-check.mjs [source-dir]
- *   預設掃瞄 src/components/
+ * 用途：精確掃描 TSX/JSX 元件中的卡片容器與文字配色缺陷：
+ *  1. 未配對的深色容器（缺少 bg-white 或未加 dark: 前綴）
+ *  2. 硬編碼深色漸變背景（在淺色模式下造成黑底黑字或對比度失效）
+ *  3. 危險的暴力 CSS 內聯覆蓋（dangerouslySetInnerHTML 注入 lightModeOverrides）
+ *  4. 淺色背景上未做深色主題切換的純白文字
  */
 
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 const TARGET_DIRS = process.argv.slice(2)[0] ? [process.argv[2]] : ['src/components'];
-const OUTPUT_DIR = process.argv.slice(2)[0] ? process.argv[2] : 'src/components';
 
-// 潛在低對比度模式定義
-const LOW_CONTRAST_PATTERNS = [
-  // 白底/淺色背景 + 淺色文字（淺色模式問題）
+const DEFECT_PATTERNS = [
   {
-    name: '白底+淺色字',
-    bgPattern: /bg-(white|slate-50|slate-100|slate-200|slate-900\/[0-9]+|slate-950\/[0-9]+)/g,
-    textPattern: /text-(white|slate-100|slate-200|slate-300|sky-100|sky-200|sky-300|blue-100|blue-200|cyan-200|cyan-300|amber-200|amber-300|purple-200|purple-300|emerald-200|emerald-300|red-200|red-300|orange-200|orange-300|indigo-200|indigo-300)/g,
-    severity: 'HIGH'
+    name: '硬編碼深色漸變背景 (Hardcoded Dark Gradient Container)',
+    regex: /className=["'`][^"'`]*\b(bg-gradient-to-[a-z]+)\b[^"'`]*\b(?<!dark:)from-(slate-900|slate-950|purple-950|indigo-950)\b/g,
+    severity: 'CRITICAL',
+    message: '禁止使用未經淺色模式適配的硬編碼深色漸變容器，應使用 bg-white dark:bg-slate-900 統一卡片規範。'
   },
-  // dark:bg 容器內的 text-white（淺色模式下需覆蓋）
   {
-    name: '暗色容器+白色文字',
-    bgPattern: /dark:bg-(slate-900|slate-950|slate-800)/g,
-    textPattern: /text-white(?!\s*[,\}])/g,
-    severity: 'MEDIUM',
-    note: '需在 light mode CSS 覆蓋規則中處理'
+    name: '未加 dark: 前綴的深色容器 (Raw Dark Background without dark: prefix)',
+    check: (content) => {
+      const findings = [];
+      const lines = content.split('\n');
+      lines.forEach((line, index) => {
+        if (line.trim().startsWith('//') || line.trim().startsWith('/*') || line.includes('import')) return;
+        
+        // 匹配 className 中包含未加 dark: 的 bg-slate-900 / bg-slate-950
+        const classMatches = [...line.matchAll(/className=["'`][^"'`]*\b(?<!dark:)bg-(slate-900|slate-950)(\/[0-9]+)?\b[^"'`]*/g)];
+        for (const match of classMatches) {
+          const classStr = match[0];
+          // 如果沒有同時聲明淺色背景（bg-white, bg-slate-50/100, bg-transparent 等）或不是專門的暗色 code pre 區塊
+          if (!/\bbg-(white|slate-50|slate-100|slate-200|transparent|sky-|indigo-|purple-|emerald-|amber-|red-|blue-)/.test(classStr)) {
+            // 允許專門的代碼顯示 pre 容器
+            if (line.includes('<pre') || line.includes('overflow-x-auto') || line.includes('whitespace-pre')) {
+              continue;
+            }
+            findings.push({
+              line: index + 1,
+              snippet: line.trim()
+            });
+          }
+        }
+      });
+      return findings;
+    },
+    severity: 'HIGH',
+    message: '卡片容器應同時聲明淺色與深色背景（例如 bg-white dark:bg-slate-900）。'
   },
-  // text-slate-400/500 在浅色背景上（對比度可能不足）
   {
-    name: 'slate低對比度文字',
-    bgPattern: /bg-(white|slate-50|slate-100)/g,
-    textPattern: /text-slate-(400|500)/g,
-    severity: 'MEDIUM',
-    note: '需確認 light mode CSS 覆蓋已到位'
+    name: '暴力內聯樣式覆蓋 (Hacky dangerouslySetInnerHTML style injection)',
+    regex: /dangerouslySetInnerHTML=\{\{\s*__html:\s*lightModeOverrides\s*\}\}/g,
+    severity: 'HIGH',
+    message: '禁止使用 lightModeOverrides 暴力內聯注入，請使用標準 Tailwind 雙主題 class。'
   }
 ];
 
 function checkFile(filePath) {
   const content = readFileSync(filePath, 'utf-8');
-  const findings = [];
+  const fileFindings = [];
 
-  for (const pattern of LOW_CONTRAST_PATTERNS) {
-    const bgMatches = content.match(pattern.bgPattern);
-    const textMatches = content.match(pattern.textPattern);
-
-    if (bgMatches && textMatches) {
-      // 計算粗略的匹配分佈，判斷是否在相同行附近
-      const bgLines = new Set();
-      const textLines = new Set();
-
-      const bgRegex = new RegExp(pattern.bgPattern.source, 'g');
-      const textRegex = new RegExp(pattern.textPattern.source, 'g');
-
-      let lineNum = 1;
-      for (const char of content) {
-        if (char === '\n') lineNum++;
+  for (const p of DEFECT_PATTERNS) {
+    if (p.regex) {
+      const matches = [...content.matchAll(p.regex)];
+      if (matches.length > 0) {
+        fileFindings.push({
+          file: filePath,
+          pattern: p.name,
+          severity: p.severity,
+          message: p.message,
+          count: matches.length
+        });
       }
-
-      // 簡化：只要兩種 pattern 都存在就報告
-      findings.push({
-        file: filePath,
-        pattern: pattern.name,
-        severity: pattern.severity,
-        note: pattern.note || '',
-        bgCount: bgMatches.length,
-        textCount: textMatches.length
-      });
+    } else if (p.check) {
+      const results = p.check(content);
+      if (results.length > 0) {
+        fileFindings.push({
+          file: filePath,
+          pattern: p.name,
+          severity: p.severity,
+          message: p.message,
+          count: results.length,
+          details: results
+        });
+      }
     }
   }
 
-  return findings;
+  return fileFindings;
 }
 
 function scanDir(dir) {
@@ -98,6 +115,7 @@ function scanDir(dir) {
 }
 
 function main() {
+  console.log('🔍 執行嚴謹卡片配色與對比度架構校驗 (Rigorous Contrast & Card Theme Checker)...');
   const allFindings = [];
 
   for (const dir of TARGET_DIRS) {
@@ -108,52 +126,36 @@ function main() {
     }
   }
 
-  if (allFindings.length === 0) {
-    console.log('✅ 對比度校驗通過 — 未發現明顯低對比度模式');
-    process.exit(0);
-  }
-
-  // 按嚴重度分組
-  const high = allFindings.filter(f => f.severity === 'HIGH');
-  const medium = allFindings.filter(f => f.severity === 'MEDIUM');
-
-  console.log(`\n⚠️  發現 ${allFindings.length} 處潛在低對比度問題`);
-
-  if (high.length > 0) {
-    console.log(`\n🔴 高風險 (${high.length} 處):`);
-    for (const f of high) {
-      console.log(`  ${f.file}`);
-      console.log(`    模式: ${f.pattern} (白底×${f.bgCount} 次, 淺色字×${f.textCount} 次)`);
-      if (f.note) console.log(`    注意: ${f.note}`);
-    }
-  }
-
-  if (medium.length > 0) {
-    console.log(`\n🟡 中風險 (${medium.length} 處):`);
-    for (const f of medium) {
-      console.log(`  ${f.file}: ${f.pattern}`);
-      if (f.note) console.log(`    注意: ${f.note}`);
-    }
-  }
-
-  // 報告已保存（無論通過與否）
   const reportPath = join(process.cwd(), '.mec-report.json');
   writeFileSync(reportPath, JSON.stringify({
     timestamp: new Date().toISOString(),
     totalFindings: allFindings.length,
-    highRisk: high.length,
-    mediumRisk: medium.length,
+    criticalCount: allFindings.filter(f => f.severity === 'CRITICAL').length,
+    highRiskCount: allFindings.filter(f => f.severity === 'HIGH').length,
     findings: allFindings
   }, null, 2));
-  console.log(`\n📄 報告已保存：${reportPath}`);
 
-  // 不阻塞提交：僅輸出報告，由 CI/MECE 流程進行最終決策
-  console.log(`\n⚠️  對比度校驗完成 — ${high.length} 高風險 / ${medium.length} 中風險`);
-  console.log('   請參考 .mec-report.json 並確認淺色模式視覺效果');
+  if (allFindings.length === 0) {
+    console.log('✅ 對比度與卡片配色校驗 100% 通過！未發現任何未適配深色容器、漸變缺陷或內聯覆蓋。');
+    process.exit(0);
+  }
+
+  console.log(`\n❌ 發現 ${allFindings.length} 處配色與對比度架構缺陷：`);
+  for (const f of allFindings) {
+    console.log(`\n[${f.severity}] ${f.file} — ${f.pattern}`);
+    console.log(`  說明: ${f.message} (違規次數: ${f.count})`);
+    if (f.details) {
+      f.details.slice(0, 3).forEach(d => console.log(`    Line ${d.line}: ${d.snippet}`));
+    }
+  }
+
+  console.log(`\n📄 詳細報告已儲存至：${reportPath}`);
+  
+  const hasCritical = allFindings.some(f => f.severity === 'CRITICAL');
+  if (hasCritical) {
+    process.exit(1);
+  }
   process.exit(0);
 }
 
-main().catch(e => {
-  console.error('對比度校驗腳本執行錯誤:', e.message);
-  process.exit(1);
-});
+main();

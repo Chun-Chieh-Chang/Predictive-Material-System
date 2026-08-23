@@ -585,4 +585,81 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 ---
 
-*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-22*
+## V-20260823-23 — 介面卡片配色邏輯統一與全方位對比度確效 (CAPA-009)
+
+**狀態：** 🟢 Complete / Verified（已通過瀏覽器 Light/Dark 雙模式實測確效）
+**TypeScript 編譯：** 0 錯誤 / 0 警告
+**Build：** ✓ built in 3.69s
+**對比度校驗器 (`contrast-check.mjs`)：** 100% 通過（0 缺陷）
+
+#### 需求與問題描述
+用戶截圖反饋在淺色模式 (Light Mode) 下，`ShipScheduleClearanceView`（出貨船期與通關）與 `OrderTensionTrackerView`（訂單緊張度追蹤）等頁面的頂部 Header Banner 出現深黑底暗字、紫黑底暗字及右側背景截斷色偏問題，文字幾乎完全無法閱讀。
+
+#### 根因分析 (RCA - Root Cause Analysis)
+1. **硬編碼深色背景/漸變 (Hardcoded Dark Backgrounds)**：先前部分視圖使用了寫死的 `bg-gradient-to-r from-slate-900...` 或未加 `dark:` 前綴的 `bg-slate-950`，在深色模式下看似正常，但在切換到 Light Mode 時與全局淺色文本顏色/反色規則產生嚴重衝突，造成黑底黑字災難。
+2. **暴力內聯覆蓋 Hacks (`lightModeOverrides`)**：先前在 `MrpCalculatorView` 與 `SystemSettingsView` 中使用 `dangerouslySetInnerHTML` 注入暴力 CSS 覆蓋，破壞了 Tailwind 的標準層疊上下文與雙主題規範。
+3. **校驗工具不足**：先前的校驗腳本依賴粗略正則，未能捕捉到組件內部未做深淺色分流的容器。
+
+#### 矯正與預防措施 (CAPA - Corrective & Preventive Action)
+1. **全專案卡片容器雙主題 Token 標準化**：
+   - 外層卡片容器全面統一為：`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs`
+   - 內層子區塊/瓦片全面統一為：`bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/80 rounded-xl p-4`
+   - 標題文字統一為：`text-slate-900 dark:text-white font-bold`
+   - 副標/內文統一為：`text-slate-600 dark:text-slate-400`
+   - 徹底重構 10 大核心視圖：`ShipScheduleClearanceView`, `OrderTensionTrackerView`, `MrpCalculatorView`, `Sidebar`, `BackupSettingsView`, `DataExchangeView`, `PrdDocView`, `DashboardView`, `SystemSettingsView`。
+2. **淺色主題工作台底色微調 (Light Canvas Soft Separation)**：
+   - 將淺色主題畫布背景由 `#f1f5f9` 微調至冷灰色階 `#ebf0f5`（`--bg-workbench: #ebf0f5`）。
+   - 與純白卡片 (`#ffffff`) 建立自然溫和的 1.15:1 景深層次，解決卡片與底色過於接近的問題，同時避免對比度過大造成視覺疲勞。
+3. **側邊欄群組預設為收合狀態 (Sidebar Collapsed by Default)**：
+   - 將 `Sidebar.tsx` 中的 `expandedGroups` 預設狀態調整為全收合 (`init[g.title] = false`)，使介面保持極簡俐落，避免多層次菜單的視覺負擔，使用者可隨時按需點擊展開。
+4. **徹底移除所有暴力 CSS 注入 (`lightModeOverrides`)**，回歸原生 Tailwind 雙主題 class。
+5. **升級嚴謹對比度校驗器 (`.impeccable/scripts/contrast-check.mjs`)**：
+   - 實裝 Token 與 AST 級掃描，嚴密防禦「硬編碼深色漸變」、「未加 dark: 前綴的深色容器」與「暴力樣式注入」。
+6. **瀏覽器雙主題實測確效 (Mandatory Runtime Check)**：
+   - 透過 Browser Subagent 分別在 **Light Mode (淺色)** 與 **Dark Mode (深色)** 下實測全頁面，截圖存證並確認 Console 零錯誤。
+
+---
+
+## V-20260823-24 — 全專案程式碼與檔案優化清理 (Project Refactor & MECE Cleanup SOP)
+
+**狀態：** ✅ Complete / Verified  
+**TypeScript 編譯：** 0 錯誤 / 0 警告  
+**Build：** ✓ built in 3.60s  
+**對比度校驗器：** 100% 通過（0 缺陷）
+
+#### 需求摘要
+依 Project Refactor & Cleanup SOP 5 大階段執行全量專案盤點與優化：死碼與無效資源清理、文件 100% 同步、MECE 整合、沙盒確效與 Git Commit 基準點建立。
+
+#### 盤點與清理 (Phase 1 — MECE Audit & Dead Code Removal)
+| 審查項目 | 結果 | 說明 |
+|----------|------|------|
+| 模組引用鏈完整性 | ✅ | `wipEngine.ts` 由 `dataPipelineSimulation.ts` & `dataIntegrityScanner.ts` 引用，`dataPipelineSimulation.ts` 由 `DataExchangeView.tsx` 引用，鏈路完整，非死碼 |
+| 敏感資料資安盤點 | ⚠️→✅ | 發現 `rawdata/客戶(ICU)原料料號對照表.xlsx` 已被 git 追蹤（含客戶原料料號對照表，屬敏感商業數據） |
+| `.gitignore` 修補 | ✅ | 執行 `git rm --cached` 移除追蹤，並於 `.gitignore` 新增 `rawdata/` 整目錄排除規則 |
+| `sync.ffs_db` | ✅ | 已在 `.gitignore` 排除，確認未追蹤 |
+| 死碼識別 | ✅ | 無廢棄函式或未引用組件（所有 13 個 components、10 個 utils 均有有效引用） |
+
+#### 文件同步 (Phase 2 — Documentation Alignment)
+| 文件 | 修正項目 |
+|------|----------|
+| `docs/DESIGN.md` | 更新 `--bg-workbench` token：`#F1F5F9` → `#EBF0F5`；補充版本標記 V-20260823-22 |
+| `docs/DevelopmentStatus.md` | 版號更新 `V-20260823-16` → `V-20260823-22`；新增 CAPA-009 UI/UX 雙主題視覺標準化完成事項表 |
+| `DEV_LOG.md` | 新增本次 V-20260823-24 全量清理記錄 |
+
+#### 根因分析 (RCA)
+- **敏感資料未保護**：`rawdata/` 目錄在初始 `.gitignore` 配置時未列入排除，導致客戶原料對照表 xlsx 直接被 git 追蹤，存在上傳至遠端 GitHub 的資安風險。
+- **文件版本落後**：`docs/DESIGN.md` 和 `docs/DevelopmentStatus.md` 在多次 CAPA 快速迭代後未同步更新，與實際代碼產生斷層。
+
+#### 矯正與預防措施 (CAPA)
+1. **敏感資料永久保護**：`rawdata/` 整目錄加入 `.gitignore`，並從 git 版控追蹤中移除，本地檔案保留不刪除。
+2. **文件同步 SOP 強制化**：每次執行「全量重構清理 SOP」時必須檢查 `docs/DESIGN.md` 的 Token 值與 `docs/DevelopmentStatus.md` 的版號是否與實際代碼同步。
+3. **零死碼確認**：經全量依賴鏈掃描（`grep import`），確認所有工具函式與視圖組件均有有效引用路徑，無廢棄模組。
+
+#### 沙盒確效結果 (Phase 4 — Runtime Verification)
+- `npm run lint` (`tsc --noEmit`)：✅ 0 錯誤 / 0 警告
+- `npm run build` (Vite production)：✅ 成功建置 3.60s
+- `node .impeccable/scripts/contrast-check.mjs`：✅ 100% 通過（0 缺陷）
+
+---
+
+*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-23*

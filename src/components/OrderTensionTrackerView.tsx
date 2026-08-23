@@ -111,23 +111,22 @@ export const OrderTensionTrackerView: React.FC<OrderTensionTrackerViewProps> = (
   return (
     <div className="space-y-6 pb-12">
       {/* 1. Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-purple-950 to-slate-900 border border-slate-800 text-white rounded-2xl p-6 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs relative overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2.5 mb-2">
-              <span className="p-2 bg-purple-500/20 text-purple-300 rounded-xl border border-purple-500/30">
-                <Activity className="w-6 h-6" />
+              <span className="p-2 bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 rounded-xl border border-purple-200 dark:border-purple-800">
+                <Activity className="w-5 h-5" />
               </span>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
                 訂單物料緊張檢索與全鏈路瓶頸診斷
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-500/20 text-red-300 border border-red-500/30 animate-pulse">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
                 智能預警中
               </span>
             </div>
-            <p className="text-sm text-slate-300 max-w-3xl leading-relaxed">
-              即時檢索全廠訂單，精確定位<strong>「原料交期、模具產能、WIP待挑選、在途船期、色母配色、倉容超載」</strong>等 6 大供應鏈卡關環節，提供一鍵應變處置 SOP。
+            <p className="text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
+              即時檢索全廠訂單，精確定位<strong className="font-semibold text-slate-800 dark:text-slate-200">「原料交期、模具產能、WIP待挑選、在途船期、色母配色、倉容超載」</strong>等 6 大供應鏈卡關環節，提供一鍵應變處置 SOP。
             </p>
           </div>
 
@@ -138,7 +137,7 @@ export const OrderTensionTrackerView: React.FC<OrderTensionTrackerViewProps> = (
                 setTensionLevelFilter('ALL');
                 setStageFilter('ALL');
               }}
-              className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 transition-all cursor-pointer"
             >
               <RotateCcw className="w-4 h-4" />
               <span>重置條件</span>

@@ -1,6 +1,7 @@
 # PMS Design Specification
 
-> Generated from existing codebase ·料事如神系統 (Predictive-Material-System)
+> Generated from existing codebase ·料事如神系統 (Predictive-Material-System)  
+> Last updated: 2026-08-23 (aligned with V-20260823-22 CAPA-009 dual-theme & contrast standardization)
 
 ---
 
@@ -36,7 +37,7 @@ All colors are registered design tokens. Do not introduce new hex values without
 | Token | HEX | RGB | 用途 |
 |-------|-----|-----|------|
 | `--bg-app` | `#0B132B` | `11, 19, 43` | 深色應用背景（全域底） |
-| `--bg-workbench` | `#F1F5F9` | `241, 245, 249` | 工作區背景（淺色模式） |
+| `--bg-workbench` | `#EBF0F5` | `235, 240, 245` | 工作區背景（淺色模式），與純白卡片形成溫潤柔和景深分層 |
 | `--bg-surface` | `#FFFFFF` | `255, 255, 255` | 卡片表面 |
 | `--bg-surface-subtle` | `#F8FAFC` | `248, 250, 252` | 次要表面 |
 | `--bg-card-dark` | `#1E293B` | `30, 41, 59` | 深色卡片 |
