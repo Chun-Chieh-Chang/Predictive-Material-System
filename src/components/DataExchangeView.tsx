@@ -186,23 +186,31 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
 
   // Load Demo Sample Database (示範演練數據)
   const handleLoadDemoSample = () => {
-    if (window.confirm('確定要載入「示範演練數據包 (SAMPLE)」嗎？此操作將載入包含 T接頭、模具與在途採購的完整演練資料。')) {
-      setDb(JSON.parse(JSON.stringify(DEMO_SAMPLE_DATABASE)));
+    try {
+      const demoData = JSON.parse(JSON.stringify(DEMO_SAMPLE_DATABASE));
+      localStorage.setItem('PMS_DATABASE_STATE_V1', JSON.stringify(demoData));
+      setDb(demoData);
       setDryRunReport(null);
       setPendingDB(null);
       setDetectedFormat(null);
-      onNotify('已成功載入「示範演練數據包 (SAMPLE)」，各功能模組已驅動示範數據！', 'success');
+      onNotify('已成功載入 52 筆代表性示範演練資料庫！各功能模組已即時刷新！', 'success');
+    } catch (err: any) {
+      onNotify(`載入失敗: ${err.message}`, 'error');
     }
   };
 
   // Clear Database to Clean State (清空全庫回歸純淨狀態)
   const handleClearDatabase = () => {
-    if (window.confirm('【警告】確定要清空全庫所有主檔與訂單記錄嗎？清空後系統將回歸純淨無資料狀態，供您匯入正式生產 Excel。')) {
-      setDb(JSON.parse(JSON.stringify(EMPTY_DATABASE)));
+    try {
+      const emptyData = JSON.parse(JSON.stringify(EMPTY_DATABASE));
+      localStorage.setItem('PMS_DATABASE_STATE_V1', JSON.stringify(emptyData));
+      setDb(emptyData);
       setDryRunReport(null);
       setPendingDB(null);
       setDetectedFormat(null);
-      onNotify('已清空全庫資料，系統目前為純淨空庫狀態！', 'info');
+      onNotify('已清空全庫資料，系統目前為純淨正式空庫狀態！', 'info');
+    } catch (err: any) {
+      onNotify(`清空失敗: ${err.message}`, 'error');
     }
   };
 
@@ -320,13 +328,8 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
 
           <div className="space-y-2">
             <button
-              onClick={() => {
-                if (window.confirm('確定要載入 52 筆代表性示範演練資料庫嗎？這將會覆蓋當前資料庫。')) {
-                  setDb(DEMO_SAMPLE_DATABASE);
-                  onNotify('已成功載入 52 筆代表性示範演練資料庫！系統已切換為【示範演練模式】。', 'success');
-                }
-              }}
-              id="exchange-load-demo-btn"
+              onClick={handleLoadDemoSample}
+              id="exchange-load-demo-card-btn"
               className="w-full flex items-center justify-center space-x-2 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow-md shadow-sky-600/20 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -334,13 +337,8 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
             </button>
 
             <button
-              onClick={() => {
-                if (window.confirm('⚠️ 警告：確定要清空所有資料庫內容嗎？\n\n此操作將清空為純淨正式空庫，方便您匯入真實生產資料。建議您先行匯出備份。')) {
-                  setDb(EMPTY_DATABASE);
-                  onNotify('已清空資料庫為純淨正式空庫！系統已切換為【正式空白模式】，請匯入真實生產數據。', 'info');
-                }
-              }}
-              id="exchange-clear-db-btn"
+              onClick={handleClearDatabase}
+              id="exchange-clear-db-card-btn"
               className="w-full flex items-center justify-center space-x-2 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-sm border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer"
             >
               <XCircle className="w-3.5 h-3.5 text-rose-500" />
