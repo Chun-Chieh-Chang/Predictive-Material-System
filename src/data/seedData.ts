@@ -349,8 +349,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       sku: 'A01-200-131',
       target_date: '2026-11-30',
       demand_qty: 120000,
-      created_by_id: 'usr_sales_a',
-      created_by_name: '業務專員 A (Sales A)',
+      created_by_id: 'usr_sales',
+      created_by_name: '業務人員',
       created_at: '2026-08-01 09:30',
       notes: 'MDX 歐美旺季初估需求'
     },
@@ -361,8 +361,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       sku: 'A01-200-131',
       target_date: '2026-11-30',
       demand_qty: 90000,
-      created_by_id: 'usr_sales_a',
-      created_by_name: '業務專員 A (Sales A)',
+      created_by_id: 'usr_sales',
+      created_by_name: '業務人員',
       created_at: '2026-08-08 14:15',
       notes: 'MDX 下修 Forecast (-30,000 PCS)，系統觸發防爆倉注意'
     },
@@ -373,8 +373,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       sku: 'A01-210-251',
       target_date: '2026-12-15',
       demand_qty: 80000,
-      created_by_id: 'usr_sales_a',
-      created_by_name: '業務專員 A (Sales A)',
+      created_by_id: 'usr_sales',
+      created_by_name: '業務人員',
       created_at: '2026-08-08 14:20',
       notes: '加壓接頭年末定期備量'
     },
@@ -385,8 +385,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       sku: 'C09-200-251',
       target_date: '2026-10-31',
       demand_qty: 45000,
-      created_by_id: 'usr_sales_a',
-      created_by_name: '業務專員 A (Sales A)',
+      created_by_id: 'usr_sales',
+      created_by_name: '業務人員',
       created_at: '2026-08-08 14:25',
       notes: 'Y管緊急追加 Forecast'
     },
@@ -397,8 +397,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       sku: 'B02-100-011',
       target_date: '2026-09-30',
       demand_qty: 150000,
-      created_by_id: 'usr_sales_b',
-      created_by_name: '業務專員 B (Sales B)',
+      created_by_id: 'usr_sales',
+      created_by_name: '業務人員',
       created_at: '2026-08-10 11:00',
       notes: 'ICU 急單專案'
     }
