@@ -268,7 +268,8 @@ html:not(.dark) .border-slate-700 {
 
 /* High Contrast Light Mode Typography Rules */
 /* ============================================================
-   CORE: text-white → dark text on white/light backgrounds
+   CORE: text-white on white/light backgrounds → dark text
+   (excludes colored buttons and dark containers)
    ============================================================ */
 html:not(.dark) h1.text-white,
 html:not(.dark) h2.text-white,
@@ -276,18 +277,80 @@ html:not(.dark) h3.text-white,
 html:not(.dark) h4.text-white,
 html:not(.dark) h5.text-white,
 html:not(.dark) h6.text-white,
-html:not(.dark) p.text-white,
-html:not(.dark) div.text-white,
-html:not(.dark) span.text-white,
 html:not(.dark) label.text-white,
-html:not(.dark) button.text-white,
-html:not(.dark) strong.text-white,
-html:not(.dark) a.text-white,
 html:not(.dark) td.text-white,
 html:not(.dark) th.text-white,
 html:not(.dark) code.text-white,
 html:not(.dark) input.text-white {
   color: #0f172a !important;
+}
+
+/* ============================================================
+   SOLID COLORED & GRADIENT BUTTONS, PILLS & BADGES (CRISP WHITE TEXT)
+   Ensures buttons with dark/saturated backgrounds always have crisp white text in Light Mode
+   ============================================================ */
+html:not(.dark) .bg-emerald-600,
+html:not(.dark) .bg-emerald-600 *,
+html:not(.dark) .bg-emerald-700,
+html:not(.dark) .bg-emerald-700 *,
+html:not(.dark) .bg-blue-600,
+html:not(.dark) .bg-blue-600 *,
+html:not(.dark) .bg-blue-700,
+html:not(.dark) .bg-blue-700 *,
+html:not(.dark) .bg-sky-600,
+html:not(.dark) .bg-sky-600 *,
+html:not(.dark) .bg-sky-700,
+html:not(.dark) .bg-sky-700 *,
+html:not(.dark) .bg-purple-600,
+html:not(.dark) .bg-purple-600 *,
+html:not(.dark) .bg-purple-700,
+html:not(.dark) .bg-purple-700 *,
+html:not(.dark) .bg-indigo-600,
+html:not(.dark) .bg-indigo-600 *,
+html:not(.dark) .bg-indigo-700,
+html:not(.dark) .bg-indigo-700 *,
+html:not(.dark) .bg-red-600,
+html:not(.dark) .bg-red-600 *,
+html:not(.dark) .bg-amber-600,
+html:not(.dark) .bg-amber-600 *,
+html:not(.dark) [class*="bg-gradient-"],
+html:not(.dark) [class*="bg-gradient-"] *,
+html:not(.dark) [class*="from-purple-"],
+html:not(.dark) [class*="from-purple-"] *,
+html:not(.dark) [class*="from-indigo-"],
+html:not(.dark) [class*="from-indigo-"] *,
+html:not(.dark) [class*="from-blue-"],
+html:not(.dark) [class*="from-blue-"] *,
+html:not(.dark) [class*="from-sky-"],
+html:not(.dark) [class*="from-sky-"] *,
+html:not(.dark) [class*="from-emerald-"],
+html:not(.dark) [class*="from-emerald-"] *,
+html:not(.dark) button.bg-sky-600,
+html:not(.dark) button.bg-sky-600 *,
+html:not(.dark) button.bg-emerald-600,
+html:not(.dark) button.bg-emerald-600 *,
+html:not(.dark) button.bg-blue-600,
+html:not(.dark) button.bg-blue-600 *,
+html:not(.dark) button.bg-purple-600,
+html:not(.dark) button.bg-purple-600 *,
+html:not(.dark) button.bg-indigo-600,
+html:not(.dark) button.bg-indigo-600 *,
+html:not(.dark) button.bg-red-600,
+html:not(.dark) button.bg-red-600 *,
+html:not(.dark) .btn-primary,
+html:not(.dark) .btn-primary * {
+  color: #ffffff !important;
+}
+
+html:not(.dark) .bg-emerald-600 svg,
+html:not(.dark) .bg-blue-600 svg,
+html:not(.dark) .bg-sky-600 svg,
+html:not(.dark) .bg-purple-600 svg,
+html:not(.dark) .bg-indigo-600 svg,
+html:not(.dark) [class*="from-purple-"] svg,
+html:not(.dark) [class*="from-blue-"] svg {
+  color: #ffffff !important;
+  stroke: currentColor !important;
 }
 
 /* ============================================================

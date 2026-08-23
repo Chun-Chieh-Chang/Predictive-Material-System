@@ -730,6 +730,33 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 ---
 
+## V-20260823-27 — 深底色/飽和色彩色按鈕與卡片字體對比度修復 (White Text Preservation)
+
+**狀態：** ✅ Complete / Verified  
+**TypeScript 編譯：** 0 錯誤 / 0 警告 (`tsc --noEmit` 通過)  
+**Build：** ✓ built in 3.53s  
+**對比度校驗：** 100% 通過 (0 缺陷)
+
+#### 需求與問題描述
+用戶截圖反饋：在淺色模式 (Light Mode) 下，部分深底色與飽和色彩色按鈕（如綠色匯出範本按鈕 `bg-emerald-600`、藍色 JSON 備份按鈕 `bg-blue-600`、紫色模擬按鈕 `from-purple-600`、藍色參數總覽膠囊 `bg-sky-600`）文字意外呈現深黑色，導致按鈕在彩色底色上嚴重缺乏視覺對比度，可讀性不佳。
+
+#### 根因分析 (RCA)
+- **CSS 全域規則過度覆蓋 (Overbroad Global Override)**：`src/index.css` 先前包含 `html:not(.dark) *.text-white { color: #0f172a !important; }` 規則，本意是防止白底卡片上出現白字白底，但該規則無差別覆蓋了所有帶有深色/飽和色背景的按鈕與膠囊子元素（`button`, `span`, `svg`），將按鈕內部文字暴力覆蓋為黑色 `#0f172a`。
+
+#### 矯正與預防措施 (CAPA)
+1. **精準隔離覆蓋範圍**：從 `html:not(.dark) *.text-white` 中移除 `button`, `span`, `p`, `div` 等通用標籤的無差別覆蓋，僅保留卡片內純標題等安全標籤。
+2. **彩色與深色按鈕白色字體強化 (Solid & Gradient Button White Text Protection)**：
+   - 為所有實心色彩按鈕（`.bg-emerald-600`, `.bg-blue-600`, `.bg-sky-600`, `.bg-purple-600`, `.bg-indigo-600`, `.bg-red-600`, `.bg-amber-600`, `[class*="bg-gradient-"]`, `[class*="from-purple-"]`, `.btn-primary` 等）顯式定義 `color: #ffffff !important` 與 `stroke: currentColor !important`。
+   - 確保按鈕內部圖標與文字無論在 Light 還是 Dark Mode 下均呈現純淨清晰的白色對比度。
+
+#### 驗證結果
+- [x] TypeScript 編譯通過（`tsc --noEmit` 0 錯誤）
+- [x] Production build 成功（3.53s）
+- [x] 對比度校驗器 100% 通過（0 缺陷）
+
+---
+
 *DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-23*
+
 
 
