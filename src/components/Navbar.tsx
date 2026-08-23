@@ -107,6 +107,7 @@ interface NavbarProps {
   onAdminLock: () => void;
   onMenuToggle: () => void;
   menuOpen: boolean;
+  isDemoMode?: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -120,6 +121,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onAdminLock,
   onMenuToggle,
   menuOpen,
+  isDemoMode = false,
 }) => {
   const { theme, toggleTheme } = useTheme();
 
@@ -285,6 +287,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Telemetry Status & Actions */}
           <div className="flex items-center space-x-3 sm:space-x-4">
+            {/* Database Mode Badge */}
+            <div
+              className={`hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs font-bold border shadow-xs transition-all ${
+                isDemoMode
+                  ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/60'
+                  : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60'
+              }`}
+              title={isDemoMode ? '目前載入 52 筆示範演練數據，匯入真實 Excel/JSON 時將自動換檔' : '目前為主體正式生產資料庫'}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${isDemoMode ? 'bg-sky-500 animate-pulse' : 'bg-emerald-500'}`}></span>
+              <span>{isDemoMode ? '🎮 示範演練模式 (DEMO)' : '🟢 正式生產模式 (PROD)'}</span>
+            </div>
+
             {/* Connection Status Indicator */}
             <div className="hidden lg:flex items-center space-x-2 bg-pms-pass-bg dark:bg-emerald-950/40 border border-pms-pass-border dark:border-emerald-800/60 text-pms-pass-text dark:text-emerald-400 px-2.5 py-1 rounded-md shadow-xs">
               <span className="relative flex h-2 w-2">

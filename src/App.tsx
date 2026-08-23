@@ -25,6 +25,7 @@ import {
   BackupScheduleConfig,
   DEFAULT_BACKUP_CONFIG,
   BACKUP_CONFIG_STORAGE_KEY,
+  isDemoDatabase,
 } from './types';
 import { INITIAL_DATABASE } from './data/seedData';
 import { calculateAllMRP } from './utils/mrpEngine';
@@ -201,6 +202,7 @@ export function App() {
         onAdminLock={handleAdminLock}
         onMenuToggle={() => setMenuOpen((v) => !v)}
         menuOpen={menuOpen}
+        isDemoMode={isDemoDatabase(db)}
       />
 
       {/* Main Content Area */}

@@ -180,7 +180,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
       setDryRunReport(null);
       setPendingDB(null);
       setDetectedFormat(null);
-      onNotify('資料庫已成功安全覆蓋更新 (Upsert) 並驅動最新排程！', 'success');
+      onNotify('資料庫已成功匯入！系統已切換為【🟢 正式生產模式 (PROD)】並驅動最新物料排程！', 'success');
     }
   };
 
@@ -299,7 +299,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
           </div>
         </div>
 
-        {/* Card 2: Offline Demo / Training Sample Package */}
+        {/* Card 2: Offline Demo / Training Sample Package & Switcher */}
         <div className="col-span-12 md:col-span-6 xl:col-span-3 bg-white dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/5 dark:shadow-black/20 space-y-4">
           <div className="flex items-center space-x-3 pb-3 border-b border-slate-200 dark:border-slate-800">
             <div className="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-500/10 text-pms-cobalt dark:text-sky-400 border border-sky-200 dark:border-sky-500/20 flex items-center justify-center shrink-0">
@@ -307,27 +307,55 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">離線示範演練測試包</h3>
-                <span className="text-[10px] bg-sky-50 dark:bg-sky-950 text-pms-cobalt dark:text-sky-400 border border-sky-200 dark:border-sky-800/60 px-1.5 py-0.5 rounded font-mono font-bold whitespace-nowrap">SAMPLE</span>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">示範演練與換檔控制</h3>
+                <span className="text-[10px] bg-sky-50 dark:bg-sky-950 text-pms-cobalt dark:text-sky-400 border border-sky-200 dark:border-sky-800/60 px-1.5 py-0.5 rounded font-mono font-bold whitespace-nowrap">52 筆物料鏈</span>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">人員培訓、系統演練、功能驗證</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">全階層代表性品號 · RAW到SET</p>
             </div>
           </div>
 
           <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-            包含醫療射出成型完整主檔（T接頭、16穴主力模、在途海運訂單與 3 階 MRP 數據鏈）。
+            包含 52 筆代表性品號、15 組主力模具、全檢良率與在途採購，完整貫通 3 階 MRP 推導與週二出貨審查。
           </p>
 
           <div className="space-y-2">
+            <button
+              onClick={() => {
+                if (window.confirm('確定要載入 52 筆代表性示範演練資料庫嗎？這將會覆蓋當前資料庫。')) {
+                  setDb(DEMO_SAMPLE_DATABASE);
+                  onNotify('已成功載入 52 筆代表性示範演練資料庫！系統已切換為【示範演練模式】。', 'success');
+                }
+              }}
+              id="exchange-load-demo-btn"
+              className="w-full flex items-center justify-center space-x-2 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow-md shadow-sky-600/20 transition-colors cursor-pointer"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>🎮 一鍵載入 52 筆示範演練庫</span>
+            </button>
+
+            <button
+              onClick={() => {
+                if (window.confirm('⚠️ 警告：確定要清空所有資料庫內容嗎？\n\n此操作將清空為純淨正式空庫，方便您匯入真實生產資料。建議您先行匯出備份。')) {
+                  setDb(EMPTY_DATABASE);
+                  onNotify('已清空資料庫為純淨正式空庫！系統已切換為【正式空白模式】，請匯入真實生產數據。', 'info');
+                }
+              }}
+              id="exchange-clear-db-btn"
+              className="w-full flex items-center justify-center space-x-2 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-sm border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer"
+            >
+              <XCircle className="w-3.5 h-3.5 text-rose-500" />
+              <span>🧹 一鍵清空資料庫 (切換為純淨空白)</span>
+            </button>
+
             <button
               onClick={() => {
                 downloadDemoSampleExcel();
                 onNotify('離線示範演練測試包已成功匯出，標明 SAMPLE 供演練使用！', 'success');
               }}
               id="exchange-download-demo-btn"
-              className="w-full flex items-center justify-center space-x-2 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/60 dark:hover:bg-sky-900/80 text-pms-cobalt dark:text-sky-200 font-semibold text-sm border border-sky-200 dark:border-sky-800/60 transition-colors cursor-pointer"
+              className="w-full flex items-center justify-center space-x-2 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/60 dark:hover:bg-sky-900/80 text-pms-cobalt dark:text-sky-200 font-semibold text-xs border border-sky-200 dark:border-sky-800/60 transition-colors cursor-pointer"
             >
-              <Upload className="w-3.5 h-3.5 text-pms-cobalt dark:text-sky-400" />
+              <Upload className="w-3 h-3 text-pms-cobalt dark:text-sky-400" />
               <span>匯出示範演練數據包 (.xlsx)</span>
             </button>
           </div>

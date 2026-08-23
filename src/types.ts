@@ -409,6 +409,13 @@ export function isShippableMaterialClass(materialClass?: MaterialClassCode | str
   return upper === 'SET' || upper === 'PART' || upper === 'COMP';
 }
 
+/** 判斷是否為示範演練資料庫 (Demo Mode) */
+export function isDemoDatabase(db?: SystemDatabase | null): boolean {
+  if (!db || !db.item_master || db.item_master.length === 0) return false;
+  // 若包含代表性示範品號，視為示範演練模式
+  return db.item_master.some(i => i.sku === 'RAW-PP-5011' || i.sku === 'SET-IV-EXT-01' || i.sku === 'A01-200-131');
+}
+
 // Storage keys
 export const BACKUP_CONFIG_STORAGE_KEY = 'PMS_BACKUP_CONFIG_V1';
 export const BACKUP_LOG_STORAGE_KEY    = 'PMS_BACKUP_LOG_V1';
