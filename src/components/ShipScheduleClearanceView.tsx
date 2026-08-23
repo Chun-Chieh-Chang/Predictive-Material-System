@@ -20,7 +20,9 @@ import {
   TrendingUp,
   Clock,
   ShieldCheck,
-  Users
+  Users,
+  Search,
+  X
 } from 'lucide-react';
 import { SystemDatabase, SystemParameters, ItemMaster, isShippableMaterialClass } from '../types';
 
@@ -36,13 +38,14 @@ export interface ScheduleClearanceItem {
   customer_id: string;
   category: string;
   description?: string;
+  material_class?: string | null;
   scheduledQty: number; // 2週出貨排程需求 (PCS)
   fgReadyQty: number; // 成品在庫良品 (PCS)
   wipPendingQty: number; // 3樓待驗 WIP (PCS)
   sortingYield: number; // 標準良率
   wipEffectiveQty: number; // 經良率折算之有效 WIP (PCS)
   totalAvailableSupply: number; // 總可用供給 (FG + 有效 WIP)
-  balanceQty: number; // 結算餘裕/缺口 (供給 - 排程)
+  balanceQty: number; // 結算餘裕/缺口 (供给 - 排程)
   status: 'clear' | 'wip_dependent' | 'deficit';
   deficitQty: number; // 若缺貨時的赤字數量
   actionNote: string;
@@ -56,6 +59,8 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
 }) => {
   const [customerFilter, setCustomerFilter] = useState<string>('ALL');
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'clear' | 'wip_dependent' | 'deficit'>('ALL');
+  const [selectedCategory, setSelectedCategory] = useState<'ALL' | 'SET' | 'COMP' | 'PART'>('ALL');
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [simulatedMultipliers, setSimulatedMultipliers] = useState<Record<string, number>>({});
 
   // 1. 取得所有可出貨品（SET / PART / COMP 成品與獨立出貨品）
@@ -130,6 +135,7 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
         customer_id: item.customer_id,
         category: item.category,
         description: item.description,
+        material_class: item.material_class ?? null,
         scheduledQty,
         fgReadyQty,
         wipPendingQty,
@@ -155,9 +161,14 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
     return clearanceData.filter((item) => {
       const matchCustomer = customerFilter === 'ALL' || item.customer_id === customerFilter;
       const matchStatus = statusFilter === 'ALL' || item.status === statusFilter;
-      return matchCustomer && matchStatus;
+      const matchCategory = selectedCategory === 'ALL' || item.material_class === selectedCategory;
+      const matchSearch = searchTerm === '' ||
+        item.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        item.category.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchCustomer && matchStatus && matchCategory && matchSearch;
     });
-  }, [clearanceData, customerFilter, statusFilter]);
+  }, [clearanceData, customerFilter, statusFilter, selectedCategory, searchTerm]);
 
   // 統計指標
   const kpis = useMemo(() => {
@@ -292,8 +303,53 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
       </div>
 
       {/* 3. Filter & Controls Bar */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-xs flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-3">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-xs">
+        {/* Category Pills */}
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider shrink-0">類別篩選:</span>
+          {(['ALL', 'SET', 'COMP', 'PART'] as const).map((cat) => {
+            const count = cat === 'ALL'
+              ? clearanceData.length
+              : clearanceData.filter((i) => i.material_class === cat).length;
+            return (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border ${
+                  selectedCategory === cat
+                    ? 'bg-sky-500 text-white border-sky-500 font-bold shadow-xs'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                {cat === 'ALL' ? '全部' : cat === 'SET' ? '成品 SET' : cat === 'COMP' ? '組件 COMP' : '單品 PART'}
+                <span className="ml-1.5 text-[10px] opacity-80 font-mono">({count})</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Search + Customer + Status Row */}
+        <div className="flex flex-wrap items-center gap-4">
+          {/* Search Input */}
+          <div className="relative flex-1 min-w-[200px] max-w-xs">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="搜尋品號 / 品名 / 分類..."
+              className="w-full pl-9 pr-8 py-1.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
           {/* Customer Filter */}
           <div className="flex items-center gap-2">
             <Filter className="w-4 h-4 text-slate-400" />
@@ -359,8 +415,12 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
           </div>
         </div>
 
-        <div className="text-xs text-slate-500 dark:text-slate-400">
-          💡 拖曳「模擬排程」滑桿可即時預算客戶臨時增單/減單之交貨可行性
+        <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/60 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
+          <span>
+            顯示 <strong className="text-slate-900 dark:text-white">{filteredData.length}</strong> / {kpis.total} 項品號
+            {searchTerm && <span> · 關鍵字「{searchTerm}」</span>}
+          </span>
+          <span>💡 拖曳「模擬排程」滑桿可即時預算客戶臨時增單/減單之交貨可行性</span>
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 # 料事如神系統 — Predictive Material System (PMS)
 
 > **QCC 料事如神圈 · 射出成型智能備料與產能排程推估平台**  
-> Baseline Version：`V-20260823-30` | Developed by Wesley Chang @Mouldex, Aug-2026
+> Baseline Version：`V-20260823-52` | Developed by Wesley Chang @Mouldex, Aug-2026
 
 ---
 
@@ -134,6 +134,9 @@ Phase 3 → 採購決策
 
 | 版本 | 日期 | 說明 |
 |------|------|------|
+| V-20260823-52 | 2026-08-23 | Smart Filter Hub 實作：MrpCalculatorView SKU 搜尋下拉選單 + ShipScheduleClearanceView 類別膠囊/即時搜尋、全域死碼 import 清理（7 檔案 14 處）、版本號對齊至 V-20260823-52 |
+| V-20260823-29 | 2026-08-23 | 52 筆代表性物料數據鏈與開箱智慧雙模換檔機制版、通配選擇器污染根除 (CAPA-011) |
+| V-20260823-16 | 2026-08-23 | 週二出貨審查看板、預測偏差分析、WIP 日動態推估、虛擬預扣、分批到貨排程建議、訂單緊張度引擎 |
 | V-20260821-22 | 2026-08-21 | 全域優化：移除 dead export、清理懸空依賴（motion/autoprefixer/esbuild/tsx）、修正 Demo 數據 material_class 欄位與 MrpCalculatorView SKU 篩選 Bug、Navbar 硬編日期動態化、同步更新 README/DEV_LOG |
 | V-20260821-21 | 2026-08-21 | SET 分類描述修正，明確支援直接 PART 一次組裝路徑；全域「8 大→10 大」文字盤點 |
 | V-20260821-20 | 2026-08-21 | 五層物料分類體系、FieldArchitectureAudit_Report、H-01~H-03 校驗函式、M-01~M-06 欄位擴充 |

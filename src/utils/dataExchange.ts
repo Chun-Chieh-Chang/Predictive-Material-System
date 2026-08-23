@@ -334,7 +334,7 @@ export function exportToExcel(db: SystemDatabase, filename = '料事如神系統
 
 
 // 3. Download Formal Blank Template (正式空白填報範本 - 純淨無假資料，權責單位專用)
-export function downloadFormalTemplateExcel() {
+export function downloadTemplateExcel() {
   const wb = XLSX.utils.book_new();
 
   // Sheet 0: 填報規範與勾稽字典 (首頁引導，符合 MECE 權責分工)
@@ -379,9 +379,6 @@ export function downloadFormalTemplateExcel() {
 
   XLSX.writeFile(wb, '料事如神系統_正式空白匯入範本_v1.0.xlsx');
 }
-
-// 兼容舊介面別名
-export const downloadTemplateExcel = downloadFormalTemplateExcel;
 
 // 3b. Download Demo / Training Sample Excel (離線示範演練測試包 - 標註 SAMPLE 專用)
 export function downloadDemoSampleExcel() {

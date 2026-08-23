@@ -263,6 +263,62 @@ SystemDatabase {
 
 ## 整體程式碼優化作業記錄
 
+### 2026-08-23 — V-20260823-52 全域死碼清理與 Smart Filter Hub 升級版
+
+**執行人：** Antigravity AI (Wesley Chang @Mouldex)  
+**類型：** 死碼 import 清理 + MECE 檔案重構 + Smart Filter Hub 實作 + 版本號對齊  
+**TypeScript 編譯：** 0 錯誤 / 0 警告 (`npx tsc --noEmit`)
+
+#### 變更清單
+
+**[階段一：全域死碼 import 清理（7 檔案 14 處）]**
+
+| 檔案 | 清理項目 | 影響 |
+|------|---------|------|
+| `Navbar.tsx` | 移除 `RotateCcw`（lucide-react 未使用圖標） | bundle 微縮 |
+| `Sidebar.tsx` | 移除 `Menu`（lucide-react 未使用圖標） | bundle 微縮 |
+| `DashboardView.tsx` | 移除 `TrendingDown`、`Sliders`、`RefreshCw`、`Boxes`、`DollarSign`、`Calendar` | bundle 微縮 |
+| `SystemSettingsView.tsx` | 移除 `Flame`、`Shield`、`Activity` | bundle 微縮 |
+| `orderTensionEngine.ts` | 移除 `ActualOrder`、`ItemMaster` 未使用類型 import | 型別檢查負荷降低 |
+| `materialClassValidation.ts` | 移除 `ItemMaster`、`ProductMoldBOM` 未使用類型 import | 型別檢查負荷降低 |
+| `DataExchangeView.tsx` | 移除 `downloadFormalTemplateExcel` 重複匯出別名引用（保留 `downloadTemplateExcel`） | 代碼清晰化 |
+
+**[階段二：Smart Filter Hub 實作]**
+
+- `MrpCalculatorView.tsx` — **三合一智慧品號選擇器**（由 Antigravity IDE 前期完成）
+  - 類別分頁膠囊：全部 / 成品 SET / 組件 COMP / 單品 PART（含即時計數）
+  - 可搜尋下拉選單：品號 / 品名 / 客戶關鍵字即時模糊過濾
+  - 最近檢視快速標籤：最多 5 筆高頻品號一鍵切換
+  - 外點關閉 dropdown（mousedown outside handler）
+
+- `ShipScheduleClearanceView.tsx` — **類別膠囊 + 即時搜尋過濾器**
+  - 新增 `selectedCategory` / `searchTerm` 狀態
+  - 表格資料增加 `material_class` 欄位
+  - 類別分頁膠囊（全部 / SET / COMP / PART）含即時計數
+  - 即時搜尋輸入框（品號 / 品名 / 分類），X 按鈕清除
+  - 篩選結果計數標頭：「顯示 X / Y 項品號 · 關鍵字「…」**」
+
+**[階段三：版本號與文件對齊]**
+
+| 檔案 | 舊值 | 新值 |
+|------|------|------|
+| `src/utils/version.ts` | V-20260823-51 | V-20260823-52 |
+| `README.md` header | V-20260823-30 | V-20260823-52 |
+| `docs/DevelopmentStatus.md` header | V-20260823-30 | V-20260823-52 |
+| `README.md` 版本記錄表 | 缺 V-20260823-* 條目 | 補入 V-20260823-52 / -29 / -16 |
+
+**[階段四：資安與數據隱私盤點]**
+- ✅ 0 處硬編憑證/金鑰
+- ✅ 0 處外部 API 未經授權呼叫（純前端 LocalStorage 架構）
+- ✅ `rawdata/` 目錄已排除於 `.gitignore`，客戶商業數據不進入版控
+- ✅ `node_modules/`、`dist/`、`.env*` 均已排除
+
+**驗證結果：**
+- `npx tsc --noEmit` → ✅ 0 錯誤 / 0 警告
+- 業務邏輯：未修改任何運算引擎核心，零破壞風險
+
+---
+
 ### 2026-08-21 — V-20260820-12 代碼庫清理優化
 
 **執行人：** Antigravity AI (Wesley Chang @Mouldex)  

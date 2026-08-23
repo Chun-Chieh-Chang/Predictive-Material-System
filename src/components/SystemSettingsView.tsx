@@ -5,11 +5,9 @@
 
 import React, { useState, useMemo } from 'react';
 import {
-  Sliders,
   RotateCcw,
   ShieldCheck,
   AlertTriangle,
-  Zap,
   Layers,
   Clock,
   CheckCircle2,
@@ -22,10 +20,7 @@ import {
   Cpu,
   Boxes,
   Percent,
-  SlidersHorizontal,
-  Flame,
-  Shield,
-  Activity
+  SlidersHorizontal
 } from 'lucide-react';
 import {
   SystemDatabase,

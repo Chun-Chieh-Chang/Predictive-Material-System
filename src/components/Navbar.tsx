@@ -12,7 +12,6 @@ import {
   Database,
   FileSpreadsheet,
   FileText,
-  RotateCcw,
   SlidersHorizontal,
   Sun,
   Moon,

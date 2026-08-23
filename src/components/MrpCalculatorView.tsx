@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Layers,
   ArrowDown,
@@ -20,7 +20,10 @@ import {
   Sparkles,
   SlidersHorizontal,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Search,
+  X,
+  Check
 } from 'lucide-react';
 import { SystemDatabase, MRPCalculationResult, SystemParameters, isShippableMaterialClass } from '../types';
 import { calculateMRPForSKU } from '../utils/mrpEngine';
@@ -41,6 +44,48 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
   const [selectedSku, setSelectedSku] = useState<string>(initialSku || 'A01-200-131');
   const [activeMoldId, setActiveMoldId] = useState<string | null>(null);
   const [collapsedStages, setCollapsedStages] = useState<Set<string>>(new Set());
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<'ALL' | 'SET' | 'COMP' | 'PART'>('ALL');
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [recentSkus, setRecentSkus] = useState<string[]>(['A01-200-131', 'P-CON-STR02', 'CP-3WAY-VALVE', 'SET-IV-EXT-01']);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Available finished goods / shippable SKUs (SET / PART / COMP 類可出貨品)
+  const availableSkus = db.item_master.filter((i) => isShippableMaterialClass(i.material_class));
+
+  // Filtered SKUs based on category tab & search keyword
+  const filteredSkus = availableSkus.filter((item) => {
+    const matchesCategory = selectedCategory === 'ALL' || item.material_class === selectedCategory;
+    const matchesSearch = searchTerm === '' ||
+      item.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (item.customer_id && item.customer_id.toLowerCase().includes(searchTerm.toLowerCase()));
+    return matchesCategory && matchesSearch;
+  });
+
+  const handleSelectSku = (sku: string) => {
+    setSelectedSku(sku);
+    setActiveMoldId(null);
+    setIsDropdownOpen(false);
+    setSearchTerm('');
+    setRecentSkus(prev => {
+      const filtered = prev.filter(s => s !== sku);
+      return [sku, ...filtered].slice(0, 5);
+    });
+  };
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const toggleStage = (id: string) => {
     setCollapsedStages(prev => {
       const next = new Set(prev);
@@ -68,9 +113,6 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
     .light .text-slate-200 { color: #1e293b !important; }
   `;
   const isStageCollapsed = (id: string) => collapsedStages.has(id);
-
-  // Available finished goods / shippable SKUs (SET / PART / COMP 類可出貨品)
-  const availableSkus = db.item_master.filter((i) => isShippableMaterialClass(i.material_class));
 
   // Related molds for this SKU
   const relatedBoms = db.product_mold_bom.filter((b) => b.sku === selectedSku);
@@ -112,30 +154,125 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
             </p>
           </div>
 
-          {/* SKU Pill Selector & Settings Link */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm text-slate-600 dark:text-slate-400 font-semibold">切換品號:</span>
-            {availableSkus.map((item) => (
-              <button
-                key={item.sku}
-                onClick={() => {
-                  setSelectedSku(item.sku);
-                  setActiveMoldId(null);
-                }}
-                className={`px-3 py-1.5 rounded-xl text-sm font-mono font-bold transition-all border cursor-pointer ${
-                  selectedSku === item.sku
-                    ? 'bg-sky-50 text-sky-700 border-sky-300 shadow-xs dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-600'
-                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
-                }`}
+          {/* Smart SKU Selector & Settings Link */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            {/* Category Filter Pills */}
+            <div className="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200 dark:border-slate-700/60 text-xs">
+              {(['ALL', 'SET', 'COMP', 'PART'] as const).map((cat) => {
+                const count = cat === 'ALL'
+                  ? availableSkus.length
+                  : availableSkus.filter(s => s.material_class === cat).length;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+                      selectedCategory === cat
+                        ? 'bg-white dark:bg-slate-900 text-sky-700 dark:text-sky-300 font-bold shadow-xs border border-slate-200 dark:border-slate-700'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    {cat === 'ALL' ? '全部' : cat === 'SET' ? '成品 SET' : cat === 'COMP' ? '組件 COMP' : '單品 PART'}
+                    <span className="ml-1 text-[10px] opacity-75 font-mono">({count})</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Searchable SKU Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <div
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center justify-between min-w-[260px] sm:min-w-[300px] px-3.5 py-2 rounded-xl bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 hover:border-sky-500 dark:hover:border-sky-500 shadow-xs cursor-pointer transition-all"
               >
-                {item.sku}
-              </button>
-            ))}
+                <div className="flex items-center space-x-2 truncate mr-2">
+                  <Search className="w-4 h-4 text-slate-400 shrink-0" />
+                  <span className="font-mono font-bold text-sm text-sky-700 dark:text-sky-400">
+                    {selectedSku}
+                  </span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                    {result?.productName}
+                  </span>
+                </div>
+                <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+              </div>
+
+              {/* Dropdown Menu Popup */}
+              {isDropdownOpen && (
+                <div className="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 w-[320px] sm:w-[380px] bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl z-50 overflow-hidden animate-in fade-in-50 zoom-in-95">
+                  {/* Search Input Box */}
+                  <div className="p-3 border-b border-slate-100 dark:border-slate-800 flex items-center space-x-2 bg-slate-50 dark:bg-slate-950/60">
+                    <Search className="w-4 h-4 text-slate-400 shrink-0" />
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="搜尋品號、品名或客戶..."
+                      className="w-full bg-transparent text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden"
+                      autoFocus
+                    />
+                    {searchTerm && (
+                      <button
+                        onClick={() => setSearchTerm('')}
+                        className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 cursor-pointer"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Filtered SKU List */}
+                  <div className="max-h-[300px] overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60 text-sm">
+                    {filteredSkus.length === 0 ? (
+                      <div className="p-4 text-center text-xs text-slate-400">
+                        查無符合「{searchTerm}」的品號
+                      </div>
+                    ) : (
+                      filteredSkus.map((item) => {
+                        const isSelected = item.sku === selectedSku;
+                        const classColor = item.material_class === 'SET'
+                          ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800'
+                          : item.material_class === 'COMP'
+                          ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'
+                          : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800';
+
+                        return (
+                          <div
+                            key={item.sku}
+                            onClick={() => handleSelectSku(item.sku)}
+                            className={`p-3 flex items-center justify-between hover:bg-sky-50/50 dark:hover:bg-sky-950/30 cursor-pointer transition-colors ${
+                              isSelected ? 'bg-sky-50 dark:bg-sky-950/60 font-semibold' : ''
+                            }`}
+                          >
+                            <div className="flex flex-col truncate mr-2">
+                              <div className="flex items-center space-x-2">
+                                <span className="font-mono font-bold text-slate-900 dark:text-white">
+                                  {item.sku}
+                                </span>
+                                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md border ${classColor}`}>
+                                  {item.material_class}
+                                </span>
+                              </div>
+                              <span className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                                {item.category} {item.description ? `• ${item.description}` : ''}
+                              </span>
+                            </div>
+                            {isSelected && (
+                              <Check className="w-4 h-4 text-sky-600 dark:text-cyan-400 shrink-0" />
+                            )}
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
 
             {onNavigateToSettings && (
               <button
                 onClick={onNavigateToSettings}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-sm font-medium bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60 transition-colors ml-2 cursor-pointer"
+                className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-sm font-medium bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60 transition-colors shrink-0 cursor-pointer"
                 title="調整 MRP 運算策略與告警門檻"
               >
                 <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -143,6 +280,31 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
               </button>
             )}
           </div>
+        </div>
+
+        {/* Quick Recent SKU Chips */}
+        <div className="mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800/60 flex flex-wrap items-center gap-2 text-xs">
+          <span className="text-slate-500 dark:text-slate-400 flex items-center space-x-1">
+            <span>📌 最近檢視:</span>
+          </span>
+          {recentSkus.map((sku) => {
+            const item = availableSkus.find(s => s.sku === sku);
+            const isCurrent = sku === selectedSku;
+            return (
+              <button
+                key={sku}
+                onClick={() => handleSelectSku(sku)}
+                className={`px-2.5 py-1 rounded-lg font-mono font-medium transition-all border cursor-pointer ${
+                  isCurrent
+                    ? 'bg-sky-500 text-white border-sky-500 font-bold shadow-xs'
+                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
+                }`}
+                title={item?.category}
+              >
+                {sku}
+              </button>
+            );
+          })}
         </div>
 
         {/* Dynamic System Strategy Indicator */}

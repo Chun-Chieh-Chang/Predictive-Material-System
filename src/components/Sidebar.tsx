@@ -18,7 +18,6 @@ import {
   BookOpen,
   ChevronDown,
   ChevronRight,
-  Menu,
   X,
 } from 'lucide-react';
 import { NavTab } from './Navbar';

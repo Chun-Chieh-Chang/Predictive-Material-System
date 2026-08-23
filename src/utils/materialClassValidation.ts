@@ -8,7 +8,7 @@
  * - 分類路徑建構
  */
 
-import type { MaterialClass, MaterialClassCode, ItemMaster, ProductMoldBOM } from '../types';
+import type { MaterialClass, MaterialClassCode } from '../types';
 
 // ─── 預設 SKU 前綴規範（可匯入時覆寫）──
 const SKU_PREFIX_RULES: Record<MaterialClassCode, string[]> = {

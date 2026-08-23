@@ -3,7 +3,6 @@ import { SystemDatabase } from '../types';
 import { DEMO_SAMPLE_DATABASE, EMPTY_DATABASE } from '../data/seedData';
 import {
   exportToExcel,
-  downloadFormalTemplateExcel,
   downloadDemoSampleExcel,
   downloadTemplateExcel,
   exportToJSON,
