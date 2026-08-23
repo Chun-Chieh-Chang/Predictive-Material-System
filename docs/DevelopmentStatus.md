@@ -1,12 +1,12 @@
 # 料事如神（PMS）開發進度與後續計畫
 
-> 版號：`V-20260823-26`　|　更新日期：2026-08-23　|　下次啟動時自動閱讀
+> 版號：`V-20260823-28`　|　更新日期：2026-08-23　|　下次啟動時自動閱讀
 
 ---
 
 ## 一、已完成功能清單（Commit 基準）
 
-### 版本 `V-20260823-26`（最新 — 物料分類領域模型校正與全數據鏈 MECE 閉環版）
+### 版本 `V-20260823-28`（最新 — 全自動自進化體系門禁與按鈕對比度全固化版）
 
 #### 核心運算引擎 (4 大引擎)
 | 項目 | 狀態 | 說明 |
@@ -31,14 +31,13 @@
 | 備份與復原設定 | `BackupSettingsView.tsx` | ✅ | 自動排程備份與 JSON 備份還原 |
 | PRD 規格文件 | `PrdDocView.tsx` | ✅ | 完整系統規格文件與 Roadmap 檢視 |
 
-#### 物料分類領域模型校正與 MECE 全選項標準化 (V-20260823-25 ~ 26)
+#### 全自動自進化體系與對比度防護 (V-20260823-27 ~ 28)
 | 項目 | 狀態 | 說明 |
 |------|------|------|
-| 領域模型與判定標準化 | ✅ | `types.ts` 更新 `DEFAULT_MATERIAL_CLASSES` 描述（PART/COMP 多數/部分可直接出貨），新增 `isShippableMaterialClass` 統一規則 |
-| 全數據鏈路靜態過濾解鎖 | ✅ | `MrpCalculatorView`、`ShipScheduleClearanceView`、`DashboardView`、`wipEngine` 全面支援 PART/COMP/SET |
-| 需求沖銷模式 4 選項補齊 | ✅ | `SystemSettingsView` 補齊 `forecast_only` 與 `actual_only`，與模擬器及型別 100% 對齊 |
-| 模具與訂單狀態機完備 | ✅ | `mold_master.status` 加入 `retired`（封存報廢）；`actual_order.status` 加入 `partial_shipped`（部分出貨） |
-| 資料交換字典與無損解析 | ✅ | `dataExchange.ts` 規格字典全面同步，Excel/JSON 匯出入完整支援 `material_class` 解析 |
+| 全自動自進化門禁 (Auto-Evolution Gate) | ✅ | `.impeccable/scripts/auto-evolution-gate.mjs` 整合進 `.husky/pre-commit`，每次 commit 自動萃取知識庫、自動 MECE 100 滿分校驗、自動升級防禦工具 |
+| 深底色按鈕純白字體保護 (CAPA-010) | ✅ | `src/index.css` 為實心/漸變按鈕強制宣告 `#ffffff !important`，修復綠色/藍色/紫色按鈕文字對比度，並以 MECE 6 維度完成 CAPA-010 |
+| 按鈕對比度反向防呆工具鏈 | ✅ | `.impeccable/scripts/contrast-check.mjs` 實裝「實心按鈕白色文字保證檢測」規則 |
+| 業務人員稱謂標準化與去個資 | ✅ | `seedData.ts`、`dataExchange.ts`、`ShipScheduleClearanceView.tsx` 與文件全面移除具體人名，統一為俐落專業的「業務人員」(`usr_sales`) |
 | 雙主題視覺與卡片 Token 標準化 | ✅ | 10 大核心視圖外層卡片統一 `bg-white dark:bg-slate-900`，工作台底色溫潤分離 `--bg-workbench: #EBF0F5` |
 | 側邊欄預設收合 | ✅ | `Sidebar.tsx` 4 大導航群組預設收合（`expandedGroups` 初始值 `false`），提供極簡入場視野 |
 
