@@ -29,6 +29,7 @@ bun.lock
 
 # AI Studio / editor temp
 assets/.aistudio/
+.omo/
 
 # IDE settings
 .vscode/

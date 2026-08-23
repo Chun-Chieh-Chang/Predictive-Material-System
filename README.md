@@ -1,19 +1,20 @@
 # 料事如神系統 — Predictive Material System (PMS)
 
 > **QCC 料事如神圈 · 射出成型智能備料與產能排程推估平台**  
-> Baseline Version：`V-20260821-23` | Developed by Wesley Chang @Mouldex, Aug-2026
+> Baseline Version：`V-20260823-16` | Developed by Wesley Chang @Mouldex, Aug-2026
 
 ---
 
 ## 系統概述
 
-料事如神系統 (PMS) 是一套專為**射出成型製造業**設計的前端智能物料需求運算與資料維運平台。系統以全瀏覽器本地端運行（LocalStorage 持久化），無需後端伺服器，即可完成從客戶預測 (Forecast) 到採購決策的完整 3 階 MRP 推導。
+料事如神系統 (PMS) 是一套專為**射出成型製造業**設計的前端智能物料需求運算與資料維運平台。系統以全瀏覽器本地端運行（LocalStorage 持久化），無需後端伺服器，即可完成從客戶預測 (Forecast) 到採購決策的完整 3 階 MRP 推導、雙週出貨可行性審查、訂單全鏈路物料緊張度追蹤與數據鏈路穿透模擬。
 
 **核心解決問題：**
-- 快速判斷「現有庫存 + WIP + 在途料」能否滿足客戶需求
+- 快速判斷「現有庫存 + WIP + 在途料」能否滿足客戶需求與雙週出貨排程
 - 自動展開原料毛需求（BOM 爆炸），結合良率與損耗率精算
-- 動態產能排程，識別產能瓶頸（赤字天數告警）
-- 採購決策輔助：建議採購量（向上取整 MOQ）與最晚下單日
+- 動態產能排程，識別產能瓶頸（赤字天數、塞穴降級、時序差與虛擬預扣）
+- 採購決策輔助：建議採購量（向上取整 MOQ、分批到貨防爆倉）與最晚下單日
+- 訂單物料緊張度 6 大環節瓶頸診斷與全數據鏈路健康度排查
 
 ---
 
@@ -49,17 +50,20 @@ npm run dev
 
 ---
 
-## 系統架構 — 8 大功能模組
+## 系統架構 — 11 大功能模組
 
 ```
 PMS
-├── [決策戰情室]           DashboardView               綜合儀表板：MRP 全局告警、庫存熱圖、KPI 追蹤
-├── [3階 MRP 推導]         MrpCalculatorView           單品/全品 MRP 計算引擎、多版本需求比較
-├── [參數策略設定]         SystemSettingsView          系統參數 & 業務規則配置（預警門檻/排程策略/良率基準）
+├── [決策戰情室]           DashboardView               綜合儀表板：MRP 全局告警、庫存熱圖、客戶預測偏差分析
+├── [出貨排程審查看板]     ShipScheduleClearanceView   週二雙週出貨可行性放行審查、良品+WIP折算、What-If 模擬
+├── [3階 MRP 推導]         MrpCalculatorView           單品/全品 MRP 計算引擎、分批到貨排程建議、多版本需求比較
+├── [訂單物料緊張追蹤]     OrderTensionTrackerView     逐筆訂單 6 大供應鏈瓶頸診斷、4 級緊張度告警、應變 SOP
+├── [參數策略設定]         SystemSettingsView          系統參數 & 業務規則配置（預警門檻/排程策略/虛擬預扣開關）
 ├── [物料分類體系]         MaterialClassManagementView 五層分類樹管理（RAW/MAT/PART/COMP/SET）
 ├── [10大主檔維護]         DataTablesView              10 張主檔 CRUD（不含 audit_log，audit_log 僅匯出不覆蓋）
-├── [無損資料中心]         DataExchangeView            JSON/Excel 匯出入、資料規格字典、示範數據載入
+├── [無損資料中心]         DataExchangeView            JSON/Excel 匯出入、全數據鏈路深度模擬與防斷鏈診斷
 ├── [備份與復原設定]       BackupSettingsView          自動備份排程、恢復備份檔、容量統計
+├── [專業術語辭典]         GlossaryView                料事如神專業名詞獨立專頁（7 大分類搜尋與索引）
 └── [PRD 規格辭典]         PrdDocView                  系統設計規格文件（PRD）瀏覽器
 ```
 

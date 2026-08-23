@@ -528,6 +528,21 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
           </div>
         </div>
 
+        {/* Virtual Backflush Callout (if active) */}
+        {result.virtualBackflushDeductedKg !== undefined && result.virtualBackflushDeductedKg > 0 && (
+          <div className="mb-4 p-3 rounded-xl bg-emerald-950/30 border border-emerald-800/60 text-xs flex items-center justify-between">
+            <div className="flex items-center gap-2 text-emerald-300">
+              <Sparkles className="w-4 h-4 text-emerald-400" />
+              <span>
+                <strong>月內自用料虛擬預扣已生效：</strong>已依 3樓 WIP 待驗量自動預扣原料 <strong>{result.virtualBackflushDeductedKg.toLocaleString()} KG</strong>（ERP 帳面 {result.rmOnHandKg.toLocaleString()} KG $\rightarrow$ 真實可用 {result.effectiveRmOnHandKg?.toLocaleString()} KG）。
+              </span>
+            </div>
+            <span className="text-emerald-400 font-mono font-semibold whitespace-nowrap">
+              消滅時序差
+            </span>
+          </div>
+        )}
+
         {/* Final Procurement Callout Bento Box */}
         <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -554,6 +569,47 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Phased Delivery Inbound Schedule (Subtask 3.1) */}
+        {result.phasedDeliveryPlan && result.phasedDeliveryPlan.length > 0 && (
+          <div className="mt-4 p-4 rounded-xl bg-slate-950/90 border border-indigo-900/60 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Boxes className="w-4 h-4 text-indigo-400" />
+                <span className="text-sm font-bold text-white">
+                  建議分批/階段性到港排程 (防範 8,000 萬爆倉與倉容超載)
+                </span>
+              </div>
+              <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-950 text-indigo-300 border border-indigo-800">
+                拆為 {result.phasedDeliveryPlan.length} 批進貨
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              {result.phasedDeliveryPlan.map((batch) => (
+                <div
+                  key={batch.batchNo}
+                  className="p-3 rounded-lg bg-slate-900/80 border border-slate-800 flex flex-col justify-between space-y-1.5"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-indigo-300">
+                      第 {batch.batchNo} 批進貨: {batch.qtyKg.toLocaleString()} KG
+                    </span>
+                    <span className="text-slate-400 font-mono">
+                      約 {Math.ceil(batch.qtyKg / 25)} 包
+                    </span>
+                  </div>
+                  <div className="text-slate-300">
+                    最晚下單: <strong className="text-white font-mono">{batch.orderDate}</strong> ➔ 預計到廠: <strong className="text-white font-mono">{batch.etaDate}</strong>
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-1">
+                    {batch.reason}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         </>
         )}
       </div>

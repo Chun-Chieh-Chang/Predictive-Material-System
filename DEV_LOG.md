@@ -8,7 +8,92 @@
 
 ## 版本演進記錄
 
-### V-20260820-12 (2026-08-20) — 首個完整基準版本
+### V-20260823-16 (2026-08-23) — 第一次需求會議 Gap Analysis 優化與決策賦能版
+
+**狀態：** ✅ 穩定發布  
+**TypeScript 編譯：** 0 錯誤 / 0 警告 (`npm run build` 通過)
+
+#### 本版本完成功能清單 (Gap Closure)
+
+**[階段一：業務賦能與出貨決策 (Sales Enablement)]**
+- `ShipScheduleClearanceView.tsx` — **全新模組：週二雙週出貨排程可行性審查看板**
+  - 專為業務（Iris / AB）每週二出貨協調會設計
+  - 即時計算：$\text{可承接出貨量} = \text{成品良品現貨} + \text{有效待驗品 (WIP} \times \text{Yield)} - \text{未結正式訂單}$
+  - 三色燈號：🟢 100% 可放行、🟡 需 3F WIP 優先挑選支援、🔴 實質缺貨赤字
+  - 互動式 What-If 排程需求模擬滑桿 (0.5x ~ 2.0x) 與週二協調會議 SOP 卡片
+  - 整合至 Navbar 與 Sidebar 「核心操作」導航群組
+- `DashboardView.tsx` — **客戶預測偏差分析與供需透明化報告 (Forecast Deviation & Transparency)**
+  - 歷史 Forecast vs 實際訂單偏差率計算：$\text{Deviation \%} = \frac{\text{Actual} - \text{Forecast}}{\text{Forecast}} \times 100\%$
+  - 預測準確度評分條（紅色 <50%、黃色 50~80%、綠色 >80%）
+  - 我方備料透明度客觀佐證（原料需求 vs 已備原料在庫+在途），提供業務談判客觀背書
+
+**[階段二：現場時序差消除與 WIP 動態推估 (Temporal & WIP Engine)]**
+- `wipEngine.ts` — **全新工具庫：在製品 (WIP) 日動態推估公式計算器**
+  - 實作日累積模型：$WIP(t) = WIP(t-1) + P(t) - S(t)$
+  - 機台產出估算：$P(t) = \text{工時} \times (3600 / \text{週期}) \times \text{妥善穴數} \times (1 - \text{損耗率})$
+  - 包含夜間 12 小時無人挑選產出時序差修正、FIFO 庫齡超量預警
+- `mrpEngine.ts` & `SystemSettingsView.tsx` — **場內自用料月內虛擬預扣 (Virtual Backflush)**
+  - 消除頂新 ERP 月底才扣料導致月中可用庫存虛增之盲區
+  - 系統參數支援 `enableVirtualBackflush` 動態開關與即時 MRP 聯動
+
+**[階段三：採購執行落地與倉容防呆 (Procurement Actionability)]**
+- `mrpEngine.ts` & `MrpCalculatorView.tsx` — **實體倉容分批到貨排程建議 (Phased Inbound Plan)**
+  - 當採購量達貨櫃規模或倉容上限時，自動生成「首批 + 次批 (間隔 30 天)」階段性交貨排程
+  - 徹底解決一次性進貨引發的 8,000 萬爆倉危機
+- `materialClassValidation.ts` & `fieldMeta.ts` — **損耗率成本天花板防呆校驗 (Cost Ceiling Guard)**
+  - 系統參數新增 `maxAllowedScrapRatePct` (預設 8%)
+  - 表單與 BOM 維護加入防呆，嚴禁輸入超過計價成本之損耗率
+
+**[階段四：訂單物料緊張檢索與全鏈路瓶頸診斷 (Order Tension & Bottleneck Diagnostics)]**
+- `orderTensionEngine.ts` — **訂單全鏈路物料健康度診斷運算引擎**
+  - 逐筆訂單全面掃描 6 大供應鏈環節：
+    1. 🔴 原料採購交期環節（最晚下單日逾期 / 倒數吃緊）
+    2. 🟣 模具射出產能環節（連續生產天數不足 / 模具塞穴折損）
+    3. 🟡 3樓 WIP 全檢環節（成品現貨不足需優先挑選入庫 / 實質缺貨赤字）
+    4. 🟠 在途海運船期環節（在途 PO 延誤到港）
+    5. 🔵 色母配色缺料環節（色粉/色母短缺）
+    6. 🟤 實體倉容超載環節（在庫+在途達容積上限）
+  - 產出 4 級緊張度評級與 0~100 緊張指數
+- `OrderTensionTrackerView.tsx` — **訂單物料示警與瓶頸診斷視覺化看板**
+  - 支援訂單號、客戶代碼、成品料號秒級全文檢索
+  - 提供 4 色緊張度分級篩選與 6 大特定卡關環節過濾器
+  - 支援展開卡關原因根因分析 (RCA) 與即時應變 SOP 指引，一鍵直達 MRP 推導器
+
+**[階段五：全數據鏈路深度模擬與防斷鏈/孤兒數據排查 (Data Pipeline Integrity & Simulation)]**
+- `dataIntegrityScanner.ts` — **全數據鏈路完整性與孤兒數據排查器 (MECE 原則)**
+  - 10 大主檔全面交叉驗證：外鍵斷鏈、孤兒料號/模具、重複主鍵、過期 BOM、無效極值數值
+  - 4 大運算引擎流水線貫通性測試 (MRP, WIP, Order Tension, Ship Clearance)
+  - 綜合健康度評分 (0 ~ 100 分)
+- `dataPipelineSimulation.ts` — **4 大極限業務場景端到端穿透模擬套件**
+  - 場景 1：標準業務閉環穿透 (Baseline Pass-Through) ➔ 100% 跑通
+  - 場景 2：模具塞穴降級與產能衝擊 (Degraded Cavity Stress) ➔ 塞 4 穴單穴耗料上升 +33.3% 聯動成功
+  - 場景 3：現場夜班時序差與虛擬預扣 (Temporal Lag & Virtual Backflush) ➔ 精確預扣 28.92 KG 原料
+  - 場景 4：大宗採購倉容超載與分批進貨 (Phased Inbound Delivery) ➔ 自動拆解為 2 批進貨防爆倉
+- `DataExchangeView.tsx` — **「全數據鏈路深度模擬與防斷鏈診斷儀」視覺化面板**
+  - 支援一鍵執行全庫穿透測試，展示健康評分、斷鏈錯誤清單與場景耗時報告
+
+#### 專案全量重構與最佳化作業 (Project Refactor & MECE Optimization SOP)
+- **需求摘要**：執行全專案死碼清理、文件 100% 同步、MECE 架構整頓、沙盒確效驗證與還原基準點建立。
+- **盤點與清理 (MECE Audit & Dead Code Removal)**：
+  - 移除已棄用抽屜式組件 `src/components/GlossaryPanel.tsx`（已由獨立專頁 `GlossaryView.tsx` 完整承接）。
+  - 更新 `src/data/glossaryData.ts` 導引註解對齊 `GlossaryView.tsx`。
+  - 修復 `src/utils/dataPipelineSimulation.ts` 中 `calculateMRPForSKU` 參數對齊與空值防禦（0 錯誤通過 `npm run lint`）。
+  - 更新 `.gitignore` 排除編輯器與工具臨時快取 `.omo/`，從版控追蹤中移除本機資料庫快取 `sync.ffs_db`。
+- **文件全量同步 (Documentation Alignment)**：
+  - 更新 `README.md`、`docs/DevelopmentStatus.md`、`docs/SemanticParserDesign.md`、`docs/PMS-Typography-Standards.md`，同步 11 大功能模組與全鏈路閉環架構。
+  - 完成專案數據隱私與資安盤點（0 憑證外洩、0 未授權外部傳輸）。
+- **沙盒確效測試 (Sandbox Runtime Check)**：
+  - `tsc --noEmit`：0 錯誤 / 0 警告
+  - `npm run build`：Vite 構建通過 (3.85s)
+- **版本基準點**：Git Commit `55c90c5`
+- **根因分析 (RCA)**：
+  - 模組重構後舊有組件檔案未即時清理（如 GlossaryPanel），導致依賴圖譜存在冗餘死碼。
+  - 新增運算函式調用時未傳入全量選填參數順序，導致型別檢查報錯。
+- **矯正與預防措施 (CAPA)**：
+  - 建立嚴格死碼審計清單，組件獨立後第一時間刪除舊檔案並更新映射文件。
+  - 啟用 Husky Pre-commit 與 CI/CD 雙層型別檢查機制，保障每一次原子提交 100% 跑通。
+
+---
 
 **狀態：** ✅ 穩定發布  
 **TypeScript 編譯：** 0 錯誤 / 0 警告

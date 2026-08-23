@@ -5,8 +5,10 @@
 
 import React, { useState, useEffect } from 'react';
 import {
+  Activity,
   BarChart3,
   Calculator,
+  CalendarCheck,
   Layers,
   Database,
   FileSpreadsheet,
@@ -76,6 +78,8 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { id: 'dashboard', label: '決策戰情室', sub: 'Decision War Room', icon: BarChart3 },
       { id: 'mrp_calculator', label: '3 階 MRP 推導', sub: 'MRP Engine', icon: Calculator },
+      { id: 'ship_schedule_clearance', label: '週二出貨審查', sub: 'Ship Schedule', icon: CalendarCheck },
+      { id: 'order_tension_tracker', label: '訂單物料示警', sub: 'Order Tension', icon: Activity },
     ],
   },
   {

@@ -812,6 +812,69 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                 日產能公式: ({params.dailyOperatingHours * 3600} 秒 ÷ 成型週期) &times; 妥善穴數
               </div>
             </div>
+
+            {/* Parameter 2.4 & 2.5: Advanced Temporal & Inbound Automation Toggles */}
+            <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800/80 space-y-3">
+              <label className="text-sm font-bold text-white block">
+                現場時序差消除與倉容防呆策略 (Execution & Defense Rules)
+              </label>
+
+              {/* Virtual Backflush Toggle */}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800">
+                <div>
+                  <div className="font-semibold text-white text-sm flex items-center gap-1.5">
+                    <span>場內自用料月內虛擬預扣 (Virtual Backflush)</span>
+                    <span className="text-[10px] bg-emerald-950/60 text-emerald-300 border border-emerald-800 px-1.5 py-0.5 rounded font-mono">
+                      消滅時序差
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    在頂新 ERP 月底正式開單扣料前，自動扣除「月內已成型」耗用原料，避免可用庫存虛增延誤長交期下單。
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setParams({ ...params, enableVirtualBackflush: !params.enableVirtualBackflush })}
+                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
+                    params.enableVirtualBackflush ? 'bg-indigo-600' : 'bg-slate-700'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition duration-200 ease-in-out ${
+                      params.enableVirtualBackflush ? 'translate-x-5' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* Phased Delivery Advisor Toggle */}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800">
+                <div>
+                  <div className="font-semibold text-white text-sm flex items-center gap-1.5">
+                    <span>大宗採購分批到貨排程建議 (Phased Inbound Advisor)</span>
+                    <span className="text-[10px] bg-amber-950/60 text-amber-300 border border-amber-800 px-1.5 py-0.5 rounded font-mono">
+                      防8000萬爆倉
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    當建議採購量達貨櫃規模或倉容上限時，自動拆解為「首批 + 次批 (間隔 30 天)」階段性交貨建議。
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setParams({ ...params, enablePhasedDeliveryAdvisor: !params.enablePhasedDeliveryAdvisor })}
+                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
+                    params.enablePhasedDeliveryAdvisor ? 'bg-indigo-600' : 'bg-slate-700'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition duration-200 ease-in-out ${
+                      params.enablePhasedDeliveryAdvisor ? 'translate-x-5' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
@@ -832,7 +895,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
               {/* Default Sorting Yield */}
               <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800/80 space-y-2.5">
                 <div className="flex items-center justify-between">
@@ -888,6 +951,35 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                 />
                 <p className="text-[10px] text-slate-500">
                   原料毛需求公式分母: (1 - 損耗率)
+                </p>
+              </div>
+
+              {/* Max Allowed Scrap Rate (Ceiling Guard) */}
+              <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800/80 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-bold text-white">
+                    損耗率計價成本天花板
+                  </label>
+                  <span className="font-mono font-bold text-red-400 text-sm">
+                    {(params.maxAllowedScrapRatePct * 100).toFixed(1)}%
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="0.03"
+                  max="0.15"
+                  step="0.005"
+                  value={params.maxAllowedScrapRatePct}
+                  onChange={(e) =>
+                    setParams({
+                      ...params,
+                      maxAllowedScrapRatePct: Number(e.target.value)
+                    })
+                  }
+                  className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-red-500"
+                />
+                <p className="text-[10px] text-slate-500">
+                  BOM 損耗防呆上限（不可高於會計計價標準）
                 </p>
               </div>
 

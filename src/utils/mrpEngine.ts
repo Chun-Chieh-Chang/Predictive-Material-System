@@ -171,11 +171,20 @@ export function calculateMRPForSKU(
   const moqKg = supplierRule.moq_kg || params.defaultMoqKg;
   const leadTimeDays = supplierRule.lead_time_days || params.defaultProcurementLeadTimeDays;
 
-  // Formula: Net RM Requirement (KG) = Gross RM - OnHand - InTransit + SafetyStock
+  // Virtual Backflush calculation for in-house molding before month-end ERP deduction
+  let virtualBackflushDeductedKg = 0;
+  if (params.enableVirtualBackflush) {
+    virtualBackflushDeductedKg = Number(
+      ((wipPendingQty * unitWeightG) / 1000 / Math.max(0.01, 1 - stdScrapRate)).toFixed(2)
+    );
+  }
+  const effectiveRmOnHandKg = Math.max(0, Number((rmOnHandKg - virtualBackflushDeductedKg).toFixed(2)));
+
+  // Formula: Net RM Requirement (KG) = Gross RM - Effective OnHand - InTransit + SafetyStock
   // Note: when mixingRatioPct > 0, rmSku is the colorant; rmNetRequirementKg is colorant net req.
   const rmNetRequirementKg = Math.max(
     0,
-    Number((effectiveResinGrossKg - rmOnHandKg - rmInTransitKg + safetyStockKg).toFixed(2))
+    Number((effectiveResinGrossKg - effectiveRmOnHandKg - rmInTransitKg + safetyStockKg).toFixed(2))
   );
 
   // Round up to MOQ
@@ -315,6 +324,36 @@ export function calculateMRPForSKU(
     });
   }
 
+  // Phased Delivery Plan Generation (for Subtask 3.1)
+  let phasedDeliveryPlan: { batchNo: number; qtyKg: number; orderDate: string; etaDate: string; reason: string }[] | undefined = undefined;
+  if (params.enablePhasedDeliveryAdvisor && suggestedOrderQtyKg > 0) {
+    const isLargeBatch = suggestedOrderQtyKg > maxStorageCapacityKg * 0.6 || suggestedOrderQtyKg >= 5000;
+    if (isLargeBatch) {
+      const batch1Qty = Math.ceil((suggestedOrderQtyKg * 0.5) / moqKg) * moqKg;
+      const batch2Qty = Math.max(0, suggestedOrderQtyKg - batch1Qty);
+
+      const batch2OrderDateObj = new Date(suggestedOrderDateObj.getTime() + 30 * 24 * 60 * 60 * 1000);
+      const batch2EtaDateObj = new Date(targetDateObj.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+      phasedDeliveryPlan = [
+        {
+          batchNo: 1,
+          qtyKg: batch1Qty,
+          orderDate: suggestedOrderDate,
+          etaDate: targetDate,
+          reason: '首批到港 (滿足前半段排產與安全水位，防範實體爆倉)',
+        },
+        {
+          batchNo: 2,
+          qtyKg: batch2Qty,
+          orderDate: batch2OrderDateObj.toISOString().split('T')[0],
+          etaDate: batch2EtaDateObj.toISOString().split('T')[0],
+          reason: '次批到港 (間隔 30 天，平衡倉庫容積與資金積壓風險)',
+        },
+      ];
+    }
+  }
+
   return {
     sku,
     productName: item.category,
@@ -343,6 +382,8 @@ export function calculateMRPForSKU(
     rmGrossRequirementKg,
     colorMixingRatioPct: mixingRatioPct,
     rmOnHandKg,
+    virtualBackflushDeductedKg,
+    effectiveRmOnHandKg,
     rmInTransitKg,
     safetyStockKg,
     rmNetRequirementKg,
@@ -355,6 +396,7 @@ export function calculateMRPForSKU(
     requiredProdDays,
     capacityDeficitDays,
     colorantDetail,
+    phasedDeliveryPlan,
     alerts
   };
 }

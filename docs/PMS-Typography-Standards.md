@@ -119,14 +119,16 @@
 | 組件 | text-[10px] 數量 | text-[11px] 數量 | text-xs | text-sm |
 |------|:---:|:---:|:---:|:---:|
 | DashboardView.tsx | ~0 | ~50 | — | ~20 |
+| ShipScheduleClearanceView.tsx | ~0 | ~10 | ~5 | ~15 |
+| OrderTensionTrackerView.tsx | ~0 | ~8 | ~4 | ~12 |
+| MrpCalculatorView.tsx | ~0 | ~12 | ~4 | ~16 |
 | SystemSettingsView.tsx | ~12 | ~14 | ~1 | ~10 |
 | BackupSettingsView.tsx | ~8 | ~10 | ~0 | ~5 |
 | DataTablesView.tsx | ~4 | ~0 | ~1 | ~3 |
 | DataExchangeView.tsx | ~9 | ~3 | ~0 | ~4 |
-| GlossaryPanel.tsx | ~3 | ~5 | ~2 | ~2 |
+| GlossaryView.tsx | ~0 | ~5 | ~2 | ~2 |
 | Sidebar.tsx | ~6 | ~0 | ~0 | ~1 |
 | Navbar.tsx | ~0 | ~1 | ~0 | ~0 |
-| **合計** | **~42** | **~83** | **~4** | **~45** |
 
 > **注意：** 上述 custom px 數量為靜態掃描近似值，實際值以編譯後 CSS 為準。現已全部透過 index.css 強制映射至標準級距。
 

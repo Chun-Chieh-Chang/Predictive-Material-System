@@ -104,14 +104,16 @@ IF 無關鍵字匹配但含目標名稱（如 "sidebar", "dashboard"）→ 預�
 |------------|-------------|-----------------|
 | 側邊欄 / sidebar / 導航列 | `Sidebar` | `src/components/Sidebar.tsx` |
 | 戰情室 / dashboard / 決策室 | `DashboardView` | `src/components/DashboardView.tsx` |
+| 出貨排程 / 審查看板 / 週二會議 | `ShipScheduleClearanceView` | `src/components/ShipScheduleClearanceView.tsx` |
+| 訂單物料緊張 / 瓶頸診斷 / 示警 | `OrderTensionTrackerView` | `src/components/OrderTensionTrackerView.tsx` |
 | MRP 推導 / mrp / 計算機 | `MrpCalculatorView` | `src/components/MrpCalculatorView.tsx` |
 | 資料表 / 主檔 / 10大主檔 | `DataTablesView` | `src/components/DataTablesView.tsx` |
 | 參數設定 / 系統設定 | `SystemSettingsView` | `src/components/SystemSettingsView.tsx` |
-| 資料交換 / 匯出匯入 | `DataExchangeView` | `src/components/DataExchangeView.tsx` |
+| 資料交換 / 匯出匯入 / 模擬診斷 | `DataExchangeView` | `src/components/DataExchangeView.tsx` |
 | PRD / 規格書 / 辭典 | `PrdDocView` | `src/components/PrdDocView.tsx` |
 | 備份 / backup | `BackupSettingsView` | `src/components/BackupSettingsView.tsx` |
 | 物料分類 / 物料體系 | `MaterialClassManagementView` | `src/components/MaterialClassManagementView.tsx` |
-| 術語辭典 / 名詞解釋 | `GlossaryPanel` | `src/components/GlossaryPanel.tsx` |
+| 術語辭典 / 名詞解釋 | `GlossaryView` | `src/components/GlossaryView.tsx` |
 | 頂部導航 / navbar | `Navbar` | `src/components/Navbar.tsx` |
 | 全域 / 整個系統 / all | 全專案掃描 | `src/components/` + `src/index.css` |
 | 深色主題 / dark theme | Dark 模式檢查 | 雙主題 CSS override 區段 |

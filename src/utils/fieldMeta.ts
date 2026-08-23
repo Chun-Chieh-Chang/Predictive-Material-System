@@ -92,8 +92,12 @@ const PRODUCT_MOLD_BOM_META: TableMeta = {
     { key: 'net_mold_weight_g', label: '整模淨重 (g)', editability: 3, inputType: 'number', required: true, min: 0.001, step: 0.001, validate: (v) => { const val = Number(v); return (isFinite(val) && val > 0) ? null : '整模淨重必須 > 0 克'; } },
     { key: 'runner_weight_g', label: '流道重量 (g)', editability: 3, inputType: 'number', required: true, min: 0, step: 0.001, validate: (v) => { const val = Number(v); return (isFinite(val) && val >= 0) ? null : '流道重量必須 ≥ 0 克'; } },
     { key: 'is_primary_mold', label: '主模標記', editability: 3, inputType: 'checkbox' },
-    { key: 'std_mfg_scrap_rate', label: '成型損耗率', editability: 3, inputType: 'number', required: true, min: 0, max: 0.5, step: 0.001,
-      validate: (v) => { const val = Number(v); return (isFinite(val) && val >= 0 && val <= 0.5) ? null : '損耗率須介於 0 ~ 0.5'; },
+    { key: 'std_mfg_scrap_rate', label: '成型損耗率', editability: 3, inputType: 'number', required: true, min: 0, max: 0.15, step: 0.001,
+      validate: (v) => {
+        const val = Number(v);
+        if (!isFinite(val) || val < 0 || val > 0.15) return '損耗率須介於 0 ~ 15% (不可超過計價成本上限)';
+        return null;
+      },
       formatDisplay: (v) => `${(Number(v) * 100).toFixed(1)}%`,
     },
     {

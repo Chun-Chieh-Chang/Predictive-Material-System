@@ -5,8 +5,10 @@
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import {
+  Activity,
   BarChart3,
   Calculator,
+  CalendarCheck,
   Database,
   FileSpreadsheet,
   FileText,
@@ -51,7 +53,7 @@ const TaiwanDate: React.FC = () => {
   return <>{dateStr}</>;
 };
 
-export type NavTab = 'dashboard' | 'mrp_calculator' | 'system_settings' | 'material_class_management' | 'data_tables' | 'data_exchange' | 'prd_docs' | 'glossary' | 'backup_settings';
+export type NavTab = 'dashboard' | 'mrp_calculator' | 'ship_schedule_clearance' | 'order_tension_tracker' | 'system_settings' | 'material_class_management' | 'data_tables' | 'data_exchange' | 'prd_docs' | 'glossary' | 'backup_settings';
 
 interface NavbarProps {
   activeTab: NavTab;
@@ -131,6 +133,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   const tabs = [
     { id: 'dashboard' as NavTab, label: '決策戰情室', sub: 'Decision War Room', icon: BarChart3, badge: alertCount > 0 ? alertCount : undefined },
     { id: 'mrp_calculator' as NavTab, label: '3階 MRP 推導', sub: 'MRP Engine', icon: Calculator },
+    { id: 'ship_schedule_clearance' as NavTab, label: '週二出貨審查', sub: 'Ship Schedule', icon: CalendarCheck },
+    { id: 'order_tension_tracker' as NavTab, label: '訂單物料示警', sub: 'Order Tension', icon: Activity },
     { id: 'system_settings' as NavTab, label: '參數策略設定', sub: 'System Config', icon: SlidersHorizontal },
     { id: 'material_class_management' as NavTab, label: '物料分類體系', sub: 'Material Classes', icon: Layers },
     { id: 'data_tables' as NavTab, label: '10大主檔維護', sub: 'Master Data', icon: Database },

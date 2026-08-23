@@ -23,8 +23,18 @@ import {
   Sparkles,
   ArrowRight,
   Database,
-  Layers
+  Layers,
+  Activity,
+  Cpu,
+  Flame,
+  XCircle,
+  Clock,
+  Play
 } from 'lucide-react';
+import {
+  runDeepPipelineSimulation,
+  DeepPipelineSimulationSuiteResult
+} from '../utils/dataPipelineSimulation';
 
 interface DataExchangeViewProps {
   db: SystemDatabase;
@@ -42,6 +52,29 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [dragActive, setDragActive] = useState<boolean>(false);
   const [detectedFormat, setDetectedFormat] = useState<'excel' | 'json' | null>(null);
+
+  // Deep Simulation State
+  const [simResult, setSimResult] = useState<DeepPipelineSimulationSuiteResult | null>(null);
+  const [isRunningSim, setIsRunningSim] = useState<boolean>(false);
+
+  const handleRunSimulation = () => {
+    setIsRunningSim(true);
+    setTimeout(() => {
+      try {
+        const result = runDeepPipelineSimulation(db);
+        setSimResult(result);
+        if (result.allPassed) {
+          onNotify(`全數據鏈路深度穿透模擬通過！健康評分: ${result.integrityReport.healthScore} 分，4 大業務場景 100% 跑通！`, 'success');
+        } else {
+          onNotify(`數據鏈路檢測到 ${result.integrityReport.errors.length} 項斷鏈錯誤，請檢視診斷報告！`, 'error');
+        }
+      } catch (err: any) {
+        onNotify(`模擬測試執行失敗: ${err.message}`, 'error');
+      } finally {
+        setIsRunningSim(false);
+      }
+    }, 150);
+  };
 
   // Manual JSON paste input
   const [showPasteModal, setShowPasteModal] = useState<boolean>(false);
@@ -474,6 +507,168 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
           )}
         </div>
 
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 3. 全數據鏈路深度模擬與防斷鏈診斷儀 (Deep Pipeline Integrity Inspector) */}
+      {/* ========================================================================= */}
+      <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 gap-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800 flex items-center justify-center font-bold">
+              <Activity className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                  全數據鏈路深度穿透模擬與防斷鏈診斷儀
+                </h3>
+                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                  MECE 嚴格檢驗
+                </span>
+              </div>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                深度排查 10 大主檔外鍵關聯完整性、孤兒數據、過期冗餘記錄，並穿透模擬 4 大業務極限場景。
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={handleRunSimulation}
+            disabled={isRunningSim}
+            className="flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:from-indigo-500 text-white font-bold rounded-xl text-sm shadow-md shadow-purple-600/20 transition-all cursor-pointer disabled:opacity-50"
+          >
+            <Play className={`w-4 h-4 ${isRunningSim ? 'animate-spin' : ''}`} />
+            <span>{isRunningSim ? '正在深度穿透模擬中...' : '⚡ 執行全數據鏈路深度模擬'}</span>
+          </button>
+        </div>
+
+        {/* Diagnostic Results Display */}
+        {simResult ? (
+          <div className="space-y-5">
+            {/* Top Score & Summary Banner */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {/* Score Tile */}
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+                <span className="text-xs font-medium text-slate-500">數據鏈路健康評分</span>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <span className={`text-2xl font-bold font-mono ${simResult.integrityReport.healthScore >= 90 ? 'text-emerald-500' : simResult.integrityReport.healthScore >= 70 ? 'text-amber-500' : 'text-red-500'}`}>
+                    {simResult.integrityReport.healthScore}
+                  </span>
+                  <span className="text-xs text-slate-400">/ 100 分</span>
+                </div>
+                <span className="text-[11px] text-slate-400 mt-1 block">
+                  掃描 {simResult.integrityReport.totalRecordsScanned} 筆記錄 (10 大主檔)
+                </span>
+              </div>
+
+              {/* Broken FK Errors */}
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+                <span className="text-xs font-medium text-slate-500">外鍵斷鏈錯誤 (Broken FK)</span>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <span className={`text-2xl font-bold font-mono ${simResult.integrityReport.summary.brokenFkCount === 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                    {simResult.integrityReport.summary.brokenFkCount}
+                  </span>
+                  <span className="text-xs text-slate-400">項致命錯誤</span>
+                </div>
+                <span className="text-[11px] text-slate-400 mt-1 block">
+                  {simResult.integrityReport.summary.brokenFkCount === 0 ? '0 斷鏈，全關聯暢通' : '存在懸空無效參照！'}
+                </span>
+              </div>
+
+              {/* Orphan Data */}
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+                <span className="text-xs font-medium text-slate-500">孤兒/閒置數據 (Orphan Data)</span>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <span className="text-2xl font-bold font-mono text-slate-700 dark:text-slate-300">
+                    {simResult.integrityReport.summary.orphanCount}
+                  </span>
+                  <span className="text-xs text-slate-400">筆孤立項目</span>
+                </div>
+                <span className="text-[11px] text-slate-400 mt-1 block">
+                  未綁定 BOM 之模具或無訂單料號
+                </span>
+              </div>
+
+              {/* Scenario Pass Rate */}
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+                <span className="text-xs font-medium text-slate-500">4大極限場景穿透測試</span>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <span className={`text-2xl font-bold font-mono ${simResult.passedCount === simResult.totalScenarios ? 'text-emerald-500' : 'text-amber-500'}`}>
+                    {simResult.passedCount} / {simResult.totalScenarios}
+                  </span>
+                  <span className="text-xs text-slate-400">場景通過</span>
+                </div>
+                <span className="text-[11px] text-slate-400 mt-1 block">
+                  {simResult.allPassed ? '100% 業務閉環貫通' : '部分場景存在邏輯盲點'}
+                </span>
+              </div>
+            </div>
+
+            {/* Broken FK Error Callout Box (if any) */}
+            {simResult.integrityReport.errors.length > 0 && (
+              <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 space-y-2 text-xs">
+                <div className="flex items-center gap-1.5 text-red-700 dark:text-red-300 font-bold">
+                  <XCircle className="w-4 h-4" />
+                  <span>發現 {simResult.integrityReport.errors.length} 項外鍵斷鏈致命錯誤（需優先修復）：</span>
+                </div>
+                <div className="space-y-1 text-red-600 dark:text-red-400">
+                  {simResult.integrityReport.errors.map((err, idx) => (
+                    <div key={idx} className="flex items-start gap-1.5">
+                      <span>•</span>
+                      <span><strong>[{err.table}]</strong> {err.reason} (主鍵: {err.pkValue})</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 4 End-to-End Simulation Scenarios Breakdown */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
+                <Flame className="w-4 h-4 text-indigo-500" />
+                <span>4 大端到端極限業務場景模擬驗證報告 (Penetration Scenarios)</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                {simResult.scenarioResults.map((sc) => (
+                  <div
+                    key={sc.scenarioId}
+                    className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-2"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <span className="font-mono text-indigo-500">{sc.scenarioId}:</span>
+                        <span>{sc.scenarioName}</span>
+                      </span>
+                      <span className={`px-2 py-0.5 rounded text-[11px] font-bold ${sc.passed ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400'}`}>
+                        {sc.passed ? `PASS (${sc.durationMs}ms)` : 'FAIL'}
+                      </span>
+                    </div>
+                    <p className="text-slate-500 dark:text-slate-400">
+                      {sc.description}
+                    </p>
+                    <div className="space-y-1 text-slate-700 dark:text-slate-300 font-mono text-[11px]">
+                      {sc.findings.map((f, fIdx) => (
+                        <div key={fIdx}>{f}</div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="p-8 rounded-xl bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/80 text-center space-y-2">
+            <Activity className="w-8 h-8 text-purple-400 mx-auto" />
+            <div className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+              全數據鏈路診斷儀處於待命狀態
+            </div>
+            <p className="text-xs text-slate-500 max-w-md mx-auto">
+              點擊上方「⚡ 執行全數據鏈路深度模擬」按鈕，系統將自動以 MECE 原則排查 10 大主檔外鍵關聯完整性，並穿透模擬 4 大極限業務場景。
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Modal for Raw JSON Text Paste */}

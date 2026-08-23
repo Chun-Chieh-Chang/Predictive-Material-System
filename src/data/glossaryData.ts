@@ -7,7 +7,7 @@
  * 料事如神系統（PMS）專業術語辭典
  *
  * 使用方式：
- *  - GlossaryPanel.tsx 側邊面板提供搜尋與分類瀏覽
+ *  - GlossaryView.tsx 獨立專頁提供搜尋與分類瀏覽
  *  - 新增術語時直接在本檔案追加 entries 陣列項目即可
  *  - category 支援：'fk_sku' | 'mrp' | 'molding' | 'system' | 'process' | 'alert' | 'doc'
  */

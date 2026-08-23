@@ -43,6 +43,7 @@ interface DashboardViewProps {
   onNavigateToTables: (tableName: string) => void;
   onNavigateToSettings?: () => void;
   onNavigateToExchange?: () => void;
+  onNavigateToOrderTension?: () => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -51,7 +52,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onNavigateToMRP,
   onNavigateToTables,
   onNavigateToSettings,
-  onNavigateToExchange
+  onNavigateToExchange,
+  onNavigateToOrderTension
 }) => {
   const mrpResults = useMemo(() => calculateAllMRP(db, undefined, params), [db, params]);
 
@@ -75,6 +77,55 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   // ==========================================
   const [selectedSku, setSelectedSku] = useState<string>(mrpResults[0]?.sku || 'A01-200-131');
   const [sandboxTab, setSandboxTab] = useState<'demand' | 'molding' | 'quality_stock' | 'procure'>('demand');
+  const [deviationCustomerFilter, setDeviationCustomerFilter] = useState<string>('ALL');
+
+  // ─── Customer Forecast Deviation & Supply Transparency Analytics ─────────
+  const forecastDeviationData = useMemo(() => {
+    const finishedGoods = db.item_master.filter((i) => i.material_class === 'SET' || !i.material_class);
+    
+    return finishedGoods.map((item) => {
+      const forecasts = db.demand_forecast_log.filter((f) => f.sku === item.sku);
+      const latestForecast = forecasts[forecasts.length - 1];
+      const forecastQty = latestForecast ? latestForecast.demand_qty : 0;
+      const forecastVersion = latestForecast ? latestForecast.version_no : 'N/A';
+
+      const actualOrders = db.actual_order.filter((o) => o.sku === item.sku && o.status !== 'cancelled');
+      const actualPoQty = actualOrders.reduce((s, o) => s + o.order_qty, 0);
+
+      const deviationQty = actualPoQty - forecastQty;
+      const deviationPct = forecastQty > 0 ? Number(((deviationQty / forecastQty) * 100).toFixed(1)) : 0;
+      const accuracyPct = forecastQty > 0 ? Math.max(0, Math.min(100, Math.round(100 - Math.abs(deviationPct)))) : 100;
+
+      const mrpResult = mrpResults.find((r) => r.sku === item.sku);
+      const rmGrossReqKg = mrpResult?.rmGrossRequirementKg || 0;
+      const rmOnHandKg = mrpResult?.rmOnHandKg || 0;
+      const rmInTransitKg = mrpResult?.rmInTransitKg || 0;
+      const totalRmPreparedKg = rmOnHandKg + rmInTransitKg;
+      const prepRatioPct = rmGrossReqKg > 0 ? Math.round((totalRmPreparedKg / rmGrossReqKg) * 100) : 100;
+
+      return {
+        sku: item.sku,
+        customerId: item.customer_id,
+        category: item.category,
+        forecastVersion,
+        forecastQty,
+        actualPoQty,
+        deviationQty,
+        deviationPct,
+        accuracyPct,
+        rmSku: mrpResult?.rmSku || '—',
+        rmGrossReqKg,
+        totalRmPreparedKg,
+        prepRatioPct,
+      };
+    });
+  }, [db, mrpResults]);
+
+  const filteredDeviationData = useMemo(() => {
+    if (deviationCustomerFilter === 'ALL') return forecastDeviationData;
+    return forecastDeviationData.filter((d) => d.customerId === deviationCustomerFilter);
+  }, [forecastDeviationData, deviationCustomerFilter]);
+
   // Collapsible section tracking (default: all open)
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
   const toggleSection = (id: string) => {
@@ -1285,6 +1336,163 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         )}
       </section>
 
+      {/* 3.5. Customer Forecast Accuracy & Supply Transparency Report (業務談判與供需透明化專區) */}
+      <section className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 gap-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 flex items-center justify-center font-bold">
+              <TrendingUp className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                  客戶預測偏差分析與我方備料透明度報告
+                </h3>
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                  業務談判數據背書
+                </span>
+              </div>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                比對客戶歷史 Forecast 與實際訂單 (Actual PO) 偏差率，客觀佐證我方原料準備率，打破供需不對稱。
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* Customer Filter */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-slate-500">篩選客戶:</span>
+              <select
+                value={deviationCustomerFilter}
+                onChange={(e) => setDeviationCustomerFilter(e.target.value)}
+                className="text-xs bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-800 dark:text-slate-200 font-semibold"
+              >
+                <option value="ALL">全部客戶 (All Customers)</option>
+                {Array.from(new Set(forecastDeviationData.map((d) => d.customerId))).map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+
+            <button
+              onClick={() => toggleSection('forecast_deviation')}
+              className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+            >
+              {isCollapsed('forecast_deviation') ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+            </button>
+          </div>
+        </div>
+
+        {!isCollapsed('forecast_deviation') && (
+          <div className="mt-5 space-y-4">
+            <div className="overflow-x-auto scrollbar-sm">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-slate-50 dark:bg-slate-950/60 text-slate-600 dark:text-slate-400 font-semibold uppercase text-xs border-b border-slate-200 dark:border-slate-800">
+                  <tr>
+                    <th className="px-3.5 py-3">成品料號 / 客戶</th>
+                    <th className="px-3.5 py-3">預估版本</th>
+                    <th className="px-3.5 py-3 text-right">預估量 (Forecast)</th>
+                    <th className="px-3.5 py-3 text-right">實下訂單 (Actual PO)</th>
+                    <th className="px-3.5 py-3 text-center">預測偏差率 (Δ%)</th>
+                    <th className="px-3.5 py-3 text-center">預測準確度</th>
+                    <th className="px-3.5 py-3 text-right">我方已備原料 (在途+在庫)</th>
+                    <th className="px-3.5 py-3 text-center">我方備料履約率</th>
+                    <th className="px-3.5 py-3">談判客觀判定</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono text-sm">
+                  {filteredDeviationData.map((row) => (
+                    <tr key={row.sku} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                      <td className="px-3.5 py-3.5 font-sans">
+                        <div className="font-bold text-slate-900 dark:text-white text-sm">{row.sku}</div>
+                        <div className="text-xs text-slate-500 font-medium mt-0.5">{row.customerId} • {row.category}</div>
+                      </td>
+                      <td className="px-3.5 py-3.5">
+                        <span className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded text-xs">
+                          {row.forecastVersion}
+                        </span>
+                      </td>
+                      <td className="px-3.5 py-3.5 text-right font-medium text-slate-700 dark:text-slate-300">
+                        {row.forecastQty.toLocaleString()} PCS
+                      </td>
+                      <td className="px-3.5 py-3.5 text-right font-bold text-slate-900 dark:text-white">
+                        {row.actualPoQty.toLocaleString()} PCS
+                      </td>
+                      <td className="px-3.5 py-3.5 text-center">
+                        <span
+                          className={`font-bold px-2 py-0.5 rounded text-xs ${
+                            row.deviationPct < -30
+                              ? 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                              : row.deviationPct > 30
+                              ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800'
+                              : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
+                          }`}
+                        >
+                          {row.deviationPct > 0 ? `+${row.deviationPct}%` : `${row.deviationPct}%`}
+                        </span>
+                      </td>
+                      <td className="px-3.5 py-3.5 text-center">
+                        <div className="inline-flex items-center gap-2">
+                          <div className="w-16 bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full ${
+                                row.accuracyPct < 50
+                                  ? 'bg-red-500'
+                                  : row.accuracyPct < 80
+                                  ? 'bg-amber-500'
+                                  : 'bg-emerald-500'
+                              }`}
+                              style={{ width: `${row.accuracyPct}%` }}
+                            />
+                          </div>
+                          <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                            {row.accuracyPct}%
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-3.5 py-3.5 text-right">
+                        <div className="font-semibold text-purple-700 dark:text-purple-300 text-sm">
+                          {row.totalRmPreparedKg.toLocaleString()} KG
+                        </div>
+                        <div className="text-[11px] text-slate-400">
+                          (原料需求: {row.rmGrossReqKg.toLocaleString()} KG)
+                        </div>
+                      </td>
+                      <td className="px-3.5 py-3.5 text-center">
+                        <span
+                          className={`font-bold px-2 py-0.5 rounded text-xs ${
+                            row.prepRatioPct >= 100
+                              ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+                              : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
+                          }`}
+                        >
+                          {row.prepRatioPct}% 履約率
+                        </span>
+                      </td>
+                      <td className="px-3.5 py-3.5 font-sans text-xs">
+                        {row.deviationPct < -30 ? (
+                          <div className="text-amber-700 dark:text-amber-400 font-medium">
+                            ⚠️ 客戶大幅下修 ({row.deviationPct}%)，我方已按預估備妥料，協調時應爭取庫存吸納補償
+                          </div>
+                        ) : row.deviationPct > 30 ? (
+                          <div className="text-blue-700 dark:text-blue-400 font-medium">
+                            🔥 客戶突發急單 (+{row.deviationPct}%)，請依原料到位時程排定階段出貨
+                          </div>
+                        ) : (
+                          <div className="text-emerald-700 dark:text-emerald-400 font-medium">
+                            🛡️ 供需穩定，我方原料已 100% 準備就緒，無斷料責任風險
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </section>
+
       {/* 4. Risk Alerts Bento Grid (3 Cols) */}
       <section className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 shadow-xl shadow-black/30">
         <div className="flex items-center justify-between pb-4 border-b border-slate-800">
@@ -1299,9 +1507,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </p>
             </div>
           </div>
-          <span className="text-sm font-mono font-semibold text-slate-300 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
-            {allAlerts.length} 項預警狀態
-          </span>
+          <div className="flex items-center gap-2">
+            {onNavigateToOrderTension && (
+              <button
+                onClick={onNavigateToOrderTension}
+                className="px-3 py-1 text-xs font-bold rounded-lg bg-purple-600 hover:bg-purple-500 text-white shadow-xs transition-colors cursor-pointer flex items-center gap-1"
+              >
+                <span>🔍 檢索緊張訂單與卡關環節</span>
+              </button>
+            )}
+            <span className="text-sm font-mono font-semibold text-slate-300 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+              {allAlerts.length} 項預警狀態
+            </span>
+          </div>
         </div>
 
         {!isCollapsed('alerts') && (

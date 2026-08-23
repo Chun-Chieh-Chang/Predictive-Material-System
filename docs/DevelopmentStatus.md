@@ -1,63 +1,35 @@
 # 料事如神（PMS）開發進度與後續計畫
 
-> 版號：`V-20260821-23`　|　建立日期：2026-08-21　|　下次啟動時自動閱讀
+> 版號：`V-20260823-16`　|　更新日期：2026-08-23　|　下次啟動時自動閱讀
 
 ---
 
 ## 一、已完成功能清單（Commit 基準）
 
-### 版本 `8fa4560`（最新）
+### 版本 `V-20260823-16`（最新 — 業務賦能與全鏈路閉環版）
 
-#### 核心引擎
+#### 核心運算引擎 (4 大引擎)
 | 項目 | 狀態 | 說明 |
 |------|------|------|
-| MRP 三階計算引擎 | ✅ | `mrpEngine.ts`：FG Net Req → BOM 爆炸 → 採購決策 |
-| SystemParameters 配置 | ✅ | 13 個參數，即時預覽 MRP 影響 |
+| MRP 三階計算引擎 | ✅ | `mrpEngine.ts`：FG Net Req → BOM 爆炸 → 採購決策、分批到貨建議、虛擬預扣 |
+| WIP 日動態推估公式計算器 | ✅ | `wipEngine.ts`：$WIP(t) = WIP(t-1) + P(t) - S(t)$，含夜班 12h 無人挑選時序差補償 |
+| 訂單全鏈路物料緊張度診斷引擎 | ✅ | `orderTensionEngine.ts`：6 大供應鏈環節瓶頸掃描、4 級緊張度告警與應變 SOP |
+| 全數據鏈路模擬與孤兒數據排查器 | ✅ | `dataIntegrityScanner.ts` & `dataPipelineSimulation.ts`：4 大業務場景穿透與 10 大主檔關聯校驗 |
 
-#### 資料模型（10 張主檔）
-| 表名 | 擴充欄位 | 狀態 |
-|------|----------|------|
-| `item_master` | `material_class` + `material_class_label` | ✅ |
-| `mold_master` | `machine_type` + `production_line`（M-03）| ✅ |
-| `product_mold_bom` | `valid_from` + `valid_to`（M-05）| ✅ |
-| `yield_master` | — | ✅ |
-| `supplier_rule_master` | `unit_price_twd`（M-04）| ✅ |
-| `demand_forecast_log` | `created_by_id` + `created_by_name`（M-02）| ✅ |
-| `inventory_wip_snapshot` | — | ✅ |
-| `po_in_transit` | `actual_arrival_date` + `eta_variance_days`（M-01）| ✅ |
-| `sorting_actual_yield_log` | **全新表**（M-06）| ✅ 結構就緒，UI 待 Phase 3 |
-| `material_classes` | **全新表**（五層分類體系）| ✅ |
-| `audit_log` | — | ✅ |
-
-#### 分類體系
-| 項目 | 狀態 |
-|------|------|
-| 五層分類類型 `MaterialClassCode` | ✅ |
-| `DEFAULT_MATERIAL_CLASSES` 5 筆頂層 | ✅ |
-| `MaterialClassManagementView` UI | ✅ |
-| SKU 前綴推斷規則 `inferClassFromSku()` | ✅ |
-| 匯入驗證 `validateImportRows()` | ✅ |
-| 遷移函式 `migrateItemMasterClasses()` | ❌ 已移除（2026-08-22） |
-
-#### 架構盤點修正（FieldArchitectureAudit_Report.md）
-| ID | 內容 | 狀態 |
-|----|------|------|
-| H-04 | 移除 `ItemMasterV0`，統一使用 `ItemMaster` | ✅ |
-| H-01~H-03 | 驗證函式 `validateRmSkuAsRaw` / `validateYieldSku` / `validateSupplierRmSku` | ❌ 已於 2026-08-22 移除（未接入 handleSave，待 MRP 完整整合後重新評估） |
-| M-01 | `po_in_transit` 新增到貨日期欄位 | ✅ |
-| M-02 | `demand_forecast_log` 遷移邏輯（App.tsx）| ✅ |
-| M-03~M-05 | fieldMeta 欄位擴充 | ✅ |
-| M-06 | `sorting_actual_yield_log` 表結構 | ✅ |
-
-#### UI / 文件一致性
-| 項目 | 狀態 |
-|------|------|
-| Navbar 「10 大主檔維護」| ✅ |
-| DataTablesView 標題 + 分類篩選下拉 | ✅ |
-| DataExchangeView 標題 | ✅ |
-| PrdDocView §6 五層分類 + §7 Roadmap | ✅ |
-| README.md 全域一致性 | ✅ |
-| SET 描述修正（直接 PART 組裝路徑合法）| ✅ |
+#### 業務賦能與視覺化看板 (11 大模組)
+| 視圖模組 | 檔案 | 狀態 | 說明 |
+|---------|------|------|------|
+| 出貨排程可行性審查看板 | `ShipScheduleClearanceView.tsx` | ✅ | 專為每週二出貨會議設計，良品+WIP折算、三色放行燈號、What-If 滑桿 |
+| 決策戰情室 | `DashboardView.tsx` | ✅ | 歷史預測偏差分析 (Forecast vs Actual)、供需透明度備料客觀背書、MRP 全局告警 |
+| 訂單物料緊張追蹤看板 | `OrderTensionTrackerView.tsx` | ✅ | 逐筆訂單 6 大環節瓶頸診斷、全文檢索、RCA 與應變 SOP |
+| 3階 MRP 推導器 | `MrpCalculatorView.tsx` | ✅ | 單品/全品 MRP 推導、分批進貨建議 (防 8,000 萬爆倉) |
+| 參數策略設定 | `SystemSettingsView.tsx` | ✅ | 虛擬預扣開關、分批進貨開關、損耗率天花板防呆 |
+| 無損資料中心 | `DataExchangeView.tsx` | ✅ | 全數據鏈路深度模擬診斷面板、Excel/JSON 匯出入 |
+| 專業術語辭典 | `GlossaryView.tsx` | ✅ | 獨立專頁 7 大分類術語檢索 |
+| 物料分類體系 | `MaterialClassManagementView.tsx` | ✅ | 五層樹狀分類管理 (RAW/MAT/PART/COMP/SET) |
+| 10大主檔維護 | `DataTablesView.tsx` | ✅ | 10 張主檔 CRUD 與 3 級變更管制 |
+| 備份與復原設定 | `BackupSettingsView.tsx` | ✅ | 自動排程備份與 JSON 備份還原 |
+| PRD 規格文件 | `PrdDocView.tsx` | ✅ | 完整系統規格文件與 Roadmap 檢視 |
 
 ---
 

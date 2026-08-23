@@ -9,6 +9,8 @@ import { Sidebar } from './components/Sidebar';
 import { PMS_VERSION } from './utils/version';
 import { DashboardView } from './components/DashboardView';
 import { MrpCalculatorView } from './components/MrpCalculatorView';
+import { ShipScheduleClearanceView } from './components/ShipScheduleClearanceView';
+import { OrderTensionTrackerView } from './components/OrderTensionTrackerView';
 import { SystemSettingsView } from './components/SystemSettingsView';
 import { DataTablesView, TableKey } from './components/DataTablesView';
 import { DataExchangeView } from './components/DataExchangeView';
@@ -211,6 +213,7 @@ export function App() {
             onNavigateToTables={handleNavigateToTables}
             onNavigateToSettings={handleNavigateToSettings}
             onNavigateToExchange={handleNavigateToExchange}
+            onNavigateToOrderTension={() => setActiveTab('order_tension_tracker')}
           />
         )}
 
@@ -220,6 +223,24 @@ export function App() {
             params={systemParams}
             initialSku={activeMrpSku}
             onNavigateToSettings={handleNavigateToSettings}
+          />
+        )}
+
+        {activeTab === 'ship_schedule_clearance' && (
+          <ShipScheduleClearanceView
+            db={db}
+            params={systemParams}
+            onNavigateToMRP={handleNavigateToMRP}
+            onNavigateToTables={handleNavigateToTables}
+          />
+        )}
+
+        {activeTab === 'order_tension_tracker' && (
+          <OrderTensionTrackerView
+            db={db}
+            params={systemParams}
+            onNavigateToMRP={handleNavigateToMRP}
+            onNavigateToTables={handleNavigateToTables}
           />
         )}
 
