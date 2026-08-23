@@ -17,7 +17,7 @@
 
 **[階段一：業務賦能與出貨決策 (Sales Enablement)]**
 - `ShipScheduleClearanceView.tsx` — **全新模組：週二雙週出貨排程可行性審查看板**
-  - 專為業務（Iris / AB）每週二出貨協調會設計
+  - 專為業務部門每週二出貨協調會設計
   - 即時計算：$\text{可承接出貨量} = \text{成品良品現貨} + \text{有效待驗品 (WIP} \times \text{Yield)} - \text{未結正式訂單}$
   - 三色燈號：🟢 100% 可放行、🟡 需 3F WIP 優先挑選支援、🔴 實質缺貨赤字
   - 互動式 What-If 排程需求模擬滑桿 (0.5x ~ 2.0x) 與週二協調會議 SOP 卡片

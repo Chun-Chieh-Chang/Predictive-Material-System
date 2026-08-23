@@ -203,8 +203,8 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
                 業務協調專用
               </span>
             </div>
-            <p className="text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
-              專為業務（Iris / AB）與廠長每週二出貨協調會設計。依據最新 2 週出貨排程（Ship Schedule），即時比對成品良品現貨與 3 樓待驗 WIP，5 分鐘內決策可承接出貨量與急迫挑選工單。
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+              專為業務部門與廠長每週二出貨協調會設計。依據最新 2 週出貨排程（Ship Schedule），即時比對成品良品現貨與 3 樓待驗 WIP，5 分鐘內決策可承接出貨量與急迫挑選工單。
             </p>
           </div>
 
