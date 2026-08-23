@@ -700,5 +700,36 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 ---
 
+## V-20260823-26 — 主檔案責任單位填報規範與 ERP 接口數據防呆對齊
+
+**狀態：** ✅ Complete / Verified  
+**TypeScript 編譯：** 0 錯誤 / 0 警告 (`tsc --noEmit` 通過)  
+**Build：** ✓ built in 3.59s  
+
+#### 需求與問題描述
+主檔案將提供給 4 大責任單位（資材/生管、工程、製造、業務）審查填報，並需對接製造業 ERP 系統數據。經全盤檢討發現：
+1. `dataExchange.ts` 的資料規格字典中，`item_master` 仍保留舊版 `物料類別 (FinishedGoods/RawMaterial/WIP)` 描述，與當前五層物料分類 (`material_class: RAW/MAT/PART/COMP/SET`) 存在定義斷層。
+2. Excel 匯入/匯出 `item_master` 時漏掉 `material_class` 欄位解析，導致責任單位透過 Excel 匯入主檔時分類遺失。
+3. `yield_master` 與 `color_mixing_log` 的品號 label 殘留「成品/SET」狹義描述，造成填報單位困惑。
+
+#### 矯正與預防措施 (CAPA)
+1. **資料交換字典全面同步 (DATA_SPECIFICATION_DICTIONARY)**：
+   - `item_master`：明確區分 `物料分類` (RAW/MAT/PART/COMP/SET) 與 `產品種類` (品名規格)。
+   - `mold_master`：運行狀態字典補齊 `retired`（封存報廢）。
+   - `actual_order`：訂單狀態字典補齊 `partial_shipped`（部分出貨）。
+   - `product_mold_bom` & `yield_master`：品號規格說明明確標註支援 PART/COMP/SET。
+2. **Excel/JSON 匯出入無損修補**：
+   - `exportToExcel`：Sheet 1 `料號基本主檔` 正式納入 `物料分類` 欄位。
+   - `importFromExcel` & `importFromJSON`：支援讀取並解析 `物料分類` / `material_class`，杜絕匯入時屬性遺失。
+3. **無冗餘欄位確認**：經全量掃描，10 大主檔全部 58 個欄位均有明確的 ERP 對接來源或下游 MRP / WIP / 戰情室運算引用，無任何死碼或多餘廢欄。
+
+#### 驗證結果
+- [x] TypeScript 編譯通過（`tsc --noEmit` 0 錯誤）
+- [x] Production build 成功（3.59s）
+- [x] Excel 匯出入雙向欄位完整性驗證通過
+
+---
+
 *DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-23*
+
 

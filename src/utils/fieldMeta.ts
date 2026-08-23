@@ -115,7 +115,7 @@ const PRODUCT_MOLD_BOM_META: TableMeta = {
 const YIELD_MASTER_META: TableMeta = {
   key: 'yield_master', label: 'Sorting良率標準檔', pkFields: ['sku'],
   fields: [
-    { key: 'sku', label: '品號 (PK/FK)', editability: 'locked', inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku', required: true },
+    { key: 'sku', label: '品號 (PK/FK，PART/COMP/SET)', editability: 'locked', inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku', required: true },
     {
       key: 'std_sorting_yield', label: '標準全檢良率', editability: 2, inputType: 'number', required: true, min: 0.01, max: 1.0, step: 0.001,
       validate: (v) => { const val = Number(v); return (isFinite(val) && val >= 0.01 && val <= 1.0) ? null : '良率須介於 0.01 ~ 1.00'; },
@@ -244,7 +244,7 @@ const COLOR_MIXING_LOG_META: TableMeta = {
     { key: 'total_batch_kg', label: '混合後總重量 (KG)（計算值）', editability: 'computed', inputType: 'computed',
       formatDisplay: (v) => v ? `${Number(v).toFixed(2)} KG` : '—' },
     { key: 'mold_id', label: '成型模具編號 (FK)', editability: 1, inputType: 'fk_select', fkTable: 'mold_master', fkValueKey: 'mold_id', fkLabelKey: 'mold_id' },
-    { key: 'sku', label: '對應 SET 品號 (FK)', editability: 1, inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku' },
+    { key: 'sku', label: '對應製品品號 (FK)', editability: 1, inputType: 'fk_select', fkTable: 'item_master', fkValueKey: 'sku', fkLabelKey: 'sku' },
     {
       key: 'process_tag', label: '製程標籤', editability: 2, inputType: 'select', required: true,
       options: [
