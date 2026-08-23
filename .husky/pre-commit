@@ -11,7 +11,11 @@
 
 echo "🧬 PMS Pre-commit & Auto-Evolution Checks..."
 
-# 0. 全自動自我進化閉環門禁 (Auto-Evolution Gate)
+# 0. 自動同步最新版號至 src/utils/version.ts 並納入暫存
+node .impeccable/scripts/sync-version.mjs
+git add src/utils/version.ts
+
+# 0.1. 全自動自我進化閉環門禁 (Auto-Evolution Gate)
 node .impeccable/scripts/auto-evolution-gate.mjs || {
   echo "❌ 自我進化閉環檢查失敗"
   exit 1

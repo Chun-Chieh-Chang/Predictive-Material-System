@@ -14,6 +14,8 @@
 
 import type { Plugin } from 'vite';
 import { execSync } from 'child_process';
+import { readFileSync, writeFileSync } from 'fs';
+import { resolve } from 'path';
 
 /** 將 Date 轉為本地 YYYYMMDD 字串（與使用者電腦時間一致） */
 function formatLocalDate(date: Date = new Date()): string {
@@ -27,8 +29,6 @@ function formatLocalDate(date: Date = new Date()): string {
 function resolveDailyCommitCount(root: string): number {
   try {
     const todayLocal = formatLocalDate();
-    // git committer date 儲存為 UTC，--date=format 以執行環境時區輸出
-    // 在本地開發環境（Asia/Taipei）執行時，%Y%m%d 會產生本地日期字串
     const raw = execSync(
       'git log --format=%ad --date=format:%Y%m%d',
       { cwd: root, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }
@@ -40,20 +40,62 @@ function resolveDailyCommitCount(root: string): number {
   }
 }
 
+function syncVersionFile(root: string) {
+  const today = formatLocalDate();
+  const count = resolveDailyCommitCount(root);
+  const seq = count === 0 ? 1 : count;
+  const version = `V-${today}-${String(seq).padStart(2, '0')}`;
+
+  const versionFilePath = resolve(root, 'src/utils/version.ts');
+  try {
+    const currentContent = readFileSync(versionFilePath, 'utf-8');
+    const newContent = `/**
+ * src/utils/version.ts
+ *
+ * 集中化管理 PMS 版本常數（MECE 單一真相來源）。
+ * 由 sync-version.mjs 與 vite-plugin-git-version 自動即時同步。
+ */
+export const PMS_VERSION: string = '${version}';
+
+/** 系統標題文字（集中化品牌文案） */
+export const SYSTEM_TITLE: string = '料事如神系統';
+export const SYSTEM_SUBTITLE: string = 'Predictive Material System';
+export const SYSTEM_TAGLINE: string = 'QCC 料事如神圈 • 射出成型智能備料與產能排程推估';
+`;
+    if (currentContent !== newContent) {
+      writeFileSync(versionFilePath, newContent, 'utf-8');
+      console.log(`[git-version] 自動更新 src/utils/version.ts -> ${version}`);
+    }
+  } catch (e) {
+    console.error('[git-version] 同步失敗', e);
+  }
+  return version;
+}
+
 export default function gitVersionPlugin(): Plugin {
   return {
     name: 'vite-plugin-git-version',
     configResolved(resolvedConfig) {
-      const root  = resolvedConfig.root;
-      const today = formatLocalDate();
-      const count = resolveDailyCommitCount(root);
-      const version = `V-${today}-${String(count).padStart(2, '0')}`;
+      const root = resolvedConfig.root;
+      const version = syncVersionFile(root);
 
-      // 注入到 import.meta.env，可在 TSX 中透過 import.meta.env.VITE_PMS_VERSION 存取
       resolvedConfig.define ??= {};
       resolvedConfig.define['import.meta.env.VITE_PMS_VERSION'] = JSON.stringify(version);
-
-      console.log(`[git-version] ${version} (${count} commits local today)`);
+      console.log(`[git-version] ${version} loaded`);
     },
+    configureServer(server) {
+      const root = server.config.root;
+      // 伺服器啟動時立即同步一次
+      syncVersionFile(root);
+
+      // 定期每 5 秒檢查 Git 狀態並即時熱更新
+      const interval = setInterval(() => {
+        syncVersionFile(root);
+      }, 5000);
+
+      server.httpServer?.on('close', () => {
+        clearInterval(interval);
+      });
+    }
   };
 }
