@@ -48,12 +48,19 @@ interface NavGroup {
 }
 
 const ACCENT: Record<string, GroupAccent> = {
-  core: {
+  war_room: {
     titleColor: 'text-sky-400',
     dotColor:   'bg-sky-400',
     itemBorder: 'border-l-sky-500',
     chipBg:     'bg-sky-500/10',
     chipHover:  'hover:bg-sky-500/15',
+  },
+  mrp: {
+    titleColor: 'text-indigo-400',
+    dotColor:   'bg-indigo-400',
+    itemBorder: 'border-l-indigo-500',
+    chipBg:     'bg-indigo-500/10',
+    chipHover:  'hover:bg-indigo-500/15',
   },
   data: {
     titleColor: 'text-emerald-400',
@@ -62,7 +69,7 @@ const ACCENT: Record<string, GroupAccent> = {
     chipBg:     'bg-emerald-500/10',
     chipHover:  'hover:bg-emerald-500/15',
   },
-  settings: {
+  support: {
     titleColor: 'text-amber-400',
     dotColor:   'bg-amber-400',
     itemBorder: 'border-l-amber-500',
@@ -73,31 +80,37 @@ const ACCENT: Record<string, GroupAccent> = {
 
 const NAV_GROUPS: NavGroup[] = [
   {
-    title: '核心操作',
-    accent: ACCENT.core,
+    title: '決策戰情',
+    accent: ACCENT.war_room,
     items: [
-      { id: 'dashboard', label: '決策戰情室', sub: 'Decision War Room', icon: BarChart3 },
-      { id: 'mrp_calculator', label: '3 階 MRP 推導', sub: 'MRP Engine', icon: Calculator },
-      { id: 'ship_schedule_clearance', label: '週二出貨審查', sub: 'Ship Schedule', icon: CalendarCheck },
+      { id: 'dashboard', label: '綜合戰情儀表板', sub: 'Decision War Room', icon: BarChart3 },
+      { id: 'ship_schedule_clearance', label: '週二出貨審查', sub: 'Ship Clearance', icon: CalendarCheck },
       { id: 'order_tension_tracker', label: '訂單物料示警', sub: 'Order Tension', icon: Activity },
     ],
   },
   {
-    title: '資料管理',
-    accent: ACCENT.data,
+    title: '物料推導',
+    accent: ACCENT.mrp,
     items: [
-      { id: 'material_class_management', label: '物料分類體系', sub: 'Material Classes', icon: Layers },
-      { id: 'data_tables', label: '10 大主檔維護', sub: 'Master Data', icon: Database },
-      { id: 'data_exchange', label: '資料交換中心', sub: 'Data Gateway', icon: FileSpreadsheet },
+      { id: 'mrp_calculator', label: '3 階 MRP 推導', sub: 'MRP Engine', icon: Calculator },
     ],
   },
   {
-    title: '設定與文件',
-    accent: ACCENT.settings,
+    title: '數據中心',
+    accent: ACCENT.data,
+    items: [
+      { id: 'data_tables', label: '10 大主檔維護', sub: 'Master Data', icon: Database },
+      { id: 'material_class_management', label: '物料分類體系', sub: 'Material Classes', icon: Layers },
+      { id: 'data_exchange', label: '資料交換與模擬', sub: 'Data & Simulation', icon: FileSpreadsheet },
+    ],
+  },
+  {
+    title: '系統支援',
+    accent: ACCENT.support,
     items: [
       { id: 'system_settings', label: '參數策略設定', sub: 'System Config', icon: SlidersHorizontal },
+      { id: 'glossary', label: '專業術語辭典', sub: 'Glossary', icon: BookOpen },
       { id: 'prd_docs', label: 'PRD 規格辭典', sub: 'PRD & Spec', icon: FileText },
-      { id: 'glossary', label: '術語辭典', sub: 'Glossary', icon: BookOpen },
     ],
   },
 ];

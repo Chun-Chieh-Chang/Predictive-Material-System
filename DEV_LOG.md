@@ -85,13 +85,17 @@
 - **沙盒確效測試 (Sandbox Runtime Check)**：
   - `tsc --noEmit`：0 錯誤 / 0 警告
   - `npm run build`：Vite 構建通過 (3.85s)
-- **版本基準點**：Git Commit `55c90c5`
-- **根因分析 (RCA)**：
-  - 模組重構後舊有組件檔案未即時清理（如 GlossaryPanel），導致依賴圖譜存在冗餘死碼。
-  - 新增運算函式調用時未傳入全量選填參數順序，導致型別檢查報錯。
-- **矯正與預防措施 (CAPA)**：
-  - 建立嚴格死碼審計清單，組件獨立後第一時間刪除舊檔案並更新映射文件。
-  - 啟用 Husky Pre-commit 與 CI/CD 雙層型別檢查機制，保障每一次原子提交 100% 跑通。
+- **版本基準點**：Git Commit `4086c14` / `2128636`
+
+#### MECE 介面與功能入口極簡重構 (Minimalist Visual IA & 4-Domain Architecture)
+- **需求摘要**：消除 11 個平行導航入口的視覺轟炸與資訊超載，重構為 4 大角色情境門戶（決策戰情、物料推導、數據中心、系統支援）與二級微導航切換。
+- **重構與防斷鏈實作**：
+  - `Navbar.tsx`：頂部引入 4 大主門戶切換（War Room, MRP Engine, Data Center, System Support），並依當前門戶動態展示二級微膠囊標籤（Segmented Sub-navigation Pills）。
+  - `Sidebar.tsx`：側邊欄導航重組為對應的 4 大 MECE 模組，雙向聯動高亮與展開狀態。
+  - **5 大防斷鏈驗證**：確保 4 大運算引擎、10 大主檔外鍵、跨頁面料號/主檔直接跳轉與 Admin 模式解鎖 100% 完整無損。
+- **運行驗證**：Browser Subagent 完整測試 4 大領域切換，Console 0 錯誤。
+- **根因分析 (RCA)**：功能快速迭代時常採「新增獨立頁籤」方式擴充，造成一級導航入口過多。重構需兼顧漸進式揭露（Progressive Disclosure）與資訊可尋性（Findability）。
+- **矯正與預防措施 (CAPA)**：建立資訊架構規範，未來新增功能一律歸入 4 大核心門戶下的二級子視圖，嚴禁直接堆疊至一級導航。
 
 ---
 

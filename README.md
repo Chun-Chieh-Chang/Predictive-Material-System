@@ -50,21 +50,25 @@ npm run dev
 
 ---
 
-## 系統架構 — 11 大功能模組
+## 系統架構 — 4 大 MECE 核心情境門戶 (11 大功能子視圖)
 
 ```
-PMS
-├── [決策戰情室]           DashboardView               綜合儀表板：MRP 全局告警、庫存熱圖、客戶預測偏差分析
-├── [出貨排程審查看板]     ShipScheduleClearanceView   週二雙週出貨可行性放行審查、良品+WIP折算、What-If 模擬
-├── [3階 MRP 推導]         MrpCalculatorView           單品/全品 MRP 計算引擎、分批到貨排程建議、多版本需求比較
-├── [訂單物料緊張追蹤]     OrderTensionTrackerView     逐筆訂單 6 大供應鏈瓶頸診斷、4 級緊張度告警、應變 SOP
-├── [參數策略設定]         SystemSettingsView          系統參數 & 業務規則配置（預警門檻/排程策略/虛擬預扣開關）
-├── [物料分類體系]         MaterialClassManagementView 五層分類樹管理（RAW/MAT/PART/COMP/SET）
-├── [10大主檔維護]         DataTablesView              10 張主檔 CRUD（不含 audit_log，audit_log 僅匯出不覆蓋）
-├── [無損資料中心]         DataExchangeView            JSON/Excel 匯出入、全數據鏈路深度模擬與防斷鏈診斷
-├── [備份與復原設定]       BackupSettingsView          自動備份排程、恢復備份檔、容量統計
-├── [專業術語辭典]         GlossaryView                料事如神專業名詞獨立專頁（7 大分類搜尋與索引）
-└── [PRD 規格辭典]         PrdDocView                  系統設計規格文件（PRD）瀏覽器
+料事如神系統 (PMS)
+├── 📊 [決策戰情 War Room]
+│   ├── 綜合戰情儀表板 (DashboardView) — MRP 全局告警、庫存熱圖、客戶預測偏差分析
+│   ├── 週二出貨審查看板 (ShipScheduleClearanceView) — 雙週出貨可行性放行審查、良品+WIP折算、What-If 模擬
+│   └── 訂單物料示警 (OrderTensionTrackerView) — 逐筆訂單 6 大供應鏈瓶頸診斷、4 級緊張度告警與應變 SOP
+├── 🧮 [物料推導 MRP Engine]
+│   └── 3 階 MRP 推導 (MrpCalculatorView) — 單品/全品 MRP 推導、分批到貨排程建議、多版本需求比較
+├── 🗄️ [數據中心 Data Center]
+│   ├── 10 大主檔維護 (DataTablesView) — 10 張主檔 CRUD 與 3 級變更管制（不含 audit_log）
+│   ├── 五層物料分類體系 (MaterialClassManagementView) — RAW/MAT/PART/COMP/SET 樹狀分類管理
+│   └── 資料交換與鏈路模擬 (DataExchangeView) — JSON/Excel 匯出入、全數據鏈路深度模擬與防斷鏈診斷
+└── ⚙️ [系統支援 System & Support]
+    ├── 參數策略配置 (SystemSettingsView) — 系統參數配置（預警門檻/排程策略/虛擬預扣開關）
+    ├── 專業術語辭典 (GlossaryView) — 7 大分類專有名詞檢索與通俗定義
+    ├── PRD 設計規格書 (PrdDocView) — 系統設計規格文件瀏覽器
+    └── 自動化備份與復原 (BackupSettingsView) — 自動備份排程、恢復備份檔（Admin 模式）
 ```
 
 ---

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import {
   Activity,
   BarChart3,
@@ -53,7 +53,48 @@ const TaiwanDate: React.FC = () => {
   return <>{dateStr}</>;
 };
 
-export type NavTab = 'dashboard' | 'mrp_calculator' | 'ship_schedule_clearance' | 'order_tension_tracker' | 'system_settings' | 'material_class_management' | 'data_tables' | 'data_exchange' | 'prd_docs' | 'glossary' | 'backup_settings';
+export type NavTab =
+  | 'dashboard'
+  | 'mrp_calculator'
+  | 'ship_schedule_clearance'
+  | 'order_tension_tracker'
+  | 'system_settings'
+  | 'material_class_management'
+  | 'data_tables'
+  | 'data_exchange'
+  | 'prd_docs'
+  | 'glossary'
+  | 'backup_settings';
+
+export type PrimaryDomain = 'war_room' | 'mrp_engine' | 'data_center' | 'system_support';
+
+export interface DomainMeta {
+  id: PrimaryDomain;
+  label: string;
+  enLabel: string;
+  icon: React.ElementType;
+  defaultTab: NavTab;
+  tabs: {
+    id: NavTab;
+    label: string;
+    subLabel: string;
+    icon: React.ElementType;
+    badge?: string | number;
+  }[];
+}
+
+export function getDomainForTab(tab: NavTab): PrimaryDomain {
+  if (tab === 'dashboard' || tab === 'ship_schedule_clearance' || tab === 'order_tension_tracker') {
+    return 'war_room';
+  }
+  if (tab === 'mrp_calculator') {
+    return 'mrp_engine';
+  }
+  if (tab === 'data_tables' || tab === 'material_class_management' || tab === 'data_exchange') {
+    return 'data_center';
+  }
+  return 'system_support';
+}
 
 interface NavbarProps {
   activeTab: NavTab;
@@ -82,11 +123,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const { theme, toggleTheme } = useTheme();
 
-  // ── 5連擊 Admin 解鎖邏輯（視覺計數局部維護）──────────────────────────────────
+  // ── 5連擊 Admin 解鎖邏輯 ──────────────────────────────────────────
   const tapCountRef = useRef(0);
   const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastTapAtRef = useRef<number>(0);
-  const [comboTaps, setComboTaps] = useState<number>(0);
+  const [, setComboTaps] = useState<number>(0);
 
   const clearComboTimer = useCallback(() => {
     if (tapTimerRef.current) {
@@ -99,7 +140,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const handleVersionBadgeClick = useCallback(() => {
     if (adminUnlocked) {
-      // 已解鎖：點擊重新鎖定
       onAdminLock();
       return;
     }
@@ -127,22 +167,82 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, [adminUnlocked, clearComboTimer, onAdminUnlock, onAdminLock]);
 
   useEffect(() => {
-    return () => { if (tapTimerRef.current) clearTimeout(tapTimerRef.current); };
+    return () => {
+      if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+    };
   }, []);
 
-  const tabs = [
-    { id: 'dashboard' as NavTab, label: '決策戰情室', sub: 'Decision War Room', icon: BarChart3, badge: alertCount > 0 ? alertCount : undefined },
-    { id: 'mrp_calculator' as NavTab, label: '3階 MRP 推導', sub: 'MRP Engine', icon: Calculator },
-    { id: 'ship_schedule_clearance' as NavTab, label: '週二出貨審查', sub: 'Ship Schedule', icon: CalendarCheck },
-    { id: 'order_tension_tracker' as NavTab, label: '訂單物料示警', sub: 'Order Tension', icon: Activity },
-    { id: 'system_settings' as NavTab, label: '參數策略設定', sub: 'System Config', icon: SlidersHorizontal },
-    { id: 'material_class_management' as NavTab, label: '物料分類體系', sub: 'Material Classes', icon: Layers },
-    { id: 'data_tables' as NavTab, label: '10大主檔維護', sub: 'Master Data', icon: Database },
-    { id: 'data_exchange' as NavTab, label: '資料交換中心', sub: 'Data Gateway', icon: FileSpreadsheet },
-    { id: 'prd_docs' as NavTab, label: 'PRD 規格辭典', sub: 'PRD & Spec', icon: FileText },
-    { id: 'glossary' as NavTab, label: '術語辭典', sub: 'Glossary', icon: BookOpen },
-    ...(adminUnlocked ? [{ id: 'backup_settings' as NavTab, label: '自動化備份', sub: 'Backup System', icon: ShieldCheck, badge: backupEnabled ? 'RUNNING' : undefined }] : []),
-  ];
+  // ── 4 大 MECE 核心領域定義 ─────────────────────────────────────────
+  const domains: DomainMeta[] = useMemo(
+    () => [
+      {
+        id: 'war_room',
+        label: '決策戰情',
+        enLabel: 'War Room',
+        icon: BarChart3,
+        defaultTab: 'dashboard',
+        tabs: [
+          { id: 'dashboard', label: '綜合戰情儀表板', subLabel: 'War Room', icon: BarChart3, badge: alertCount > 0 ? alertCount : undefined },
+          { id: 'ship_schedule_clearance', label: '週二出貨審查', subLabel: 'Ship Clearance', icon: CalendarCheck },
+          { id: 'order_tension_tracker', label: '訂單物料示警', subLabel: 'Order Tension', icon: Activity },
+        ],
+      },
+      {
+        id: 'mrp_engine',
+        label: '物料推導',
+        enLabel: 'MRP Engine',
+        icon: Calculator,
+        defaultTab: 'mrp_calculator',
+        tabs: [
+          { id: 'mrp_calculator', label: '3 階 MRP 推導', subLabel: 'MRP Engine', icon: Calculator },
+        ],
+      },
+      {
+        id: 'data_center',
+        label: '數據中心',
+        enLabel: 'Data Center',
+        icon: Database,
+        defaultTab: 'data_tables',
+        tabs: [
+          { id: 'data_tables', label: '10 大主檔維護', subLabel: 'Master Tables', icon: Database },
+          { id: 'material_class_management', label: '五層物料分類', subLabel: 'Classification', icon: Layers },
+          { id: 'data_exchange', label: '資料交換與模擬', subLabel: 'Data & Simulation', icon: FileSpreadsheet },
+        ],
+      },
+      {
+        id: 'system_support',
+        label: '系統支援',
+        enLabel: 'System & Support',
+        icon: SlidersHorizontal,
+        defaultTab: 'system_settings',
+        tabs: [
+          { id: 'system_settings', label: '參數策略配置', subLabel: 'System Config', icon: SlidersHorizontal },
+          { id: 'glossary', label: '專業術語辭典', subLabel: 'Glossary', icon: BookOpen },
+          { id: 'prd_docs', label: 'PRD 設計規格書', subLabel: 'PRD & Spec', icon: FileText },
+          ...(adminUnlocked
+            ? [
+                {
+                  id: 'backup_settings' as NavTab,
+                  label: '自動化備份',
+                  subLabel: 'Backup System',
+                  icon: ShieldCheck,
+                  badge: backupEnabled ? 'RUNNING' : undefined,
+                },
+              ]
+            : []),
+        ],
+      },
+    ],
+    [alertCount, adminUnlocked, backupEnabled]
+  );
+
+  const activeDomain = getDomainForTab(activeTab);
+  const currentDomainMeta = domains.find((d) => d.id === activeDomain) || domains[0];
+
+  const handleDomainClick = (domain: DomainMeta) => {
+    if (getDomainForTab(activeTab) === domain.id) return;
+    setActiveTab(domain.defaultTab);
+  };
 
   return (
     <header className="bg-white/95 dark:bg-slate-950/90 backdrop-blur-md border-b border-slate-300 dark:border-slate-800/80 sticky top-0 z-40 transition-colors shadow-xs">
@@ -169,7 +269,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       ? 'bg-gradient-to-r from-amber-500 to-yellow-400 text-amber-950 border-amber-400 shadow-lg shadow-amber-500/30 animate-pulse'
                       : 'bg-pms-iso-bg dark:bg-indigo-950/60 text-pms-iso dark:text-indigo-400 border border-pms-iso-border dark:border-indigo-800/60 hover:border-pms-iso dark:hover:border-indigo-400'
                   }`}
-                  title={adminUnlocked ? 'Admin 管理模式已啟用（點擊重新鎖定）' : 'ISO 標準認證版號標籤'}
+                  title={adminUnlocked ? 'Admin 管理模式已啟用（點擊重新鎖定）' : 'ISO 標準認證版號標籤（連續點擊 5 次解鎖進階管理模式）'}
                 >
                   <span className="flex items-center gap-1">
                     {adminUnlocked && <Crown className="w-3 h-3" />}
@@ -248,17 +348,83 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
+        {/* ── 4 大 MECE 核心領域導航與二級子視圖切換列 ──────────────────────── */}
+        <div className="hidden lg:flex items-center justify-between py-2 gap-4">
+          {/* 4 大核心領域切換鈕 (Primary Domains) */}
+          <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800/80 shadow-inner">
+            {domains.map((domain) => {
+              const isDomainActive = activeDomain === domain.id;
+              const Icon = domain.icon;
+              return (
+                <button
+                  key={domain.id}
+                  onClick={() => handleDomainClick(domain)}
+                  className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-semibold transition-all duration-150 cursor-pointer ${
+                    isDomainActive
+                      ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 shadow-xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 ${isDomainActive ? 'text-sky-500 dark:text-sky-400' : 'text-slate-400'}`} />
+                  <span>{domain.label}</span>
+                  {domain.id === 'war_room' && alertCount > 0 && (
+                    <span className="ml-0.5 px-1.5 py-0.2 text-xs font-bold rounded-full bg-rose-500 text-white">
+                      {alertCount}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* 二級子視圖微切換條 (Segmented Sub-navigation Pills) */}
+          <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 scrollbar-none">
+            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 mr-1 font-mono uppercase tracking-wider">
+              {currentDomainMeta.enLabel}:
+            </span>
+            {currentDomainMeta.tabs.map((tab) => {
+              const isTabActive = activeTab === tab.id;
+              const TabIcon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer whitespace-nowrap border ${
+                    isTabActive
+                      ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-300 dark:border-sky-800 shadow-xs font-semibold'
+                      : 'bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
+                >
+                  <TabIcon className={`w-3.5 h-3.5 ${isTabActive ? 'text-sky-600 dark:text-sky-400' : 'text-slate-400'}`} />
+                  <span>{tab.label}</span>
+                  {tab.badge !== undefined && (
+                    <span
+                      className={`ml-1 px-1.5 py-0.2 text-[11px] font-bold rounded-full ${
+                        typeof tab.badge === 'number' && tab.badge > 0
+                          ? 'bg-rose-500 text-white'
+                          : 'bg-emerald-500 text-white'
+                      }`}
+                    >
+                      {tab.badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Mobile hamburger menu button (visible < lg) */}
-        <div className="lg:hidden flex items-center gap-2 pb-3 border-b border-slate-200 dark:border-slate-800/50">
+        <div className="lg:hidden flex items-center justify-between py-2 border-t border-slate-200 dark:border-slate-800/50">
           <button
             onClick={onMenuToggle}
             id="nav-menu-btn"
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer border border-slate-300 dark:border-slate-700"
-            title={menuOpen ? '關閉選單' : '開啟選單'}
-            aria-label={menuOpen ? '關閉選單' : '開啟選單'}
+            title={menuOpen ? '關閉選單' : '開啟導航選單'}
+            aria-label={menuOpen ? '關閉選單' : '開啟導航選單'}
           >
             {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-            <span>導航</span>
+            <span>{currentDomainMeta.label} · {currentDomainMeta.tabs.find((t) => t.id === activeTab)?.label || '功能導航'}</span>
           </button>
         </div>
       </div>
