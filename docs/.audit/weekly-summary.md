@@ -1,0 +1,54 @@
+# 每週審核摘要 — 第 34 週（2026-08-23）
+
+## 總覽
+
+| 指標 | 數值 |
+|------|------|
+| pre-task-checklist 總執行次數 | 22 |
+|  通過 | 22 |
+|  失敗（缺失驗證標準） | 0 |
+| 部署驗證次數 | 8 |
+|  成功 | 8 |
+|  失敗 | 0 |
+
+## KB 知識庫分析
+
+```
+
+📊 KB Analytics — 效果驗證
+
+  知識庫：6/6 活躍条目
+  預警總次數：0
+  預警準確率：0.0%
+
+  詳細報告：/home/runner/work/Predictive-Material-System/Predictive-Material-System/docs/.audit/kb-analytics-summary.md
+```
+
+## 詳細日誌
+
+```jsonl
+{"timestamp":"2026-08-22T14:06:35.221Z","commit_sha":"3487bb7febbbdba5055a5ce06f7a2ff1052c6854","staged_files":[".github/workflows/deploy.yml"],"ui_files":[],"reason":"no_ui_change","has_standard":null,"matched_reports":[],"exit_code":0}
+{"timestamp":"2026-08-22T14:37:10.348Z","commit_sha":"c3d35f3921cb978eef4ea943dbf28ec2dcb967c2","staged_files":[".github/workflows/deploy.yml"],"ui_files":[],"reason":"no_ui_change","has_standard":null,"matched_reports":[],"exit_code":0}
+{"timestamp":"2026-08-22T14:38:44.072Z","commit_sha":"5f4597ccc95b70bf4549ffe3432bf910c0126d32","staged_files":[".impeccable/kb/issues.yaml"],"ui_files":[],"reason":"no_ui_change","has_standard":null,"matched_reports":[],"exit_code":0}
+{"timestamp":"2026-08-22T15:48:33.308Z","commit_sha":"d518f5d9e0e062e5743cf56a13db4a417eef5c81","staged_files":[".impeccable/scripts/pre-task-checklist.mjs","docs/CAPA-004-ContrastFix.md","docs/CAPA-005-ContrastFix.md","docs/CAPA-006-LayoutOverflowFix.md","docs/CAPA-007-ButtonClippingRootCauseAnalysis.md","docs/DESIGN.md","docs/Impeccable-IntegrationRoadmap.md","docs/ImpeccableIntegrationGuide.md","docs/NVR-20260822-01-VerificationMechanismAnalysis.md","docs/SYSTEM-VALIDATION-REPORT-20260822.md","docs/TraceabilityVerificationReport.md","docs/UI-Contrast-Standards.md","src/components/DataTablesView.tsx","src/utils/dataExchange.ts","src/utils/fieldMeta.ts","src/utils/materialClassValidation.ts","src/utils/mrpEngine.ts"],"ui_files":["src/components/DataTablesView.tsx"],"reason":"pass","has_standard":true,"matched_reports":["CAPA-004-ContrastFix.md","CAPA-005-ContrastFix.md","CAPA-006-LayoutOverflowFix.md","CAPA-007-ButtonClippingRootCauseAnalysis.md","CAPA-008-FalseProgressReporting.md","UI-Contrast-Standards.md"],"exit_code":0}
+{"timestamp":"2026-08-22T15:51:29.038Z","commit_sha":"d518f5d9e0e062e5743cf56a13db4a417eef5c81","staged_files":[".husky/pre-commit",".impeccable/scripts/pre-task-checklist.mjs","docs/CAPA-004-ContrastFix.md","docs/CAPA-005-ContrastFix.md","docs/CAPA-006-LayoutOverflowFix.md","docs/CAPA-007-ButtonClippingRootCauseAnalysis.md","docs/DESIGN.md","docs/Impeccable-IntegrationRoadmap.md","docs/ImpeccableIntegrationGuide.md","docs/NVR-20260822-01-VerificationMechanismAnalysis.md","docs/SYSTEM-VALIDATION-REPORT-20260822.md","docs/TraceabilityVerificationReport.md","docs/UI-Contrast-Standards.md","src/components/DataTablesView.tsx","src/utils/dataExchange.ts","src/utils/fieldMeta.ts","src/utils/materialClassValidation.ts","src/utils/mrpEngine.ts"],"ui_files":["src/components/DataTablesView.tsx"],"reason":"pass","has_standard":true,"matched_reports":["CAPA-004-ContrastFix.md","CAPA-005-ContrastFix.md","CAPA-006-LayoutOverflowFix.md","CAPA-007-ButtonClippingRootCauseAnalysis.md","CAPA-008-FalseProgressReporting.md","UI-Contrast-Standards.md"],"exit_code":0}
+{"timestamp":"2026-08-22T15:53:22.006Z","commit_sha":"a8e248a3cd9d2962137461b61030073a7ea03394","staged_files":["docs/CAPA-004-ContrastFix.md","docs/CAPA-005-ContrastFix.md","docs/CAPA-006-LayoutOverflowFix.md","docs/CAPA-007-ButtonClippingRootCauseAnalysis.md"],"ui_files":[],"reason":"no_ui_change","has_standard":null,"matched_reports":[],"exit_code":0}
+{"timestamp":"2026-08-22T15:59:28.535Z","commit_sha":"9ee9da7b3ece02f1ec406a6cd263ce7561cd50e3","staged_files":[".github/workflows/daily-scan.yml",".gitignore",".impeccable/scripts/kb-analytics.mjs","docs/.audit/kb-analytics-summary.md","docs/.audit/pre-task-checklist.jsonl"],"ui_files":[],"reason":"no_ui_change","has_standard":null,"matched_reports":[],"exit_code":0}
+{"timestamp":"2026-08-22T16:00:13.661Z","commit_sha":"03c0a6cc67f023b0940bd388da306c75ee2f78a1","staged_files":["docs/.audit/pre-task-checklist.jsonl"],"ui_files":[],"reason":"no_ui_change","has_standard":null,"matched_reports":[],"exit_code":0}
+{"timestamp":"2026-08-22T16:15:40.855Z","commit_sha":"00ae6308fb492405d8379e74099743c06376e9f4","staged_files":["src/App.tsx","src/components/Navbar.tsx","src/components/PrdDocView.tsx","src/components/Sidebar.tsx","src/vite-env.d.ts","vite-plugin-git-version.ts"],"ui_files":["src/App.tsx","src/components/Navbar.tsx","src/components/PrdDocView.tsx","src/components/Sidebar.tsx"],"reason":"pass","has_standard":true,"matched_reports":["CAPA-004-ContrastFix.md","CAPA-005-ContrastFix.md","CAPA-006-LayoutOverflowFix.md","CAPA-007-ButtonClippingRootCauseAnalysis.md","CAPA-008-FalseProgressReporting.md","UI-Contrast-Standards.md"],"exit_code":0}
+{"timestamp":"2026-08-22T16:22:07.968Z","commit_sha":"b8aed9b1154f959fc85e3d4ac6021ec2b9e10f08","staged_files":[".gitignore","src/App.tsx","src/components/Navbar.tsx","src/components/PrdDocView.tsx","src/components/Sidebar.tsx","src/utils/version.ts","vite-plugin-git-version.ts"],"ui_files":["src/App.tsx","src/components/Navbar.tsx","src/components/PrdDocView.tsx","src/components/Sidebar.tsx"],"reason":"pass","has_standard":true,"matched_reports":["CAPA-004-ContrastFix.md","CAPA-005-ContrastFix.md","CAPA-006-LayoutOverflowFix.md","CAPA-007-ButtonClippingRootCauseAnalysis.md","CAPA-008-FalseProgressReporting.md","UI-Contrast-Standards.md"],"exit_code":0}
+{"timestamp":"2026-08-22T16:22:20.120Z","commit_sha":"51b4792dc4817a0705fcb96bacd99ae56fb3ee6b","staged_files":["docs/.audit/pre-task-checklist.jsonl"],"ui_files":[],"reason":"no_ui_change","has_standard":null,"matched_reports":[],"exit_code":0}
+{"timestamp":"2026-08-22T16:25:39.335Z","commit_sha":"486d5352755fa9b80460ebf475c12e9ea71ef39c","staged_files":["vite.config.ts"],"ui_files":[],"reason":"no_ui_change","has_standard":null,"matched_reports":[],"exit_code":0}
+{"timestamp":"2026-08-22T16:27:04.564Z","commit_sha":"81ba55cc28047092d8d0180f5c21489770f81127","staged_files":["docs/.audit/pre-task-checklist.jsonl"],"ui_files":[],"reason":"no_ui_change","has_standard":null,"matched_reports":[],"exit_code":0}
+{"timestamp":"2026-08-22T16:31:57.183Z","commit_sha":"7bb6a0c532445540f03abfad85d5f470a9d02967","staged_files":["src/components/GlossaryPanel.tsx"],"ui_files":["src/components/GlossaryPanel.tsx"],"reason":"pass","has_standard":true,"matched_reports":["CAPA-004-ContrastFix.md","CAPA-005-ContrastFix.md","CAPA-006-LayoutOverflowFix.md","CAPA-007-ButtonClippingRootCauseAnalysis.md","CAPA-008-FalseProgressReporting.md","UI-Contrast-Standards.md"],"exit_code":0}
+{"timestamp":"2026-08-22T16:33:35.053Z","commit_sha":"d80c53ff57b6a06bc40953b1e8b4f011a9aee2e9","staged_files":["docs/.audit/pre-task-checklist.jsonl"],"ui_files":[],"reason":"no_ui_change","has_standard":null,"matched_reports":[],"exit_code":0}
+{"timestamp":"2026-08-22T16:35:11.305Z","commit_sha":"b862e22d40f04714ae7e72c84ef7fc8a984ec635","staged_files":["src/vite-env.d.ts","vite-plugin-git-version.ts"],"ui_files":[],"reason":"no_ui_change","has_standard":null,"matched_reports":[],"exit_code":0}
+{"timestamp":"2026-08-22T16:35:26.057Z","commit_sha":"c904344d638a55bb0341dd418b9fbf00b832546f","staged_files":["docs/.audit/pre-task-checklist.jsonl"],"ui_files":[],"reason":"no_ui_change","has_standard":null,"matched_reports":[],"exit_code":0}
+{"timestamp":"2026-08-22T16:36:37.842Z","commit_sha":"cd40b8e9b50a237dba2bee6a2435dd9c3de0c8d1","staged_files":["docs/.audit/pre-task-checklist.jsonl"],"ui_files":[],"reason":"no_ui_change","has_standard":null,"matched_reports":[],"exit_code":0}
+{"timestamp":"2026-08-22T16:40:07.257Z","commit_sha":"3b1bb0ee737ead2eb9530163071747d831a78c13","staged_files":["src/components/GlossaryPanel.tsx"],"ui_files":["src/components/GlossaryPanel.tsx"],"reason":"pass","has_standard":true,"matched_reports":["CAPA-004-ContrastFix.md","CAPA-005-ContrastFix.md","CAPA-006-LayoutOverflowFix.md","CAPA-007-ButtonClippingRootCauseAnalysis.md","CAPA-008-FalseProgressReporting.md","UI-Contrast-Standards.md"],"exit_code":0}
+{"timestamp":"2026-08-22T16:47:06.163Z","commit_sha":"3c5fede35c783e0a3419ae4f63cefa9593cefb62","staged_files":["src/App.tsx","src/components/GlossaryView.tsx","src/components/Navbar.tsx","src/components/Sidebar.tsx"],"ui_files":["src/App.tsx","src/components/GlossaryView.tsx","src/components/Navbar.tsx","src/components/Sidebar.tsx"],"reason":"pass","has_standard":true,"matched_reports":["CAPA-004-ContrastFix.md","CAPA-005-ContrastFix.md","CAPA-006-LayoutOverflowFix.md","CAPA-007-ButtonClippingRootCauseAnalysis.md","CAPA-008-FalseProgressReporting.md","UI-Contrast-Standards.md"],"exit_code":0}
+```
+
+## 建議行動
+
+- ✅ 所有指標正常，無需行動
