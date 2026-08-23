@@ -1,7 +1,7 @@
 # 料事如神系統 — Predictive Material System (PMS)
 
 > **QCC 料事如神圈 · 射出成型智能備料與產能排程推估平台**  
-> Baseline Version：`V-20260823-16` | Developed by Wesley Chang @Mouldex, Aug-2026
+> Baseline Version：`V-20260823-26` | Developed by Wesley Chang @Mouldex, Aug-2026
 
 ---
 
