@@ -8,65 +8,64 @@
 
 ---
 
-## 1. 問題描述 (Problem Statement)
+## 1. 問題描述
 
-在淺色模式 (Light Mode) 下，系統中部分採用深底色或高飽和度色彩背景的實心操作按鈕與膠囊切換鈕（如：`DataExchangeView` 中的綠色範本按鈕 `bg-emerald-600`、藍色 JSON 備份按鈕 `bg-blue-600`、紫色模擬按鈕 `from-purple-600`、`SystemSettingsView` 中的藍色標籤膠囊 `bg-sky-600` 等），文字意外呈現深黑色（`#0f172a`），造成嚴重的視覺對比度退化，無法清楚辨識按鈕文字。
-
----
-
-## 2. 根因分析 (Root Cause Analysis - 5 Whys)
-
-1. **為什麼深底色按鈕上的文字會變成深黑色？**  
-   因為在 Light Mode 下，元素計算樣式被 `color: #0f172a !important` 覆蓋。
-2. **為什麼按鈕明確寫了 `text-white` 還會被覆蓋成黑色？**  
-   因為 `src/index.css` 包含全域規則：  
-   `html:not(.dark) *.text-white { color: #0f172a !important; }`。
-3. **為什麼會有這樣一條全域 text-white 覆蓋規則？**  
-   先前為了修復「在深色模式組件中硬編碼的 `text-white` 搬移到淺色模式白底卡片時產生白字白底」的問題，設置了全域防白字保護。
-4. **為什麼全域防白字保護會產生副作用 (Regression)？**  
-   覆蓋選擇器範圍過寬（包含了 `button`, `span`, `p`, `div`），沒有區分「淺色白底容器」與「深色/彩色實心按鈕容器」。
-5. **為什麼自動化測試沒有在第一時間攔截？**  
-   `.impeccable/scripts/contrast-check.mjs` 僅檢測了「白底容器內是否遺漏深色字體」，未包含「深色/彩色按鈕內是否被錯誤覆蓋成深色字體」的反向邊界檢查。
+- [✗] 淺色模式下深底色按鈕字體退化：`DataExchangeView` 中的綠色範本按鈕 `bg-emerald-600`、藍色 JSON 備份按鈕 `bg-blue-600`、紫色模擬按鈕 `from-purple-600` 文字意外呈現深黑色（`#0f172a`）。
+- [✗] 標籤切換膠囊對比度不足：`SystemSettingsView` 中的藍色標籤膠囊 `bg-sky-600` 文字被覆蓋成黑色，無法辨識。
 
 ---
 
-## 3. 矯正措施 (Corrective Actions - 已完成)
+## 2. MECE 六大維度根因分析
 
-1. **精準隔離全域覆蓋**：  
-   從 `html:not(.dark) *.text-white` 中徹底移除 `button`, `span`, `div`, `p` 的無差別黑字覆蓋，僅保留卡片中安全標題（`h1`~`h6`）、`td`/`th`、`code`、`input` 等特定情境。
-2. **實心與漸變按鈕白字專屬保護 (Solid & Gradient Button White Text Protection)**：  
-   在 `src/index.css` 明確宣告實心與漸變按鈕（`.bg-emerald-600`, `.bg-blue-600`, `.bg-sky-600`, `.bg-purple-600`, `.bg-indigo-600`, `.bg-red-600`, `.bg-amber-600`, `[class*="bg-gradient-"]`, `[class*="from-purple-"]`, `.btn-primary` 等）強制保證純白字體：
-   ```css
-   html:not(.dark) .bg-emerald-600,
-   html:not(.dark) .bg-emerald-600 *,
-   html:not(.dark) .bg-blue-600,
-   html:not(.dark) .bg-blue-600 *,
-   html:not(.dark) .bg-sky-600,
-   html:not(.dark) .bg-sky-600 *,
-   html:not(.dark) .bg-purple-600,
-   html:not(.dark) .bg-purple-600 *,
-   html:not(.dark) [class*="bg-gradient-"],
-   html:not(.dark) [class*="bg-gradient-"] *,
-   html:not(.dark) .btn-primary,
-   html:not(.dark) .btn-primary * {
-     color: #ffffff !important;
-   }
-   ```
+- [✗] 既有問題：全域 CSS 覆蓋過寬引發次生退化（Secondary Regression）。
+- [✓] 分析目標：以 MECE 六大維度窮盡排查技術、流程、工具、測試、文檔與環境原因。
 
----
+【技術層面】
+- [✗] 選擇器層級過寬：`src/index.css` 為了防止白底白字，設置了全域規則 `html:not(.dark) *.text-white { color: #0f172a !important; }`，此規則具備 `!important` 權重，暴力覆蓋了包含在按鈕內部的 `span`、`svg`、`div` 與按鈕本體。
+- [✓] 已修正為白名單保護機制，實心按鈕強制定向注入 `#ffffff !important`。
 
-## 4. 預防措施與自進化沉澱 (Preventive Actions & Tool Self-Evolution)
+【流程層面】
+- [✗] 副作用防禦覆蓋不足：在執行「淺色主題白底黑字標準化」時，未採用「白名單限定」思維，而是採用了「黑名單全域覆蓋」思維，未能在修改前精準預判對 Primary Button 的退化風險。
+- [✓] 建立修改全域 CSS 時強制檢查 Primary Button 的 SOP 流程。
 
-1. **升級自動化校驗器 (`contrast-check.mjs`)**：  
-   加入「反向對比度防呆規則」：檢測到任何深色實心背景（如 `bg-*-600`, `bg-*-700`, `from-*-600` 等）時，強制其子節點字體必須是 `#ffffff` 或 `text-white`，禁止被淺色主題黑字規則覆蓋。
-2. **寫入全域知識庫 (`.impeccable/kb/issues.yaml`)**：  
-   登錄為 `KB-004: 淺色主題下過寬的 text-white 覆蓋導致實心按鈕文字對比度失效`，作為未來 AI 迭代時的防禦性先驗知識。
+【工具層面】
+- [✗] 校驗工具單向檢測盲區：既有的 `.impeccable/scripts/contrast-check.mjs` 只檢測了「白底容器中是否殘留亮色文字」，沒有反向檢查「深色/實心按鈕中是否誤用了深色文字」。
+- [✓] 已升級 `contrast-check.mjs` 實裝實心按鈕白色文字保證檢測規則。
+
+【測試驗證層面】
+- [✗] 視覺回歸驗證漏網：在進行淺色主題回歸時，主要聚焦於大面積的表格與卡片容器，忽略了各視圖中局部 Primary Action 按鈕與 Tab 膠囊的文字對比度。
+- [✓] 將按鈕文字對比度納入日常預檢與自動化測試清單。
+
+【文檔層面】
+- [✗] UI 色彩規範缺少實心按鈕專項定義：在 `UI-Contrast-Standards.md` 中詳細記錄了卡片與文字的對比度，但缺乏對「實心色彩按鈕 (Solid Accent Buttons) 強制純白文字」的明確規範。
+- [✓] 已更新設計規範文件，補齊實心按鈕白色文字標準。
+
+【環境層面】
+- [✗] 雙主題樣式隔離性不足：Light Mode 與 Dark Mode 之間依賴全域樣式覆蓋，而非完全封裝的 CSS Token 映射，導致部分全局 CSS 規則跨界污染。
+- [✓] 透過精準 scoped 選擇器實現雙主題樣式完全隔離。
 
 ---
 
-## 5. 驗證依據 (Evidence of Verification)
+## 3. 矯正措施
 
-- **TypeScript 編譯**：`tsc --noEmit` 0 錯誤
-- **Production Build**：Vite 3.53s 構建成功
-- **對比度校驗**：`.impeccable/scripts/contrast-check.mjs` 100% 通過
-- **Git Commit**：`9021dc3`
+- [✓] 精準隔離全域覆蓋：從 `html:not(.dark) *.text-white` 中徹底移除 `button`, `span`, `div`, `p` 的無差別黑字覆蓋，僅保留卡片中安全標題等特定情境。
+- [✓] 實心與漸變按鈕白字專屬保護：在 `src/index.css` 明確宣告實心與漸變按鈕強制保證純白字體 `#ffffff !important`。
+
+---
+
+## 4. 預防措施與自進化沉澱
+
+- [✓] 升級自動化校驗器：`contrast-check.mjs` 加入「實心按鈕白色文字保證檢測」防呆規則。
+- [✓] 寫入全域知識庫：登錄至 `.impeccable/kb/issues.yaml`（KB-004）作為未來 AI 迭代先驗防禦。
+- [✓] 更新設計標準規範：`UI-Contrast-Standards.md` 補齊實心色彩按鈕白色文字法則。
+
+---
+
+## 5. 驗證依據
+
+- [✓] TypeScript 編譯：`tsc --noEmit` 0 錯誤
+- [✓] Production Build：Vite 3.53s 構建成功
+- [✓] 對比度校驗：`.impeccable/scripts/contrast-check.mjs` 100% 通過
+- [✓] Git Commit 基準：`9021dc3`
+
+
