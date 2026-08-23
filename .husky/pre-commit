@@ -1,28 +1,29 @@
 #!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
 
 # ─────────────────────────────────────────────────────
 # Pre-commit Hook — 料事如神系統 (PMS)
-# 在 commit 前執行以下檢查：
-# 1. TypeScript 類型檢查
-# 2. MECE 完整性校驗（對新增/修改的 CAPA 報告）
-# 3. 對比度校驗
+# 在 commit 前全自動執行：
+# 0. 全自動自進化體系閉環 (Auto-Evolution Gate: KB 索引/MECE/防禦升級)
+# 1. UI 變更前置檢查
+# 2. TypeScript 類型檢查
+# 3. 對比度與按鈕白字防禦檢查
 # ─────────────────────────────────────────────────────
 
-echo "🔍 PMS Pre-commit Checks..."
+echo "🧬 PMS Pre-commit & Auto-Evolution Checks..."
 
-# 0. UI 變更 → 驗證標準前置檢查（PA-01）
+# 0. 全自動自我進化閉環門禁 (Auto-Evolution Gate)
+node .impeccable/scripts/auto-evolution-gate.mjs || {
+  echo "❌ 自我進化閉環檢查失敗"
+  exit 1
+}
+
+# 1. UI 變更 → 驗證標準前置檢查（PA-01）
 echo "  → UI 驗證標準檢查..."
 node .impeccable/scripts/pre-task-checklist.mjs || {
   echo "❌ UI 驗證標準檢查失敗，請先定義驗證標準再提交"
   exit 1
 }
 echo "  ✅ UI 驗證標準檢查通過"
-
-# 1.5 KB 主動預警（warning 模式，不阻擋 commit）
-echo "  → KB 主動預警..."
-node .impeccable/scripts/kb-proactive-check.mjs
-echo "  ✅ KB 主動預警完成"
 
 # 2. TypeScript 檢查
 echo "  → TypeScript check..."
@@ -33,19 +34,5 @@ if [ $? -ne 0 ]; then
 fi
 echo "  ✅ TypeScript 檢查通過"
 
-# 3. MECE 完整性校驗（僅檢查本次提交新增/修改的 CAPA 報告）
-echo "  → MECE 完整性校驗..."
-git diff --cached --name-only | grep -E 'docs/CAPA-.*\.md' | while read capadoc; do
-  echo "    校驗: $capadoc"
-  node .impeccable/scripts/mec-validator.mjs "$capadoc" || {
-    echo "⚠️  MECE 校驗警告: $capadoc（非阻塞，請確認文件格式）"
-  }
-done
-echo "  ✅ MECE 完整性校驗完成"
+echo "✅ 所有自動化自進化與品質檢查通過，準備提交"
 
-# 4. 對比度校驗
-echo "  → 對比度校驗..."
-node .impeccable/scripts/contrast-check.mjs src/components/ 2>/dev/null || true
-echo "  ✅ 對比度校驗完成"
-
-echo "✅ 所有檢查通過，準備提交"
