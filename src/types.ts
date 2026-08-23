@@ -46,7 +46,7 @@ export interface MoldMaster {
   active_cavities: number; // 妥善穴數 (原: 現況穴數)
   cycle_time_sec: number; // 成型週期_秒
   daily_capacity?: number; // 系統動態計算: (86400 / cycle_time_sec) * active_cavities
-  status?: 'active' | 'maintenance' | 'trial';
+  status?: 'active' | 'maintenance' | 'trial' | 'retired';
   location?: string;
   machine_type?: string;    // 成型機型號 (M-03)
   production_line?: string; // 產線編號 (M-03)
@@ -108,7 +108,7 @@ export interface ActualOrder {
   sku: string; // 訂單品號 (FK)
   target_date: string; // 約定交期 (YYYY-MM-DD)
   order_qty: number; // 實際訂單量_PCS
-  status?: 'confirmed' | 'in_production' | 'completed' | 'cancelled';
+  status?: 'confirmed' | 'in_production' | 'partial_shipped' | 'completed' | 'cancelled';
   order_date: string;
 }
 
@@ -382,15 +382,15 @@ export const DEFAULT_MATERIAL_CLASSES: MaterialClass[] = [
   // ── MAT：物料類（紙箱、塑膠袋、標籤、收縮膜等包裝與輔料）──
   { code: 'MAT', name: '物料類', nameEn: 'Packaging & Supplies', sort_order: 2, is_active: true, business_type: 'material',
     description: '紙箱、塑膠袋、標籤紙、B膠、收縮膜等各類包裝耗材與輔助生產物料。不直接參與成型，以 PCS/KG 計量。' },
-  // ── PART：零件類（單一射出製品）──
+  // ── PART：零件類（單一射出製品，多數可獨立出貨）──
   { code: 'PART', name: '零件類', nameEn: 'Parts', sort_order: 3, is_active: true, business_type: 'part',
-    description: '單一塑膠射出製品，可獨立存在但尚非最終出貨品。由 BOM 展開計算毛需求，以 PCS 計量。' },
+    description: '單一塑膠射出製品，可獨立存在且多數為最終出貨品，對應客戶預估需求 (Forecast) 或正式訂單 (PO)。由 BOM 展開計算原料毛需求，以 PCS 計量。' },
   // ── COMP：組件類（零件＋物料組裝完成之中間產品）──
   { code: 'COMP', name: '組件類', nameEn: 'Components', sort_order: 4, is_active: true, business_type: 'component',
-    description: '由零件與物料組裝完成的中間組裝產品。納入 Assembly BOM 管理（可作為 SET 的組裝子項）。' },
+    description: '由零件與物料組裝完成的中間組裝產品。可作為最終出貨品（對應 Forecast/PO），亦可作為 SET 的組裝子項納入 Assembly BOM 管理。' },
   // ── SET：SET 類（最終出廠組合製品）──
   { code: 'SET', name: 'SET 類', nameEn: 'Sets (Final Products)', sort_order: 5, is_active: true, business_type: 'set',
-    description: '由零件或組件一次組裝完成的最終出廠組合製品。可包含直接 PART 領出組裝、或經 COMP 入庫後再領出組裝兩種路徑。對應業務 Forecast、PO 與成品庫存。' },
+    description: '由零件或組件一次組裝完成的最終出廠組合製品。對應業務 Forecast、PO 與成品庫存。' },
 ];
 
 // 分類代碼 → 中文名稱快速查找表
@@ -401,6 +401,13 @@ export const MATERIAL_CLASS_LABELS: Record<MaterialClassCode, string> = {
   COMP: '組件類',
   SET:  'SET 類',
 };
+
+/** 判斷是否為可出貨/可推導成品品類 (SET, PART, COMP) */
+export function isShippableMaterialClass(materialClass?: MaterialClassCode | string | null): boolean {
+  if (!materialClass) return true; // 向前相容舊資料
+  const upper = materialClass.toUpperCase();
+  return upper === 'SET' || upper === 'PART' || upper === 'COMP';
+}
 
 // Storage keys
 export const BACKUP_CONFIG_STORAGE_KEY = 'PMS_BACKUP_CONFIG_V1';

@@ -75,7 +75,7 @@ const MOLD_MASTER_META: TableMeta = {
       key: 'cycle_time_sec', label: '成型週期 (秒)', editability: 2, inputType: 'number', required: true, min: 1, step: 0.5,
       validate: (v) => { const val = Number(v); return (isFinite(val) && val >= 1) ? null : '成型週期必須 ≥ 1 秒'; },
     },
-    { key: 'status', label: '模具狀態', editability: 1, inputType: 'select', options: [{ value: 'active', label: '✅ 正常使用' }, { value: 'maintenance', label: '🔧 維修保養' }, { value: 'trial', label: '🧪 試模驗證' }] },
+    { key: 'status', label: '模具狀態', editability: 1, inputType: 'select', options: [{ value: 'active', label: '✅ 正常使用' }, { value: 'maintenance', label: '🔧 維修保養' }, { value: 'trial', label: '🧪 試模驗證' }, { value: 'retired', label: '🗃️ 封存報廢' }] },
     { key: 'location', label: '機台存放位置', editability: 1, inputType: 'text', maxLength: 50 },
     { key: 'machine_type', label: '成型機型號', editability: 1, inputType: 'text', maxLength: 50 }, // M-03
     { key: 'production_line', label: '產線編號', editability: 1, inputType: 'text', maxLength: 20 }, // M-03
@@ -163,7 +163,13 @@ const ACTUAL_ORDER_META: TableMeta = {
     { key: 'order_date', label: '下單日期', editability: 1, inputType: 'date', required: true },
     { key: 'target_date', label: '約定交期', editability: 2, inputType: 'date', required: true },
     { key: 'order_qty', label: '訂單量 (PCS)', editability: 2, inputType: 'number', required: true, min: 1, step: 1, validate: (v) => { const val = Number(v); return (isFinite(val) && val >= 1) ? null : '訂單量必須 ≥ 1 PCS'; } },
-    { key: 'status', label: '訂單狀態', editability: 1, inputType: 'select', options: [{ value: 'confirmed', label: '📋 已確認' }, { value: 'in_production', label: '🏭 生產中' }, { value: 'completed', label: '✅ 已完成' }, { value: 'cancelled', label: '❌ 已取消' }] },
+    { key: 'status', label: '訂單狀態', editability: 1, inputType: 'select', options: [
+      { value: 'confirmed', label: '📋 已確認' },
+      { value: 'in_production', label: '🏭 生產中' },
+      { value: 'partial_shipped', label: '📦 部分出貨' },
+      { value: 'completed', label: '✅ 已完成' },
+      { value: 'cancelled', label: '❌ 已取消' }
+    ] },
   ],
 };
 

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { SystemDatabase, ProductMoldBOM, MoldMaster } from '../types';
+import { SystemDatabase, ProductMoldBOM, MoldMaster, isShippableMaterialClass } from '../types';
 
 export interface DailyWIPEstimationInput {
   sku: string;
@@ -93,9 +93,9 @@ export function generateSystemWIPEstimations(
   db: SystemDatabase,
   overrides?: Record<string, Partial<DailyWIPEstimationInput>>
 ): DailyWIPEstimationResult[] {
-  const setSkus = db.item_master.filter((i) => i.material_class === 'SET' || !i.material_class);
+  const targetSkus = db.item_master.filter((i) => isShippableMaterialClass(i.material_class));
 
-  return setSkus.map((item) => {
+  return targetSkus.map((item) => {
     const override = overrides?.[item.sku] || {};
 
     // 抓取現況快照

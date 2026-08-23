@@ -22,7 +22,7 @@ import {
   ShieldCheck,
   Users
 } from 'lucide-react';
-import { SystemDatabase, SystemParameters, ItemMaster } from '../types';
+import { SystemDatabase, SystemParameters, ItemMaster, isShippableMaterialClass } from '../types';
 
 interface ShipScheduleClearanceViewProps {
   db: SystemDatabase;
@@ -58,9 +58,9 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'clear' | 'wip_dependent' | 'deficit'>('ALL');
   const [simulatedMultipliers, setSimulatedMultipliers] = useState<Record<string, number>>({});
 
-  // 1. 取得所有 SET 類成品
+  // 1. 取得所有可出貨品（SET / PART / COMP 成品與獨立出貨品）
   const finishedGoods = useMemo(() => {
-    return db.item_master.filter((i) => i.material_class === 'SET' || !i.material_class);
+    return db.item_master.filter((i) => isShippableMaterialClass(i.material_class));
   }, [db.item_master]);
 
   // 2. 彙整各品號之 2 週出貨排程與在庫 WIP 資料

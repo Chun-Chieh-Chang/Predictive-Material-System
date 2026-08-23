@@ -32,7 +32,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
-import { SystemDatabase, MRPCalculationResult, SystemParameters, ProductMoldBOM } from '../types';
+import { SystemDatabase, MRPCalculationResult, SystemParameters, ProductMoldBOM, isShippableMaterialClass } from '../types';
 import { calculateAllMRP } from '../utils/mrpEngine';
 import { exportToExcel } from '../utils/dataExchange';
 
@@ -81,7 +81,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   // ─── Customer Forecast Deviation & Supply Transparency Analytics ─────────
   const forecastDeviationData = useMemo(() => {
-    const finishedGoods = db.item_master.filter((i) => i.material_class === 'SET' || !i.material_class);
+    const finishedGoods = db.item_master.filter((i) => isShippableMaterialClass(i.material_class));
     
     return finishedGoods.map((item) => {
       const forecasts = db.demand_forecast_log.filter((f) => f.sku === item.sku);

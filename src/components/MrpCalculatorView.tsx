@@ -22,7 +22,7 @@ import {
   ChevronDown,
   ChevronUp
 } from 'lucide-react';
-import { SystemDatabase, MRPCalculationResult, SystemParameters } from '../types';
+import { SystemDatabase, MRPCalculationResult, SystemParameters, isShippableMaterialClass } from '../types';
 import { calculateMRPForSKU } from '../utils/mrpEngine';
 
 interface MrpCalculatorViewProps {
@@ -35,12 +35,12 @@ interface MrpCalculatorViewProps {
 export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
   db,
   params,
-  initialSku = 'A01-200-131',
+  initialSku,
   onNavigateToSettings
 }) => {
-  const [selectedSku, setSelectedSku] = useState<string>(initialSku);
+  const [selectedSku, setSelectedSku] = useState<string>(initialSku || 'A01-200-131');
   const [activeMoldId, setActiveMoldId] = useState<string | null>(null);
-  const [collapsedStages, setCollapsedStages] = useState<Set<string>>(new Set(['stage2', 'stage3']));
+  const [collapsedStages, setCollapsedStages] = useState<Set<string>>(new Set());
   const toggleStage = (id: string) => {
     setCollapsedStages(prev => {
       const next = new Set(prev);
@@ -69,8 +69,8 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
   `;
   const isStageCollapsed = (id: string) => collapsedStages.has(id);
 
-  // Available finished goods SKUs (SET 類成品)
-  const availableSkus = db.item_master.filter((i) => i.material_class === 'SET');
+  // Available finished goods / shippable SKUs (SET / PART / COMP 類可出貨品)
+  const availableSkus = db.item_master.filter((i) => isShippableMaterialClass(i.material_class));
 
   // Related molds for this SKU
   const relatedBoms = db.product_mold_bom.filter((b) => b.sku === selectedSku);

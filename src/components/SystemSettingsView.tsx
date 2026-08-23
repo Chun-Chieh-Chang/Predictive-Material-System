@@ -683,19 +683,22 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                 需求沖銷與彙總模式 (Demand Calculation Mode)
               </label>
 
-              <div className="grid grid-cols-2 gap-2 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                 <button
                   type="button"
                   onClick={() => setParams({ ...params, demandConsumptionMode: 'additive' })}
                   className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                     params.demandConsumptionMode === 'additive'
                       ? 'bg-sky-600 text-white border-sky-500 shadow-xs'
-                      : 'bg-white dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100'
+                      : 'bg-white dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800/50'
                   }`}
                 >
-                  <div className="font-bold">疊加模式 (Additive)</div>
+                  <div className="font-bold flex items-center justify-between">
+                    <span>疊加模式 (Additive)</span>
+                    <span className="text-[9px] bg-white/20 px-1 py-0.5 rounded font-mono">PRD 預設</span>
+                  </div>
                   <div className="text-[10px] opacity-80 mt-1">
-                    Demand = Forecast + 實際 PO (PRD 標準)
+                    Demand = Forecast + 實際訂單 PO
                   </div>
                 </button>
 
@@ -705,12 +708,42 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                   className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                     params.demandConsumptionMode === 'po_consume'
                       ? 'bg-sky-600 text-white border-sky-500 shadow-xs'
-                      : 'bg-white dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100'
+                      : 'bg-white dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800/50'
                   }`}
                 >
                   <div className="font-bold">訂單沖銷模式 (PO Consume)</div>
                   <div className="text-[10px] opacity-80 mt-1">
                     Demand = Max(Forecast, PO)
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setParams({ ...params, demandConsumptionMode: 'forecast_only' })}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                    params.demandConsumptionMode === 'forecast_only'
+                      ? 'bg-sky-600 text-white border-sky-500 shadow-xs'
+                      : 'bg-white dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800/50'
+                  }`}
+                >
+                  <div className="font-bold">僅計預估 (Forecast Only)</div>
+                  <div className="text-[10px] opacity-80 mt-1">
+                    Demand = Forecast（忽略未成案 PO）
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setParams({ ...params, demandConsumptionMode: 'actual_only' })}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                    params.demandConsumptionMode === 'actual_only'
+                      ? 'bg-sky-600 text-white border-sky-500 shadow-xs'
+                      : 'bg-white dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800/50'
+                  }`}
+                >
+                  <div className="font-bold">僅計實單 (Actual PO Only)</div>
+                  <div className="text-[10px] opacity-80 mt-1">
+                    Demand = 實際 PO（不看預估）
                   </div>
                 </button>
               </div>

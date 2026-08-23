@@ -662,4 +662,43 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 ---
 
+## V-20260823-25 — 物料分類業務定義校正與全選項欄位 MECE 標準化
+
+**狀態：** ✅ Complete / Verified  
+**TypeScript 編譯：** 0 錯誤 / 0 警告 (`tsc --noEmit` 通過)  
+**Build：** ✓ built in 3.50s  
+**對比度校驗器：** 100% 通過（0 缺陷）
+
+#### 需求與問題描述
+1. **物料分類業務定義校正**：原先假設僅 `SET` 類為出貨品，但客觀業務中**單一射出製品 (`PART`) 多數為最終出貨品**，部分中間組件 (`COMP`) 亦可作為出貨品，均會直接對應客戶 Forecast / 實際 PO。原系統多個模組（MRP 推導器、週二出貨審查、戰情室預測偏差、動態 WIP）硬編碼 `material_class === 'SET'`，造成 PART 與 COMP 無法在出貨與推導介面中被正確選取或審查。
+2. **選項欄位 MECE 完整性補齊**：
+   - `SystemSettingsView` 需求沖銷模式遺漏 `forecast_only` 與 `actual_only` 兩個選項。
+   - `mold_master.status` 缺少 `retired`（🗃️ 封存報廢）。
+   - `actual_order.status` 缺少 `partial_shipped`（📦 部分出貨）。
+
+#### 根因分析 (RCA)
+- **領域模型與業務實況偏差 (Domain Model Gap)**：初版架構將物料分類簡化為「SET = 成品、PART = 半成品」，忽視了射出廠大量單件（如接頭、單品塑膠外殼）即為出貨品的產業事實。
+- **過濾條件硬編碼**：前端組件與工具函式各自採用局部條件過濾 `i.material_class === 'SET'`，缺乏統一的 `isShippableMaterialClass` 領域判定規則。
+
+#### 矯正與預防措施 (CAPA)
+1. **領域判定標準化**：在 `src/types.ts` 建立 `isShippableMaterialClass(materialClass)` 統一規則（涵蓋 SET / PART / COMP 與向前相容），並更新 `DEFAULT_MATERIAL_CLASSES` 中 PART / COMP / SET 描述。
+2. **解除全數據鏈靜態過濾枷鎖**：
+   - `MrpCalculatorView.tsx`：更新 `availableSkus` 支援所有可出貨品類（PART / COMP / SET）。
+   - `ShipScheduleClearanceView.tsx`：出貨排程可行性審查涵蓋 PART / COMP / SET。
+   - `DashboardView.tsx`：客戶預測偏差分析涵蓋 PART / COMP / SET。
+   - `wipEngine.ts`：`generateSystemWIPEstimations` 批量推估涵蓋 PART / COMP / SET。
+3. **MECE 選項完整補齊**：
+   - `SystemSettingsView.tsx`：補齊 4 種需求沖銷模式按鈕組（疊加、沖銷、僅計預估、僅計實單）。
+   - `src/types.ts` & `src/utils/fieldMeta.ts`：`mold_master.status` 加入 `retired`；`actual_order.status` 加入 `partial_shipped`。
+4. **文件同步更新**：同步更新 `mece_options_audit.md` 審查報告。
+
+#### 驗證結果
+- [x] TypeScript 編譯通過（`tsc --noEmit` 0 錯誤）
+- [x] Production build 成功（3.50s）
+- [x] 對比度與主題校驗 100% 通過
+- [x] Node 實測驗證所有型別與欄位選項正確注入
+
+---
+
 *DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-23*
+
