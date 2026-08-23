@@ -56,6 +56,28 @@ const DEFECT_PATTERNS = [
     regex: /dangerouslySetInnerHTML=\{\{\s*__html:\s*lightModeOverrides\s*\}\}/g,
     severity: 'HIGH',
     message: '禁止使用 lightModeOverrides 暴力內聯注入，請使用標準 Tailwind 雙主題 class。'
+  },
+  {
+    name: '實心按鈕白色文字保證 (Solid/Gradient Button White Text Guarantee - CAPA-010)',
+    check: (content) => {
+      const findings = [];
+      const lines = content.split('\n');
+      lines.forEach((line, index) => {
+        if (line.trim().startsWith('//') || line.trim().startsWith('/*') || line.includes('import')) return;
+        // 匹配含有深色實心背景的按鈕但缺少 text-white 的情況
+        if (line.includes('<button') && /className=["'`][^"'`]*\b(bg-(emerald|blue|sky|purple|indigo|red)-[67]00|from-(purple|indigo|blue|sky|emerald)-[67]00)\b[^"'`]*/.test(line)) {
+          if (!line.includes('text-white') && !line.includes('text-slate-100') && !line.includes('text-slate-50')) {
+            findings.push({
+              line: index + 1,
+              snippet: line.trim()
+            });
+          }
+        }
+      });
+      return findings;
+    },
+    severity: 'HIGH',
+    message: '深底色與高飽和度實心按鈕必須顯式包含 text-white，以確保在所有主題下具備最高對比度 (WCAG AA)。'
   }
 ];
 
