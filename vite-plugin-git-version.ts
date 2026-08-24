@@ -127,17 +127,8 @@ export default function gitVersionPlugin(): Plugin {
     },
     configureServer(server) {
       const root = server.config.root;
-      // 伺服器啟動時立即同步一次
+      // 伺服器啟動時同步一次
       syncVersionFile(root);
-
-      // 定期每 5 秒檢查 Git 狀態並即時熱更新
-      const interval = setInterval(() => {
-        syncVersionFile(root);
-      }, 5000);
-
-      server.httpServer?.on('close', () => {
-        clearInterval(interval);
-      });
     }
   };
 }

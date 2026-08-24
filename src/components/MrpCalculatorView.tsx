@@ -51,7 +51,6 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<'ALL' | 'SET' | 'COMP' | 'PART'>('ALL');
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [recentSkus, setRecentSkus] = useState<string[]>(['A01-200-131', 'P-CON-STR02', 'CP-3WAY-VALVE', 'SET-IV-EXT-01']);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Available finished goods / shippable SKUs (SET / PART / COMP 類可出貨品)
@@ -73,10 +72,6 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
     setActiveMoldId(null);
     setIsDropdownOpen(false);
     setSearchTerm('');
-    setRecentSkus(prev => {
-      const filtered = prev.filter(s => s !== sku);
-      return [sku, ...filtered].slice(0, 5);
-    });
   };
 
   // Close dropdown on outside click
@@ -284,31 +279,6 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
               </button>
             )}
           </div>
-        </div>
-
-        {/* Quick Recent SKU Chips */}
-        <div className="mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800/60 flex flex-wrap items-center gap-2 text-xs">
-          <span className="text-slate-500 dark:text-slate-400 flex items-center space-x-1">
-            <span>📌 最近檢視:</span>
-          </span>
-          {recentSkus.map((sku) => {
-            const item = availableSkus.find(s => s.sku === sku);
-            const isCurrent = sku === selectedSku;
-            return (
-              <button
-                key={sku}
-                onClick={() => handleSelectSku(sku)}
-                className={`px-2.5 py-1 rounded-lg font-mono font-medium transition-all border cursor-pointer ${
-                  isCurrent
-                    ? 'bg-sky-500 text-white border-sky-500 font-bold shadow-xs'
-                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
-                }`}
-                title={item?.category}
-              >
-                {sku}
-              </button>
-            );
-          })}
         </div>
 
         {/* Dynamic System Strategy Indicator */}
