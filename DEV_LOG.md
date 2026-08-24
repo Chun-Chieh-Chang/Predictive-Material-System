@@ -8,6 +8,37 @@
 
 ## 版本演進記錄
 
+### V-20260824-38 (2026-08-24) — SSOT 單一事實來源收斂、LocalStorage 自動去識別化清洗與 UI 互動斷層全盤清查修復版
+
+**狀態：** ✅ 穩定發布  
+**TypeScript 編譯：** 0 錯誤 / 0 警告 (`npm run build` 3.60s 通過)
+
+#### 本版本完成優化清單
+
+**[階段一：SSOT 單一事實來源徹底定錨與硬編碼計數清除]**
+- 全系統定錨為 **8 大實體核心主檔 (Active 8 Tables in 3NF)**，包含：
+  1. `item_master` (品號主檔，含良率與採購規則)
+  2. `mold_master` (模具與產能主檔)
+  3. `product_mold_bom` (產品模具成型關聯檔，含色母配比)
+  4. `demand_forecast_log` (業務預估需求檔)
+  5. `actual_order` (實際訂單檔)
+  6. `inventory_wip_snapshot` (庫存與待驗快照檔)
+  7. `po_in_transit` (在途採購訂單檔)
+  8. `sorting_actual_yield_log` (Sorting 實際良率紀錄檔)
+- `DataTablesView.tsx`、`Navbar.tsx`、`ProcurementWorkbenchView.tsx` 與 `PrdDocView.tsx` 消除所有硬編碼數字，全數改為動態取值 `{tablesMeta.length}`。
+- 重新編譯生成獨立字典手冊 [`docs/PMS_Master_Field_Data_Dictionary.html`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/PMS_Master_Field_Data_Dictionary.html) 與規格書 [`docs/PMS_Data_Dictionary.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/PMS_Data_Dictionary.md)。
+
+**[階段二：LocalStorage 自動去識別化清洗器 (Auto-Sanitizer on Hydration)]**
+- **根因分析 (RCA)**：純前端 LocalStorage 持久化導致先前載入過的舊版快取資料（含 `MDX`、`ICU`、`GEN`）持續覆蓋程式碼中的最新 seedData。
+- **矯正預防 (CAPA)**：於 `App.tsx` 與 `dataExchange.ts` 植入啟動自動清洗器，從瀏覽器快取讀取瞬間自動將舊代碼清洗映射為 `A客戶`、`B客戶`、`通用客戶` 與標準供應商名稱，並立即寫回快取，終結數據鏈斷裂。
+
+**[階段三：全系統介面欄位與互動反饋斷層全盤清查 (Zero-Disconnect UI Audit)]**
+- **What-If 沙盒切換反饋修復**：修復沙盒收合時切換「模擬目標品號」造成的視覺靜止問題，加入**切換時自動展開畫布**與**標題列常駐即時數據膠囊 (Live Mini-Metrics)**。
+- **三向比對看板連動展開**：切換客戶或品號篩選器時自動解鎖展開比對看板。
+- **業務工作台動態維度切換**：消除按鈕硬編碼預設字串，一律動態取用資料庫首筆記錄 (`customerList[0]` / `skuList[0]`)。
+
+---
+
 ### V-20260824-01 (2026-08-24) — 業務核心需求 15 大可驗收目標確立與 Karpathy 軟體工程準則全域植入版
 
 **狀態：** ✅ 穩定發布  
