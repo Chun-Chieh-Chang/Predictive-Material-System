@@ -80,7 +80,6 @@ entries:
       - github-pages
       - deploy
       - progress
-      - false
       - husky
       - mece
     severity: medium
