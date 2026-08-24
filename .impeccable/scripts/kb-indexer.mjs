@@ -283,9 +283,9 @@ function mergeEntries(existing, incoming) {
   if (incoming.root_cause && incoming.root_cause.length > (merged.root_cause?.length || 0)) {
     merged.root_cause = incoming.root_cause;
   }
-  // 若有更新的修復代碼則追加
+  // 若有更新的修復代碼則替換
   if (incoming.fix_code) {
-    merged.fix_code = (merged.fix_code || '') + '\n\n/* --- Updated by ' + incoming.id + ' --- */\n' + incoming.fix_code;
+    merged.fix_code = incoming.fix_code.slice(0, 2000);
   }
   merged.last_used = new Date().toISOString().slice(0, 10);
   return merged;
