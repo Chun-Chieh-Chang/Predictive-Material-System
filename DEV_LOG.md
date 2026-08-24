@@ -1102,7 +1102,44 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 ---
 
-*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-24 V-20260824-32*
+### V-20260824-33 (2026-08-24) — 全專案單一事實來源 (SSOT) 深度盤點與 8 大核心主表架構一致性全面閉環版
+
+**執行人：** Antigravity AI (Wesley Chang @Mouldex)  
+**狀態：** ✅ Complete / Verified  
+**TypeScript 編譯：** 0 錯誤 / 0 警告 (`tsc --noEmit`)  
+**原則落實：** Single Source of Truth (SSOT)、Zero Hardcoding、MECE Architecture Parity、Type-Driven Constraints  
+
+#### 一、問題根因分析 (RCA)
+- **現象**：使用者查閱手冊發現 HTML 手冊導航列出 11 個主檔，工具介面為 8 個頁籤，但介面頂部卻寫著「10 大核心資料庫即時維護中心」，三方數字嚴重矛盾脫節。
+- **根因**：
+  1. 系統演進歷史遺留：早期 11 表概念在實體資料庫收斂為 8 表後，字典檔案 `masterFieldDictionary.ts` 仍殘留未整併的虛擬表 Schema。
+  2. 靜態硬編碼數字：`DataTablesView.tsx`、`Navbar.tsx`、`DataExchangeView.tsx` 與多份文件中手動寫死「10 大」或「7 大」。
+  3. 缺乏自動化一致性核對門禁：型別層、字典層與畫面層未建立強型別綁定。
+
+#### 二、全盤清理與矯正措施 (CAPA)
+1. **單一事實來源 (SSOT) 定錨為「8 大實體核心主檔」**：
+   - 1. 品號主檔 (`item_master`) — 整合標準良率與採購規則
+   - 2. 模具與產能主檔 (`mold_master`)
+   - 3. 產品模具成型 BOM (`product_mold_bom`) — 內嵌色母配比
+   - 4. 業務預估需求檔 (`demand_forecast_log`)
+   - 5. 實際訂單檔 (`actual_order`)
+   - 6. 庫存與待驗快照檔 (`inventory_wip_snapshot`)
+   - 7. 在途採購訂單檔 (`po_in_transit`)
+   - 8. Sorting 實際良率紀錄檔 (`sorting_actual_yield_log`)
+2. **全面消除靜態數字硬編碼 (Zero Hardcoding)**：
+   - [`src/components/DataTablesView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/DataTablesView.tsx)：標題改為 `{tablesMeta.length} 大核心資料庫即時維護中心`。
+   - [`src/components/Navbar.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/Navbar.tsx)：選單標籤標準化為 `資料表維護 (8 大主檔)`。
+   - [`src/components/DataExchangeView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/DataExchangeView.tsx)：所有提示與模擬文字修正為 `8 大主檔`。
+   - [`src/components/ProcurementWorkbenchView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/ProcurementWorkbenchView.tsx)：快捷按鈕網格補齊為完整的 8 大主表（加入 `sorting_actual_yield_log`）。
+   - [`src/components/PrdDocView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/PrdDocView.tsx)：OBJ-04 與 OBJ-15 驗收條款同步更新為 `8 大核心營運主檔`。
+3. **全量手冊與文件 100% 同步**：
+   - 重新編譯發布獨立手冊 [`docs/PMS_Master_Field_Data_Dictionary.html`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/PMS_Master_Field_Data_Dictionary.html)，精準呈現 8 大主檔與 72 個運算欄位。
+   - 同步修正 [`docs/PMS_Data_Dictionary.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/PMS_Data_Dictionary.md) 與 [`README.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/README.md)。
+
+---
+
+*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-24 V-20260824-33*
+
 
 
 

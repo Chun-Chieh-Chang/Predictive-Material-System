@@ -190,7 +190,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         icon: Database,
         defaultTab: 'data_tables',
         tabs: [
-          { id: 'data_tables', label: '10 大主檔維護', subLabel: 'Master Tables', icon: Database },
+          { id: 'data_tables', label: '資料表維護', subLabel: '8 大主檔', icon: Database },
           { id: 'material_class_management', label: '五層物料分類', subLabel: 'Classification', icon: Layers },
           { id: 'data_exchange', label: '資料交換與模擬', subLabel: 'Data & Simulation', icon: FileSpreadsheet },
         ],

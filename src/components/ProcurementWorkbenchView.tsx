@@ -391,7 +391,7 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
         </div>
       </div>
 
-      {/* ── 模組 4: 7 大核心營運主檔快捷樞紐與 Excel 快速匯入匯出 ─────────── */}
+      {/* ── 模組 4: 8 大核心營運主檔快捷樞紐與 Excel 快速匯入匯出 ─────────── */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 gap-3">
           <div className="flex items-center space-x-2.5">
@@ -400,7 +400,7 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
             </div>
             <div>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                7 大核心營運主檔維護與 Excel 快速範本
+                8 大核心營運主檔維護與 Excel 快速範本
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 點選直接進入對應主表在線編輯或批次匯入匯出
@@ -417,8 +417,8 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
           </button>
         </div>
 
-        {/* 7 大主檔快捷按鈕網格 */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mt-4">
+        {/* 8 大主檔快捷按鈕網格 */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 mt-4">
           {[
             { key: 'item_master', name: '料號主檔', count: db.item_master.length, icon: '📦' },
             { key: 'mold_master', name: '模具產能', count: db.mold_master.length, icon: '🔧' },
@@ -427,6 +427,7 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
             { key: 'actual_order', name: '實際訂單', count: db.actual_order.length, icon: '🎯' },
             { key: 'inventory_wip_snapshot', name: '庫存快照', count: db.inventory_wip_snapshot.length, icon: '🏬' },
             { key: 'po_in_transit', name: '在途採購', count: db.po_in_transit.length, icon: '🚢' },
+            { key: 'sorting_actual_yield_log', name: '良率紀錄', count: (db as any).sorting_actual_yield_log?.length ?? 0, icon: '🔬' },
           ].map(tbl => (
             <button
               key={tbl.key}

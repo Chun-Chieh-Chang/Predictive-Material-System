@@ -553,7 +553,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
                 </span>
               </div>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-                排查 10 大主檔外鍵關聯完整性、孤兒數據與無效記錄，並模擬 4 大業務情境。
+                排查 8 大主檔外鍵關聯完整性、孤兒數據與無效記錄，並模擬 4 大業務情境。
               </p>
             </div>
           </div>
@@ -583,7 +583,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
                   <span className="text-xs text-slate-400">/ 100 分</span>
                 </div>
                 <span className="text-[11px] text-slate-400 mt-1 block">
-                  掃描 {simResult.integrityReport.totalRecordsScanned} 筆記錄 (10 大主檔)
+                  掃描 {simResult.integrityReport.totalRecordsScanned} 筆記錄 (8 大主檔)
                 </span>
               </div>
 
@@ -690,7 +690,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
               資料完整性檢驗處於待命狀態
             </div>
             <p className="text-xs text-slate-500 max-w-md mx-auto">
-              點擊上方「⚡ 執行資料完整性與流程模擬」按鈕，系統將自動檢查 10 大主檔外鍵關聯完整性，並模擬 4 大業務情境。
+              點擊上方「⚡ 執行資料完整性與流程模擬」按鈕，系統將自動檢查 8 大主檔外鍵關聯完整性，並模擬 4 大業務情境。
             </p>
           </div>
         )}
@@ -707,7 +707,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-slate-900 dark:text-white">直接貼上 JSON 原始代碼</h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">支援貼上包含 10 大主檔陣列之標準 JSON 物件</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">支援貼上包含 8 大主檔陣列之標準 JSON 物件</p>
                 </div>
               </div>
               <button

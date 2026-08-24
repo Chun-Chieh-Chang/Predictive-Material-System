@@ -528,7 +528,7 @@ const htmlContent = `<!DOCTYPE html>
           Master Table Field Dictionary & Data Pipeline Location Guide · V2.0 3NF Standard
         </p>
       </div>
-      <span class="header-badge">8 大核心主表 · 45 運算欄位</span>
+      <span class="header-badge">${MASTER_TABLE_SCHEMAS.length} 大核心主表 · ${MASTER_TABLE_SCHEMAS.reduce((s, t) => s + t.fields.length, 0)} 運算欄位</span>
     </div>
     <div class="search-box">
       <span class="search-icon">🔍</span>

@@ -416,7 +416,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
             <span className="bg-pms-cobalt-light dark:bg-blue-950 text-pms-cobalt dark:text-blue-400 border border-sky-200 dark:border-blue-800/60 text-sm font-mono font-bold px-2 py-0.5 rounded-md">
               SSOT DATA HUB
             </span>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">10 大核心資料庫即時維護中心</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{tablesMeta.length} 大核心資料庫即時維護中心</h2>
           </div>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             遵循 SSOT 與 MECE 原則 ·

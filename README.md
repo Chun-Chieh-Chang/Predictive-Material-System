@@ -16,7 +16,7 @@
 - **採購時程推算**：依據 Lead Time 自動倒推最晚下單日與倒數提醒，防止因採購交期延誤導致停線斷料。
 - **3 階 MRP 算式透明化**：公式明細展開成品淨缺口、模具單穴耗料克重、安全存量與 MOQ 向上整補完整推導過程。
 - **出貨排程審查**：雙週出貨排程審查看板快速推算「現有庫存 + 在製品 WIP 待驗良品折算」，5 分鐘內完成放行決策。
-- **7 大核心主檔維護**：消除多頭維護，良率標準與採購規則直合於品號主檔，遵循 3NF 關聯式架構。
+- **8 大核心主檔維護**：消除多頭維護，良率標準與採購規則直合於品號主檔，遵循 3NF 關聯式架構。
 
 ---
 
@@ -32,7 +32,7 @@
 | Excel 匯出入 | xlsx (SheetJS) |
 | 資料持久化 | Browser LocalStorage |
 | 佈景主題 | Light / Dark 雙主題（系統偏好 + 手動切換）|
-| 自進化引擎 | Impeccable Gate System + MECE 100% Validator + 14 份 CAPA 知識庫 |
+| 自進化引擎 | Impeccable Gate System + MECE 100% Validator + 15 份 CAPA 知識庫 |
 
 ---
 
@@ -67,19 +67,19 @@ npm run dev
 ├── 🧮 [物料需求運算 MRP Engine]
 │   └── 3 階 MRP 推導 (MrpCalculatorView) — 單品/全品 MRP 推導、計算公式明細、採購排程時間軸與下單倒數
 ├── 🗄️ [資料管理 Data Management]
-│   ├── 資料表維護 (DataTablesView) — 7 大核心主檔 CRUD 與 3 級變更管制（含 FK 影響掃描）
+│   ├── 資料表維護 (DataTablesView) — 8 大核心主檔 CRUD 與 3 級變更管制（含 FK 影響掃描）
 │   ├── 物料分類體系 (MaterialClassManagementView) — RAW/MAT/PART/COMP/SET 樹狀分類管理
 │   └── 資料匯入匯出與模擬 (DataExchangeView) — JSON/Excel 雙向匯出入、資料關聯完整性掃描與流程模擬
 └── ⚙️ [系統設定 System & Settings]
     ├── 參數策略設定 (SystemSettingsView) — 系統參數配置（預警門檻/排程策略/虛擬預扣開關/損耗率天花板）
-    ├── 名詞術語說明 (GlossaryView) — 7 大分類專有名詞檢索 + 主檔案欄位定義庫 (90+ 欄位)
+    ├── 名詞術語說明 (GlossaryView) — 7 大分類專有名詞檢索 + 主檔案欄位定義庫 (65+ 欄位)
     ├── 系統規格與驗收 (PrdDocView) — 15 大核心可驗收目標 (OBJ-01 ~ OBJ-15) 規格與驗收總表
     └── 自動化備份與復原 (BackupSettingsView) — 自動備份排程、恢復備份檔（Admin 模式）
 ```
 
 ---
 
-## 資料模型 — 7 大核心營運主檔 (3NF 高內聚架構)
+## 資料模型 — 8 大核心營運主檔 (3NF 高內聚架構)
 
 | # | 主檔名稱 | 主鍵 | 說明 |
 |---|----------|------|------|
@@ -88,8 +88,9 @@ npm run dev
 | 3 | **產品模具成型 BOM** (`product_mold_bom`) | `sku + mold_id` | 整模克重、流道克重、成型損耗率、**直接內嵌色母/色粉配比** |
 | 4 | **業務預估需求檔** (`demand_forecast_log`) | `demand_id` | 客戶滾動預示量 (Rolling Forecast) 與需求交期 |
 | 5 | **實際訂單檔** (`actual_order`) | `order_id` | 正式客戶合約訂單 (Customer PO)、下單日期與約定交期 |
-| 6 | **庫存與待驗快照檔** (`inventory_wip_snapshot`) | `snapshot_date + sku` | 4F 成品良品在庫、3F Sorting 待驗品、1F 原料可用庫存 |
+| 6 | **庫存與待驗快照檔** (`inventory_wip_snapshot`) | `snapshot_date + sku` | 成品良品在庫、在製品待驗區 (WIP) 待驗品、原料在庫可用庫存 |
 | 7 | **在途採購訂單檔** (`po_in_transit`) | `po_number` | 在途原料採購量、預計到廠日 (ETA) 與在途物流狀態 |
+| 8 | **Sorting 實際良率紀錄檔** (`sorting_actual_yield_log`) | `log_id` | 每日現場檢驗實績動態回饋、批號追溯與實際檢驗良率 |
 
 *附屬檔：`material_classes`（五層物料樹）、`sorting_actual_yield_log`（全檢實際良率歷史軌跡）、`audit_log`（異動審計日誌）。*
 

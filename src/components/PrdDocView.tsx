@@ -49,7 +49,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 - OBJ-01: 三向需求交叉比對看板 | DashboardView | 100% 驗收通過 ✅
 - OBJ-02: 預測波動與偏離示警 | demandAnalysisEngine | 100% 驗收通過 ✅
 - OBJ-03: 最晚採購下單日推算 | MrpCalculatorView (30天時程軸) | 100% 驗收通過 ✅
-- OBJ-04: 7 大核心營運主檔集中單一真相 | DataTablesView, dataExchange | 100% 驗收通過 ✅
+- OBJ-04: 8 大核心營運主檔集中單一真相 | DataTablesView, dataExchange | 100% 驗收通過 ✅
 - OBJ-05: 週二出貨放行審查 | ShipScheduleClearanceView | 100% 驗收通過 ✅
 - OBJ-06: 訂單缺料分析與瓶頸診斷 | OrderTensionTrackerView | 100% 驗收通過 ✅
 - OBJ-07: 標準 3 階 MRP 推導演算法 | mrpEngine, MrpCalculatorView | 100% 驗收通過 ✅
@@ -92,11 +92,11 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
     },
     {
       id: 'OBJ-04',
-      name: '7 大核心營運主檔集中單一真相',
+      name: '8 大核心營運主檔集中單一真相',
       category: '提高資訊集中度 / 消除孤島',
       files: 'DataTablesView.tsx\ndataExchange.ts',
-      summary: '集中管理 7 大核心營運主表 (3NF)，支援 Excel 雙向匯入匯出與防呆驗證',
-      dod: '7 大核心主檔一站式切換瀏覽與在線編輯，支援 Excel 範本匯出與批次匯入',
+      summary: '集中管理 8 大核心營運主表 (3NF)，支援 Excel 雙向匯入匯出與防呆驗證',
+      dod: '8 大核心主檔一站式切換瀏覽與在線編輯，支援 Excel 範本匯出與批次匯入',
       status: '✅ 100% 驗收通過'
     },
     {
@@ -194,7 +194,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
       name: '開放資料契約與全欄位字典',
       category: '保留擴充性 / 系統銜接準備',
       files: 'masterFieldDictionary.ts\nPMS_Data_Dictionary.md\nGlossaryView.tsx',
-      summary: '建立 7 大核心主表 90+ 欄位定義表，內建於術語辭典並發布規格書',
+      summary: '建立 8 大核心主表 65+ 欄位定義表，內建於術語辭典並發布規格書',
       dod: '發布 PMS_Data_Dictionary.md，術語辭典整合 主檔案欄位名稱定義表',
       status: '✅ 100% 驗收通過'
     },
@@ -294,7 +294,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
             }`}
           >
           <ShieldCheck className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-          <span>📚 7 大核心主檔欄位與名詞定義</span>
+          <span>📚 8 大核心主檔欄位與名詞定義</span>
         </button>
 
         <button

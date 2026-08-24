@@ -4,7 +4,7 @@
  *
  * masterFieldDictionary.ts
  * 主檔案全欄位權威業務定義表 (Master Table Full Field Definition Dictionary)
- * 涵蓋系統 8 大核心營運主表 (3NF)、共計 90+ 個欄位之名稱、資料型別、約束條件、白話通俗解說、業務價值、填寫規範、實務示範與詳細解說。
+ * 涵蓋系統 8 大核心營運主表 (3NF)、共計 65+ 個運算欄位之名稱、資料型別、約束條件、白話通俗解說、業務價值、填寫規範、實務示範與詳細解說。
  */
 
 import { GlossaryEntry, MasterFieldDefinition } from './glossaryData';
@@ -17,13 +17,13 @@ export const MASTER_TABLE_SCHEMAS: {
   ownerDepartment: string;
   fields: MasterFieldDefinition[];
 }[] = [
-  // ── 1. item_master (料號基本主檔) ──────────────────────────────────────────
+  // ── 1. item_master (品號主檔 (含良率與採購規則)) ────────────────────────────
   {
     tableKey: 'item_master',
-    tableLabel: '料號基本主檔 (Item Master)',
+    tableLabel: '品號主檔 (含良率/採購規則) (Item Master)',
     categoryIcon: '🌿',
-    description: '全廠所有塑膠原料、色母、包材、單品射出零件、組裝組件與出貨成品的唯一身分證檔案。',
-    ownerDepartment: '研發部 / 生管部',
+    description: '全廠所有塑膠原料、色母、包材、單品射出零件、組裝組件與出貨成品的唯一身分證檔案，並整合標準檢驗良率與採購交期參數。',
+    ownerDepartment: '資材(生管) / 研發部',
     fields: [
       {
         fieldKey: 'sku',
@@ -144,6 +144,81 @@ export const MASTER_TABLE_SCHEMAS: {
         example: '醫療級透明 MABS 樹脂，符合 USP Class VI 認證，原廠包裝 25KG/包',
         exampleExplanation: '清楚說明該塑料的醫療級別與包裝方式，採購收料驗收時可作為核對包裝與標籤之依據。',
         mrpImpact: '純資訊顯示，不影響數學公式運算。'
+      },
+      {
+        fieldKey: 'std_sorting_yield',
+        fieldLabel: '標準全檢良率 (Std Sorting Yield)',
+        tableName: 'yield_master',
+        tableLabel: 'Sorting良率標準檔',
+        dataType: 'number (FLOAT 0.01~1.0)',
+        constraint: 'Required',
+        plainDefinition: '「品檢人員在做 100% 全檢時，每 100 顆裡面預計有幾顆是合格的良品」。例如填 0.98 代表預期有 98% 是好的，有 2% 是黑點毛邊不良品。',
+        definition: '製造產出之毛品經品管全檢後預期的合格良品比率（如 0.98 代表 98%）。',
+        businessPurpose: '讓系統在計算在製品 (WIP) 待驗半品時，把不良品扣掉，只把真正能用的良品算進庫存。',
+        fillGuide: '必填。以小數點表示（如 0.98 代表 98%）。嚴禁填寫整數 98 或百分比符號。',
+        example: '0.98',
+        exampleExplanation: '代表該製品在品檢全檢時歷史平均良率為 98%。若現有 1,000 PCS 待驗品，系統只會認定有 980 PCS 為可用良品。',
+        mrpImpact: '第 1 階有效 WIP 折算公式：有效待驗良品 = WIP 待驗數量 × 標準全檢良率。'
+      },
+      {
+        fieldKey: 'supplier_name',
+        fieldLabel: '供應商名稱 (Supplier Name)',
+        tableName: 'supplier_rule_master',
+        tableLabel: '採購與供應商規則檔',
+        dataType: 'string (VARCHAR 100)',
+        constraint: 'Required',
+        plainDefinition: '「這項原料是向哪一家廠商或代理商買的」。',
+        definition: '供應該項原料之原廠石化商或代理商名稱。',
+        businessPurpose: '採購發單對象、廠商評鑑與交期追蹤。',
+        fillGuide: '必填。填寫廠商全名（如 INEOS Styrolution, A供應商, 台塑石化）。',
+        example: 'INEOS Styrolution (英力士苯領)',
+        exampleExplanation: '代表該醫療級 MABS 塑料係直接向德國原廠英力士苯領採購。',
+        mrpImpact: '顯示於採購建議單與在途 PO 供應商欄位。'
+      },
+      {
+        fieldKey: 'lead_time_days',
+        fieldLabel: '採購交期天數 (Lead Time Days)',
+        tableName: 'supplier_rule_master',
+        tableLabel: '採購與供應商規則檔',
+        dataType: 'number (INTEGER ≥ 1)',
+        constraint: 'Required',
+        plainDefinition: '「從採購發訂單給廠商，到原料真正運進我們廠裡可以開始用的總天數」。包含廠商生產、船期海運、報關檢驗的時間。',
+        definition: '發出採購單 (PO) 至貨物抵廠驗收完成之總前置天數。',
+        businessPurpose: '前瞻防斷料的最重要參數！系統會拿客戶交期扣掉這個天數，告訴採購「最晚哪一天一定要下單」。',
+        fillGuide: '必填。正整數天數。進口料通常為 60~120 天，本土料通常為 7~14 天。',
+        example: '90',
+        exampleExplanation: '自歐洲船運進口需 90 天（含原廠備貨 15天 + 海運 60天 + 報關入庫 15天）。若客戶 11/20 要貨，最晚 8/22 就必須向廠商下單。',
+        mrpImpact: '推算最晚採購下單日公式：最晚下單發單日 = 客戶交期 - 採購交期天數 (Lead Time)。'
+      },
+      {
+        fieldKey: 'moq_kg',
+        fieldLabel: '最小起訂量 KG (MOQ)',
+        tableName: 'supplier_rule_master',
+        tableLabel: '採購與供應商規則檔',
+        dataType: 'number (FLOAT > 0)',
+        constraint: 'Required',
+        plainDefinition: '「廠商規定一次最少一定要買多少公斤」。就算我們只缺 30 公斤，廠商規定一次最少要買 500 公斤，我們就必須買 500 公斤。',
+        definition: '供應商單筆採購最小起訂整補門檻 (KG)。',
+        businessPurpose: '系統自動將計算出來的微小缺口向上整補到廠商要求的最小倍數，符合商業採購合約。',
+        fillGuide: '必填。正數（如 500.0, 1000.0, 25.0）。依供應商報價合約填寫。',
+        example: '500.0',
+        exampleExplanation: '原廠規定單次採購至少需訂購 1 個棧板（20 包 × 25KG = 500KG）。若系統算得缺口為 79.6KG，會自動整補建議下單 500KG。',
+        mrpImpact: '建議採購量公式：建議下單量 = CEILING(原料淨缺口 ÷ MOQ) × MOQ。'
+      },
+      {
+        fieldKey: 'safety_stock_kg',
+        fieldLabel: '安全庫存量 KG (Safety Stock)',
+        tableName: 'supplier_rule_master',
+        tableLabel: '採購與供應商規則檔',
+        dataType: 'number (FLOAT ≥ 0)',
+        constraint: 'Required',
+        plainDefinition: '「倉庫裡平時最少要保留多少公斤的原料當作緊急保險庫存」。用來防範船期延誤、塞港或客戶臨時緊急插單。',
+        definition: '為防範供應鏈波動或緊急插單所設定之常備緩衝存量 (KG)。',
+        businessPurpose: '建立防斷料安全緩衝防線。',
+        fillGuide: '必填。正數（如 200.0）。若無安全庫存請填 0。建議抓 2 週平均消耗量。',
+        example: '200.0',
+        exampleExplanation: '常備 200 公斤（約 8 包）作為安全庫存。當庫存低於 200KG 時系統即觸發備料警戒。',
+        mrpImpact: '原料淨缺口計算公式：原料淨缺口 = 毛需求 - (在手庫存 + 在途PO) + 安全庫存量。'
       }
     ]
   },
@@ -154,7 +229,7 @@ export const MASTER_TABLE_SCHEMAS: {
     tableLabel: '模具與產能主檔 (Mold Master)',
     categoryIcon: '⚙️',
     description: '射出成型模具之鋼模編號、原始設計穴數、現場可用穴數、成型秒數與理論產能參數檔。',
-    ownerDepartment: '模具課 / 製造部',
+    ownerDepartment: '製造部 / 模具課',
     fields: [
       {
         fieldKey: 'mold_id',
@@ -294,13 +369,13 @@ export const MASTER_TABLE_SCHEMAS: {
     ]
   },
 
-  // ── 3. product_mold_bom (產品模具成型關聯檔) ──────────────────────────────────
+  // ── 3. product_mold_bom (產品模具成型關聯檔) ────────────────────────────────
   {
     tableKey: 'product_mold_bom',
     tableLabel: '產品模具成型關聯檔 (Product-Mold BOM)',
     categoryIcon: '🧬',
-    description: '製品品號、射出模具與原料品號之配對檔，記錄整模重量、流道廢料重量與成型損耗率。',
-    ownerDepartment: '研發工程部 / 生管部',
+    description: '定義品號成型所使用的模具編號、原料料號、單模總重、流道廢料重、成型損耗率與色母配比。',
+    ownerDepartment: '工程研發部 / 生管部',
     fields: [
       {
         fieldKey: 'sku',
@@ -485,199 +560,12 @@ export const MASTER_TABLE_SCHEMAS: {
     ]
   },
 
-  // ── 4. yield_master (Sorting良率標準檔) ──────────────────────────────────────
-  {
-    tableKey: 'yield_master',
-    tableLabel: 'Sorting良率標準檔 (Yield Master)',
-    categoryIcon: '🎯',
-    description: '品檢全檢站 (Sorting) 之歷史檢驗合格良率標準檔，決定在製品折算良品之比率。',
-    ownerDepartment: '品保部 / 製造部',
-    fields: [
-      {
-        fieldKey: 'sku',
-        fieldLabel: '品號 (SKU)',
-        tableName: 'yield_master',
-        tableLabel: 'Sorting良率標準檔',
-        dataType: 'string (VARCHAR 50)',
-        constraint: 'PK/FK',
-        plainDefinition: '「要設定全檢良率的製品料號」。',
-        definition: '適用該全檢良率之成品或零件料號（限定 PART/COMP/SET 類別）。',
-        businessPurpose: '品檢標準良率之品號索引。',
-        fillGuide: '必填。必須先在 item_master 建檔，從下拉選單選擇。',
-        example: 'A01-200-131',
-        exampleExplanation: '指定 A01-200-131 T 接頭成品之品管全檢標準良率。',
-        mrpImpact: '關聯第 1 階 WIP 待驗品良品折算與實際缺口推算。'
-      },
-      {
-        fieldKey: 'std_sorting_yield',
-        fieldLabel: '標準全檢良率 (Std Sorting Yield)',
-        tableName: 'yield_master',
-        tableLabel: 'Sorting良率標準檔',
-        dataType: 'number (FLOAT 0.01~1.0)',
-        constraint: 'Required',
-        plainDefinition: '「品檢人員在做 100% 全檢時，每 100 顆裡面預計有幾顆是合格的良品」。例如填 0.98 代表預期有 98% 是好的，有 2% 是黑點毛邊不良品。',
-        definition: '製造產出之毛品經品管全檢後預期的合格良品比率（如 0.98 代表 98%）。',
-        businessPurpose: '讓系統在計算在製品 (WIP) 待驗半品時，把不良品扣掉，只把真正能用的良品算進庫存。',
-        fillGuide: '必填。以小數點表示（如 0.98 代表 98%）。嚴禁填寫整數 98 或百分比符號。',
-        example: '0.98',
-        exampleExplanation: '代表該製品在品檢全檢時歷史平均良率為 98%。若現有 1,000 PCS 待驗品，系統只會認定有 980 PCS 為可用良品。',
-        mrpImpact: '第 1 階有效 WIP 折算公式：有效待驗良品 = WIP 待驗數量 × 標準全檢良率。'
-      },
-      {
-        fieldKey: 'notes',
-        fieldLabel: '備註說明 (Notes)',
-        tableName: 'yield_master',
-        tableLabel: 'Sorting良率標準檔',
-        dataType: 'string | null',
-        constraint: 'Optional',
-        plainDefinition: '「品檢全檢時要特別注意看什麼地方」。例如透明件要看有沒有黑點、氣泡或毛邊。',
-        definition: '檢驗注意事項、重點疵點（如毛邊、黑點、縮水）說明。',
-        businessPurpose: '提醒品檢主管與品管員檢驗重點，提升檢驗一致性。',
-        fillGuide: '選填。填寫檢驗重點（如 透明件重點檢驗黑點與頂針白化）。',
-        example: '透明件重點檢驗黑點與頂針白化，每 2 小時巡檢一次',
-        exampleExplanation: '明確提示全檢作業員此料號主要瑕疵為黑點，需在強光燈下加強篩檢。',
-        mrpImpact: '純品檢備註，不影響數值計算。'
-      }
-    ]
-  },
-
-  // ── 5. supplier_rule_master (採購與供應商規則檔) ────────────────────────────
-  {
-    tableKey: 'supplier_rule_master',
-    tableLabel: '採購與供應商規則檔 (Supplier Rule Master)',
-    categoryIcon: '🚢',
-    description: '原料採購交期 (Lead Time)、最小起訂量 (MOQ)、安全庫存量、倉容上限與單價檔。',
-    ownerDepartment: '採購部 / 倉管課',
-    fields: [
-      {
-        fieldKey: 'rm_sku',
-        fieldLabel: '原料品號 (Raw Material SKU)',
-        tableName: 'supplier_rule_master',
-        tableLabel: '採購與供應商規則檔',
-        dataType: 'string (VARCHAR 50)',
-        constraint: 'PK/FK',
-        plainDefinition: '「要設定採購規則的原料品號」。這條規則是針對哪一種塑膠粒或色料。',
-        definition: '適用該採購規則之原料品號（嚴格限定為 RAW 類物料）。',
-        businessPurpose: '採購規則之唯一原料索引鍵。',
-        fillGuide: '必填。必須先在 item_master 建檔且分類為 RAW，從下拉選單選擇。',
-        example: 'TERLUX 2802',
-        exampleExplanation: '設定進口原料 TERLUX 2802 之採購前置天數、最小起訂量與安全庫存。',
-        mrpImpact: 'MRP 第 3 階採購下單日與訂購整補之對應原料主鍵。'
-      },
-      {
-        fieldKey: 'supplier_name',
-        fieldLabel: '供應商名稱 (Supplier Name)',
-        tableName: 'supplier_rule_master',
-        tableLabel: '採購與供應商規則檔',
-        dataType: 'string (VARCHAR 100)',
-        constraint: 'Required',
-        plainDefinition: '「這項原料是向哪一家廠商或代理商買的」。',
-        definition: '供應該項原料之原廠石化商或代理商名稱。',
-        businessPurpose: '採購發單對象、廠商評鑑與交期追蹤。',
-        fillGuide: '必填。填寫廠商全名（如 INEOS Styrolution, A供應商, 台塑石化）。',
-        example: 'INEOS Styrolution (英力士苯領)',
-        exampleExplanation: '代表該醫療級 MABS 塑料係直接向德國原廠英力士苯領採購。',
-        mrpImpact: '顯示於採購建議單與在途 PO 供應商欄位。'
-      },
-      {
-        fieldKey: 'lead_time_days',
-        fieldLabel: '採購交期天數 (Lead Time Days)',
-        tableName: 'supplier_rule_master',
-        tableLabel: '採購與供應商規則檔',
-        dataType: 'number (INTEGER ≥ 1)',
-        constraint: 'Required',
-        plainDefinition: '「從採購發訂單給廠商，到原料真正運進我們廠裡可以開始用的總天數」。包含廠商生產、船期海運、報關檢驗的時間。',
-        definition: '發出採購單 (PO) 至貨物抵廠驗收完成之總前置天數。',
-        businessPurpose: '前瞻防斷料的最重要參數！系統會拿客戶交期扣掉這個天數，告訴採購「最晚哪一天一定要下單」。',
-        fillGuide: '必填。正整數天數。進口料通常為 60~120 天，本土料通常為 7~14 天。',
-        example: '90',
-        exampleExplanation: '自歐洲船運進口需 90 天（含原廠備貨 15天 + 海運 60天 + 報關入庫 15天）。若客戶 11/20 要貨，最晚 8/22 就必須向廠商下單。',
-        mrpImpact: '推算最晚採購下單日公式：最晚下單發單日 = 客戶交期 - 採購交期天數 (Lead Time)。'
-      },
-      {
-        fieldKey: 'moq_kg',
-        fieldLabel: '最小起訂量 KG (MOQ)',
-        tableName: 'supplier_rule_master',
-        tableLabel: '採購與供應商規則檔',
-        dataType: 'number (FLOAT > 0)',
-        constraint: 'Required',
-        plainDefinition: '「廠商規定一次最少一定要買多少公斤」。就算我們只缺 30 公斤，廠商規定一次最少要買 500 公斤，我們就必須買 500 公斤。',
-        definition: '供應商單筆採購最小起訂整補門檻 (KG)。',
-        businessPurpose: '系統自動將計算出來的微小缺口向上整補到廠商要求的最小倍數，符合商業採購合約。',
-        fillGuide: '必填。正數（如 500.0, 1000.0, 25.0）。依供應商報價合約填寫。',
-        example: '500.0',
-        exampleExplanation: '原廠規定單次採購至少需訂購 1 個棧板（20 包 × 25KG = 500KG）。若系統算得缺口為 79.6KG，會自動整補建議下單 500KG。',
-        mrpImpact: '建議採購量公式：建議下單量 = CEILING(原料淨缺口 ÷ MOQ) × MOQ。'
-      },
-      {
-        fieldKey: 'safety_stock_kg',
-        fieldLabel: '安全庫存量 KG (Safety Stock)',
-        tableName: 'supplier_rule_master',
-        tableLabel: '採購與供應商規則檔',
-        dataType: 'number (FLOAT ≥ 0)',
-        constraint: 'Required',
-        plainDefinition: '「倉庫裡平時最少要保留多少公斤的原料當作緊急保險庫存」。用來防範船期延誤、塞港或客戶臨時緊急插單。',
-        definition: '為防範供應鏈波動或緊急插單所設定之常備緩衝存量 (KG)。',
-        businessPurpose: '建立防斷料安全緩衝防線。',
-        fillGuide: '必填。正數（如 200.0）。若無安全庫存請填 0。建議抓 2 週平均消耗量。',
-        example: '200.0',
-        exampleExplanation: '常備 200 公斤（約 8 包）作為安全庫存。當庫存低於 200KG 時系統即觸發備料警戒。',
-        mrpImpact: '原料淨缺口計算公式：原料淨缺口 = 毛需求 - (在手庫存 + 在途PO) + 安全庫存量。'
-      },
-      {
-        fieldKey: 'max_storage_capacity_kg',
-        fieldLabel: '實體倉容上限 KG (Max Storage Capacity)',
-        tableName: 'supplier_rule_master',
-        tableLabel: '採購與供應商規則檔',
-        dataType: 'number (FLOAT) | null',
-        constraint: 'Optional',
-        plainDefinition: '「原料倉庫針對這個原料，空間最多能放多少公斤」。防止採購一口氣買太多把倉庫塞爆。',
-        definition: '原料倉庫該品項最大實體容納重量 (KG)。',
-        businessPurpose: '防爆倉警示：防止過度備料導致走道堵塞、消防違規或原料過期呆滯。',
-        fillGuide: '選填。填寫公斤數（如 5000.0）。若無空間限制可留空。',
-        example: '5000.0',
-        exampleExplanation: '原料倉庫 A 區架位最大只能容納 10 個棧板（5,000 KG）。若進貨累積超過 5,000 KG 系統會發出爆倉警戒。',
-        mrpImpact: '觸發「超備/倉容超限警示 (Overstock Risk)」。'
-      },
-      {
-        fieldKey: 'unit_price_usd',
-        fieldLabel: '預估單價 USD (Unit Price USD)',
-        tableName: 'supplier_rule_master',
-        tableLabel: '採購與供應商規則檔',
-        dataType: 'number (FLOAT) | null',
-        constraint: 'Optional',
-        plainDefinition: '「國外進口原料每公斤多少美元」。用來估算要準備多少採購資金。',
-        definition: '外幣進口原料每公斤原廠報價美元單價。',
-        businessPurpose: '計算備料採購總金額、外匯準備與產品原料成本結構。',
-        fillGuide: '選填。美元小數（如 3.85 代表 3.85 USD/KG）。本土料可留空。',
-        example: '3.85',
-        exampleExplanation: '每公斤進口報價 3.85 美元。若建議採購 500KG，預估採購金額為 1,925 美元。',
-        mrpImpact: '採購建議單金額估算：預估採購金額 = 建議下單量 × 單價。'
-      },
-      {
-        fieldKey: 'unit_price_twd',
-        fieldLabel: '預估單價 TWD (Unit Price TWD)',
-        tableName: 'supplier_rule_master',
-        tableLabel: '採購與供應商規則檔',
-        dataType: 'number (FLOAT) | null',
-        constraint: 'Optional',
-        plainDefinition: '「國內原料每公斤多少台幣」。',
-        definition: '本土原料或台幣結算每公斤基準採購單價。',
-        businessPurpose: '台幣採購成本核算與請款依據。',
-        fillGuide: '選填。台幣金額（如 125.0 代表 125 元/KG）。',
-        example: '125.00',
-        exampleExplanation: '本土色母每公斤 125 元新台幣。',
-        mrpImpact: '台幣採購預算核算。'
-      }
-    ]
-  },
-
-  // ── 6. demand_forecast_log (業務預估需求檔) ──────────────────────────────────
+  // ── 4. demand_forecast_log (業務預估需求檔) ──────────────────────────────────
   {
     tableKey: 'demand_forecast_log',
     tableLabel: '業務預估需求檔 (Demand Forecast Log)',
     categoryIcon: '📈',
-    description: '業務部定期由客戶取得之滾動預示量 (Rolling Forecast) 版本歷史記錄檔。',
+    description: '記錄客戶滾動提供的未來需求預測 (Rolling Forecast)，支援版本追蹤 (Version Tracking) 與預測偏差分析。',
     ownerDepartment: '業務部',
     fields: [
       {
@@ -818,12 +706,12 @@ export const MASTER_TABLE_SCHEMAS: {
     ]
   },
 
-  // ── 7. actual_order (實際訂單檔) ───────────────────────────────────────────
+  // ── 5. actual_order (實際訂單檔) ───────────────────────────────────────────
   {
     tableKey: 'actual_order',
-    tableLabel: '實際訂單檔 (Actual Order)',
-    categoryIcon: '📝',
-    description: '客戶正式簽署合約、正式下達之確認採購訂單 (Confirmed Purchase Order)。',
+    tableLabel: '實際訂單檔 (Actual Orders)',
+    categoryIcon: '📄',
+    description: '客戶正式下達的採購訂單 (Customer PO)，包含約定交期、訂單數量與生產結案狀態。',
     ownerDepartment: '業務部',
     fields: [
       {
@@ -934,13 +822,13 @@ export const MASTER_TABLE_SCHEMAS: {
     ]
   },
 
-  // ── 8. inventory_wip_snapshot (庫存與待驗快照檔) ───────────────────────────
+  // ── 6. inventory_wip_snapshot (庫存與待驗快照檔) ───────────────────────────
   {
     tableKey: 'inventory_wip_snapshot',
     tableLabel: '庫存與待驗快照檔 (Inventory & WIP Snapshot)',
     categoryIcon: '📦',
-    description: '記錄成品良品現貨、在製品 (WIP) 待全檢半品與原料實體可用庫存快照。',
-    ownerDepartment: '倉管課 / 品保部',
+    description: '每日/即時庫存現況，精準區分「成品良品在庫」、「在製品待驗區 (WIP)」與「原料在庫」。',
+    ownerDepartment: '資材(生管)',
     fields: [
       {
         fieldKey: 'snapshot_date',
@@ -1020,13 +908,13 @@ export const MASTER_TABLE_SCHEMAS: {
     ]
   },
 
-  // ── 9. po_in_transit (在途採購訂單檔) ───────────────────────────────────────
+  // ── 7. po_in_transit (在途採購訂單檔) ───────────────────────────────────────
   {
     tableKey: 'po_in_transit',
     tableLabel: '在途採購訂單檔 (PO In-Transit)',
-    categoryIcon: '🚛',
-    description: '我方已向原料廠商開立採購單、目前在公海航運、清關或在途之原料訂單檔。',
-    ownerDepartment: '採購部 / 國貿課',
+    categoryIcon: '🚚',
+    description: '已向供應商下達但尚未到廠驗收入庫的在途採購單，記錄預計到廠日 (ETA) 與物流狀態。',
+    ownerDepartment: '資材(生管) / 採購',
     fields: [
       {
         fieldKey: 'po_number',
@@ -1151,13 +1039,13 @@ export const MASTER_TABLE_SCHEMAS: {
     ]
   },
 
-  // ── 10. sorting_actual_yield_log (Sorting 實際良率紀錄檔) ───────────────────
+  // ── 8. sorting_actual_yield_log (Sorting 實際良率紀錄檔) ───────────────────
   {
     tableKey: 'sorting_actual_yield_log',
-    tableLabel: 'Sorting 實際良率紀錄檔 (Sorting Actual Yield Log)',
+    tableLabel: 'Sorting 實際良率紀錄檔 (Sorting Yield Log)',
     categoryIcon: '🔬',
-    description: '記錄品檢現場每批次全檢數量、合格數量與動態良率反饋閉環。',
-    ownerDepartment: '品管部',
+    description: '每日在製品全檢日報數據，記錄全檢數量、合格良品數量與實際檢驗良率，提供動態閉環反饋。',
+    ownerDepartment: '製造部 / 品管課',
     fields: [
       {
         fieldKey: 'log_id',
@@ -1295,340 +1183,124 @@ export const MASTER_TABLE_SCHEMAS: {
         mrpImpact: '純品質改善記錄。'
       }
     ]
-  },
-
-  // ── 11. color_mixing_log (色母/色粉混合製程紀錄檔) ───────────────────────────
-  {
-    tableKey: 'color_mixing_log',
-    tableLabel: '色母/色粉混合製程紀錄檔 (Color Mixing Log)',
-    categoryIcon: '🎨',
-    description: '記錄現場配色、基礎塑料樹脂與色母/色粉精確投料重量與實際配比。',
-    ownerDepartment: '製造部 / 調料組',
-    fields: [
-      {
-        fieldKey: 'mix_log_id',
-        fieldLabel: '混料紀錄編號 (Mix Log ID)',
-        tableName: 'color_mixing_log',
-        tableLabel: '色母/色粉混合製程紀錄檔',
-        dataType: 'string (VARCHAR 40)',
-        constraint: 'PK',
-        plainDefinition: '「現場每一次調料拌料的流水紀錄號碼」。',
-        definition: '混料批次之唯一系統記錄代號。',
-        businessPurpose: '現場調料桶配方履歷唯一主鍵。',
-        fillGuide: '必填。系統自動編號（如 MIX-20260824-001）。',
-        example: 'MIX-20260824-001',
-        exampleExplanation: '2026年8月24日第 1 桶調料混合紀錄。',
-        mrpImpact: '配色批次追溯唯一主鍵。'
-      },
-      {
-        fieldKey: 'batch_no',
-        fieldLabel: '混料批次號 (Mixing Batch No)',
-        tableName: 'color_mixing_log',
-        tableLabel: '色母/色粉混合製程紀錄檔',
-        dataType: 'string (VARCHAR 30)',
-        constraint: 'Required',
-        plainDefinition: '「貼在現場混料桶或乾燥桶上面的大張標籤批號」。現場師傅看這個標籤推桶子去機台。',
-        definition: '現場混料桶或乾燥桶之批次編號。',
-        businessPurpose: '現場實體桶位防呆，防止射出機抓錯料桶倒錯顏色。',
-        fillGuide: '必填。填寫料桶批號（如 MIX-LOT-0824-A）。',
-        example: 'MIX-LOT-0824-A',
-        exampleExplanation: '調料組 8/24 早班 A 號乾燥桶混料批次。',
-        mrpImpact: '現場實體物料追溯。'
-      },
-      {
-        fieldKey: 'mixing_date',
-        fieldLabel: '混合日期 (Mixing Date)',
-        tableName: 'color_mixing_log',
-        tableLabel: '色母/色粉混合製程紀錄檔',
-        dataType: 'string (DATE YYYY-MM-DD)',
-        constraint: 'Required',
-        plainDefinition: '「現場是在哪一天把塑膠粒跟色料倒進攪拌機拌料的」。',
-        definition: '現場執行攪拌混料之日期。',
-        businessPurpose: '計算混料後烘料時間（烘料不可超過 48 小時防止塑料脆化）。',
-        fillGuide: '必填。日期格式 YYYY-MM-DD（如 2026-08-24）。',
-        example: '2026-08-24',
-        exampleExplanation: '2026 年 8 月 24 日完成稱重混料。',
-        mrpImpact: '混料庫存時效追蹤。'
-      },
-      {
-        fieldKey: 'operator_id',
-        fieldLabel: '混合作業員代碼 (Operator ID)',
-        tableName: 'color_mixing_log',
-        tableLabel: '色母/色粉混合製程紀錄檔',
-        dataType: 'string (VARCHAR 30)',
-        constraint: 'Required',
-        plainDefinition: '「現場負責稱重倒料、操作攪拌機的師傅工號」。',
-        definition: '執行稱重與混料之技術員代號。',
-        businessPurpose: '配料防呆與責任簽核，確保依照標準秤量比例投料。',
-        fillGuide: '必填。作業員帳號（如 op_mixer_01）。',
-        example: 'op_mixer_01',
-        exampleExplanation: '調料組資深拌料技術員。',
-        mrpImpact: '純簽核審計追溯。'
-      },
-      {
-        fieldKey: 'base_resin_sku',
-        fieldLabel: '基礎樹脂品號 (Base Resin SKU)',
-        tableName: 'color_mixing_log',
-        tableLabel: '色母/色粉混合製程紀錄檔',
-        dataType: 'string (VARCHAR 50)',
-        constraint: 'FK',
-        plainDefinition: '「這桶料裡面倒進去的主要透明或本色塑膠粒料號」。',
-        definition: '所投入之透明或本色原料塑料顆粒料號（限 RAW 類物料）。',
-        businessPurpose: '扣減基礎塑料在手庫存。',
-        fillGuide: '必填。必須先在 item_master 建檔且分類為 RAW，從下拉選單選擇。',
-        example: 'TERLUX 2802',
-        exampleExplanation: '使用透明 MABS 塑料 TERLUX 2802 作為基礎基底。',
-        mrpImpact: '依據投入重量實時扣減原料庫存。'
-      },
-      {
-        fieldKey: 'base_resin_kg',
-        fieldLabel: '基礎樹脂用量 KG (Base Resin KG)',
-        tableName: 'color_mixing_log',
-        tableLabel: '色母/色粉混合製程紀錄檔',
-        dataType: 'number (FLOAT > 0)',
-        constraint: 'Required',
-        plainDefinition: '「這桶料實際倒進去了幾公斤的塑膠本料」。例如倒了 4 包整包，共 100 公斤。',
-        definition: '該桶混料實際投入之塑料顆粒重量 (KG)。',
-        businessPurpose: '計算配色比例的分母。',
-        fillGuide: '必填。正數公斤（如 100.0）。以地磅實秤為準。',
-        example: '100.0',
-        exampleExplanation: '投入 4 包 25KG 塑膠粒，合計 100.0 KG。',
-        mrpImpact: '扣減原料庫存 100.0 KG。'
-      },
-      {
-        fieldKey: 'colorant_sku',
-        fieldLabel: '色母/色粉品號 (Colorant SKU)',
-        tableName: 'color_mixing_log',
-        tableLabel: '色母/色粉混合製程紀錄檔',
-        dataType: 'string (VARCHAR 50)',
-        constraint: 'FK',
-        plainDefinition: '「這桶料裡面加入的色母粒或色粉的料號」。',
-        definition: '所投入之色母 (CB-) 或色粉 (CP-) 料號（限 RAW 類物料）。',
-        businessPurpose: '扣減色母色粉庫存。',
-        fillGuide: '必填。必須先在 item_master 建檔且分類為 RAW，從下拉選單選擇。',
-        example: 'CB-BLUE-01',
-        exampleExplanation: '投入天藍色母 CB-BLUE-01。',
-        mrpImpact: '扣減色料庫存。'
-      },
-      {
-        fieldKey: 'colorant_kg',
-        fieldLabel: '色母/色粉用量 KG (Colorant KG)',
-        tableName: 'color_mixing_log',
-        tableLabel: '色母/色粉混合製程紀錄檔',
-        dataType: 'number (FLOAT > 0)',
-        constraint: 'Required',
-        plainDefinition: '「這桶料用電子天平秤了幾公斤的色料倒進去」。',
-        definition: '該桶混料精確電子秤投入之色料重量 (KG)。',
-        businessPurpose: '確保顏色濃度符合客戶色票標準，防止顏色太淡或太深整批報廢。',
-        fillGuide: '必填。正數公斤（如 3.000）。需使用精確電子秤秤重。',
-        example: '3.000',
-        exampleExplanation: '電子秤精確稱量 3.000 公斤色母投入攪拌桶。',
-        mrpImpact: '扣減色母庫存 3.000 KG。'
-      },
-      {
-        fieldKey: 'mixing_ratio_pct',
-        fieldLabel: '實際混合配比 % (Actual Mixing Ratio)',
-        tableName: 'color_mixing_log',
-        tableLabel: '色母/色粉混合製程紀錄檔',
-        dataType: 'number (FLOAT)',
-        constraint: 'Computed',
-        plainDefinition: '「這桶料實際做出來的色料比例是百分之幾」。系統自動算：(色料重量 ÷ 塑膠本料重量) × 100%。',
-        definition: '系統動態計算：(色料用量 ÷ 基礎樹脂用量) × 100%。實際添加百分比。',
-        businessPurpose: '比對 BOM 標準配比（如 3.0%），若偏差超過 ±0.2% 系統會跳出配比異常警報。',
-        fillGuide: '唯讀欄位（系統自動計算）。',
-        example: '3.00',
-        exampleExplanation: '(3.000 ÷ 100.0) × 100% = 3.00%，完全符合標準配比 3.0%。',
-        mrpImpact: '品質配方防呆驗證。'
-      },
-      {
-        fieldKey: 'total_batch_kg',
-        fieldLabel: '混合總重量 KG (Total Batch Weight)',
-        tableName: 'color_mixing_log',
-        tableLabel: '色母/色粉混合製程紀錄檔',
-        dataType: 'number (FLOAT)',
-        constraint: 'Computed',
-        plainDefinition: '「塑膠本料加上色料之後，整桶混合料總共幾公斤」。系統自動相加。',
-        definition: '系統動態計算：基礎樹脂重量 + 色料重量。該桶混合後可供成型使用之總料重。',
-        businessPurpose: '現場領料與烘料桶容量防呆。',
-        fillGuide: '唯讀欄位（系統自動計算）。',
-        example: '103.00',
-        exampleExplanation: '100.0 KG 樹脂 + 3.0 KG 色母 = 整桶總料重 103.00 KG。',
-        mrpImpact: '現場可生產總克重基準。'
-      },
-      {
-        fieldKey: 'mold_id',
-        fieldLabel: '成型模具編號 (Mold ID)',
-        tableName: 'color_mixing_log',
-        tableLabel: '色母/色粉混合製程紀錄檔',
-        dataType: 'string | null',
-        constraint: 'Optional',
-        plainDefinition: '「這桶料拌好之後，準備推去給哪一副模具生產」。',
-        definition: '該批混料預計供應之成型模具代號。',
-        businessPurpose: '指定料桶發料去向，防止推錯機台。',
-        fillGuide: '選填。從 mold_master 下拉選單選擇（如 MI17193）。',
-        example: 'MI17193',
-        exampleExplanation: '預計供應給 MI17193 模具在 Line-A 產線射出。',
-        mrpImpact: '關聯產線發料。'
-      },
-      {
-        fieldKey: 'sku',
-        fieldLabel: '對應製品品號 (SKU)',
-        tableName: 'color_mixing_log',
-        tableLabel: '色母/色粉混合製程紀錄檔',
-        dataType: 'string | null',
-        constraint: 'Optional',
-        plainDefinition: '「這桶料是為了做哪一個產品而拌的」。',
-        definition: '該批混料預計生產之成品料號。',
-        businessPurpose: '製品專用料標籤追溯。',
-        fillGuide: '選填。從 item_master 下拉選單選擇（如 A01-200-131）。',
-        example: 'A01-200-131',
-        exampleExplanation: '生產 A01-200-131 T 接頭專用料。',
-        mrpImpact: '工單發料對應。'
-      },
-      {
-        fieldKey: 'process_tag',
-        fieldLabel: '混料工藝標籤 (Process Tag)',
-        tableName: 'color_mixing_log',
-        tableLabel: '色母/色粉混合製程紀錄檔',
-        dataType: 'enum (mixed | pre_mix | direct)',
-        constraint: 'Required',
-        plainDefinition: '「這批料是用哪種方式加色料的」。mixed(在桶子裡先全部拌均勻)、pre_mix(少量先預拌做樣品)、direct(直接在射出機料斗上用自動滴注機滴色母)。',
-        definition: '配色工藝模式：mixed(預先拌料桶混合)、pre_mix(預混小樣試產)、direct(成型機色母滴注機直接添加)。',
-        businessPurpose: '工藝工法規範與標準作業流程確認。',
-        fillGuide: '必填。下拉選單三選一。大批量量產一律選 mixed。',
-        example: 'mixed',
-        exampleExplanation: '使用 200KG 旋轉攪拌桶預先均勻混合。',
-        mrpImpact: '純工藝模式標註。'
-      },
-      {
-        fieldKey: 'notes',
-        fieldLabel: '備註 (Notes)',
-        tableName: 'color_mixing_log',
-        tableLabel: '色母/色粉混合製程紀錄檔',
-        dataType: 'string | null',
-        constraint: 'Optional',
-        plainDefinition: '「攪拌了幾分鐘、烘料溫度設幾度、有沒有什麼注意事項」。',
-        definition: '攪拌時間（秒）、乾燥溫度或烘料條件備註。',
-        businessPurpose: '製程工藝條件留痕，確保每批塑料乾燥度與混色均勻度一致。',
-        fillGuide: '選填。填寫攪拌秒數與烘料條件（如 攪拌 180 秒，80°C 烘料 4 小時）。',
-        example: '攪拌 180 秒，80°C 烘料 4 小時，水分含量已測量 < 0.02%',
-        exampleExplanation: '確認混色均勻且乾燥水分符合醫材射出標準，防止射出產生銀絲氣泡。',
-        mrpImpact: '純製程品質履歷備註。'
-      }
-    ]
   }
 ];
 
-export const MASTER_FIELD_LOCATIONS: Record<string, Record<string, string>> = {
-  item_master: {
-    sku: '業務工作台（品號查詢/訂單明細）、生管採購工作台（MRP 品號選單）、總覽儀表板（品號過濾）、出貨排程審查看板（品號清單）、資料表維護',
-    alt_sku: '資料表維護（品號主檔）、生管採購工作台（替代料/備用料備料提醒）',
-    customer_id: '業務工作台（客戶查詢樞紐）、總覽儀表板（客戶維度過濾與預測比對）、資料表維護',
-    category: '出貨排程審查看板（產品類別篩選膠囊）、總覽儀表板、資料表維護',
-    material_class: '物料分類體系管理視圖、生管採購工作台（BOM 與良率分流判定）、資料表維護',
-    color: '生管採購工作台（外觀與混料配比換算）、資料表維護',
-    unit: '3 階 MRP 推導（PCS / KG / SET 跨階單位轉換基準）、資料表維護',
-    description: '資料表維護（品號規格書型號、醫療級認證與原廠包裝備註）',
-    std_sorting_yield: '出貨排程審查看板（WIP 待驗良品折算）、3 階 MRP 第 1 階算式過程、資料表維護',
-    supplier_name: '3 階 MRP 第 3 階採購建議（供應商對象）、在途原料物流追蹤、資料表維護',
-    lead_time_days: '生管採購工作台（最晚下單日 30 天時程軸）、3 階 MRP 第 3 階發單日倒推、資料表維護',
-    moq_kg: '3 階 MRP 第 3 階建議採購量向上整補、資料表維護',
-    safety_stock_kg: '3 階 MRP 第 3 階原料淨缺口緩衝算式、資料表維護'
-  },
-  mold_master: {
-    mold_id: '生管採購工作台（模具日產能卡片）、成型 BOM 關聯選單、資料表維護',
-    active_cavities: '3 階 MRP 第 2 階單穴克重算式、生管採購工作台（現場實際妥善穴數與日產能推估）、資料表維護',
-    design_cavities: '資料表維護（原始設計穴數，對比塞穴損耗）',
-    cycle_time_sec: '生管採購工作台（模具日產能公式: (86400 / 週期) × 妥善穴數）、資料表維護',
-    daily_capacity: '生管採購工作台（模具日產能卡片）、總覽儀表板（機台負荷估算）、資料表維護',
-    location: '資料表維護（模具庫位與機台位置）',
-    status: '訂單缺料分析（模具可用性環節診斷）、資料表維護'
-  },
-  product_mold_bom: {
-    sku: '3 階 MRP 第 2 階 BOM 展開入口、資料表維護',
-    mold_id: '3 階 MRP 第 2 階成型模具綁定、生管採購工作台、資料表維護',
-    rm_sku: '3 階 MRP 第 2 階到第 3 階原料關聯展開、資料表維護',
-    net_mold_weight_g: '3 階 MRP 第 2 階單穴耗料克重算式、資料表維護',
-    runner_weight_g: '3 階 MRP 第 2 階注塑廢料分攤算式、資料表維護',
-    unit_weight_g: '3 階 MRP 第 2 階單穴克重計算公式明細、資料表維護',
-    is_primary_mold: '3 階 MRP 自動選模策略（優先採用主力模具運算）、資料表維護',
-    std_mfg_scrap_rate: '3 階 MRP 第 2 階原料毛需求損耗膨脹算式、資料表維護',
-    color_mixing_ratio_pct: '3 階 MRP 第 3 階色母雙軌採購需求推算、生管採購工作台、資料表維護',
-    remarks: '資料表維護（BOM 工程變更與試模備註）',
-    valid_from: '資料表維護（BOM 生效起始日）',
-    valid_to: '資料表維護（BOM 失效截止日）'
-  },
-  inventory_wip_snapshot: {
-    snapshot_date: '全系統庫存快照基準日、資料匯入匯出中心、資料表維護',
-    sku: '庫存查詢、出貨排程審查看板、3 階 MRP 算式、資料表維護',
-    fg_ready_qty: '業務工作台（在庫現貨庫存）、出貨排程審查看板（放行第一道防線）、3 階 MRP 第 1 階淨需求扣抵、資料表維護',
-    wip_pending_qty: '出貨排程審查看板（WIP 良率折算支援）、3 階 MRP 第 1 階扣抵、訂單缺料分析（WIP 環節）、資料表維護',
-    rm_on_hand_kg: '生管採購工作台（原料在手存量）、3 階 MRP 第 3 階淨缺口扣抵、訂單缺料分析（原料在庫環節）、資料表維護'
-  },
-  po_in_transit: {
-    po_number: '生管採購工作台（在途採購單清單）、訂單缺料分析、資料表維護',
-    rm_sku: '3 階 MRP 第 3 階在途抵扣、資料表維護',
-    in_transit_qty_kg: '3 階 MRP 第 3 階原料淨缺口扣抵、資料表維護',
-    eta_date: '生管採購工作台（船期到廠倒數）、訂單缺料分析（在途 PO ETA 瓶頸診斷）、資料表維護',
-    actual_arrival_date: '資料表維護（到廠驗收核銷與準時率統計）',
-    eta_variance_days: '生管採購工作台（ETA 偏差天數示警）、資料表維護',
-    supplier_name: '生管採購工作台、資料表維護',
-    status: '訂單缺料分析（在途物流狀態）、生管採購工作台、資料表維護'
-  },
-  demand_forecast_log: {
-    demand_id: '預估需求流水追蹤、資料表維護',
-    version_no: '業務工作台（預估版本波動追單）、總覽儀表板（預測版本篩選）、資料表維護',
-    customer_id: '業務工作台（客戶維度查詢）、總覽儀表板（客戶預測偏差分析）、資料表維護',
-    sku: '業務工作台、總覽儀表板、3 階 MRP 成品總需求來源、資料表維護',
-    target_date: '業務工作台（交期確認）、生管採購工作台（最晚下單日倒推起點）、總覽儀表板、資料表維護',
-    demand_qty: '業務工作台（預測量）、總覽儀表板（三向交叉比對與 Bias% 計算）、3 階 MRP 總需求、資料表維護',
-    created_by_id: '資料表維護（審計日誌追蹤）',
-    created_by_name: '業務工作台、資料表維護',
-    notes: '業務工作台（商務情報備註）、資料表維護'
-  },
-  actual_order: {
-    order_id: '業務工作台（PO 查詢）、訂單缺料分析（逐筆訂單診斷）、出貨排程審查看板（訂單放行）、資料表維護',
-    customer_id: '業務工作台、訂單缺料分析、總覽儀表板、資料表維護',
-    sku: '業務工作台、訂單缺料分析、出貨排程審查看板、3 階 MRP 總需求來源、資料表維護',
-    order_date: '業務工作台、訂單缺料分析（急單識別與前置時間判定）、資料表維護',
-    target_date: '業務工作台（約定交期）、出貨排程審查看板（雙週放行目標日）、訂單缺料分析、資料表維護',
-    order_qty: '業務工作台、出貨排程審查看板（雙週待交數量）、總覽儀表板（實單比對）、訂單缺料分析、資料表維護',
-    status: '業務工作台、訂單缺料分析（過濾未結案訂單）、出貨排程審查看板、資料表維護'
-  },
-  sorting_actual_yield_log: {
-    log_id: '品檢日報記錄主鍵、資料表維護',
-    sku: '品檢良率統計、資料表維護',
-    batch_no: '製程批號追溯、資料表維護',
-    sorting_date: '品檢全檢日報日期、歷史良率趨勢統計、資料表維護',
-    qty_sorted: '全檢數量分母、資料表維護',
-    qty_passed: '合格良品數量分子、資料表維護',
-    actual_yield_rate: '品管動態反饋閉環（比對標準良率與動態調整）、資料表維護',
-    operator_id: '資料表維護（品管責任簽核）',
-    notes: '資料表維護（不良疵點原因記錄）'
-  }
+// 匯出全部欄位平鋪陣列（供搜尋與快速查閱）
+export const ALL_MASTER_FIELDS: MasterFieldDefinition[] = MASTER_TABLE_SCHEMAS.flatMap(
+  table => table.fields
+);
+
+// 匯出按主表分組清單
+export const MASTER_TABLE_GROUPS = MASTER_TABLE_SCHEMAS.map(table => ({
+  tableKey: table.tableKey,
+  tableLabel: table.tableLabel,
+  categoryIcon: table.categoryIcon,
+  description: table.description,
+  ownerDepartment: table.ownerDepartment,
+  fieldCount: table.fields.length
+}));
+
+// 注入各欄位在數據鏈或介面中的具體位置
+export const MASTER_FIELD_LOCATIONS: Record<string, string> = {
+  // item_master
+  'sku': '業務工作台（品號查詢/訂單明細）、生管採購工作台（MRP 品號選單）、總覽儀表板（品號過濾）、出貨排程審查看板（品號清單）、資料表維護',
+  'alt_sku': '資料表維護（品號主檔）、生管採購工作台（替代料/備用料備料提醒）',
+  'customer_id': '業務工作台（客戶查詢樞紐）、總覽儀表板（客戶維度過濾與預測比對）、資料表維護',
+  'category': '出貨排程審查看板（產品類別篩選膠囊）、總覽儀表板、資料表維護',
+  'material_class': '物料分類體系管理視圖、生管採購工作台（BOM 與良率分流判定）、資料表維護',
+  'color': '生管採購工作台（外觀與混料配比換算）、資料表維護',
+  'unit': '3 階 MRP 推導（PCS / KG / SET 跨階單位轉換基準）、資料表維護',
+  'description': '資料表維護（品號規格書型號、醫療級認證與原廠包裝備註）',
+  'std_sorting_yield': '出貨排程審查看板（WIP 待驗良品折算）、3 階 MRP 第 1 階算式過程、資料表維護',
+  'supplier_name': '3 階 MRP 第 3 階採購建議（供應商對象）、在途原料物流追蹤、資料表維護',
+  'lead_time_days': '生管採購工作台（最晚下單日 30 天時程軸）、3 階 MRP 第 3 階發單日倒推、資料表維護',
+  'moq_kg': '3 階 MRP 第 3 階建議採購量向上整補、資料表維護',
+  'safety_stock_kg': '3 階 MRP 第 3 階原料淨缺口緩衝算式、資料表維護',
+
+  // mold_master
+  'mold_id': '生管採購工作台（模具日產能卡片）、成型 BOM 關聯選單、資料表維護',
+  'design_cavities': '資料表維護（原始設計穴數，對比塞穴損耗）',
+  'active_cavities': '3 階 MRP 第 2 階單穴克重算式、生管採購工作台（現場實際妥善穴數與日產能推估）、資料表維護',
+  'cycle_time_sec': '生管採購工作台（模具日產能公式: (86400 / 週期) × 妥善穴數）、資料表維護',
+  'daily_capacity': '生管採購工作台（模具日產能卡片）、總覽儀表板（機台負荷估算）、資料表維護',
+  'status': '訂單缺料分析（模具可用性環節診斷）、資料表維護',
+  'location': '資料表維護（模具庫位與機台位置）',
+  'remarks': '資料表維護（模具工程維修與試模履歷）',
+  'last_maintenance_date': '生管採購工作台（模具預防保養排程）、資料表維護',
+
+  // product_mold_bom
+  'net_mold_weight_g': '3 階 MRP 第 2 階單穴耗料克重算式、資料表維護',
+  'runner_weight_g': '3 階 MRP 第 2 階注塑廢料分攤算式、資料表維護',
+  'unit_weight_g': '3 階 MRP 第 2 階單穴克重計算公式明細、資料表維護',
+  'is_primary_mold': '3 階 MRP 自動選模策略（優先採用主力模具運算）、資料表維護',
+  'std_mfg_scrap_rate': '3 階 MRP 第 2 階原料毛需求損耗膨脹算式、資料表維護',
+  'color_mixing_ratio_pct': '3 階 MRP 第 3 階色母雙軌採購需求推算、生管採購工作台、資料表維護',
+  'rm_sku': '3 階 MRP 第 2 階到第 3 階原料關聯展開、資料表維護',
+  'valid_from': '資料表維護（BOM 生效起始日）',
+  'valid_to': '資料表維護（BOM 失效截止日）',
+
+  // demand_forecast_log
+  'demand_id': '預估需求流水追蹤、資料表維護',
+  'version_no': '業務工作台（預估版本波動追單）、總覽儀表板（預測版本篩選）、資料表維護',
+  'target_date': '業務工作台（交期確認）、生管採購工作台（最晚下單日倒推起點）、總覽儀表板、資料表維護',
+  'demand_qty': '業務工作台（預測量）、總覽儀表板（三向交叉比對與 Bias% 計算）、3 階 MRP 總需求、資料表維護',
+  'created_by_id': '資料表維護（審計日誌追蹤）',
+  'created_by_name': '業務工作台、資料表維護',
+  'created_at': '業務工作台（預估版本建立時間戳記）、資料表維護',
+  'notes': '業務工作台（商務情報備註）、資料表維護',
+
+  // actual_order
+  'order_id': '業務工作台（PO 查詢）、訂單缺料分析（逐筆訂單診斷）、出貨排程審查看板（訂單放行）、資料表維護',
+  'order_date': '業務工作台、訂單缺料分析（急單識別與前置時間判定）、資料表維護',
+  'order_qty': '業務工作台、出貨排程審查看板（雙週待交數量）、總覽儀表板（實單比對）、訂單缺料分析、資料表維護',
+
+  // inventory_wip_snapshot
+  'snapshot_date': '全系統庫存快照基準日、資料匯入匯出中心、資料表維護',
+  'fg_ready_qty': '業務工作台（在庫現貨庫存）、出貨排程審查看板（放行第一道防線）、3 階 MRP 第 1 階淨需求扣抵、資料表維護',
+  'wip_pending_qty': '出貨排程審查看板（WIP 良率折算支援）、3 階 MRP 第 1 階扣抵、訂單缺料分析（WIP 環節）、資料表維護',
+  'rm_on_hand_kg': '生管採購工作台（原料在手存量）、3 階 MRP 第 3 階淨缺口扣抵、訂單缺料分析（原料在庫環節）、資料表維護',
+
+  // po_in_transit
+  'po_number': '生管採購工作台（在途採購單清單）、訂單缺料分析、資料表維護',
+  'in_transit_qty_kg': '3 階 MRP 第 3 階原料淨缺口扣抵、資料表維護',
+  'eta_date': '生管採購工作台（船期到廠倒數）、訂單缺料分析（在途 PO ETA 瓶頸診斷）、資料表維護',
+  'actual_arrival_date': '資料表維護（到廠驗收核銷與準時率統計）',
+  'eta_variance_days': '生管採購工作台（ETA 偏差天數示警）、資料表維護',
+
+  // sorting_actual_yield_log
+  'log_id': '品檢日報記錄主鍵、資料表維護',
+  'batch_no': '製程批號追溯、資料表維護',
+  'sorting_date': '品檢全檢日報日期、歷史良率趨勢統計、資料表維護',
+  'qty_sorted': '全檢數量分母、資料表維護',
+  'qty_passed': '合格良品數量分子、資料表維護',
+  'actual_yield_rate': '品管動態反饋閉環（比對標準良率與動態調整）、資料表維護',
+  'operator_id': '資料表維護（品管責任簽核）'
 };
 
-/** 扁平化匯出全部欄位條目（用於注入術語辭典，提供超詳盡白話與填寫範例解說） */
-export const ALL_MASTER_FIELD_ENTRIES: GlossaryEntry[] = MASTER_TABLE_SCHEMAS.flatMap((table) =>
-  table.fields.map((f) => {
-    const loc = f.uiLocation || MASTER_FIELD_LOCATIONS[f.tableName]?.[f.fieldKey] || '資料表維護 (DataTablesView)';
-    return {
-      id: `field_${f.tableName}_${f.fieldKey}`,
-      term: `${f.fieldLabel} (${f.fieldKey})`,
-      en: `${f.tableName}.${f.fieldKey} [${f.dataType}]`,
-      category: 'fields' as const,
-      uiLocation: loc,
-      plainDefinition: f.plainDefinition,
-      definition: f.definition,
-      businessPurpose: f.businessPurpose,
-      mrpImpact: f.mrpImpact,
-      fillGuide: f.fillGuide,
-      example: f.example,
-      exampleExplanation: f.exampleExplanation,
-      related: [f.tableName, 'mrp', 'fk_sku'],
-      tableName: f.tableName,
-      tableLabel: f.tableLabel,
-      dataType: `${f.dataType} | 約束: ${f.constraint}`
-    };
-  })
-);
+// 自動將 location 注入至各欄位物件中
+MASTER_TABLE_SCHEMAS.forEach(table => {
+  table.fields.forEach(field => {
+    if (MASTER_FIELD_LOCATIONS[field.fieldKey]) {
+      field.uiLocation = MASTER_FIELD_LOCATIONS[field.fieldKey];
+    }
+  });
+});
+
+// 轉換為術語辭典條目
+export const ALL_MASTER_FIELD_ENTRIES: GlossaryEntry[] = ALL_MASTER_FIELDS.map(f => ({
+  id: `FIELD-${f.tableName}-${f.fieldKey}`,
+  term: `${f.fieldLabel} (${f.fieldKey})`,
+  category: 'fields',
+  definition: f.definition,
+  tableName: f.tableName,
+  tableLabel: f.tableLabel,
+  dataType: f.dataType,
+  uiLocation: f.uiLocation,
+  plainDefinition: f.plainDefinition,
+  businessPurpose: f.businessPurpose,
+  mrpImpact: f.mrpImpact,
+  fillGuide: f.fillGuide,
+  example: `${f.example}: ${f.exampleExplanation}`,
+}));
+
