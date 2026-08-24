@@ -4,7 +4,7 @@
  *
  * masterFieldDictionary.ts
  * 主檔案全欄位權威業務定義表 (Master Table Full Field Definition Dictionary)
- * 涵蓋系統 11 張核心主表、共計 90+ 個欄位之名稱、資料型別、約束條件、白話通俗解說、業務價值、填寫規範、實務示範與詳細解說。
+ * 涵蓋系統 7 大核心營運主表 (3NF)、共計 90+ 個欄位之名稱、資料型別、約束條件、白話通俗解說、業務價值、填寫規範、實務示範與詳細解說。
  */
 
 import { GlossaryEntry, MasterFieldDefinition } from './glossaryData';

@@ -8,26 +8,23 @@
 
 ## 總覽目錄
 
-本規格書完整收錄料事如神系統（PMS）全系統 **11 張核心資料表**，逐一為每個欄位提供：
+本規格書完整收錄料事如神系統（PMS）全系統 **7 大核心營運資料表 (3NF Schema V2.0)**，逐一為每個欄位提供：
 1. 💡 **大白話解說**（用工廠最親切、最通俗的日常口語說明「這是什麼」）
 2. 🎯 **業務價值與用途**（告訴生管、業務、現場、採購「為什麼需要它」）
 3. 📝 **填寫規範與防呆要點**（清楚說明「該怎麼填、格式是什麼、必填還是選填」）
 4. 🔍 **示範數值與詳細情境說明**（給出具體數值並詳細解說「為什麼這樣填、情境背景由來」）
 5. ⚙️ **系統推導與 MRP 運算關聯**（講清楚系統在算淨需求、單穴克重、防斷料時怎麼拿它來算）
 
-| # | 資料表代碼 (Table Key) | 中文名稱 | 主鍵 (PK) | 欄位數 | 主要權責部門 |
-|:-:|:---|:---|:---|:-:|:---|
-| 1 | [`item_master`](#1-item_master-料號基本主檔) | 料號基本主檔 | `sku` | 8 | 研發部 / 生管部 |
-| 2 | [`mold_master`](#2-mold_master-模具與產能主檔) | 模具與產能主檔 | `mold_id` | 9 | 模具課 / 製造部 |
-| 3 | [`product_mold_bom`](#3-product_mold_bom-產品模具成型關聯檔) | 產品模具成型關聯檔 | `sku + mold_id` | 12 | 研發工程部 / 生管部 |
-| 4 | [`yield_master`](#4-yield_master-sorting良率標準檔) | Sorting良率標準檔 | `sku` | 3 | 品保部 / 製造部 |
-| 5 | [`supplier_rule_master`](#5-supplier_rule_master-採購與供應商規則檔) | 採購與供應商規則檔 | `rm_sku` | 8 | 採購部 / 倉管課 |
-| 6 | [`demand_forecast_log`](#6-demand_forecast_log-業務預估需求檔) | 業務預估需求檔 | `demand_id` | 9 | 業務部 |
-| 7 | [`actual_order`](#7-actual_order-實際訂單檔) | 實際訂單檔 | `order_id` | 7 | 業務部 |
-| 8 | [`inventory_wip_snapshot`](#8-inventory_wip_snapshot-庫存與待驗快照檔) | 庫存與待驗快照檔 | `snapshot_date + sku` | 5 | 倉管課 / 品保部 |
-| 9 | [`po_in_transit`](#9-po_in_transit-在途採購訂單檔) | 在途採購訂單檔 | `po_number` | 8 | 採購部 / 國貿課 |
-| 10 | [`sorting_actual_yield_log`](#10-sorting_actual_yield_log-sorting-實際良率紀錄檔) | Sorting 實際良率紀錄檔 | `log_id` | 9 | 品管部 |
-| 11 | [`color_mixing_log`](#11-color_mixing_log-色母色粉混合製程紀錄檔) | 色母/色粉混合製程紀錄檔 | `mix_log_id` | 14 | 製造部 / 調料組 |
+| # | 資料表代碼 (Table Key) | 中文名稱 | 主鍵 (PK) | 欄位數 | 主要權責部門 | 3NF 整併說明 |
+|:-:|:---|:---|:---|:-:|:---|:---|
+| 1 | [`item_master`](#1-item_master-料號基本主檔) | 料號基本主檔 | `sku` | 13 | 研發部 / 生管部 / 採購部 | 整併標準良率與 RAW 採購交期/MOQ/安全庫存 |
+| 2 | [`mold_master`](#2-mold_master-模具與產能主檔) | 模具與產能主檔 | `mold_id` | 9 | 模具課 / 製造部 | 妥善穴數與每日標準產能推估 |
+| 3 | [`product_mold_bom`](#3-product_mold_bom-產品模具成型關聯檔) | 產品模具成型關聯檔 | `sku + mold_id` | 13 | 研發工程部 / 生管部 | 整模重/損耗率，整併色母配比 % |
+| 4 | [`demand_forecast_log`](#6-demand_forecast_log-業務預估需求檔) | 業務需求預估檔 | `demand_id` | 9 | 業務部 | 滾動版本預示量與歷史提貨基準 |
+| 5 | [`actual_order`](#7-actual_order-實際訂單檔) | 實際訂單檔 | `order_id` | 7 | 業務部 | 正式 PO 訂單與客戶目標出貨日 |
+| 6 | [`inventory_wip_snapshot`](#8-inventory_wip_snapshot-庫存與待驗快照檔) | 庫存與待驗快照檔 | `snapshot_date + sku` | 5 | 倉管課 / 品保部 | 4F良品、3F WIP待驗、原料在手快照 |
+| 7 | [`po_in_transit`](#9-po_in_transit-在途採購訂單檔) | 在途採購訂單檔 | `po_number` | 8 | 採購部 / 國貿課 | 在途海運/清關追蹤與預計到廠日 |
+| 附 | [`sorting_actual_yield_log`](#10-sorting_actual_yield_log-sorting-實際良率紀錄檔) | 全檢動態回饋檔 | `log_id` | 9 | 品管部 / 全檢組 | 每日現場檢驗實績動態回饋 |
 
 ---
 

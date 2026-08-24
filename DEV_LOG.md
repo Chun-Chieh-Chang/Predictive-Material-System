@@ -40,7 +40,7 @@
 - **主檔欄位審查與去冗 (Schema Audit & Field Pruning)**：
   - 審查全系統 11 張主檔表，清理非正規化冗餘欄位 `ItemMaster.material_class_label`，統一回歸五層分類樹與 3NF 關係約束。
 - **主檔全欄位名稱定義表全量建置 (Master Table Field Dictionary)**：
-  - 建立 `src/data/masterFieldDictionary.ts`，逐一為 11 張主表共 90+ 個欄位建立標準定義（中文名稱、英文代碼、型別/約束、業務定義、業務價值、實務範例、MRP 運算關聯）。
+  - 建立 `src/data/masterFieldDictionary.ts`，逐一為 7 大核心主表 (3NF) 共 90+ 個欄位建立標準定義（中文名稱、英文代碼、型別/約束、業務定義、業務價值、實務範例、MRP 運算關聯）。
   - 無縫植入「專業術語辭典」[GlossaryView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/GlossaryView.tsx)，新增 `📊 主檔案欄位名稱定義表` 專屬分類。
   - 發布規格書 [docs/PMS_Data_Dictionary.md](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/docs/PMS_Data_Dictionary.md)。
 
