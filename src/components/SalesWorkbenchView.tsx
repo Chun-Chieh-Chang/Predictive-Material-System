@@ -518,8 +518,8 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
 
             // 自動生成客戶回覆話術
             const replyScript = isReadyCovered
-              ? `【交期回覆】${order.customer_id} 採購您好，關於訂單 ${order.order_id}（品號：${order.sku}，數量：${order.order_qty.toLocaleString()} PCS）：目前 4F 倉庫成品良品現貨在庫充足（在庫量 ${readyQty.toLocaleString()} PCS），可於預定交期（${order.target_date}）準時放行出貨！`
-              : `【交期回覆】${order.customer_id} 採購您好，關於訂單 ${order.order_id}（品號：${order.sku}，數量：${order.order_qty.toLocaleString()} PCS）：目前 4F 現貨 ${readyQty.toLocaleString()} PCS，3F WIP 待驗品 ${wipQty.toLocaleString()} PCS 已排定品檢優先支援，預計於 ${order.target_date} 順利交運。`;
+              ? `【交期回覆】${order.customer_id} 採購您好，關於訂單 ${order.order_id}（品號：${order.sku}，數量：${order.order_qty.toLocaleString()} PCS）：目前成品倉庫良品現貨在庫充足（在庫量 ${readyQty.toLocaleString()} PCS），可於預定交期（${order.target_date}）準時放行出貨！`
+              : `【交期回覆】${order.customer_id} 採購您好，關於訂單 ${order.order_id}（品號：${order.sku}，數量：${order.order_qty.toLocaleString()} PCS）：目前成品良品現貨 ${readyQty.toLocaleString()} PCS，在製品待驗區 (WIP) 待驗品 ${wipQty.toLocaleString()} PCS 已排定品檢優先支援，預計於 ${order.target_date} 順利交運。`;
 
             const isCopied = copiedScriptId === order.order_id;
 

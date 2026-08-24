@@ -38,13 +38,77 @@ const STORAGE_KEY = 'PMS_DATABASE_STATE_V1';
 const PARAMS_STORAGE_KEY = 'PMS_SYSTEM_PARAMETERS_V1';
 const ROLE_MODE_STORAGE_KEY = 'PMS_ROLE_MODE_V1';
 
+const CUSTOMER_ANONYMIZATION_MAP: Record<string, string> = {
+  'MDX': 'A客戶',
+  'ICU': 'B客戶',
+  'MED': 'C客戶',
+  'OEM': 'D客戶',
+  'GEN': '通用客戶',
+  '通用': '通用客戶',
+};
+
+const SUPPLIER_ANONYMIZATION_MAP: Record<string, string> = {
+  '台化': 'A供應商 (國內陸運)',
+  '奇美': 'B供應商 (國外海運進口)',
+  '台塑': 'C供應商 (國內陸運)',
+  'INEOS': 'D供應商 (國外海運進口)',
+  'Covestro': 'E供應商 (國外海運進口)',
+  'Teijin': 'F供應商 (國外海運進口)',
+  'Avient': 'G供應商 (廠內常備)',
+  'Clariant': 'H供應商 (國內陸運)',
+  '立安': 'A供應商 (國內陸運)',
+};
+
+function sanitizeAnonymization(rawDb: any): any {
+  if (!rawDb) return rawDb;
+  const mapCust = (val: any) => {
+    if (typeof val === 'string') {
+      for (const [k, v] of Object.entries(CUSTOMER_ANONYMIZATION_MAP)) {
+        if (val === k) return v;
+      }
+    }
+    return val;
+  };
+  const mapSup = (val: any) => {
+    if (typeof val === 'string') {
+      for (const [k, v] of Object.entries(SUPPLIER_ANONYMIZATION_MAP)) {
+        if (val.includes(k)) return v;
+      }
+    }
+    return val;
+  };
+
+  if (Array.isArray(rawDb.item_master)) {
+    rawDb.item_master.forEach((i: any) => {
+      if (i.customer_id) i.customer_id = mapCust(i.customer_id);
+      if (i.supplier_name) i.supplier_name = mapSup(i.supplier_name);
+    });
+  }
+  if (Array.isArray(rawDb.demand_forecast_log)) {
+    rawDb.demand_forecast_log.forEach((d: any) => {
+      if (d.customer_id) d.customer_id = mapCust(d.customer_id);
+    });
+  }
+  if (Array.isArray(rawDb.actual_order)) {
+    rawDb.actual_order.forEach((o: any) => {
+      if (o.customer_id) o.customer_id = mapCust(o.customer_id);
+    });
+  }
+  if (Array.isArray(rawDb.po_in_transit)) {
+    rawDb.po_in_transit.forEach((p: any) => {
+      if (p.supplier_name) p.supplier_name = mapSup(p.supplier_name);
+    });
+  }
+  return rawDb;
+}
+
 export function App() {
   // Load state from LocalStorage or seed data
   const [db, setDb] = useState<SystemDatabase>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        const parsed = JSON.parse(saved);
+        let parsed = JSON.parse(saved);
         // Backward compat: ensure required array fields exist
         if (!parsed.audit_log) parsed.audit_log = [];
         if (!parsed.material_classes) parsed.material_classes = [];
@@ -84,6 +148,10 @@ export function App() {
             created_by_name: null as string | null,
           }));
         }
+
+        // Auto-Sanitization: Ensure Rule 8 Data Anonymization across all records
+        parsed = sanitizeAnonymization(parsed);
+
         return parsed;
       }
     } catch (e) {
