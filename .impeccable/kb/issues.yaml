@@ -77,8 +77,9 @@ entries:
     title: "1. 問題描述"
     category: PROCESS
     tags:
-      - false
+      - deploy
       - typescript
+      - husky
       - mece
     severity: medium
     created_at: "2026-08-24"

@@ -64,21 +64,15 @@ function resolveDailyCommitCount(root: string): number {
 }
 
 /**
- * 計算版號：
- *   - CI 環境：讀取已提交的 version.ts，保證部署版本與 commit 一致
- *   - 本地環境：基於今日 commit 數即時計算
+ * 計算版號（MECE 單一真相來源）：
+ *   - 一律以 src/utils/version.ts 為權威基準
+ *   - 避免本機 dev server 與 CI 建構計算分歧
  */
 function resolveVersion(root: string): string {
-  if (isCI()) {
-    const committed = readCommittedVersion(root);
-    if (committed) {
-      console.log(`[git-version] CI 環境 — 讀取已提交版號: ${committed}`);
-      return committed;
-    }
-    // CI 讀取失敗時的 safe fallback
-    return `V-${formatLocalDate()}-00`;
+  const committed = readCommittedVersion(root);
+  if (committed) {
+    return committed;
   }
-
   const today = formatLocalDate();
   const count = resolveDailyCommitCount(root);
   const seq = count === 0 ? 1 : count;
@@ -87,30 +81,6 @@ function resolveVersion(root: string): string {
 
 function syncVersionFile(root: string): string {
   const version = resolveVersion(root);
-
-  const versionFilePath = resolve(root, VERSION_FILE);
-  try {
-    const currentContent = readFileSync(versionFilePath, 'utf-8');
-    const newContent = `/**
- * src/utils/version.ts
- *
- * 集中化管理 PMS 版本常數（MECE 單一真相來源）。
- * 由 sync-version.mjs 與 vite-plugin-git-version 自動即時同步。
- */
-export const PMS_VERSION: string = '${version}';
-
-/** 系統標題文字（集中化品牌文案） */
-export const SYSTEM_TITLE: string = '料事如神系統';
-export const SYSTEM_SUBTITLE: string = 'Predictive Material System';
-export const SYSTEM_TAGLINE: string = 'QCC 料事如神圈 • 射出成型智能備料與產能排程推估';
-`;
-    if (currentContent !== newContent) {
-      writeFileSync(versionFilePath, newContent, 'utf-8');
-      console.log(`[git-version] 自動更新 src/utils/version.ts -> ${version}`);
-    }
-  } catch (e) {
-    console.error('[git-version] 同步失敗', e);
-  }
   return version;
 }
 

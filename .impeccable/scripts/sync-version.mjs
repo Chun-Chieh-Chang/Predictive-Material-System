@@ -40,8 +40,8 @@ function resolveDailyCommitCount() {
 export function syncVersionFile() {
   const today = formatLocalDate();
   const count = resolveDailyCommitCount();
-  // 加上即將提交的 +1 或取目前計數（若 count 為 0 則為 01）
-  const seq = count === 0 ? 1 : count;
+  // 加上即將提交的這筆 commit (+1)
+  const seq = count + 1;
   const version = `V-${today}-${String(seq).padStart(2, '0')}`;
 
   const versionFilePath = resolve(root, 'src/utils/version.ts');

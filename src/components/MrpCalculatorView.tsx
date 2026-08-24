@@ -466,23 +466,23 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
 
         {/* Explainable Math Card for Stage 1 (OBJ-08) */}
         {expandedMathStage === 'stage1' && (
-          <div className="mt-4 p-4 rounded-xl bg-slate-900 text-slate-100 border border-sky-500/40 text-xs font-mono space-y-3 animate-in fade-in-50">
-            <div className="flex items-center justify-between border-b border-slate-700 pb-2">
-              <span className="font-bold text-cyan-400 flex items-center gap-1.5">
+          <div className="mt-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 border border-sky-300 dark:border-sky-500/40 text-xs font-mono space-y-3 animate-in fade-in-50">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+              <span className="font-bold text-sky-700 dark:text-cyan-400 flex items-center gap-1.5">
                 <Calculator className="w-4 h-4" />
                 <span>第 1 階白盒推導履歷 (Deterministic Formula Breakdown)</span>
               </span>
-              <span className="text-slate-400">標準 3 階 MRP 模型</span>
+              <span className="text-slate-500 dark:text-slate-400">標準 3 階 MRP 模型</span>
             </div>
-            <div className="space-y-1.5 text-slate-300 leading-relaxed font-sans">
-              <div><strong>數學公式：</strong><code className="text-cyan-300 font-mono">FG_Net_Gap = Max(0, Total_Demand - FG_Ready - (WIP_Pending × Yield))</code></div>
+            <div className="space-y-1.5 text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
+              <div><strong>數學公式：</strong><code className="text-sky-800 dark:text-cyan-300 font-mono font-bold">FG_Net_Gap = Max(0, Total_Demand - FG_Ready - (WIP_Pending × Yield))</code></div>
               <div><strong>帶入實務變數：</strong></div>
-              <ul className="list-disc list-inside pl-2 space-y-1 text-slate-400 font-mono text-[11px]">
-                <li><span className="text-slate-200">Total_Demand:</span> 預示量 {result.forecastQty.toLocaleString()} + 實單 {result.actualOrderQty.toLocaleString()} = {(result.forecastQty + result.actualOrderQty).toLocaleString()} PCS</li>
-                <li><span className="text-slate-200">FG_Ready (成品良品現貨):</span> {result.fgReadyQty.toLocaleString()} PCS (已在庫檢驗合格)</li>
-                <li><span className="text-slate-200">WIP_Effective (待驗品折算):</span> {result.wipPendingQty.toLocaleString()} PCS × {(result.sortingYield * 100).toFixed(0)}% (標準良率) = {result.wipEffectiveQty.toLocaleString()} PCS</li>
+              <ul className="list-disc list-inside pl-2 space-y-1 text-slate-600 dark:text-slate-400 font-mono text-[11px]">
+                <li><span className="text-slate-800 dark:text-slate-200 font-semibold">Total_Demand:</span> 預示量 {result.forecastQty.toLocaleString()} + 實單 {result.actualOrderQty.toLocaleString()} = {(result.forecastQty + result.actualOrderQty).toLocaleString()} PCS</li>
+                <li><span className="text-slate-800 dark:text-slate-200 font-semibold">FG_Ready (成品良品現貨):</span> {result.fgReadyQty.toLocaleString()} PCS (已在庫檢驗合格)</li>
+                <li><span className="text-slate-800 dark:text-slate-200 font-semibold">WIP_Effective (待驗品折算):</span> {result.wipPendingQty.toLocaleString()} PCS × {(result.sortingYield * 100).toFixed(0)}% (標準良率) = {result.wipEffectiveQty.toLocaleString()} PCS</li>
               </ul>
-              <div className="pt-2 border-t border-slate-800 text-emerald-400 font-bold font-mono">
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-800 text-emerald-700 dark:text-emerald-400 font-bold font-mono">
                 ➜ 最終結果：Max(0, {(result.forecastQty + result.actualOrderQty).toLocaleString()} - {result.fgReadyQty.toLocaleString()} - {result.wipEffectiveQty.toLocaleString()}) = {result.fgNetRequirementQty.toLocaleString()} PCS
               </div>
             </div>
@@ -629,23 +629,23 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
 
         {/* Explainable Math Card for Stage 2 (OBJ-08) */}
         {expandedMathStage === 'stage2' && (
-          <div className="mt-4 p-4 rounded-xl bg-slate-900 text-slate-100 border border-purple-500/40 text-xs font-mono space-y-3 animate-in fade-in-50">
-            <div className="flex items-center justify-between border-b border-slate-700 pb-2">
-              <span className="font-bold text-purple-400 flex items-center gap-1.5">
+          <div className="mt-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 border border-purple-300 dark:border-purple-500/40 text-xs font-mono space-y-3 animate-in fade-in-50">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+              <span className="font-bold text-purple-700 dark:text-purple-400 flex items-center gap-1.5">
                 <Calculator className="w-4 h-4" />
                 <span>第 2 階白盒推導履歷 (Mold & Cavities Math Breakdown)</span>
               </span>
-              <span className="text-slate-400">模具 M:N 與穴數損耗折算</span>
+              <span className="text-slate-500 dark:text-slate-400">模具 M:N 與穴數損耗折算</span>
             </div>
-            <div className="space-y-1.5 text-slate-300 leading-relaxed font-sans">
-              <div><strong>單穴用量公式：</strong><code className="text-purple-300 font-mono">Unit_Weight_g = (Net_Mold_Weight + Runner_Weight) / Active_Cavities</code></div>
+            <div className="space-y-1.5 text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
+              <div><strong>單穴用量公式：</strong><code className="text-purple-800 dark:text-purple-300 font-mono font-bold">Unit_Weight_g = (Net_Mold_Weight + Runner_Weight) / Active_Cavities</code></div>
               <div><strong>實務變數帶入：</strong></div>
-              <ul className="list-disc list-inside pl-2 space-y-1 text-slate-400 font-mono text-[11px]">
+              <ul className="list-disc list-inside pl-2 space-y-1 text-slate-600 dark:text-slate-400 font-mono text-[11px]">
                 <li>整模成品重: {result.netMoldWeightG}g + 流道重: {result.runnerWeightG}g = 整模克重 {result.totalShotWeightG}g</li>
                 <li>妥善穴數: {result.activeCavities} 穴 (設計穴數: {result.designCavities} 穴{result.activeCavities < result.designCavities ? `，因塞 ${result.designCavities - result.activeCavities} 穴導致單穴分攤上升` : '，全穴滿載'})</li>
                 <li>日產能推估: (86,400秒 ÷ {result.cycleTimeSec}秒週期) × {result.activeCavities}穴 = {result.dailyCapacityPcs.toLocaleString()} PCS/日</li>
               </ul>
-              <div className="pt-2 border-t border-slate-800 text-purple-300 font-bold font-mono">
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-800 text-purple-700 dark:text-purple-300 font-bold font-mono">
                 ➜ 最終單穴耗量：{result.totalShotWeightG}g ÷ {result.activeCavities} = {result.unitWeightG.toFixed(3)} g/穴
               </div>
             </div>
@@ -739,27 +739,27 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
 
         {/* Explainable Math Card for Stage 3 (OBJ-08) */}
         {expandedMathStage === 'stage3' && (
-          <div className="my-4 p-4 rounded-xl bg-slate-900 text-slate-100 border border-emerald-500/40 text-xs font-mono space-y-3 animate-in fade-in-50">
-            <div className="flex items-center justify-between border-b border-slate-700 pb-2">
-              <span className="font-bold text-emerald-400 flex items-center gap-1.5">
+          <div className="my-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 border border-emerald-300 dark:border-emerald-500/40 text-xs font-mono space-y-3 animate-in fade-in-50">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+              <span className="font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
                 <Calculator className="w-4 h-4" />
                 <span>第 3 階白盒推導履歷 (RM SCM Procurement Formula Breakdown)</span>
               </span>
-              <span className="text-slate-400">採購補貨與安全庫存整補</span>
+              <span className="text-slate-500 dark:text-slate-400">採購補貨與安全庫存整補</span>
             </div>
-            <div className="space-y-1.5 text-slate-300 leading-relaxed font-sans">
-              <div><strong>原料毛需求公式：</strong><code className="text-emerald-300 font-mono">RM_Gross_Kg = (FG_Net_Gap × Unit_Weight_g / 1000) / (1 - Scrap_Rate)</code></div>
-              <ul className="list-disc list-inside pl-2 space-y-0.5 text-slate-400 font-mono text-[11px]">
+            <div className="space-y-1.5 text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
+              <div><strong>原料毛需求公式：</strong><code className="text-emerald-800 dark:text-emerald-300 font-mono font-bold">RM_Gross_Kg = (FG_Net_Gap × Unit_Weight_g / 1000) / (1 - Scrap_Rate)</code></div>
+              <ul className="list-disc list-inside pl-2 space-y-0.5 text-slate-600 dark:text-slate-400 font-mono text-[11px]">
                 <li>FG 成品淨缺口: {result.fgNetRequirementQty.toLocaleString()} PCS × 單穴重 {result.unitWeightG}g ÷ 1,000 = {((result.fgNetRequirementQty * result.unitWeightG) / 1000).toFixed(2)} KG</li>
                 <li>製程損耗率: {(result.stdScrapRate * 100).toFixed(0)}% ➜ 毛需求 = {result.rmGrossRequirementKg.toLocaleString()} KG</li>
               </ul>
 
-              <div className="pt-2 border-t border-slate-800"><strong>原料淨缺口與採購建議公式：</strong><code className="text-emerald-300 font-mono">RM_Net_Gap = RM_Gross - (RM_OnHand + InTransit) + SafetyStock</code></div>
-              <ul className="list-disc list-inside pl-2 space-y-0.5 text-slate-400 font-mono text-[11px]">
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-800"><strong>原料淨缺口與採購建議公式：</strong><code className="text-emerald-800 dark:text-emerald-300 font-mono font-bold">RM_Net_Gap = RM_Gross - (RM_OnHand + InTransit) + SafetyStock</code></div>
+              <ul className="list-disc list-inside pl-2 space-y-0.5 text-slate-600 dark:text-slate-400 font-mono text-[11px]">
                 <li>可用在庫: {result.rmOnHandKg.toLocaleString()} KG + 在途 PO: {result.rmInTransitKg.toLocaleString()} KG</li>
                 <li>安全庫存防線: {result.safetyStockKg.toLocaleString()} KG</li>
                 <li>算式結果: {result.rmGrossRequirementKg.toLocaleString()} - {(result.rmOnHandKg + result.rmInTransitKg).toLocaleString()} + {result.safetyStockKg.toLocaleString()} = {result.rmNetRequirementKg.toLocaleString()} KG</li>
-                <li>MOQ 向上整補: Ceil({result.rmNetRequirementKg} / {result.moqKg}) × {result.moqKg} = <span className="text-emerald-400 font-bold">{result.suggestedOrderQtyKg.toLocaleString()} KG</span></li>
+                <li>MOQ 向上整補: Ceil({result.rmNetRequirementKg} / {result.moqKg}) × {result.moqKg} = <span className="text-emerald-700 dark:text-emerald-400 font-bold">{result.suggestedOrderQtyKg.toLocaleString()} KG</span></li>
               </ul>
             </div>
           </div>

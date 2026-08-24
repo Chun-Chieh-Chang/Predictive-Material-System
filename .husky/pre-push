@@ -8,7 +8,14 @@
 
 echo "🚀 PMS Pre-push Checks..."
 
-# 0. DoD 五項條件驗證（G-01 + G-07：程式化執行，取代純文字規範）
+# 0. 版本一致性自動核對門禁 (Version Consistency Gate)
+echo "  → 版本一致性核對..."
+node .impeccable/scripts/verify-version-consistency.mjs || {
+  echo "❌ 版本核對失敗，請確認 src/utils/version.ts"
+  exit 1
+}
+
+# 0.1. DoD 五項條件驗證（G-01 + G-07：程式化執行，取代純文字規範）
 echo "  → DoD 檢查..."
 node .impeccable/scripts/do-d-check.mjs || {
   echo "❌ DoD 檢查失敗，請修復後重新 push"
