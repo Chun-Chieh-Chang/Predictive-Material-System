@@ -62,16 +62,16 @@
 
 ### 維度二：提高資訊集中度，消除資訊孤島與增加效率
 
-#### 🔹 目標 4 (OBJ-04)：集中維護 7 大核心營運主檔，建立單一數據真相來源 (Single Source of Truth)
+#### 🔹 目標 4 (OBJ-04)：集中維護 8 大核心營運主檔，建立單一數據真相來源 (Single Source of Truth)
 * **現況痛點**：資訊散落在廠長（產能）、課長（模具/良率）、業務部（預測/訂單）、玉婷（庫存/採購）各自手中。
 * **具體開發功能**：
-  1. 建立統一「數據中心 (Data Center)」，遵循奧卡姆剃刀極簡架構集中管理 7 大核心主檔（良率與採購規則高內聚整併至品號主檔，配比內嵌於 BOM，大幅降低維護負擔）：
+  1. 建立統一「數據中心 (Data Center)」，遵循奧卡姆剃刀極簡架構集中管理 8 大核心主檔（良率與採購規則高內聚整併至品號主檔，配比內嵌於 BOM，大幅降低維護負擔）：
      - ① 品號主檔 (`item_master`，含良率標準與 RAW 採購前置交期/MOQ/安全庫存)
      - ② 模具與產能主檔 (`mold_master`，妥善穴數與成型週期)
      - ③ 產品模具成型 BOM (`product_mold_bom`，整模克重、損耗率、色母配比)
      - ④ 業務需求預測檔 (`demand_forecast_log`，客戶需求預估)
      - ⑤ 實際訂單檔 (`actual_order`，正式 PO 訂單)
-     - ⑥ 庫存與待驗快照檔 (`inventory_wip_snapshot`，4F 成品在庫、3F WIP 待驗、原料在庫)
+     - ⑥ 庫存與待驗快照檔 (`inventory_wip_snapshot`，成品倉庫 成品在庫、在製品待驗區 WIP 待驗、原料在庫)
      - ⑦ 在途採購訂單檔 (`po_in_transit`，在途原料海運/清關狀態)
      - 附屬：Sorting 實際良率紀錄檔 (`sorting_actual_yield_log`，全檢動態回饋)
   2. 支援標準 Excel 範本一鍵批次匯入/匯出，具備格式驗證與自動防呆。
@@ -80,7 +80,7 @@
 #### 🔹 目標 5 (OBJ-05)：開發「週二出貨可行性放行審查看板 (Ship Schedule Clearance)」
 * **現況痛點**：每週二出貨協調會需耗費大量時間人工核對庫存、待驗品與訂單，容易誤判。
 * **具體開發功能**：
-  1. 一鍵推算雙週出貨覆蓋率：$\text{可放行量} = \text{成品在庫良品} + (\text{3F WIP 待驗品} \times \text{全檢良率}) - \text{未結確認訂單}$。
+  1. 一鍵推算雙週出貨覆蓋率：$\text{可放行量} = \text{成品在庫良品} + (\text{在製品待驗區 WIP 待驗品} \times \text{全檢良率}) - \text{未結確認訂單}$。
   2. 依據缺口等級自動給予決策建議：`100% 放行`、`需 WIP 優先檢驗支援`、`實質缺料赤字（不可出貨）`。
 * **衡量指標 (DoD)**：出貨協調會議由以往耗時 1~2 小時縮短至 **5 分鐘內**藉由系統看板完成全品項放行審查。
 
@@ -164,7 +164,7 @@
 #### 🔹 目標 15 (OBJ-15)：建立開放資料交換契約 (Open Data Contract) 與全欄位定義字典
 * **現況痛點**：未來與 MES、WMS、SRM 等周邊系統串接時缺乏統一格式定義。
 * **具體開發功能**：
-  1. 發布完整資料規格書 [docs/PMS_Data_Dictionary.md](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/docs/PMS_Data_Dictionary.md)，完整定義全系統 7 大核心主檔表共 50+ 個核心欄位之白話說明、填寫示範、約束與業務定義。
+  1. 發布完整資料規格書 [docs/PMS_Data_Dictionary.md](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/docs/PMS_Data_Dictionary.md)，完整定義全系統 8 大核心主檔表共 50+ 個核心欄位之白話說明、填寫示範、約束與業務定義。
   2. 在「專業術語辭典」[GlossaryView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/GlossaryView.tsx) 中內建 `📊 主檔案欄位名稱定義表` 專區供全員即時查閱。
 * **衡量指標 (DoD)**：提供完整的資料規格文件與系統內建辭典，確保未來 IT 團隊或外部 ERP 顧問能直接以此契約進行 API 開發與資料管線串接。
 
@@ -179,7 +179,7 @@
 | **OBJ-01** | 預示量/實單/歷史三向交叉比對 | 提高客戶下單掌握度 | [demandAnalysisEngine.ts](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/utils/demandAnalysisEngine.ts)<br>[DashboardView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/DashboardView.tsx) | 同屏交叉比對預示量、實單與歷史同期基準，視覺化長條圖即時對照 | • 演算法比對測試 100% 通過 (PASS)<br>• 支援客戶/品號多維篩選與圖表連動<br>• 響應時間 $< 0.1$ 秒 | ✅ **100% 驗收通過** |
 | **OBJ-02** | 預測波動與偏離自動示警 | 提高客戶下單掌握度/防斷料 | [demandAnalysisEngine.ts](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/utils/demandAnalysisEngine.ts)<br>[DashboardView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/DashboardView.tsx) | 自動計算 Bias% 偏差率，觸發 🟢/🟡/🔴 三色燈號與業務處置建言 | • `verify_phase1_engine.py` 測試案例：+5% (正常), +20% (注意), +50% (高危), -30% (高危), 插單 (高危) 全數精確判定 (PASS) | ✅ **100% 驗收通過** |
 | **OBJ-03** | 最晚採購下單日動態推算 | 提高備料能力/防斷料 | [MrpCalculatorView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/MrpCalculatorView.tsx) | 依據 Lead Time 倒推最晚發單日，實裝 30 天防斷料倒數時程軸 | • 清楚標示當前日期、最晚發單日、交期倒數與客戶交期<br>• 逾期自動紅字警示 | ✅ **100% 驗收通過** |
-| **OBJ-04** | 7 大核心主檔集中單一真相 | 提高資訊集中度/消除孤島 | [DataTablesView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/DataTablesView.tsx)<br>[dataExchange.ts](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/utils/dataExchange.ts) | 集中管理 7 大核心主表，支援 Excel 雙向匯入匯出與防呆驗證 | • 7 大主檔一站式切換瀏覽與在線編輯<br>• 支援 Excel 範本匯出與批次匯入 | ✅ **100% 驗收通過** |
+| **OBJ-04** | 8 大核心主檔集中單一真相 | 提高資訊集中度/消除孤島 | [DataTablesView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/DataTablesView.tsx)<br>[dataExchange.ts](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/utils/dataExchange.ts) | 集中管理 7 大核心主表，支援 Excel 雙向匯入匯出與防呆驗證 | • 8 大主檔一站式切換瀏覽與在線編輯<br>• 支援 Excel 範本匯出與批次匯入 | ✅ **100% 驗收通過** |
 | **OBJ-05** | 週二出貨可行性放行審查 | 提高資訊集中度/增加效率 | [ShipScheduleClearanceView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/ShipScheduleClearanceView.tsx) | 雙週訂單放行覆蓋率自動推算，三級決策標籤與即時放行清單 | • 5 分鐘內完成雙週出貨審查<br>• 精確折算成品良品在庫與在製品 WIP 待驗品 | ✅ **100% 驗收通過** |
 | **OBJ-06** | 訂單缺料分析與瓶頸診斷 | 提高資訊集中度/增加效率 | [OrderTensionTrackerView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/OrderTensionTrackerView.tsx) | 逐筆診斷 6 大環節瓶頸，輸出缺料評級與應變建議 | • 逐筆訂單即時顯示物料備料狀況與瓶頸分析 | ✅ **100% 驗收通過** |
 | **OBJ-07** | 標準 3 階 MRP 推導演算法 | 提高資訊透明度/廢除手算 | [mrpEngine.ts](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/utils/mrpEngine.ts)<br>[MrpCalculatorView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/MrpCalculatorView.tsx) | FG 淨需求 $\rightarrow$ 模具妥善穴數克重 $\rightarrow$ 原料淨缺口與 MOQ 整補 | • 數學精確度單元測試 100% 通過 (PASS)<br>• 淨需求、克重、毛需求、淨缺口推導零誤差 | ✅ **100% 驗收通過** |
@@ -198,7 +198,7 @@
 
 本規格書與核查驗收總表所載之 **15 項核心開發目標** 已全數在料事如神系統 (PMS) 中**高標準落地並完成客觀驗證**。系統已正式具備：
 1. **前瞻防斷料能力**：三向需求比對 + 預測偏差示警 + 最晚發單日倒數。
-2. **資訊全集中與高效率**：7 大核心營運主檔單一真相 + 週二 5 分鐘放行審查 + 訂單緊張度診斷。
+2. **資訊全集中與高效率**：8 大核心營運主檔單一真相 + 週二 5 分鐘放行審查 + 訂單緊張度診斷。
 3. **100% 數位透明算式**：標準 3 階 MRP 推導 + 計算公式明細展開。
 4. **全員無阻礙同台協同**：雙模主題 + 大螢幕開會投影 + 自動審計日誌。
 5. **企業級 ERP 擴充就緒**：3NF 資料模型 + 五層分類 + 適配層解耦 + 完整資料字典規格。

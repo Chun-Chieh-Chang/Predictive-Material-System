@@ -15,7 +15,7 @@
 | 3 階 MRP 推導核心引擎 | ✅ | `mrpEngine.ts`：FG Net Req → BOM 展開 → 採購決策、分批到貨建議、虛擬預扣，支援計算公式明細展開 |
 | WIP 日動態推估公式計算器 | ✅ | `wipEngine.ts`：$WIP(t) = WIP(t-1) + P(t) - S(t)$，含夜班 12h 無人挑選時序差補償，涵蓋 PART/COMP/SET |
 | 訂單缺料分析引擎 | ✅ | `orderTensionEngine.ts`：6 大供應鏈環節瓶頸掃描、缺料告警與處置建議 |
-| 資料關聯完整性與模擬器 | ✅ | `dataIntegrityScanner.ts` & `dataPipelineSimulation.ts`：7 大核心主檔關聯校驗與資料健康防呆 |
+| 資料關聯完整性與模擬器 | ✅ | `dataIntegrityScanner.ts` & `dataPipelineSimulation.ts`：8 大核心主檔關聯校驗與資料健康防呆 |
 
 #### 業務與視覺化看板 (13 大模組)
 | 視圖模組 | 檔案 | 狀態 | 說明 |
@@ -26,7 +26,7 @@
 | 3階 MRP 推導器 | `MrpCalculatorView.tsx` | ✅ | 單品/全品 MRP 推導、計算公式明細、採購排程時間軸與最晚下單日倒數 |
 | 出貨排程可行性審查看板 | `ShipScheduleClearanceView.tsx` | ✅ | 專為每週二出貨會議設計，良品+在製品 WIP 待驗折算、三色放行燈號、情境模擬 |
 | 訂單缺料分析看板 | `OrderTensionTrackerView.tsx` | ✅ | 逐筆訂單 6 大環節瓶頸診斷、全文檢索、缺料原因與處置建議 |
-| 資料表維護 | `DataTablesView.tsx` | ✅ | 7 大核心主檔 CRUD、3 級變更管制與外鍵關聯影響即時掃描 |
+| 資料表維護 | `DataTablesView.tsx` | ✅ | 8 大核心主檔 CRUD、3 級變更管制與外鍵關聯影響即時掃描 |
 | 名詞術語說明 | `GlossaryView.tsx` | ✅ | 7 大分類專有名詞檢索 + 主檔案全欄位定義庫 (90+ 欄位) |
 | 參數策略設定 | `SystemSettingsView.tsx` | ✅ | 4 種需求沖銷模式切換、虛擬預扣開關、損耗率天花板防呆 |
 | 資料匯入匯出 | `DataExchangeView.tsx` | ✅ | 智慧雙模切換 (Demo ↔ Prod)、Excel/JSON 雙向匯出入、資料關聯模擬 |
@@ -34,7 +34,7 @@
 | 系統規格與驗收 | `PrdDocView.tsx` | ✅ | 15 大核心可驗收目標 (OBJ-01 ~ OBJ-15) 規格與驗收總表 |
 | 備份與復原設定 | `BackupSettingsView.tsx` | ✅ | 自動排程備份與 JSON 備份還原 |
 
-#### 7 大核心主檔與架構優化成果
+#### 8 大核心主檔與架構優化成果
 | 項目 | 狀態 | 說明 |
 |------|------|------|
 | 主檔架構 3NF 高內聚精簡 | ✅ | 從 11 張表格縮減為 7 張核心營運主檔，良率標準與採購規則直合於品號主檔，色料配比直合於成型 BOM |
