@@ -78,7 +78,8 @@ entries:
     category: PROCESS
     tags:
       - deploy
-      - typescript
+      - progress
+      - false
       - husky
       - mece
     severity: medium

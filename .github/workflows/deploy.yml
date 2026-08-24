@@ -13,7 +13,7 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   # ─────────────────────────────────────────
@@ -167,19 +167,13 @@ jobs:
             STATUS="verify_failed"
           fi
 
-          echo "{\"timestamp\":\"$TIMESTAMP\",\"commit_sha\":\"$COMMIT_SHA\",\"run_id\":$RUN_ID,\"workflow\":\"$WORKFLOW\",\"previous_job_result\":\"$PREVIOUS_JOB\",\"attempts\":$ATTEMPTS,\"url\":\"https://chun-chieh-chang.github.io/Predictive-Material-System/\",\"http_code\":\"$HTTP_CODE\",\"content_match\":\"$CONTENT_OK\",\"status\":\"$STATUS\"}" >> "$AUDIT_FILE"
-          cat "$AUDIT_FILE" | tail -1
+      - name: Save deploy audit log as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-audit-log
+          path: docs/.audit/deploy-audit.jsonl
+          if-no-files-found: ignore
 
-      - name: Commit audit log（不阻擋 workflow）
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add docs/.audit/deploy-audit.jsonl
-          git commit -m "chore: deploy audit log (${{ github.run_id }})" || echo "No changes to commit (no new audit entries)"
-          git push || echo "⚠️  Push 失敗（可能為權限問題），audit log 已保留在 workdir"
-
-      # 不再使用 exit 1，改為設定 status 變數供後續查看
-      # 真正的 failure 由 build-and-deploy 的結論反映
       - name: Record verification result
         run: |
           echo "::notice title=Deploy Verification::$URL → HTTP ${{ env.HTTP_CODE }}, content_match=${{ env.CONTENT_OK }}, attempts=${{ env.ATTEMPTS }}"
