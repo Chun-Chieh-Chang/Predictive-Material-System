@@ -17,7 +17,7 @@ const TARGET_DIRS = process.argv.slice(2)[0] ? [process.argv[2]] : ['src/compone
 const DEFECT_PATTERNS = [
   {
     name: '硬編碼深色漸變背景 (Hardcoded Dark Gradient Container)',
-    regex: /className=["'`][^"'`]*\b(bg-gradient-to-[a-z]+)\b[^"'`]*\b(?<!dark:)from-(slate-900|slate-950|purple-950|indigo-950)\b/g,
+    regex: /className=["'`][^"'`]*\b(bg-gradient-to-[a-z]+)\b[^"'`]*\b(?<!dark:)from-(slate|gray|zinc|neutral|stone|sky|blue|indigo|purple|violet|emerald|teal|cyan)-(800|900|950)\b/g,
     severity: 'CRITICAL',
     message: '禁止使用未經淺色模式適配的硬編碼深色漸變容器，應使用 bg-white dark:bg-slate-900 統一卡片規範。'
   },
@@ -29,16 +29,15 @@ const DEFECT_PATTERNS = [
       lines.forEach((line, index) => {
         if (line.trim().startsWith('//') || line.trim().startsWith('/*') || line.includes('import')) return;
         
-        // 匹配 className 中包含未加 dark: 的 bg-slate-900 / bg-slate-950
-        const classMatches = [...line.matchAll(/className=["'`][^"'`]*\b(?<!dark:)bg-(slate-900|slate-950)(\/[0-9]+)?\b[^"'`]*/g)];
+        // 匹配 className 中包含未加 dark: 的所有深色背景族群
+        const classMatches = [...line.matchAll(/className=["'`][^"'`]*\b(?<!dark:)bg-(slate|gray|zinc|neutral|stone|sky|blue|indigo|purple|violet|emerald|teal|cyan)-(800|900|950)(\/[0-9]+)?\b[^"'`]*/g)];
         for (const match of classMatches) {
           const classStr = match[0];
-          // 如果沒有同時聲明淺色背景（bg-white, bg-slate-50/100, bg-transparent 等）或不是專門的暗色 code pre 區塊
-          if (!/\bbg-(white|slate-50|slate-100|slate-200|transparent|sky-|indigo-|purple-|emerald-|amber-|red-|blue-)/.test(classStr)) {
-            // 允許專門的代碼顯示 pre 容器
-            if (line.includes('<pre') || line.includes('overflow-x-auto') || line.includes('whitespace-pre')) {
-              continue;
-            }
+          // 如果不是按鈕或特定代碼顯示區塊且沒有宣告淺色對應背景
+          if (line.includes('<button') || line.includes('<pre') || line.includes('overflow-x-auto') || line.includes('whitespace-pre')) {
+            continue;
+          }
+          if (!/\bbg-(white|transparent|[a-z]+-(50|100|200))(\/[0-9]+)?\b/.test(classStr)) {
             findings.push({
               line: index + 1,
               snippet: line.trim()

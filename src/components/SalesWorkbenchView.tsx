@@ -168,21 +168,21 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
   return (
     <div className="space-y-6 pb-12">
       {/* ── 頂部 Hero Banner ─────────────────────────────────────────────────── */}
-      <div className="bg-gradient-to-r from-sky-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl border border-sky-500/20 relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="bg-white dark:bg-slate-900/90 rounded-3xl p-6 sm:p-8 shadow-sm dark:shadow-xl border border-slate-200 dark:border-sky-500/20 relative overflow-hidden">
+        <div className="absolute right-0 top-0 w-96 h-96 bg-sky-500/5 dark:bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
             <div className="flex items-center space-x-2.5 mb-2">
-              <span className="bg-sky-500/20 border border-sky-400/30 text-sky-300 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 font-mono">
-                <Sparkles className="w-3.5 h-3.5 text-sky-400" />
+              <span className="bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-500/30 text-sky-700 dark:text-sky-300 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 font-mono">
+                <Sparkles className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
                 SALES AGILE WORKBENCH
               </span>
-              <span className="text-xs text-sky-200/70 font-mono">三向快查 · 偏差示警 · 交期秒答</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">三向快查 · 偏差示警 · 交期秒答</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
               業務敏捷工作台
             </h2>
-            <p className="text-sm text-sky-100/80 mt-1 max-w-2xl leading-relaxed">
+            <p className="text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
               專為業務同仁打造的一站式作戰中心。免跳轉即可同屏檢索客戶預示量波動、訂單物料緊張度與週二出貨放行狀態。
             </p>
           </div>
@@ -190,14 +190,14 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
           <div className="flex flex-wrap gap-2.5 shrink-0">
             <button
               onClick={() => onNavigateToDashboard(activeSku)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition-all backdrop-blur-md cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-700 dark:text-white border border-slate-200 dark:border-white/20 text-xs font-bold transition-all cursor-pointer"
             >
-              <BarChart3 className="w-4 h-4 text-sky-300" />
+              <BarChart3 className="w-4 h-4 text-sky-600 dark:text-sky-300" />
               <span>全戰情儀表板</span>
             </button>
             <button
               onClick={onNavigateToOrderTension}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition-all shadow-lg shadow-sky-600/30 cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition-all shadow-md shadow-sky-600/20 cursor-pointer"
             >
               <Activity className="w-4 h-4" />
               <span>訂單物料示警</span>

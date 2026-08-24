@@ -1310,41 +1310,41 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 const isOvercapacity = item.alerts.some((a) => a.level === 'orange');
                 const isOverstock = item.alerts.some((a) => a.level === 'yellow');
                 return (
-                  <tr key={item.sku} className="hover:bg-slate-800/40 transition-colors">
+                  <tr key={item.sku} className="hover:bg-slate-100/60 dark:hover:bg-slate-800/40 transition-colors">
                     <td className="py-3 px-2 font-sans">
                       {isShortage ? (
-                        <span className="px-2.5 py-1 bg-red-500/10 text-red-400 border border-red-500/20 rounded-md text-sm font-bold whitespace-nowrap">
+                        <span className="px-2.5 py-1 bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/20 rounded-md text-sm font-bold whitespace-nowrap">
                           🔴 缺料 Shortage
                         </span>
                       ) : isOvercapacity ? (
-                        <span className="px-2.5 py-1 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-md text-sm font-bold whitespace-nowrap">
+                        <span className="px-2.5 py-1 bg-orange-500/10 text-orange-700 dark:text-orange-400 border border-orange-500/20 rounded-md text-sm font-bold whitespace-nowrap">
                           🟠 爆倉 Overcapacity
                         </span>
                       ) : isOverstock ? (
-                        <span className="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-md text-sm font-bold whitespace-nowrap">
+                        <span className="px-2.5 py-1 bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 rounded-md text-sm font-bold whitespace-nowrap">
                           🟡 超備 Excess
                         </span>
                       ) : (
-                        <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-md text-sm font-bold whitespace-nowrap">
+                        <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 rounded-md text-sm font-bold whitespace-nowrap">
                           🟢 正常 Normal
                         </span>
                       )}
                     </td>
-                    <td className="py-3 px-2 text-white font-bold text-sm">{item.sku}</td>
-                    <td className="py-3 px-2 text-slate-300 font-sans text-sm">{item.customerId}</td>
-                    <td className="py-3 px-2 text-purple-400 font-semibold text-sm">{item.rmSku}</td>
-                    <td className="py-3 px-2 text-right text-blue-400 font-bold text-sm">
+                    <td className="py-3 px-2 text-slate-900 dark:text-white font-bold text-sm">{item.sku}</td>
+                    <td className="py-3 px-2 text-slate-600 dark:text-slate-300 font-sans text-sm">{item.customerId}</td>
+                    <td className="py-3 px-2 text-purple-700 dark:text-purple-400 font-semibold text-sm">{item.rmSku}</td>
+                    <td className="py-3 px-2 text-right text-blue-700 dark:text-blue-400 font-bold text-sm">
                       {item.suggestedOrderQtyKg.toLocaleString()} KG
                     </td>
                     <td className="py-3 px-2 text-right font-medium text-sm">
-                      <span className={item.daysUntilLatestOrder < 0 ? 'text-red-400 font-bold' : item.daysUntilLatestOrder <= (params?.shortageAlertBufferDays || 15) ? 'text-amber-400 font-semibold' : 'text-slate-200'}>
+                      <span className={item.daysUntilLatestOrder < 0 ? 'text-red-600 dark:text-red-400 font-bold' : item.daysUntilLatestOrder <= (params?.shortageAlertBufferDays || 15) ? 'text-amber-600 dark:text-amber-400 font-semibold' : 'text-slate-700 dark:text-slate-200'}>
                         {item.suggestedOrderDate}
                       </span>
                     </td>
                     <td className="py-3 px-2 text-center font-sans">
                       <button
                         onClick={() => onNavigateToMRP(item.sku)}
-                        className="px-2.5 py-1 text-sm font-medium text-cyan-400 hover:text-cyan-300 bg-cyan-950/50 hover:bg-cyan-900/50 border border-cyan-800/60 rounded-lg transition-colors cursor-pointer"
+                        className="px-2.5 py-1 text-sm font-medium text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 bg-cyan-50 dark:bg-cyan-950/50 hover:bg-cyan-100 dark:hover:bg-cyan-900/50 border border-cyan-200 dark:border-cyan-800/60 rounded-lg transition-colors cursor-pointer"
                       >
                         明細
                       </button>

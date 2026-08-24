@@ -92,21 +92,21 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
   return (
     <div className="space-y-6 pb-12">
       {/* ── 頂部 Hero Banner ─────────────────────────────────────────────────── */}
-      <div className="bg-gradient-to-r from-emerald-900 via-teal-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl border border-emerald-500/20 relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="bg-white dark:bg-slate-900/90 rounded-3xl p-6 sm:p-8 shadow-sm dark:shadow-xl border border-slate-200 dark:border-emerald-500/20 relative overflow-hidden">
+        <div className="absolute right-0 top-0 w-96 h-96 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
             <div className="flex items-center space-x-2.5 mb-2">
-              <span className="bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 font-mono">
-                <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 font-mono">
+                <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 PP & PROCUREMENT HUB
               </span>
-              <span className="text-xs text-emerald-200/70 font-mono">防斷料倒數 · 3階MRP推導 · 模具產能 · 7大主檔</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">防斷料倒數 · 3階MRP推導 · 模具產能 · 7大主檔</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
               生管 / 採購專屬工作台
             </h2>
-            <p className="text-sm text-emerald-100/80 mt-1 max-w-2xl leading-relaxed">
+            <p className="text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
               專為物料排程與採購決策設計的一體化工作台。自動推算最晚下單日、MOQ 整補採購量與模具日產能，徹底廢除人工紙筆黑箱計算。
             </p>
           </div>
@@ -114,14 +114,14 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
           <div className="flex flex-wrap gap-2.5 shrink-0">
             <button
               onClick={() => onNavigateToMRP(selectedSku)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition-all backdrop-blur-md cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-700 dark:text-white border border-slate-200 dark:border-white/20 text-xs font-bold transition-all cursor-pointer"
             >
-              <Calculator className="w-4 h-4 text-emerald-300" />
+              <Calculator className="w-4 h-4 text-emerald-600 dark:text-emerald-300" />
               <span>進入完整 MRP 引擎</span>
             </button>
             <button
               onClick={() => onNavigateToTables('item_master')}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-lg shadow-emerald-600/30 cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md shadow-emerald-600/20 cursor-pointer"
             >
               <Database className="w-4 h-4" />
               <span>7 大主檔維護</span>
