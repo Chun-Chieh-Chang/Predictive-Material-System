@@ -18,6 +18,7 @@ import {
   BookOpen,
   ChevronDown,
   ChevronRight,
+  Sparkles,
   X,
 } from 'lucide-react';
 import { NavTab } from './Navbar';
@@ -82,6 +83,7 @@ const NAV_GROUPS: NavGroup[] = [
     title: '決策戰情',
     accent: ACCENT.war_room,
     items: [
+      { id: 'sales_workbench', label: '業務敏捷工作台', sub: 'Sales Agile Hub', icon: Sparkles },
       { id: 'dashboard', label: '綜合戰情儀表板', sub: 'Decision War Room', icon: BarChart3 },
       { id: 'ship_schedule_clearance', label: '週二出貨審查', sub: 'Ship Clearance', icon: CalendarCheck },
       { id: 'order_tension_tracker', label: '訂單物料示警', sub: 'Order Tension', icon: Activity },
@@ -91,6 +93,7 @@ const NAV_GROUPS: NavGroup[] = [
     title: '物料推導',
     accent: ACCENT.mrp,
     items: [
+      { id: 'procurement_workbench', label: '生管採購工作台', sub: 'Procurement Hub', icon: Sparkles },
       { id: 'mrp_calculator', label: '3 階 MRP 推導', sub: 'MRP Engine', icon: Calculator },
     ],
   },
@@ -98,7 +101,7 @@ const NAV_GROUPS: NavGroup[] = [
     title: '數據中心',
     accent: ACCENT.data,
     items: [
-      { id: 'data_tables', label: '10 大主檔維護', sub: 'Master Data', icon: Database },
+      { id: 'data_tables', label: '7 大核心主檔維護', sub: 'Master Data', icon: Database },
       { id: 'material_class_management', label: '物料分類體系', sub: 'Material Classes', icon: Layers },
       { id: 'data_exchange', label: '資料交換與模擬', sub: 'Data & Simulation', icon: FileSpreadsheet },
     ],

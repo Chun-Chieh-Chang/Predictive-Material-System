@@ -52,7 +52,11 @@ const TaiwanDate: React.FC = () => {
   return <>{dateStr}</>;
 };
 
+export type RoleMode = 'sales' | 'procurement' | 'full';
+
 export type NavTab =
+  | 'sales_workbench'
+  | 'procurement_workbench'
   | 'dashboard'
   | 'mrp_calculator'
   | 'ship_schedule_clearance'
@@ -83,10 +87,10 @@ export interface DomainMeta {
 }
 
 export function getDomainForTab(tab: NavTab): PrimaryDomain {
-  if (tab === 'dashboard' || tab === 'ship_schedule_clearance' || tab === 'order_tension_tracker') {
+  if (tab === 'sales_workbench' || tab === 'dashboard' || tab === 'ship_schedule_clearance' || tab === 'order_tension_tracker') {
     return 'war_room';
   }
-  if (tab === 'mrp_calculator') {
+  if (tab === 'procurement_workbench' || tab === 'mrp_calculator') {
     return 'mrp_engine';
   }
   if (tab === 'data_tables' || tab === 'material_class_management' || tab === 'data_exchange') {
@@ -98,6 +102,8 @@ export function getDomainForTab(tab: NavTab): PrimaryDomain {
 interface NavbarProps {
   activeTab: NavTab;
   setActiveTab: (tab: NavTab) => void;
+  roleMode: RoleMode;
+  setRoleMode: (mode: RoleMode) => void;
   alertCount: number;
   onNavigateToBackup: () => void;
   backupEnabled: boolean;
@@ -112,6 +118,8 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   setActiveTab,
+  roleMode,
+  setRoleMode,
   alertCount,
   onNavigateToBackup,
   backupEnabled,
@@ -282,6 +290,57 @@ export const Navbar: React.FC<NavbarProps> = ({
                 QCC 料事如神圈 • 射出成型智能備料與產能排程推估
               </p>
             </div>
+          </div>
+
+          {/* Role Switcher Capsule (方案 A: 頂部角色敏捷切換膠囊) */}
+          <div className="hidden md:flex items-center p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-inner">
+            <button
+              onClick={() => {
+                setRoleMode('sales');
+                setActiveTab('sales_workbench');
+              }}
+              id="role-btn-sales"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                roleMode === 'sales'
+                  ? 'bg-sky-600 text-white shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="業務專屬工作台：三向快查、預測偏差追單、訂單緊張度與週二放行"
+            >
+              <span>💼 業務工作台</span>
+            </button>
+            <button
+              onClick={() => {
+                setRoleMode('procurement');
+                setActiveTab('procurement_workbench');
+              }}
+              id="role-btn-procurement"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                roleMode === 'procurement'
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="生管/採購工作台：30天防斷料時程、3階MRP推導、模具產能與7大主檔"
+            >
+              <span>🏭 生管 / 採購</span>
+            </button>
+            <button
+              onClick={() => {
+                setRoleMode('full');
+                if (activeTab === 'sales_workbench' || activeTab === 'procurement_workbench') {
+                  setActiveTab('dashboard');
+                }
+              }}
+              id="role-btn-full"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                roleMode === 'full'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="全功能模式：4大領域 11大視圖完整導航與開會投影"
+            >
+              <span>🌐 全功能模式</span>
+            </button>
           </div>
 
           {/* Telemetry Status & Actions */}

@@ -4,9 +4,11 @@
  */
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Navbar, NavTab } from './components/Navbar';
+import { Navbar, NavTab, RoleMode } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { PMS_VERSION } from './utils/version';
+import { SalesWorkbenchView } from './components/SalesWorkbenchView';
+import { ProcurementWorkbenchView } from './components/ProcurementWorkbenchView';
 import { DashboardView } from './components/DashboardView';
 import { MrpCalculatorView } from './components/MrpCalculatorView';
 import { ShipScheduleClearanceView } from './components/ShipScheduleClearanceView';
@@ -34,6 +36,7 @@ import { CheckCircle2, AlertCircle, X } from 'lucide-react';
 
 const STORAGE_KEY = 'PMS_DATABASE_STATE_V1';
 const PARAMS_STORAGE_KEY = 'PMS_SYSTEM_PARAMETERS_V1';
+const ROLE_MODE_STORAGE_KEY = 'PMS_ROLE_MODE_V1';
 
 export function App() {
   // Load state from LocalStorage or seed data
@@ -120,7 +123,30 @@ export function App() {
     }
   }, [systemParams]);
 
-  const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
+  const [roleMode, setRoleMode] = useState<RoleMode>(() => {
+    try {
+      const saved = localStorage.getItem(ROLE_MODE_STORAGE_KEY);
+      if (saved === 'sales' || saved === 'procurement' || saved === 'full') return saved;
+    } catch {}
+    return 'sales';
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(ROLE_MODE_STORAGE_KEY, roleMode);
+    } catch (e) {
+      console.error('Failed to save roleMode', e);
+    }
+  }, [roleMode]);
+
+  const [activeTab, setActiveTab] = useState<NavTab>(() => {
+    try {
+      const savedRole = localStorage.getItem(ROLE_MODE_STORAGE_KEY);
+      if (savedRole === 'procurement') return 'procurement_workbench';
+      if (savedRole === 'full') return 'dashboard';
+    } catch {}
+    return 'sales_workbench';
+  });
   const [activeMrpSku, setActiveMrpSku] = useState<string>('A01-200-131');
   const [activeTableKey, setActiveTableKey] = useState<TableKey>('item_master');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -128,7 +154,7 @@ export function App() {
   // ── Admin 管理模式（5連擊解鎖）────────────────────────────────────────────────
   const [adminUnlocked, setAdminUnlocked] = useState(false);
   const handleAdminUnlock = () => setAdminUnlocked(true);
-  const handleAdminLock   = () => { setAdminUnlocked(false); setActiveTab('dashboard'); };
+  const handleAdminLock   = () => { setAdminUnlocked(false); setActiveTab(roleMode === 'sales' ? 'sales_workbench' : roleMode === 'procurement' ? 'procurement_workbench' : 'dashboard'); };
 
   // Backup config state (loaded from localStorage)
   const [backupConfig, setBackupConfig] = useState<BackupScheduleConfig>(() => loadBackupConfig());
@@ -220,6 +246,8 @@ export function App() {
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        roleMode={roleMode}
+        setRoleMode={setRoleMode}
         alertCount={totalAlerts}
         onNavigateToBackup={handleNavigateToBackup}
         backupEnabled={backupConfig.enabled}
@@ -233,6 +261,49 @@ export function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-[1720px] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 pt-6 pb-10">
+        {activeTab === 'sales_workbench' && (
+          <SalesWorkbenchView
+            db={db}
+            params={systemParams}
+            onNavigateToDashboard={(sku) => {
+              if (sku) setActiveMrpSku(sku);
+              setRoleMode('full');
+              setActiveTab('dashboard');
+            }}
+            onNavigateToOrderTension={() => {
+              setRoleMode('full');
+              setActiveTab('order_tension_tracker');
+            }}
+            onNavigateToShipClearance={() => {
+              setRoleMode('full');
+              setActiveTab('ship_schedule_clearance');
+            }}
+            onNotify={showToast}
+          />
+        )}
+
+        {activeTab === 'procurement_workbench' && (
+          <ProcurementWorkbenchView
+            db={db}
+            params={systemParams}
+            onNavigateToMRP={(sku) => {
+              if (sku) setActiveMrpSku(sku);
+              setRoleMode('full');
+              setActiveTab('mrp_calculator');
+            }}
+            onNavigateToTables={(tableKey) => {
+              setActiveTableKey(tableKey as TableKey);
+              setRoleMode('full');
+              setActiveTab('data_tables');
+            }}
+            onNavigateToDataExchange={() => {
+              setRoleMode('full');
+              setActiveTab('data_exchange');
+            }}
+            onNotify={showToast}
+          />
+        )}
+
         {activeTab === 'dashboard' && (
           <DashboardView
             db={db}
