@@ -7,20 +7,17 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
 concurrency:
   group: 'pages'
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  # ─────────────────────────────────────────
-  # Job 1: Quality Gate & Build
-  # ─────────────────────────────────────────
-  build:
-    name: Quality Gate & Build
+  build-and-deploy:
+    name: Quality Gate, Build & Deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -51,22 +48,23 @@ jobs:
         env:
           NODE_ENV: production
 
-      - name: Upload artifact to Pages
+      - name: Deploy to gh-pages branch (Channel A)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+
+      - name: Setup GitHub Pages (Channel B)
+        uses: actions/configure-pages@v5
+        continue-on-error: true
+
+      - name: Upload artifact to Pages (Channel B)
         uses: actions/upload-pages-artifact@v3
         with:
           path: './dist'
+        continue-on-error: true
 
-  # ─────────────────────────────────────────
-  # Job 2: Deploy to GitHub Pages (Official Action)
-  # ─────────────────────────────────────────
-  deploy:
-    name: Deploy to GitHub Pages
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages (Channel B)
         id: deployment
         uses: actions/deploy-pages@v4
+        continue-on-error: true
