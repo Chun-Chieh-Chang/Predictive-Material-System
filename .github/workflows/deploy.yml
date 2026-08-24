@@ -7,20 +7,20 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: 'pages'
+  cancel-in-progress: true
 
 jobs:
   # ─────────────────────────────────────────
-  # Job: Quality Gate
+  # Job 1: Quality Gate & Build
   # ─────────────────────────────────────────
-  quality-gate:
-    name: Quality Gate
+  build:
+    name: Quality Gate & Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -51,137 +51,22 @@ jobs:
         env:
           NODE_ENV: production
 
-  # ─────────────────────────────────────────
-  # Job: Build & Deploy
-  # ─────────────────────────────────────────
-  build-and-deploy:
-    name: Build and Deploy to GitHub Pages
-    needs: quality-gate
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js 22
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build production bundle
-        run: npm run build
-        env:
-          NODE_ENV: production
-
-      - name: Setup GitHub Pages
-        uses: actions/configure-pages@v5
-
       - name: Upload artifact to Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: './dist'
 
+  # ─────────────────────────────────────────
+  # Job 2: Deploy to GitHub Pages (Official Action)
+  # ─────────────────────────────────────────
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-  # ─────────────────────────────────────────
-  # Job: Deploy Verification（部署後自動驗證）
-  # 修復重點：
-  #   1. 延長等待時間 + 重試機制（Pages 傳播通常需要 60-90 秒）
-  #   2. 移除 set -e，改用 $? 手動判斷，避免 curl 網路錯誤直接終止 workflow
-  #   3. 無論成功或失敗都寫入 audit log，便於追蹤
-  # ─────────────────────────────────────────
-  verify-deploy:
-    name: Verify Deployment
-    needs: build-and-deploy
-    runs-on: ubuntu-latest
-    # 即使前述 jobs 失敗也執行，確保 audit log 完整記錄
-    if: always()
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: true
-
-      - name: Wait for Pages propagation（60 秒）
-        run: sleep 60
-
-      - name: Check deployment URL（含 3 次重試）
-        id: url-check
-        run: |
-          URL="https://chun-chieh-chang.github.io/Predictive-Material-System/"
-          echo "  → 驗證部署網址: $URL"
-
-          HTTP_CODE="000"
-          CONTENT_OK="false"
-          BODY=""
-
-          # 最多重試 3 次，每次間隔 10 秒
-          for attempt in 1 2 3; do
-            echo "  → 嘗試 $attempt/3..."
-            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "$URL" 2>/dev/null || echo "000")
-            if [ "$HTTP_CODE" = "200" ]; then
-              BODY=$(curl -s --max-time 20 "$URL" 2>/dev/null || echo "")
-              if echo "$BODY" | grep -q "料事如神"; then
-                CONTENT_OK="true"
-                echo "  → HTTP=$HTTP_CODE content_match=true ✓"
-                break
-              fi
-            fi
-            if [ "$attempt" -lt 3 ]; then
-              echo "  → 等待 10 秒後重試..."
-              sleep 10
-            fi
-          done
-
-          echo "HTTP_CODE=$HTTP_CODE" >> $GITHUB_ENV
-          echo "CONTENT_OK=$CONTENT_OK" >> $GITHUB_ENV
-          echo "ATTEMPTS=$attempt" >> $GITHUB_ENV
-
-      - name: Generate deploy audit log
-        run: |
-          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-          COMMIT_SHA="${{ github.sha }}"
-          RUN_ID="${{ github.run_id }}"
-          WORKFLOW="${{ github.workflow }}"
-          PREVIOUS_JOB="${{ needs.build-and-deploy.result }}"
-          ATTEMPTS="${{ env.ATTEMPTS }}"
-          HTTP_CODE="${{ env.HTTP_CODE }}"
-          CONTENT_OK="${{ env.CONTENT_OK }}"
-          AUDIT_DIR="docs/.audit"
-          mkdir -p "$AUDIT_DIR"
-          AUDIT_FILE="$AUDIT_DIR/deploy-audit.jsonl"
-
-          STATUS="unknown"
-          if [ "$CONTENT_OK" = "true" ] && [ "$HTTP_CODE" = "200" ]; then
-            STATUS="success"
-          elif [ "$PREVIOUS_JOB" = "failure" ]; then
-            STATUS="build_failed"
-          else
-            STATUS="verify_failed"
-          fi
-
-      - name: Save deploy audit log as Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: deploy-audit-log
-          path: docs/.audit/deploy-audit.jsonl
-          if-no-files-found: ignore
-
-      - name: Record verification result
-        run: |
-          echo "::notice title=Deploy Verification::$URL → HTTP ${{ env.HTTP_CODE }}, content_match=${{ env.CONTENT_OK }}, attempts=${{ env.ATTEMPTS }}"
-          if [ "${{ env.CONTENT_OK }}" != "true" ] || [ "${{ env.HTTP_CODE }}" != "200" ]; then
-            echo "::warning::部署驗證未通過（HTTP ${{ env.HTTP_CODE }}），請檢查 GitHub Pages 傳播狀態"
-          else
-            echo "✅ 部署驗證通過"
-          fi
