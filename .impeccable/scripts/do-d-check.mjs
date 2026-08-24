@@ -110,8 +110,8 @@ if (capadocs.length === 0) {
     try {
       const content = readFileSync(resolve(root, doc), 'utf-8');
       const hasHash = content.includes(currentSha) ||
-                      content.includes('commit') ||
-                      /commit [a-f0-9]{7,}/.test(content);
+                      /commit/i.test(content) ||
+                      /[Cc]ommit[:\s]+[`]?[a-f0-9]{7,}/i.test(content);
       if (!hasHash) {
         console.error(`    ⚠️  ${doc} 未包含 commit hash`);
         allHaveHash = false;

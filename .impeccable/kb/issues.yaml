@@ -13,7 +13,9 @@ entries:
       - color
       - button
       - mrp
+      - false
       - mece
+      - font
       - husky
     severity: medium
     fix_code: "/* 新增 */\nhtml:not(.dark) .text-indigo-200,\nhtml:not(.dark) .text-indigo-300 { color: #3730a3 !important; } /* Indigo 800 */\nhtml:not(.dark) .text-indigo-400 { color: #4f46e5 !important; } /* Indigo 600 */\n```\n\n---\n\n/* sky 色系覆蓋 */\nhtml:not(.dark) .text-sky-100,\nhtml:not(.dark) .text-sky-200,\nhtml:not(.dark) .text-sky-300 { color: #0c4a6e !important; }\nhtml:not(.dark) .text-sky-400 { color: #0284c7 !important; }\n```"
@@ -83,6 +85,44 @@ entries:
       - progress
       - husky
       - mece
+    severity: medium
+    created_at: "2026-08-24"
+    last_used: "2026-08-24"
+    reuse_count: 0
+    status: active
+
+  - id: CAPA-001
+    title: "1. 問題描述"
+    category: DEVOPS
+    tags:
+      - typescript
+      - mece
+    severity: medium
+    created_at: "2026-08-24"
+    last_used: "2026-08-24"
+    reuse_count: 0
+    status: active
+
+  - id: CAPA-002
+    title: "1. 問題描述"
+    category: DEVOPS
+    tags:
+      - mece
+    severity: medium
+    created_at: "2026-08-24"
+    last_used: "2026-08-24"
+    reuse_count: 0
+    status: active
+
+  - id: CAPA-011
+    title: "1. 問題描述"
+    category: CSS
+    tags:
+      - css
+      - tailwind
+      - mece
+      - contrast
+      - button
     severity: medium
     created_at: "2026-08-24"
     last_used: "2026-08-24"
