@@ -1408,7 +1408,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <span className="text-xs font-medium text-slate-500">客戶:</span>
               <select
                 value={deviationCustomerFilter}
-                onChange={(e) => setDeviationCustomerFilter(e.target.value)}
+                onChange={(e) => {
+                  setDeviationCustomerFilter(e.target.value);
+                  setCollapsedSections((prev) => {
+                    const next = new Set(prev);
+                    next.delete('forecast_deviation');
+                    return next;
+                  });
+                }}
                 className="text-xs bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-800 dark:text-slate-200 font-semibold cursor-pointer"
               >
                 <option value="ALL">全部客戶 (All)</option>
@@ -1423,7 +1430,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <span className="text-xs font-medium text-slate-500">品號:</span>
               <select
                 value={demandCrossSkuFilter}
-                onChange={(e) => setDemandCrossSkuFilter(e.target.value)}
+                onChange={(e) => {
+                  setDemandCrossSkuFilter(e.target.value);
+                  setCollapsedSections((prev) => {
+                    const next = new Set(prev);
+                    next.delete('forecast_deviation');
+                    return next;
+                  });
+                }}
                 className="text-xs bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-800 dark:text-slate-200 font-mono font-semibold cursor-pointer max-w-[160px]"
               >
                 <option value="all">全品號 (All SKUs)</option>

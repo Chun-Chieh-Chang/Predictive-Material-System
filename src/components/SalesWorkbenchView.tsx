@@ -227,7 +227,7 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
             {/* Query Dimension Tabs */}
             <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold">
               <button
-                onClick={() => { setQueryType('customer'); setSearchKeyword('A客戶'); }}
+                onClick={() => { setQueryType('customer'); setSearchKeyword(customerList[0] || 'A客戶'); }}
                 className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                   queryType === 'customer'
                     ? 'bg-white dark:bg-slate-900 text-sky-700 dark:text-sky-300 shadow-xs font-bold'
@@ -237,7 +237,7 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
                 🏢 按客戶
               </button>
               <button
-                onClick={() => { setQueryType('sku'); setSearchKeyword(activeSku); }}
+                onClick={() => { setQueryType('sku'); setSearchKeyword(skuList[0]?.sku || activeSku); }}
                 className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                   queryType === 'sku'
                     ? 'bg-white dark:bg-slate-900 text-sky-700 dark:text-sky-300 shadow-xs font-bold'
@@ -247,7 +247,7 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
                 📦 按品號
               </button>
               <button
-                onClick={() => { setQueryType('po'); setSearchKeyword(orderList[0]?.order_id || 'PO-2026-0801'); }}
+                onClick={() => { setQueryType('po'); setSearchKeyword(orderList[0]?.order_id || ''); }}
                 className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                   queryType === 'po'
                     ? 'bg-white dark:bg-slate-900 text-sky-700 dark:text-sky-300 shadow-xs font-bold'
