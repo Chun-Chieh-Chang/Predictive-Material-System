@@ -12,7 +12,7 @@ import {
 export type BottleneckStageType =
   | 'raw_material_leadtime' // 🔴 原料採購交期環節
   | 'molding_capacity'      // 🟣 模具射出產能環節
-  | 'wip_sorting'           // 🟡 3樓 WIP 全檢環節
+  | 'wip_sorting'           // 🟡 WIP 全檢驗收環節
   | 'in_transit_shipping'   // 🟠 在途海運船期環節
   | 'colorant_shortage'     // 🔵 色母配色缺料環節
   | 'warehouse_overcapacity'; // 🟤 實體倉容超載環節
@@ -51,7 +51,7 @@ export interface OrderTensionDiagnostic {
 }
 
 /**
- * 針對全系統訂單進行全鏈路物料健康診斷與緊張環節定位
+ * 針對全系統訂單進行物料備料狀況診斷與缺料環節定位
  */
 export function diagnoseAllOrderTensions(
   db: SystemDatabase,
@@ -186,18 +186,18 @@ export function diagnoseAllOrderTensions(
         });
       }
 
-      // 環節 3：🟡 3樓 WIP 全檢環節 (WIP Sorting Dependency)
+      // 環節 3：🟡 在製品 WIP 全檢環節 (WIP Sorting Dependency)
       if (fgReadyQty < order.order_qty) {
         if (totalSupply >= order.order_qty) {
           const neededWip = order.order_qty - fgReadyQty;
           bottlenecks.push({
             stage: 'wip_sorting',
             level: 'yellow',
-            stageName: '3F WIP 待檢',
+            stageName: 'WIP 待驗品',
             stageBadge: `🟡 需挑選 ${neededWip.toLocaleString()} PCS`,
-            title: '成品現貨不足，極度仰賴 3樓 WIP 及時挑選驗收',
-            detail: `庫房在庫良品僅 ${fgReadyQty.toLocaleString()} PCS，需仰賴三樓暫存區之待驗品及時挑選入庫 ${neededWip.toLocaleString()} PCS 才能如期出貨。`,
-            metricText: `現貨缺 ${neededWip.toLocaleString()} PCS (3F 待驗 ${wipPendingQty.toLocaleString()} PCS)`,
+            title: '成品現貨不足，極度仰賴在製品 WIP 及時挑選驗收',
+            detail: `庫房在庫良品僅 ${fgReadyQty.toLocaleString()} PCS，需仰賴在製品暫存區之待驗品及時挑選入庫 ${neededWip.toLocaleString()} PCS 才能如期出貨。`,
+            metricText: `現貨缺 ${neededWip.toLocaleString()} PCS (WIP 待驗 ${wipPendingQty.toLocaleString()} PCS)`,
             actionGuide: '請生管與品保課優先排單檢驗該批號 WIP，確保在出貨日前完成全檢入庫！'
           });
         } else {
@@ -205,7 +205,7 @@ export function diagnoseAllOrderTensions(
           bottlenecks.push({
             stage: 'wip_sorting',
             level: 'red',
-            stageName: '3F WIP 待檢',
+            stageName: 'WIP 待驗品',
             stageBadge: `🔴 實質缺貨 ${absoluteDeficit.toLocaleString()} PCS`,
             title: '現貨與 WIP 總供給皆不足以覆蓋訂單',
             detail: `成品現貨 (${fgReadyQty.toLocaleString()}) + 有效 WIP (${wipEffectiveQty.toLocaleString()}) = 總可用量 ${totalSupply.toLocaleString()} PCS，實質赤字缺口達 ${absoluteDeficit.toLocaleString()} PCS。`,

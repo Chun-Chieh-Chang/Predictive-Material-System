@@ -21,7 +21,7 @@ export interface DailyWIPEstimationResult {
   previousWipQty: number;
   dailyProducedQty: number; // P(t) 當日機台成型產出量
   actualSortedQty: number; // S(t) 當日人工挑選入庫量
-  closingWipQty: number; // WIP(t) 當日三樓暫存區結存量
+  closingWipQty: number; // WIP(t) 當日在製品暫存區結存量
   netWipDelta: number; // WIP 淨變動量 (P(t) - S(t))
   nightShiftPendingQty: number; // 夜間無人挑選積壓量 (約 50% 產出)
   rmConsumedKg: number; // 當日成型耗用原料 (KG)

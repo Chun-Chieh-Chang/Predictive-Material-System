@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * ProcurementWorkbenchView.tsx
- * 生管/採購專屬排程與物料工作台 (PP & Procurement Workbench)
- * 一站式整合：30 天防斷料倒數時程軸、標準 3 階 MRP 淨需求推導（白盒算式履歷抽屜）、
- * 模具妥善穴數與日產能推估、7 大 3NF 核心主檔快捷操作。
+ * 生管採購工作台 (Procurement & Production Workbench)
+ * 整合：最晚下單日倒數時程軸、標準 3 階 MRP 淨需求推導（計算公式明細）、
+ * 模具妥善穴數與日產能推估、資料表維護快捷操作。
  */
 
 import React, { useState, useMemo } from 'react';
@@ -69,6 +69,7 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
       .map(res => {
         const item = db.item_master.find(i => i.sku === res.sku);
         const order = db.actual_order.find(o => o.sku === res.sku);
+        const hasOrder = !!order;
         const dueDate = order ? new Date(order.target_date) : new Date(today.getTime() + 20 * 86400000);
         const leadTimeDays = item?.lead_time_days || res.leadTimeDays || 14;
         const latestOrderDate = new Date(dueDate.getTime() - leadTimeDays * 86400000);
@@ -81,6 +82,7 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
           daysRemaining,
           dueDateStr: order?.target_date || dueDate.toISOString().split('T')[0],
           latestOrderDateStr: latestOrderDate.toISOString().split('T')[0],
+          hasOrder,
           isUrgent: daysRemaining <= 3,
           isWarning: daysRemaining > 3 && daysRemaining <= 7,
           isSafe: daysRemaining > 7,
@@ -99,15 +101,15 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
             <div className="flex items-center space-x-2.5 mb-2">
               <span className="bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 font-mono">
                 <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                PP & PROCUREMENT HUB
+                PROCUREMENT & PRODUCTION
               </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">防斷料倒數 · 3階MRP推導 · 模具產能 · 7大主檔</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">採購下單倒數 · 3 階 MRP 推導 · 模具產能 · 資料表維護</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-              生管 / 採購專屬工作台
+              生管採購工作台
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              專為物料排程與採購決策設計的一體化工作台。自動推算最晚下單日、MOQ 整補採購量與模具日產能，徹底廢除人工紙筆黑箱計算。
+              整合物料排程與採購推算。自動計算最晚下單日、MOQ 採購整補量與模具日產能。
             </p>
           </div>
 
@@ -117,14 +119,14 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-700 dark:text-white border border-slate-200 dark:border-white/20 text-xs font-bold transition-all cursor-pointer"
             >
               <Calculator className="w-4 h-4 text-emerald-600 dark:text-emerald-300" />
-              <span>進入完整 MRP 引擎</span>
+              <span>進入 3 階 MRP 計算</span>
             </button>
             <button
               onClick={() => onNavigateToTables('item_master')}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md shadow-emerald-600/20 cursor-pointer"
             >
               <Database className="w-4 h-4" />
-              <span>7 大主檔維護</span>
+              <span>資料表維護</span>
             </button>
           </div>
         </div>
@@ -139,16 +141,16 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
             </div>
             <div>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                30 天防斷料時程軸 — 最晚採購發單日倒數 (Earliest Order Date Countdown)
+                最晚採購下單日倒數 (30 天時程軸)
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                依 Lead Time 倒推最晚發單日，逾期自動標紅，按緊急度由高至低排列
+                依採購交期 (Lead Time) 倒推最晚發單日，逾期標示提醒，按緊急度排序
               </p>
             </div>
           </div>
 
           <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-            全廠物料監控中：{timelineData.length} 項
+            監控品項：{timelineData.length} 項
           </span>
         </div>
 
@@ -187,7 +189,7 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
                   <strong className="text-slate-800 dark:text-slate-200 font-mono">{item.latestOrderDateStr}</strong>
                 </div>
                 <div className="flex justify-between">
-                  <span>客戶交期:</span>
+                  <span>{item.hasOrder ? '客戶交期:' : '預設交期 (無PO):'}</span>
                   <strong className="text-slate-800 dark:text-slate-200 font-mono">{item.dueDateStr}</strong>
                 </div>
               </div>
@@ -199,7 +201,7 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
       {/* ── 模組 2 & 3: 3階MRP算式推導 + 模具產能折算 (2欄佈局) ─────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {/* ── 3 階 MRP 推導與白盒履歷 (佔 2 欄) ────────────────────────────── */}
+        {/* ── 3 階 MRP 推導與公式明細 (佔 2 欄) ────────────────────────────── */}
         <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs flex flex-col justify-between">
           <div>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 gap-3">
@@ -271,7 +273,7 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
               </div>
             )}
 
-            {/* 白盒算式履歷展開開關 */}
+            {/* 公式明細展開開關 */}
             {currentMrp && (
               <button
                 onClick={() => setExpandedMathDrawer(!expandedMathDrawer)}
@@ -279,13 +281,13 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <Calculator className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                  <span>{expandedMathDrawer ? '收合白盒推導算式履歷' : '📐 展開標準 3 階 MRP 白盒推導算式履歷'}</span>
+                  <span>{expandedMathDrawer ? '收合計算公式明細' : '📐 展開 3 階 MRP 計算公式明細'}</span>
                 </div>
                 {expandedMathDrawer ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </button>
             )}
 
-            {/* 白盒算式內容 (可收合) */}
+            {/* 公式內容 (可收合) */}
             {expandedMathDrawer && currentMrp && (
               <div className="mt-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-emerald-300 dark:border-emerald-500/40 text-xs font-mono space-y-3 animate-in fade-in-50">
                 <div className="space-y-2 text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
@@ -308,7 +310,7 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
               onClick={() => onNavigateToMRP(selectedSku)}
               className="text-xs text-emerald-700 dark:text-emerald-400 hover:underline font-bold flex items-center gap-1 cursor-pointer"
             >
-              <span>查看 30 天詳細時程白盒視圖</span>
+              <span>查看 30 天完整時程明細</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>

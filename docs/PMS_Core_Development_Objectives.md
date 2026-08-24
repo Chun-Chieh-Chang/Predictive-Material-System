@@ -84,12 +84,12 @@
   2. 依據缺口等級自動給予決策建議：`100% 放行`、`需 WIP 優先檢驗支援`、`實質缺料赤字（不可出貨）`。
 * **衡量指標 (DoD)**：出貨協調會議由以往耗時 1~2 小時縮短至 **5 分鐘內**藉由系統看板完成全品項放行審查。
 
-#### 🔹 目標 6 (OBJ-06)：開發「訂單全鏈路物料緊張度診斷看板 (Order Tension Tracker)」
+#### 🔹 目標 6 (OBJ-06)：開發「訂單缺料分析與瓶頸診斷看板 (Order Tension Tracker)」
 * **現況痛點**：無法直觀看出特定訂單卡在哪個環節，業務難以向客戶回覆確切交期。
 * **具體開發功能**：
-  1. 逐筆訂單穿透式診斷 6 大環節：① 預測覆蓋、② 模具可用性、③ 原料在庫、④ WIP 進度、⑤ 在途 PO ETA、⑥ 產能負荷。
-  2. 輸出 4 級緊張度評級（極度緊張、高度緊張、中度緊張、正常安全）與標準應變 SOP。
-* **衡量指標 (DoD)**：業務點選任何一張訂單，系統立即顯示該訂單的完整物料鏈路健康度與瓶頸節點。
+  1. 逐筆訂單診斷 6 大環節：① 預測覆蓋、② 模具可用性、③ 原料在庫、④ WIP 進度、⑤ 在途 PO ETA、⑥ 產能負荷。
+  2. 輸出缺料緊張度評級與標準應變處置建議。
+* **衡量指標 (DoD)**：業務點選任何一張訂單，系統立即顯示該訂單的物料備料狀況與瓶頸節點。
 
 ---
 
@@ -103,12 +103,12 @@
   3. **第 3 階（原料淨缺口與採購整補）**：$\text{原料淨缺口} = \text{原料毛需求} - (\text{在手庫存} + \text{在途 PO}) + \text{安全庫存}$；$\text{建議採購量} = \text{Ceil}(\text{原料淨缺口} \div \text{MOQ}) \times \text{MOQ}$。
 * **衡量指標 (DoD)**：全廠所有原料採購推算皆嚴格符合 3 階 MRP 標準公式，計算結果 100% 可被覆核驗證。
 
-#### 🔹 目標 8 (OBJ-08)：實裝「算式透明化卡片 (Explainable Calculation Drawer)」，提供白盒推導履歷
+#### 🔹 目標 8 (OBJ-08)：實裝「計算公式明細卡片 (Explainable Calculation Drawer)」
 * **現況痛點**：採購或主管看到建議數量時不知道「數字從何而來」，缺乏信任度。
 * **具體開發功能**：
-  1. 在 3 階 MRP 推導介面中實裝 `[📐 展開白盒推導履歷]` 與 `[算式履歷]` 抽屜。
-  2. 每一階層完整列出：數學公式、實務變數精確帶入值（含良品在庫、待驗良率折算、整模克重、妥善穴數分攤、損耗率%、安全庫存補整與 MOQ 向上整補完整計算軌跡）。
-* **衡量指標 (DoD)**：達到「點擊即看公式、變數完全透明、推導有跡可循」之白盒化目標。
+  1. 在 3 階 MRP 推導介面中實裝 `[📐 展開計算公式明細]` 與公式展開抽屜。
+  2. 每一階層完整列出：數學公式、實務變數精確帶入值（含良品在庫、待驗良率折算、整模克重、妥善穴數分攤、損耗率%、安全庫存補整與 MOQ 向上整補完整計算過程）。
+* **衡量指標 (DoD)**：達到「點擊即看公式、變數完全透明、推導有跡可循」之目標。
 
 #### 🔹 目標 9 (OBJ-09)：開發「What-If 情境模擬評估 (Scenario Simulation Engine)」
 * **現況痛點**：當客戶臨時追加訂單或現場塞穴/交期延遲時，無法快速量化評估衝擊。
@@ -180,13 +180,13 @@
 | **OBJ-02** | 預測波動與偏離自動示警 | 提高客戶下單掌握度/防斷料 | [demandAnalysisEngine.ts](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/utils/demandAnalysisEngine.ts)<br>[DashboardView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/DashboardView.tsx) | 自動計算 Bias% 偏差率，觸發 🟢/🟡/🔴 三色燈號與業務處置建言 | • `verify_phase1_engine.py` 測試案例：+5% (正常), +20% (注意), +50% (高危), -30% (高危), 插單 (高危) 全數精確判定 (PASS) | ✅ **100% 驗收通過** |
 | **OBJ-03** | 最晚採購下單日動態推算 | 提高備料能力/防斷料 | [MrpCalculatorView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/MrpCalculatorView.tsx) | 依據 Lead Time 倒推最晚發單日，實裝 30 天防斷料倒數時程軸 | • 清楚標示當前日期、最晚發單日、交期倒數與客戶交期<br>• 逾期自動紅字警示 | ✅ **100% 驗收通過** |
 | **OBJ-04** | 7 大核心主檔集中單一真相 | 提高資訊集中度/消除孤島 | [DataTablesView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/DataTablesView.tsx)<br>[dataExchange.ts](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/utils/dataExchange.ts) | 集中管理 7 大核心主表，支援 Excel 雙向匯入匯出與防呆驗證 | • 7 大主檔一站式切換瀏覽與在線編輯<br>• 支援 Excel 範本匯出與批次匯入 | ✅ **100% 驗收通過** |
-| **OBJ-05** | 週二出貨可行性放行審查 | 提高資訊集中度/增加效率 | [ShipScheduleClearanceView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/ShipScheduleClearanceView.tsx) | 雙週訂單放行覆蓋率自動推算，三級決策標籤與即時放行清單 | • 5 分鐘內完成雙週出貨審查<br>• 精確折算 4F 良品在庫與 3F WIP 待驗品 | ✅ **100% 驗收通過** |
-| **OBJ-06** | 訂單全鏈路緊張度診斷 | 提高資訊集中度/增加效率 | [OrderTensionTrackerView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/OrderTensionTrackerView.tsx) | 穿透式診斷 6 大環節瓶頸，輸出 4 級緊張度評級與應變 SOP | • 逐筆訂單即時顯示物料全鏈路健康度與瓶頸分析 | ✅ **100% 驗收通過** |
+| **OBJ-05** | 週二出貨可行性放行審查 | 提高資訊集中度/增加效率 | [ShipScheduleClearanceView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/ShipScheduleClearanceView.tsx) | 雙週訂單放行覆蓋率自動推算，三級決策標籤與即時放行清單 | • 5 分鐘內完成雙週出貨審查<br>• 精確折算成品良品在庫與在製品 WIP 待驗品 | ✅ **100% 驗收通過** |
+| **OBJ-06** | 訂單缺料分析與瓶頸診斷 | 提高資訊集中度/增加效率 | [OrderTensionTrackerView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/OrderTensionTrackerView.tsx) | 逐筆診斷 6 大環節瓶頸，輸出缺料評級與應變建議 | • 逐筆訂單即時顯示物料備料狀況與瓶頸分析 | ✅ **100% 驗收通過** |
 | **OBJ-07** | 標準 3 階 MRP 推導演算法 | 提高資訊透明度/廢除手算 | [mrpEngine.ts](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/utils/mrpEngine.ts)<br>[MrpCalculatorView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/MrpCalculatorView.tsx) | FG 淨需求 $\rightarrow$ 模具妥善穴數克重 $\rightarrow$ 原料淨缺口與 MOQ 整補 | • 數學精確度單元測試 100% 通過 (PASS)<br>• 淨需求、克重、毛需求、淨缺口推導零誤差 | ✅ **100% 驗收通過** |
-| **OBJ-08** | 算式透明化與推導履歷卡片 | 提高資訊透明度/白盒化 | [MrpCalculatorView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/MrpCalculatorView.tsx) | 實裝 `[📐 展開白盒推導履歷]` 抽屜，即時展開每階公式與變數帶入 | • 點擊即看公式、帶入變數與運算結果<br>• 支援 3 個推導階層獨立展開/收合 | ✅ **100% 驗收通過** |
+| **OBJ-08** | 計算公式明細卡片 | 提高資訊透明度/公式透明 | [MrpCalculatorView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/MrpCalculatorView.tsx) | 實裝 `[📐 展開計算公式明細]` 抽屜，即時展開每階公式與變數帶入 | • 點擊即看公式、帶入變數與運算結果<br>• 支援 3 個推導階層獨立展開/收合 | ✅ **100% 驗收通過** |
 | **OBJ-09** | What-If 情境模擬評估 | 提高資訊透明度/動態估算 | [DashboardView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/DashboardView.tsx) | 支援自由調校需求、模具穴數、週期、良率、交期與 MOQ | • 減法設計：預設收合為輕量卡片，按需點擊展開<br>• 0.1 秒即時推演對採購量之衝擊 | ✅ **100% 驗收通過** |
 | **OBJ-10** | 全員開放式無門檻操作介面 | 全員同台協同/無權限阻礙 | 全系統 UI/UX<br>[Sidebar.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/Sidebar.tsx) | 預設無權限阻礙，支援深淺色雙模主題，符合高對比度規範 | • 瀏覽器直開即用，操作直觀<br>• 10 分鐘內即可上手操作 | ✅ **100% 驗收通過** |
-| **OBJ-11** | 開會統一投影協同視圖 | 全員同台協同/消除對帳內耗 | [DashboardView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/DashboardView.tsx)<br>[ShipScheduleClearanceView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/ShipScheduleClearanceView.tsx) | 戰情儀表板與出貨審查看板支援大螢幕投影，共同決策 | • 會議直接投影大螢幕，終結 Excel 對帳內耗 | ✅ **100% 驗收通過** |
+| **OBJ-11** | 開會統一投影協同視圖 | 全員同台協同/消除對帳內耗 | [DashboardView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/DashboardView.tsx)<br>[ShipScheduleClearanceView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/ShipScheduleClearanceView.tsx) | 總覽儀表板與出貨審查看板支援大螢幕投影，共同決策 | • 會議直接投影大螢幕，終結 Excel 對帳內耗 | ✅ **100% 驗收通過** |
 | **OBJ-12** | 自動化變更審計軌跡 | 全員同台協同/變更留痕 | `audit_log`<br>[DataTablesView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/DataTablesView.tsx) | 背景自動記錄欄位異動、時間戳記、修改前/後值與原因 | • 關鍵參數異動 100% 具備歷史追溯記錄 | ✅ **100% 驗收通過** |
 | **OBJ-13** | 工業標準 3NF 與五層分類 | 保留擴充性/ERP 就緒 | [types.ts](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/types.ts)<br>[schema.ts](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/data/schema.ts) | 嚴格遵循第三正規化，支援 RAW/MAT/PART/COMP/SET 五層分類，清理冗餘欄位 | • 刪除非正規化 `material_class_label`<br>• Schema 100% 相容主流 ERP 物料主檔 | ✅ **100% 驗收通過** |
 | **OBJ-14** | 資料適配層解耦架構 | 保留擴充性/無痛升級 | [dataAdapter.ts](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/data/dataAdapter.ts)<br>[dataExchange.ts](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/utils/dataExchange.ts) | Adapter 模式隔離前端運算與存儲後端，未來升級無須重構 | • 切換後端資料庫僅需更換 Adapter 實作模組，核心代碼變動率 $< 5\%$ | ✅ **100% 驗收通過** |
@@ -199,7 +199,7 @@
 本規格書與核查驗收總表所載之 **15 項核心開發目標** 已全數在料事如神系統 (PMS) 中**高標準落地並完成客觀驗證**。系統已正式具備：
 1. **前瞻防斷料能力**：三向需求比對 + 預測偏差示警 + 最晚發單日倒數。
 2. **資訊全集中與高效率**：7 大核心營運主檔單一真相 + 週二 5 分鐘放行審查 + 訂單緊張度診斷。
-3. **100% 數位透明算式**：標準 3 階 MRP 推導 + 白盒化推導履歷抽屜。
+3. **100% 數位透明算式**：標準 3 階 MRP 推導 + 計算公式明細展開。
 4. **全員無阻礙同台協同**：雙模主題 + 大螢幕開會投影 + 自動審計日誌。
 5. **企業級 ERP 擴充就緒**：3NF 資料模型 + 五層分類 + 適配層解耦 + 完整資料字典規格。
 

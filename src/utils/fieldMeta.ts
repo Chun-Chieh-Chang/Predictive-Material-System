@@ -42,7 +42,7 @@ const ITEM_MASTER_META: TableMeta = {
   key: 'item_master', label: '品號主檔 (含良率與採購規則)', pkFields: ['sku'],
   fields: [
     { key: 'sku', label: '品號 (SKU)', editability: 'locked', inputType: 'text', required: true },
-    { key: 'customer_id', label: '客戶代碼', editability: 3, inputType: 'text', required: true, maxLength: 20, placeholder: 'e.g. MDX, ICU' },
+    { key: 'customer_id', label: '客戶代碼', editability: 3, inputType: 'text', required: true, maxLength: 20, placeholder: 'e.g. A客戶, B客戶' },
     { key: 'category', label: '產品種類', editability: 3, inputType: 'text', required: true, maxLength: 50 },
     { key: 'material_class', label: '物料分類', editability: 3, inputType: 'select', required: false,
       options: [

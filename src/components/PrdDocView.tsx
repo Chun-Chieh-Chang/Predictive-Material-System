@@ -51,9 +51,9 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 - OBJ-03: 最晚採購下單日推算 | MrpCalculatorView (30天時程軸) | 100% 驗收通過 ✅
 - OBJ-04: 7 大核心營運主檔集中單一真相 | DataTablesView, dataExchange | 100% 驗收通過 ✅
 - OBJ-05: 週二出貨放行審查 | ShipScheduleClearanceView | 100% 驗收通過 ✅
-- OBJ-06: 訂單全鏈路緊張度診斷 | OrderTensionTrackerView | 100% 驗收通過 ✅
+- OBJ-06: 訂單缺料分析與瓶頸診斷 | OrderTensionTrackerView | 100% 驗收通過 ✅
 - OBJ-07: 標準 3 階 MRP 推導演算法 | mrpEngine, MrpCalculatorView | 100% 驗收通過 ✅
-- OBJ-08: 算式透明化推導履歷抽屜 | MrpCalculatorView 白盒抽屜 | 100% 驗收通過 ✅
+- OBJ-08: 算式透明化推導履歷抽屜 | MrpCalculatorView 公式明細抽屜 | 100% 驗收通過 ✅
 - OBJ-09: What-If 情境模擬評估 | DashboardView (減法輕量收合) | 100% 驗收通過 ✅
 - OBJ-10: 全員開放無門檻協同介面 | 全系統 UI/UX (Dual-Theme) | 100% 驗收通過 ✅
 - OBJ-11: 開會統一投影協同視圖 | DashboardView, ShipSchedule | 100% 驗收通過 ✅
@@ -105,16 +105,16 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
       category: '提高資訊集中度 / 增加效率',
       files: 'ShipScheduleClearanceView.tsx',
       summary: '雙週訂單放行覆蓋率自動推算，三級決策標籤與即時放行清單',
-      dod: '5 分鐘內完成雙週出貨審查，精確折算 4F 良品在庫與 3F WIP 待驗品',
+      dod: '5 分鐘內完成雙週出貨審查，精確折算成品良品在庫與在製品 WIP 待驗品',
       status: '✅ 100% 驗收通過'
     },
     {
       id: 'OBJ-06',
-      name: '訂單全鏈路緊張度診斷',
+      name: '訂單缺料分析與瓶頸診斷',
       category: '提高資訊集中度 / 增加效率',
       files: 'OrderTensionTrackerView.tsx',
       summary: '穿透式診斷 6 大環節瓶頸，輸出 4 級緊張度評級與應變 SOP',
-      dod: '逐筆訂單即時顯示物料全鏈路健康度與瓶頸分析',
+      dod: '逐筆訂單即時顯示各環節備料狀況與瓶頸分析',
       status: '✅ 100% 驗收通過'
     },
     {
@@ -129,9 +129,9 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
     {
       id: 'OBJ-08',
       name: '算式透明化推導履歷抽屜',
-      category: '提高資訊透明度 / 白盒化',
+      category: '提高資訊透明度 / 公式透明',
       files: 'MrpCalculatorView.tsx',
-      summary: '實裝 [📐 展開白盒推導履歷] 抽屜，即時展開每階公式與變數帶入',
+      summary: '實裝 [📐 展開計算公式明細] 抽屜，即時展開每階公式與變數帶入',
       dod: '點擊即看公式、帶入變數與運算結果，支援 3 推導階層獨立展開/收合',
       status: '✅ 100% 驗收通過'
     },

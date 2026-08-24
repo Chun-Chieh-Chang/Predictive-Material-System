@@ -119,10 +119,10 @@ export const OrderTensionTrackerView: React.FC<OrderTensionTrackerViewProps> = (
                 <Activity className="w-5 h-5" />
               </span>
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-                訂單物料緊張檢索與全鏈路瓶頸診斷
+                訂單缺料分析與瓶頸診斷
               </h1>
               <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
-                智能預警中
+                自動預警中
               </span>
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
@@ -204,7 +204,7 @@ export const OrderTensionTrackerView: React.FC<OrderTensionTrackerViewProps> = (
             <span className="text-sm font-normal text-slate-500">({stats.normalCount}/{stats.total} 筆)</span>
           </div>
           <div className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-            全鏈路備料無虞，可如期 100% 交付
+            各環節備料充足，可如期交付
           </div>
         </div>
       </div>
@@ -218,7 +218,7 @@ export const OrderTensionTrackerView: React.FC<OrderTensionTrackerViewProps> = (
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="輸入訂單號 (如 PO-202608-001)、客戶代碼 (ICU / MDX) 或品號 (A01-200-131) 即時檢索..."
+            placeholder="輸入訂單號 (如 PO-202608-001)、客戶代碼 (A客戶 / B客戶) 或品號 (A01-200-131) 即時檢索..."
             className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-purple-500 font-medium"
           />
           {searchQuery && (
@@ -299,7 +299,7 @@ export const OrderTensionTrackerView: React.FC<OrderTensionTrackerViewProps> = (
               <option value="ALL">全部供應鏈環節 (All Stages)</option>
               <option value="raw_material_leadtime">🔴 原料採購交期環節</option>
               <option value="molding_capacity">🟣 模具射出產能環節</option>
-              <option value="wip_sorting">🟡 3樓 WIP 全檢環節</option>
+              <option value="wip_sorting">🟡 WIP 檢驗驗收環節</option>
               <option value="in_transit_shipping">🟠 在途海運船期環節</option>
               <option value="colorant_shortage">🔵 色母配色缺料環節</option>
             </select>
@@ -375,7 +375,7 @@ export const OrderTensionTrackerView: React.FC<OrderTensionTrackerViewProps> = (
                       {item.bottlenecks.length === 0 ? (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                           <CheckCircle2 className="w-3.5 h-3.5" />
-                          全鏈路健康
+                          備料充足
                         </span>
                       ) : (
                         item.bottlenecks.map((b, idx) => (
@@ -412,7 +412,7 @@ export const OrderTensionTrackerView: React.FC<OrderTensionTrackerViewProps> = (
                       <button
                         onClick={() => toggleExpandOrder(item.orderId)}
                         className="p-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-lg bg-slate-100 dark:bg-slate-800 transition-colors cursor-pointer"
-                        title={isExpanded ? '收合環節診斷明細' : '展開全鏈路卡關分析'}
+                        title={isExpanded ? '收合環節診斷明細' : '展開缺料分析明細'}
                       >
                         {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                       </button>
@@ -425,7 +425,7 @@ export const OrderTensionTrackerView: React.FC<OrderTensionTrackerViewProps> = (
                   <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800/80 space-y-3">
                     <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
                       <Flame className="w-4 h-4 text-purple-500" />
-                      <span>全鏈路卡關環節精準診斷與應變指引 (Root Cause Breakdown)</span>
+                      <span>缺料原因分析與處置建議 (Root Cause Breakdown)</span>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">

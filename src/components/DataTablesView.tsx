@@ -571,30 +571,42 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
           </div>
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto scrollbar-sm">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 dark:bg-slate-950/80 text-slate-600 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-800">
+        {/* Table Container with Always-On Freeze Panes */}
+        <div className="overflow-x-auto overflow-y-auto max-h-[calc(100vh-280px)] scrollbar-sm relative">
+          <table className="w-full text-left text-sm border-collapse">
+            <thead className="sticky top-0 z-20 bg-slate-100/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-700 dark:text-slate-300 font-semibold border-b border-slate-200 dark:border-slate-700 shadow-xs">
               <tr>
-                {tableMeta.fields.map(field => (
-                  <th key={field.key} className="px-3 py-3 whitespace-nowrap">
-                    <span className={
-                      field.editability === 'locked' ? 'text-slate-400 dark:text-slate-500' :
-                      field.editability === 3 ? 'text-red-600 dark:text-red-400' :
-                      field.editability === 2 ? 'text-amber-600 dark:text-amber-400' :
-                      field.editability === 1 ? 'text-slate-600 dark:text-slate-400' :
-                      'text-slate-400 dark:text-slate-500 italic'
-                    }>
-                      {field.editability === 'locked' ? '🔒 ' : ''}
-                      {field.editability === 3 ? '🔴 ' : ''}
-                      {field.editability === 2 ? '🟡 ' : ''}
-                      {field.editability === 1 ? '🟢 ' : ''}
-                      {field.editability === 'computed' ? '⚙️ ' : ''}
-                      {field.label}
-                    </span>
-                  </th>
-                ))}
-                <th className="px-3 py-3 text-center whitespace-nowrap text-slate-600 dark:text-slate-400">操作</th>
+                {tableMeta.fields.map((field, fIdx) => {
+                  const isFirstCol = fIdx === 0;
+                  return (
+                    <th
+                      key={field.key}
+                      className={`px-3 py-3 whitespace-nowrap ${
+                        isFirstCol
+                          ? 'sticky top-0 left-0 z-30 bg-slate-100 dark:bg-slate-900 freeze-shadow-right'
+                          : ''
+                      }`}
+                    >
+                      <span className={
+                        field.editability === 'locked' ? 'text-slate-400 dark:text-slate-500' :
+                        field.editability === 3 ? 'text-red-600 dark:text-red-400' :
+                        field.editability === 2 ? 'text-amber-600 dark:text-amber-400' :
+                        field.editability === 1 ? 'text-slate-600 dark:text-slate-400' :
+                        'text-slate-400 dark:text-slate-500 italic'
+                      }>
+                        {field.editability === 'locked' ? '🔒 ' : ''}
+                        {field.editability === 3 ? '🔴 ' : ''}
+                        {field.editability === 2 ? '🟡 ' : ''}
+                        {field.editability === 1 ? '🟢 ' : ''}
+                        {field.editability === 'computed' ? '⚙️ ' : ''}
+                        {field.label}
+                      </span>
+                    </th>
+                  );
+                })}
+                <th className="sticky top-0 right-0 z-30 bg-slate-100 dark:bg-slate-900 px-3 py-3 text-center whitespace-nowrap text-slate-600 dark:text-slate-400 shadow-[-3px_0_6px_-2px_rgba(0,0,0,0.1)]">
+                  操作
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
@@ -628,35 +640,46 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
                 const isEditing = editingKey === rowKey;
 
                 return (
-                  <tr key={rowKey} className={`transition-colors ${isEditing ? 'bg-amber-50/50 dark:bg-amber-950/20' : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/40'}`}>
-                    {tableMeta.fields.map(field => (
-                      <td key={field.key} className="px-3 py-2.5 font-mono">
-                        {isEditing ? (
-                          field.editability === 'locked' ? (
-                            <span className="flex items-center space-x-1 text-slate-500 dark:text-slate-400">
-                              <Lock className="w-3 h-3 text-slate-400" />
-                              <span className="font-bold text-slate-900 dark:text-white">{String(record[field.key] ?? '—')}</span>
-                            </span>
-                          ) : field.editability === 'computed' ? (
-                            <span className="text-slate-400 italic text-sm">自動計算</span>
+                  <tr key={rowKey} className={`transition-colors group ${isEditing ? 'bg-amber-50/50 dark:bg-amber-950/20' : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/40'}`}>
+                    {tableMeta.fields.map((field, fIdx) => {
+                      const isFirstCol = fIdx === 0;
+                      return (
+                        <td
+                          key={field.key}
+                          className={`px-3 py-2.5 font-mono ${
+                            isFirstCol
+                              ? 'sticky left-0 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md freeze-shadow-right group-hover:bg-slate-50 dark:group-hover:bg-slate-850'
+                              : ''
+                          }`}
+                          title={`[${field.label}] ${String(record[field.key] ?? '—')}`}
+                        >
+                          {isEditing ? (
+                            field.editability === 'locked' ? (
+                              <span className="flex items-center space-x-1 text-slate-500 dark:text-slate-400">
+                                <Lock className="w-3 h-3 text-slate-400" />
+                                <span className="font-bold text-slate-900 dark:text-white">{String(record[field.key] ?? '—')}</span>
+                              </span>
+                            ) : field.editability === 'computed' ? (
+                              <span className="text-slate-400 italic text-sm">自動計算</span>
+                            ) : (
+                              <div>
+                                <CellInput field={field} value={editRow[field.key]} editRow={editRow} db={db} onChange={handleEditChange} error={validationErrors[field.key]} />
+                                {validationErrors[field.key] && <p className="text-red-500 text-[10px] mt-0.5">{validationErrors[field.key]}</p>}
+                              </div>
+                            )
                           ) : (
-                            <div>
-                              <CellInput field={field} value={editRow[field.key]} editRow={editRow} db={db} onChange={handleEditChange} error={validationErrors[field.key]} />
-                              {validationErrors[field.key] && <p className="text-red-500 text-[10px] mt-0.5">{validationErrors[field.key]}</p>}
-                            </div>
-                          )
-                        ) : (
-                          <span className={
-                            tableMeta.pkFields.includes(field.key)
-                              ? 'font-bold text-slate-900 dark:text-white'
-                              : 'text-slate-700 dark:text-slate-300'
-                          }>
-                            {displayValue(field, record[field.key], db, record)}
-                          </span>
-                        )}
-                      </td>
-                    ))}
-                    <td className="px-3 py-2.5 text-center">
+                            <span className={
+                              tableMeta.pkFields.includes(field.key)
+                                ? 'font-bold text-slate-900 dark:text-white'
+                                : 'text-slate-700 dark:text-slate-300'
+                            }>
+                              {displayValue(field, record[field.key], db, record)}
+                            </span>
+                          )}
+                        </td>
+                      );
+                    })}
+                    <td className="sticky right-0 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3 py-2.5 text-center shadow-[-3px_0_6px_-2px_rgba(0,0,0,0.1)] group-hover:bg-slate-50 dark:group-hover:bg-slate-850">
                       {isEditing ? (
                         <div className="flex items-center justify-center space-x-1">
                           <button

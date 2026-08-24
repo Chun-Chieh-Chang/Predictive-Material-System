@@ -1258,13 +1258,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         )}
       </section>
 
-      {/* 3. Decision War Room Priority Table (Full Width) */}
+      {/* 3. Decision Overview Priority Table (Full Width) */}
       <section className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <span>📊 決策戰情室</span>
-              <span className="text-slate-400 dark:text-slate-500 text-xs font-normal font-mono">Decision War Room</span>
+              <span>📊 物料需求決策總覽</span>
+              <span className="text-slate-400 dark:text-slate-500 text-xs font-normal font-mono">Decision Overview</span>
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               自動辨識長交期物料，倒推最晚採購下單排程與風險處置建議
@@ -1291,9 +1291,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {!isCollapsed('warroom') && (
         <>
         {/* War Room Priority Table */}
-        <div className="overflow-x-auto scrollbar-sm mt-4">
-          <table className="w-full text-left text-sm">
-            <thead className="text-sm text-slate-400 uppercase border-b border-slate-800 font-semibold">
+        <div className="overflow-x-auto overflow-y-auto max-h-[500px] scrollbar-sm relative rounded-xl border border-slate-200 dark:border-slate-800 mt-4">
+          <table className="w-full text-left text-sm border-collapse">
+            <thead className="sticky top-0 z-20 bg-slate-100/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-400 uppercase border-b border-slate-800 font-semibold shadow-xs text-xs">
               <tr>
                 <th className="pb-3 px-2">狀態 Status</th>
                 <th className="pb-3 px-2">需求品號 SKU</th>
@@ -1454,20 +1454,22 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
             </div>
 
-            {/* Detailed 3-Way Comparison Table */}
-            <div className="overflow-x-auto scrollbar-sm">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-slate-50 dark:bg-slate-950/60 text-slate-600 dark:text-slate-400 font-semibold uppercase text-xs border-b border-slate-200 dark:border-slate-800">
+            {/* Detailed 3-Way Comparison Table with Always-On 2D Freeze Panes */}
+            <div className="overflow-x-auto overflow-y-auto max-h-[480px] scrollbar-sm relative rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs">
+              <table className="w-full text-left text-sm border-collapse">
+                <thead className="sticky top-0 z-20 bg-slate-100 dark:bg-slate-900 backdrop-blur-md text-slate-700 dark:text-slate-300 font-semibold uppercase text-xs border-b border-slate-200 dark:border-slate-700 shadow-xs">
                   <tr>
-                    <th className="px-3.5 py-3">成品料號 / 客戶</th>
-                    <th className="px-3.5 py-3 text-right">預示量 (Forecast)</th>
-                    <th className="px-3.5 py-3 text-right">實下訂單 (Actual PO)</th>
-                    <th className="px-3.5 py-3 text-right">歷年同期 (History)</th>
-                    <th className="px-3.5 py-3 text-center">三向對比長條圖</th>
-                    <th className="px-3.5 py-3 text-center">偏差率 (Bias %)</th>
-                    <th className="px-3.5 py-3 text-center">趨勢狀態</th>
-                    <th className="px-3.5 py-3">前瞻防斷料決策建言</th>
-                    <th className="px-3.5 py-3 text-center">MRP 推導</th>
+                    <th className="sticky top-0 left-0 z-30 bg-slate-100 dark:bg-slate-900 px-3.5 py-3 freeze-shadow-right whitespace-nowrap min-w-[150px]">
+                      成品料號 / 客戶
+                    </th>
+                    <th className="px-3.5 py-3 text-right whitespace-nowrap">預示量 (Forecast)</th>
+                    <th className="px-3.5 py-3 text-right whitespace-nowrap">實下訂單 (Actual PO)</th>
+                    <th className="px-3.5 py-3 text-right whitespace-nowrap">歷年同期 (History)</th>
+                    <th className="px-3.5 py-3 text-center whitespace-nowrap">三向對比長條圖</th>
+                    <th className="px-3.5 py-3 text-center whitespace-nowrap">偏差率 (Bias %)</th>
+                    <th className="px-3.5 py-3 text-center whitespace-nowrap">趨勢狀態</th>
+                    <th className="px-3.5 py-3 whitespace-nowrap">前瞻防斷料決策建言</th>
+                    <th className="px-3.5 py-3 text-center whitespace-nowrap">MRP 推導</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono text-sm">
@@ -1484,21 +1486,34 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800';
 
                     return (
-                      <tr key={row.sku} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-                        <td className="px-3.5 py-3.5 font-sans">
+                      <tr key={row.sku} className="hover:bg-sky-50/40 dark:hover:bg-slate-800/60 transition-colors group">
+                        {/* Frozen First Column: SKU & Customer */}
+                        <td className="sticky left-0 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3.5 py-3.5 font-sans freeze-shadow-right group-hover:bg-slate-50 dark:group-hover:bg-slate-850">
                           <div className="font-bold text-slate-900 dark:text-white text-sm">{row.sku}</div>
                           <div className="text-xs text-slate-500 font-medium mt-0.5">{row.customer_id}</div>
                         </td>
-                        <td className="px-3.5 py-3.5 text-right font-medium text-sky-700 dark:text-sky-300">
+                        <td
+                          className="px-3.5 py-3.5 text-right font-medium text-sky-700 dark:text-sky-300"
+                          title={`[${row.sku} / ${row.customer_id}] 客戶業務預示量: ${row.totalForecastQty.toLocaleString()} PCS`}
+                        >
                           {row.totalForecastQty.toLocaleString()} PCS
                         </td>
-                        <td className="px-3.5 py-3.5 text-right font-bold text-emerald-700 dark:text-emerald-300">
+                        <td
+                          className="px-3.5 py-3.5 text-right font-bold text-emerald-700 dark:text-emerald-300"
+                          title={`[${row.sku} / ${row.customer_id}] 正式確認採購實單: ${row.totalActualOrderQty.toLocaleString()} PCS`}
+                        >
                           {row.totalActualOrderQty.toLocaleString()} PCS
                         </td>
-                        <td className="px-3.5 py-3.5 text-right font-medium text-purple-700 dark:text-purple-300">
+                        <td
+                          className="px-3.5 py-3.5 text-right font-medium text-purple-700 dark:text-purple-300"
+                          title={`[${row.sku} / ${row.customer_id}] 歷史同期銷量: ${row.totalHistoricalQty.toLocaleString()} PCS`}
+                        >
                           {row.totalHistoricalQty.toLocaleString()} PCS
                         </td>
-                        <td className="px-3.5 py-3.5 min-w-[140px]">
+                        <td
+                          className="px-3.5 py-3.5 min-w-[140px]"
+                          title={`[${row.sku} / ${row.customer_id}] 預示量: ${row.totalForecastQty.toLocaleString()} PCS | 實單: ${row.totalActualOrderQty.toLocaleString()} PCS | 歷史: ${row.totalHistoricalQty.toLocaleString()} PCS`}
+                        >
                           <div className="space-y-1">
                             <div className="flex items-center gap-1 text-[10px]">
                               <span className="w-8 text-sky-600 font-sans">預測</span>

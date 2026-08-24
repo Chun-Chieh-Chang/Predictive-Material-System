@@ -8,15 +8,15 @@
 
 ## 系統概述
 
-料事如神系統 (PMS) 是一套專為**射出成型醫材與精密製造業**設計的前端智能物料需求運算與資料維運平台。系統以全瀏覽器本地端運行（LocalStorage 持久化），無需後端伺服器，即可完成從客戶預示量 (Forecast)、實單 (PO) 到採購決策的完整 3 階 MRP 推導、雙週出貨可行性審查、訂單全鏈路物料緊張度追蹤與數據鏈路穿透模擬。
+料事如神系統 (PMS) 是一套專為**射出成型醫材與精密製造業**設計的前端智能物料需求運算與資料維運平台。系統以全瀏覽器本地端運行（LocalStorage 持久化），無需後端伺服器，即可完成從客戶預示量 (Forecast)、實單 (PO) 到採購決策的完整 3 階 MRP 推導、雙週出貨排程審查、訂單缺料瓶頸分析與資料關聯性模擬。
 
 **核心解決問題：**
-- **角色專屬敏捷入口**：業務敏捷工作台（三向快查/偏差示警/交期秒答）與生管採購專屬工作台（防斷料倒數/3階MRP推導/模具產能/7大主檔），消除跨頁頻繁跳轉。
+- **角色工作台**：業務工作台（快速查詢/偏差示警/交期確認）與生管採購工作台（採購下單倒數/3階MRP推導/模具產能/資料表維護），消除跨頁頻繁跳轉。
 - **三向交叉比對與防斷料**：同屏比對「預示量、實單、歷史同期」，自動計算預測偏差率 (Bias%) 與三色燈號預警。
-- **前瞻採購時程推算**：依據 Lead Time 自動倒推最晚發單日與倒數防線，杜絕因海運長交期導致停線斷料。
-- **3 階 MRP 算式透明化**：白盒展開成品淨缺口、模具單穴耗料克重、安全存量與 MOQ 向上整補完整推導履歷。
-- **出貨協調會賦能**：每週二出貨排程審查看板快速推算「現有庫存 + 3F WIP待驗良品折算」，5 分鐘內完成放行決策。
-- **高內聚 7 大核心主檔**：消除多頭維護，良率標準與採購規則直合於品號主檔，遵循 3NF 關聯式架構。
+- **採購時程推算**：依據 Lead Time 自動倒推最晚下單日與倒數提醒，防止因採購交期延誤導致停線斷料。
+- **3 階 MRP 算式透明化**：公式明細展開成品淨缺口、模具單穴耗料克重、安全存量與 MOQ 向上整補完整推導過程。
+- **出貨排程審查**：雙週出貨排程審查看板快速推算「現有庫存 + 在製品 WIP 待驗良品折算」，5 分鐘內完成放行決策。
+- **7 大核心主檔維護**：消除多頭維護，良率標準與採購規則直合於品號主檔，遵循 3NF 關聯式架構。
 
 ---
 
@@ -58,22 +58,22 @@ npm run dev
 ```
 料事如神系統 (PMS)
 ├── 💼 [角色工作台 Role Workbenches]
-│   ├── 業務敏捷工作台 (SalesWorkbenchView) — 三向快查 · 偏差示警 · 交期秒答 · 常用客戶鎖定
-│   └── 生管/採購專屬工作台 (ProcurementWorkbenchView) — 防斷料倒數 · 3階MRP推導 · 模具日產能 · 7大主檔維護
-├── 📊 [決策戰情 War Room]
-│   ├── 綜合戰情儀表板 (DashboardView) — 三向需求交叉比對看板、客戶預測偏差分析 (Bias%)、備料透明度背書
-│   ├── 週二出貨審查看板 (ShipScheduleClearanceView) — 雙週出貨可行性放行審查、良品+WIP折算、What-If 模擬
-│   └── 訂單物料示警 (OrderTensionTrackerView) — 逐筆訂單 6 大供應鏈瓶頸診斷、4 級緊張度告警與應變 SOP
-├── 🧮 [物料推導 MRP Engine]
-│   └── 3 階 MRP 推導 (MrpCalculatorView) — 單品/全品 MRP 推導、白盒推導履歷抽屜、採購排程時間軸與防斷料倒數
-├── 🗄️ [數據中心 Data Center]
-│   ├── 7 大核心主檔維護 (DataTablesView) — 7 大核心主檔 CRUD 與 3 級變更管制（含 FK 影響掃描）
-│   ├── 五層物料分類體系 (MaterialClassManagementView) — RAW/MAT/PART/COMP/SET 樹狀分類管理
-│   └── 資料交換與鏈路模擬 (DataExchangeView) — JSON/Excel 雙向無損匯出入、全數據鏈路深度模擬與防斷鏈診斷
-└── ⚙️ [系統支援 System & Support]
-    ├── 參數策略配置 (SystemSettingsView) — 系統參數配置（預警門檻/排程策略/虛擬預扣開關/損耗率天花板）
-    ├── 專業術語辭典 (GlossaryView) — 7 大分類專有名詞檢索 + 主檔案全欄位權威白話定義庫 (90+ 欄位)
-    ├── PRD 規格文件 (PrdDocView) — 15 大核心可驗收目標 (OBJ-01 ~ OBJ-15) 規格與 DoD 驗收總表
+│   ├── 業務工作台 (SalesWorkbenchView) — 客戶/品號快速查詢 · 預測偏差比對 · 交期確認
+│   └── 生管採購工作台 (ProcurementWorkbenchView) — 最晚下單日倒數 · 3階MRP推導 · 模具產能 · 資料表維護
+├── 📊 [決策總覽 Overview]
+│   ├── 物料需求總覽 (DashboardView) — 三向需求交叉比對看板、客戶預測偏差分析 (Bias%)
+│   ├── 出貨排程審查看板 (ShipScheduleClearanceView) — 雙週出貨可行性放行審查、良品+WIP折算、情境模擬
+│   └── 訂單缺料分析 (OrderTensionTrackerView) — 逐筆訂單 6 大供應鏈瓶頸診斷、缺料原因分析與處置建議
+├── 🧮 [物料需求運算 MRP Engine]
+│   └── 3 階 MRP 推導 (MrpCalculatorView) — 單品/全品 MRP 推導、計算公式明細、採購排程時間軸與下單倒數
+├── 🗄️ [資料管理 Data Management]
+│   ├── 資料表維護 (DataTablesView) — 7 大核心主檔 CRUD 與 3 級變更管制（含 FK 影響掃描）
+│   ├── 物料分類體系 (MaterialClassManagementView) — RAW/MAT/PART/COMP/SET 樹狀分類管理
+│   └── 資料匯入匯出與模擬 (DataExchangeView) — JSON/Excel 雙向匯出入、資料關聯完整性掃描與流程模擬
+└── ⚙️ [系統設定 System & Settings]
+    ├── 參數策略設定 (SystemSettingsView) — 系統參數配置（預警門檻/排程策略/虛擬預扣開關/損耗率天花板）
+    ├── 名詞術語說明 (GlossaryView) — 7 大分類專有名詞檢索 + 主檔案欄位定義庫 (90+ 欄位)
+    ├── 系統規格與驗收 (PrdDocView) — 15 大核心可驗收目標 (OBJ-01 ~ OBJ-15) 規格與驗收總表
     └── 自動化備份與復原 (BackupSettingsView) — 自動備份排程、恢復備份檔（Admin 模式）
 ```
 
@@ -117,8 +117,8 @@ Phase 3 → 採購決策
 
 | 版本 | 日期 | 說明 |
 |------|------|------|
-| **V-20260824-24** | 2026-08-24 | **全專案整體程式碼與檔案優化版**：實裝「業務敏捷工作台」與「生管/採購專屬工作台」角色門戶；CAPA-001~014 報告全覆蓋（MECE 100/100 滿分驗證）；版號 SSOT 單一真相來源解除鎖定；雙通道 CI 部署與全色系對比度自動防禦門禁；存檔 IMPL-PLAN-002 自進化有機體實施計畫。 |
-| V-20260824-01 | 2026-08-24 | 業務核心需求 15 大可驗收目標確立與 Karpathy 軟體工程準則全域植入版：三向交叉比對看板、白盒推導履歷抽屜、採購排程時間軸、7 大核心主檔收斂與去冗、90+ 主檔全欄位名稱定義庫入庫、PRD 規格書 V1.3.0 發布、單元測試 100% 通過。 |
+| **V-20260824-24** | 2026-08-24 | **全專案整體程式碼與檔案優化版**：實裝「業務工作台」與「生管採購工作台」角色門戶；CAPA-001~014 報告全覆蓋（MECE 100/100 滿分驗證）；版號 SSOT 單一真相來源解除鎖定；雙通道 CI 部署與全色系對比度自動防禦門禁；存檔 IMPL-PLAN-002 自進化有機體實施計畫。 |
+| V-20260824-01 | 2026-08-24 | 業務核心需求 15 大可驗收目標確立與 Karpathy 軟體工程準則全域植入版：三向交叉比對看板、計算公式明細抽屜、採購排程時間軸、7 大核心主檔收斂與去冗、90+ 主檔全欄位名稱定義庫入庫、PRD 規格書 V1.3.0 發布、單元測試 100% 通過。 |
 | V-20260823-52 | 2026-08-23 | Smart Filter Hub 實作：MrpCalculatorView SKU 搜尋下拉選單 + ShipScheduleClearanceView 類別膠囊/即時搜尋、全域死碼 import 清理、版本號對齊。 |
 | V-20260823-29 | 2026-08-23 | 52 筆代表性物料數據鏈與開箱智慧雙模換檔機制版、通配選擇器污染根除 (CAPA-011)。 |
 | V-20260823-16 | 2026-08-23 | 週二出貨審查看板、預測偏差分析、WIP 日動態推估、虛擬預扣、分批到貨排程建議、訂單緊張度引擎。 |
@@ -147,28 +147,28 @@ src/
 │   ├── glossaryData.ts       # 專業術語辭典基礎資料
 │   └── masterFieldDictionary.ts # 7 大主表 90+ 欄位權威業務定義字典
 ├── utils/
-│   ├── mrpEngine.ts          # 3 階 MRP 計算核心引擎（白盒推導 + 分批到貨 + 虛擬預扣）
+│   ├── mrpEngine.ts          # 3 階 MRP 計算核心引擎（公式推導 + 分批到貨 + 虛擬預扣）
 │   ├── demandAnalysisEngine.ts # 三向需求交叉比對與預測偏差 (Bias%) 分析引擎
 │   ├── wipEngine.ts          # WIP 日動態推估公式計算器（消除夜班 12h 時序差）
-│   ├── orderTensionEngine.ts # 訂單全鏈路 6 大環節瓶頸診斷引擎
+│   ├── orderTensionEngine.ts # 訂單 6 大環節瓶頸診斷引擎
 │   ├── dataExchange.ts       # JSON/Excel 雙向匯出入 + 資料填報規範字典
 │   ├── fieldMeta.ts          # 主檔欄位元數據（編輯等級、型態、驗證規則）
-│   ├── dataIntegrityScanner.ts # MECE 數據鏈路健康度與孤兒資料掃描器
+│   ├── dataIntegrityScanner.ts # 資料關聯完整性與孤兒資料掃描器
 │   ├── backupService.ts      # 自動備份排程與本地存儲管理
 │   └── materialClassValidation.ts  # 五層物料分類驗證工具（SKU 前綴推斷、FK 校驗）
 └── components/
     ├── Navbar.tsx             # 頂部導覽列（導航頁籤 + 主題切換 + 告警徽章 + Telemetry 雙模徽章）
-    ├── DashboardView.tsx      # 決策戰情室（三向需求交叉比對 + 預測偏差分析 + 供需透明度）
-    ├── MrpCalculatorView.tsx  # MRP 計算器（白盒推導履歷抽屜 + 防斷料倒數時間軸 + 採購建議）
-    ├── ShipScheduleClearanceView.tsx # 週二出貨排程審查看板（雙週放行審查 + What-If 模擬）
-    ├── OrderTensionTrackerView.tsx   # 訂單物料緊張追蹤看板（6 大環節穿透診斷 + RCA 應變）
+    ├── DashboardView.tsx      # 物料需求總覽（三向需求交叉比對 + 預測偏差分析）
+    ├── MrpCalculatorView.tsx  # MRP 計算器（計算公式明細 + 最晚下單日倒數 + 採購建議）
+    ├── ShipScheduleClearanceView.tsx # 出貨排程審查看板（雙週放行審查 + 情境模擬）
+    ├── OrderTensionTrackerView.tsx   # 訂單缺料分析看板（6 大環節瓶頸診斷 + 處置建議）
     ├── SystemSettingsView.tsx # 系統參數配置面板（沖銷模式/虛擬預扣/損耗率天花板）
-    ├── DataTablesView.tsx     # 7 大核心主檔 CRUD（3 級變更管制 + FK 影響掃描）
-    ├── DataExchangeView.tsx   # 無損資料中心（雙模換檔 + Excel/JSON 雙向匯出入 + 穿透模擬）
-    ├── GlossaryView.tsx       # 專業術語辭典（含 📊 主檔案欄位名稱定義表專屬專題）
+    ├── DataTablesView.tsx     # 資料表維護（3 級變更管制 + FK 影響掃描）
+    ├── DataExchangeView.tsx   # 資料匯入匯出與模擬（雙模換檔 + Excel/JSON 匯出入 + 關聯檢核）
+    ├── GlossaryView.tsx       # 名詞術語說明（含資料表欄位定義）
     ├── MaterialClassManagementView.tsx  # 五層物料分類樹管理 (RAW/MAT/PART/COMP/SET)
     ├── BackupSettingsView.tsx # 備份與復原設定面板
-    └── PrdDocView.tsx         # PRD 規格與 15 大核心可驗收目標 (OBJ-01 ~ OBJ-15) 檢視
+    └── PrdDocView.tsx         # 系統規格與 15 大核心可驗收目標 (OBJ-01 ~ OBJ-15) 檢視
 ```
 
 ---

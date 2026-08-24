@@ -41,7 +41,7 @@ export interface ScheduleClearanceItem {
   material_class?: string | null;
   scheduledQty: number; // 2週出貨排程需求 (PCS)
   fgReadyQty: number; // 成品在庫良品 (PCS)
-  wipPendingQty: number; // 3樓待驗 WIP (PCS)
+  wipPendingQty: number; // 待驗在製品 WIP (PCS)
   sortingYield: number; // 標準良率
   wipEffectiveQty: number; // 經良率折算之有效 WIP (PCS)
   totalAvailableSupply: number; // 總可用供給 (FG + 有效 WIP)
@@ -123,7 +123,7 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
       } else if (totalAvailableSupply >= scheduledQty) {
         status = 'wip_dependent';
         const requiredFromWip = scheduledQty - fgReadyQty;
-        actionNote = `🟡 現貨不足需仰賴 3樓 WIP 挑選！需於出貨日前完成全檢 ${requiredFromWip.toLocaleString()} PCS`;
+        actionNote = `🟡 現貨不足需仰賴 WIP 待驗品挑選！需於出貨日前完成全檢 ${requiredFromWip.toLocaleString()} PCS`;
       } else {
         status = 'deficit';
         deficitQty = scheduledQty - totalAvailableSupply;
@@ -215,7 +215,7 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
               </span>
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
-              專為業務部門與廠長每週二出貨協調會設計。依據最新 2 週出貨排程（Ship Schedule），即時比對成品良品現貨與 3 樓待驗 WIP，5 分鐘內決策可承接出貨量與急迫挑選工單。
+              專為業務部門與廠長每週二出貨協調會設計。依據最新 2 週出貨排程（Ship Schedule），即時比對成品良品現貨與在製品待驗 WIP，5 分鐘內決策可承接出貨量與急迫挑選工單。
             </p>
           </div>
 
@@ -424,20 +424,22 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
         </div>
       </div>
 
-      {/* 4. Main Clearance Table */}
+      {/* 4. Main Clearance Table with Always-On 2D Freeze Panes */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto overflow-y-auto max-h-[560px] scrollbar-sm relative">
           <table className="w-full text-left border-collapse">
-            <thead>
+            <thead className="sticky top-0 z-20 bg-slate-100/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-xs">
               <tr className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
-                <th className="py-3.5 px-4">客戶 / 成品料號</th>
-                <th className="py-3.5 px-4 text-right">2週出貨排程</th>
-                <th className="py-3.5 px-4 text-right">成品現貨良品</th>
-                <th className="py-3.5 px-4 text-right">3F WIP (折算良品)</th>
-                <th className="py-3.5 px-4 text-right">總可用供給</th>
-                <th className="py-3.5 px-4 text-center">可交付狀態</th>
-                <th className="py-3.5 px-4">週二協調行動建議</th>
-                <th className="py-3.5 px-4 text-center">動作</th>
+                <th className="py-3.5 px-4 whitespace-nowrap min-w-[180px] sticky top-0 left-0 z-30 bg-slate-100 dark:bg-slate-900 freeze-shadow-right">
+                  客戶 / 成品料號
+                </th>
+                <th className="py-3.5 px-4 text-right whitespace-nowrap">2週出貨排程</th>
+                <th className="py-3.5 px-4 text-right whitespace-nowrap">成品現貨良品</th>
+                <th className="py-3.5 px-4 text-right whitespace-nowrap">在製品 WIP (折算良品)</th>
+                <th className="py-3.5 px-4 text-right whitespace-nowrap">總可用供給</th>
+                <th className="py-3.5 px-4 text-center whitespace-nowrap">可交付狀態</th>
+                <th className="py-3.5 px-4 whitespace-nowrap">週二協調行動建議</th>
+                <th className="py-3.5 px-4 text-center whitespace-nowrap">動作</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
@@ -453,10 +455,10 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
                   return (
                     <tr
                       key={row.sku}
-                      className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors"
+                      className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group"
                     >
-                      {/* 料號與客戶 */}
-                      <td className="py-4 px-4">
+                      {/* 料號與客戶 (Always-On Frozen Left Column) */}
+                      <td className="py-4 px-4 sticky left-0 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md freeze-shadow-right group-hover:bg-slate-50 dark:group-hover:bg-slate-850">
                         <div className="flex items-center gap-2">
                           <span className="px-2 py-0.5 text-xs font-bold rounded-md bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
                             {row.customer_id}
@@ -594,7 +596,7 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
             <div className="font-bold text-amber-600 dark:text-amber-400 mb-1">
               步驟 2：派發 🟡 WIP 優先挑選工單
             </div>
-            現場主管（廠長/課長）即刻將三樓暫存區之對應批號移轉至人工挑選線，於出貨日前驗收入庫。
+            現場主管（廠長/課長）即刻將在製品暫存區之對應批號移轉至全檢線，於出貨日前驗收入庫。
           </div>
           <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-indigo-100/80 dark:border-indigo-900/40">
             <div className="font-bold text-red-600 dark:text-red-400 mb-1">

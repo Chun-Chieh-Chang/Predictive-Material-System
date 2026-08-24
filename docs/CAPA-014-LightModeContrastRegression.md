@@ -10,8 +10,8 @@
 
 ## 1. 問題描述
 
-- [✗] **淺色模式下英雄橫幅黑字撞底**：在業務敏捷工作台（`SalesWorkbenchView`）與生管/採購工作台（`ProcurementWorkbenchView`）的頂部 Hero Banner，標題文字（`業務敏捷工作台`、`生管 / 採購專屬工作台`）在淺色模式下呈現近乎黑色的深墨色（`#0f172a`），與深藍/深綠漸變背景形成極低對比度（嚴重違反 WCAG AA 對比度標準）。
-- [✗] **膠囊徽章文字不可讀**：橫幅上方的 `SALES AGILE WORKBENCH` 與 `PP & PROCUREMENT HUB` 膠囊標籤文字被 CSS 強制覆蓋為深海軍藍（`#0c4a6e`）與深墨綠（`#047857`），在深底色徽章上幾乎隱形。
+- [✗] **淺色模式下英雄橫幅黑字撞底**：在業務工作台（`SalesWorkbenchView`）與生管/採購工作台（`ProcurementWorkbenchView`）的頂部 Hero Banner，標題文字（`業務工作台`、`生管採購工作台`）在淺色模式下呈現近乎黑色的深墨色（`#0f172a`），與深藍/深綠漸變背景形成極低對比度（嚴重違反 WCAG AA 對比度標準）。
+- [✗] **膠囊徽章文字不可讀**：橫幅上方的 `SALES HUB` 與 `PROCUREMENT & PRODUCTION` 膠囊標籤文字被 CSS 強制覆蓋為深海軍藍（`#0c4a6e`）與深墨綠（`#047857`），在深底色徽章上幾乎隱形。
 
 ---
 

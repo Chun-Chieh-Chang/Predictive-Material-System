@@ -936,7 +936,173 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 ---
 
-*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-24 V-20260824-24*
+## V-20260824-26 — Navbar 虛假連線卡片清理 (YAGNI 精簡與真實現狀對齊)
+
+**執行人：** Antigravity AI (Wesley Chang @Mouldex)  
+**狀態：** ✅ Complete / Verified  
+**TypeScript 編譯：** 0 錯誤 / 0 警告 (`tsc --noEmit`)  
+**原則落實：** First-Principles、YAGNI 精簡原則、MECE 死碼清理  
+
+#### 一、問題根因分析 (RCA)
+- **問題現象**：Navbar 上常駐「🟢 內網伺服器連線中」卡片，使用者反映從未見過其斷線。
+- **根本原因**：
+  1. 該卡片為原型開發時期的純靜態裝飾元件（Hardcoded Mock UI），無任何連線狀態監聽。
+  2. 系統架構本質為純前端 Client-Side SPA（本地運算 / LocalStorage / Excel 離線解析），無常駐後端伺服器連線。
+  3. 先前 CAPA-001 僅將日期動態化，未根本解決連線狀態為虛假 Mock 的問題。
+
+#### 二、矯正措施 (CAPA)
+1. **依據 YAGNI 精簡原則移除虛假元件**：
+   - 移除 [`Navbar.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/Navbar.tsx) 中的「內網伺服器連線中」卡片。
+   - 同步清理僅供該卡片使用的 `formatTaiwanDate` 函式與 `TaiwanDate` 元件，避免殘留無效死碼。
+2. **UI 佈局優化**：
+   - 維持「示範演練模式 (DEMO) / 正式生產模式 (PROD)」資料庫模式標籤。
+   - 簡化頂部導航列資訊密度，釋放桌面端視覺空間。
+
+---
+
+## V-20260824-27 — 全專案無效 UI 擺設清查、Mock 修正與永久防禦規則沉澱 (CAPA-015)
+
+**執行人：** Antigravity AI (Wesley Chang @Mouldex)  
+**狀態：** ✅ Complete / Verified  
+**TypeScript 編譯：** 0 錯誤 / 0 警告 (`tsc --noEmit`)  
+**原則落實：** First-Principles、Zero-Mock & Anti-Placebo UI、MECE、Proactive Self-Evolution  
+
+#### 一、問題根因分析 (RCA)
+- **問題現象**：系統介面存在純視覺擺設（如 Navbar 靜態連線燈）與部分誤導性 Mock fallback 數據（如業務工作台查無資料時預設顯示假數值）。
+- **根本原因**：早期原型階段為排版視覺效果填補了 Mock 裝飾，未在功能收斂時嚴格貫徹「零偽造 (Zero-Mock)」審查。
+
+#### 二、矯正措施 (CAPA-015)
+1. **SalesWorkbenchView 假數據 Fallback 修正**：
+   - 將 [`SalesWorkbenchView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/SalesWorkbenchView.tsx) 中查無品號時的寫死假數據（`10000`/`8500`/`-15%`）替換為真實空狀態（`0`/`0`/`0%`/提示無資料）。
+2. **ProcurementWorkbenchView 標籤透明化**：
+   - 區分「客戶交期:」與「預設交期 (無PO):」，消除生管排程理解歧義。
+3. **完成專案級防禦規則自進化沉澱**：
+   - 於 [`AGENTS.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/AGENTS.md) 與 [`GEMINI.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/GEMINI.md) 第 5 條永久寫入「零偽造與嚴禁虛假 UI 擺設 (Zero-Mock & Anti-Placebo UI)」條款，強制後續所有開發絕對禁止加入無實質資料流或後端心跳支持的裝飾性擺設。
+   - 建立完整 CAPA 報告：[`docs/CAPA-015-AntiPlaceboUIRule.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/CAPA-015-AntiPlaceboUIRule.md)。
+
+---
+
+## V-20260824-28 — 全專案非標準樓層術語清除與領域概念純淨化 (Domain Purity & Anti-Floor Jargon)
+
+**執行人：** Antigravity AI (Wesley Chang @Mouldex)  
+**狀態：** ✅ Complete / Verified  
+**TypeScript 編譯：** 0 錯誤 / 0 警告 (`tsc --noEmit`)  
+**原則落實：** First-Principles、Domain Purity & Anti-Floor Jargon、MECE  
+
+#### 一、問題根因分析 (RCA)
+- **問題現象**：代碼註解、UI 標籤、資料字典與文檔中散落「1樓/1F原料倉」、「3樓/3F WIP待檢」、「4樓/4F成品倉」等廠區實體樓層俗稱。
+- **根本原因**：早期訪談時直接記錄了廠內口語俗稱，未抽象提煉為標準的供應鏈與 MRP 領域術語（Domain Terms）。樓層屬於物理空間配置，與物料管理、庫存狀態與 MRP 演算邏輯完全無關。
+
+#### 二、矯正措施 (CAPA)
+1. **全專案組件與引擎術語標準化**：
+   - [`src/components/SalesWorkbenchView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/SalesWorkbenchView.tsx)：`4F 良品在庫` ➔ `成品良品在庫`；`3F WIP 檢驗` ➔ `在製品 WIP 檢驗`。
+   - [`src/components/OrderTensionTrackerView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/OrderTensionTrackerView.tsx)：`3樓 WIP 全檢環節` ➔ `WIP 檢驗驗收環節`。
+   - [`src/components/ShipScheduleClearanceView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/ShipScheduleClearanceView.tsx)：移除 `3樓/三樓` 字眼，全面統一為 `在製品待驗區` / `WIP 待驗品`。
+   - [`src/components/MrpCalculatorView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/MrpCalculatorView.tsx)：`3樓 WIP` ➔ `在製品 (WIP) 待驗量`。
+   - [`src/utils/orderTensionEngine.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/utils/orderTensionEngine.ts)：`3F WIP 待檢` ➔ `WIP 待驗品`。
+   - [`src/utils/wipEngine.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/utils/wipEngine.ts)：`三樓暫存區` ➔ `在製品暫存區`。
+   - [`src/utils/dataExchange.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/utils/dataExchange.ts)：`3F WIP` ➔ `在製品 (WIP) 待驗品`。
+   - [`src/data/masterFieldDictionary.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/data/masterFieldDictionary.ts) & [`docs/PMS_Data_Dictionary.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/PMS_Data_Dictionary.md)：全量清除 1樓/3樓/4樓，統一為 `原料倉庫`、`在製品待驗區`、`成品倉庫`。
+2. **沉澱防禦規則**：
+   - 於 [`AGENTS.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/AGENTS.md) 與 [`GEMINI.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/GEMINI.md) 寫入第 6 條「專業領域概念與嚴禁特定實體樓層術語 (Domain Purity & Anti-Floor Jargon)」，永久禁止在系統概念中混入特定建物樓層俗稱。
+
+---
+
+## V-20260824-29 — 全專案浮誇行銷詞彙清理與平實通用業務用語標準化 (Plain & Approachable Business Terminology)
+
+**執行人：** Antigravity AI (Wesley Chang @Mouldex)  
+**狀態：** ✅ Complete / Verified  
+**TypeScript 編譯：** 0 錯誤 / 0 警告 (`tsc --noEmit`)  
+**原則落實：** First-Principles、Plain & Approachable Business Terminology、MECE  
+
+#### 一、問題根因分析 (RCA)
+- **問題現象**：UI 介面充滿行銷化、浮誇或非日常的詞彙（如「敏捷工作台」、「專屬工作台」、「一站式作戰中心」、「白盒算式推導履歷」、「全鏈路緊張度」等），造成使用者認知距離與理解門檻。
+- **根本原因**：開發初期引入過多軟體敏捷開發與行銷噱頭詞彙，未以工廠與辦公室現場使用者的「直觀、平易近人、平實日常」體驗為第一考量。
+
+#### 二、矯正措施 (CAPA)
+1. **全專案選單、標題與按鈕文案標準化**：
+   - 「業務敏捷工作台 (Sales Agile Hub)」 ➔ **「業務工作台 (Sales Hub)」**
+   - 「生管 / 採購專屬工作台 (PP & Procurement Hub)」 ➔ **「生管採購工作台 (Procurement & Production)」**
+   - 「全戰情 / 決策戰情儀表板」 ➔ **「物料需求總覽 / 決策總覽 (Overview Dashboard)」**
+   - 「白盒推導算式履歷抽屜」 ➔ **「計算公式明細 (Formula Breakdown)」**
+   - 「訂單全鏈路物料緊張度 / 全鏈路卡關分析」 ➔ **「訂單缺料分析 / 瓶頸診斷 (Order Shortage Analysis)」**
+   - 「三向快查中心」 ➔ **「快速查詢 (客戶 / 品號 / 訂單)」**
+   - 「前瞻防斷料 30 天時程軸」 ➔ **「最晚採購下單日倒數 (30 天時程軸)」**
+2. **沉澱防禦規則**：
+   - 於 [`AGENTS.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/AGENTS.md) 與 [`GEMINI.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/GEMINI.md) 寫入第 7 條「務實平實之日常工作用語與嚴禁浮誇行銷詞彙 (Plain & Approachable Business Terminology)」。
+
+## V-20260824-30 — 主檔案欄位名稱定義與數據鏈位置權威手冊發布暨辭典介面主表分組重構
+
+**執行人：** Antigravity AI (Wesley Chang @Mouldex)  
+**狀態：** ✅ Complete / Verified  
+**TypeScript 編譯：** 0 錯誤 / 0 警告 (`tsc --noEmit`)  
+**原則落實：** First-Principles、Master Field Dictionary SSOT、UI/UX Grouping、MECE  
+
+#### 一、需求與目的
+1. **名詞定義與數據鏈位置全量盤點**：逐一條列全系統 8 大核心主表所有欄位之名稱、代碼、型別約束、數據鏈與介面中的位置 (uiLocation)、白話解說、業務價值、MRP 運算衝擊、填寫規範與實務示範。
+2. **獨立 HTML 手冊發布**：發布精美響應式獨立 HTML 手冊 [`docs/PMS_Master_Field_Data_Dictionary.html`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/PMS_Master_Field_Data_Dictionary.html)，具備快速搜尋與主表分組導覽。
+3. **系統內部辭典介面重構**：重構 [`src/components/GlossaryView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/GlossaryView.tsx)，在「主檔案欄位名稱定義表」分類下新增「主檔案切換」分組頁籤與主表分區標題，並於每張欄位卡片中直觀渲染「📍 在數據鏈或介面中的位置」區塊。
+
+#### 二、成果與交付清單
+- **手冊檔案**：[`docs/PMS_Master_Field_Data_Dictionary.html`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/PMS_Master_Field_Data_Dictionary.html)
+- **型別與資料集更新**：[`src/data/glossaryData.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/data/glossaryData.ts)、[`src/data/masterFieldDictionary.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/data/masterFieldDictionary.ts)
+- **UI 元件更新**：[`src/components/GlossaryView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/GlossaryView.tsx)
+- **自動化維護腳本**：[`scripts/generate_html_dictionary.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/scripts/generate_html_dictionary.ts)
+
+## V-20260824-31 — 全系統資料表格 Excel 雙向凍結視窗 (2D Freeze Panes) 與即時懸浮數據屬性檢查器 (Live Data Inspector) 升級
+
+**執行人：** Antigravity AI (Wesley Chang @Mouldex)  
+**狀態：** ✅ Complete / Verified  
+**TypeScript 編譯：** 0 錯誤 / 0 警告 (`tsc --noEmit`)  
+**原則落實：** First-Principles、Excel-like 2D Freeze Panes、UI/UX Ergonomics、MECE  
+
+#### 一、使用者痛點與第一性原理分析 (RCA)
+- **痛點現象**：當使用者在長資料表格（如物料需求總覽三向交叉比對表、7 大核心主檔維護表、出貨排程審查看板）中上下或左右捲動時，表頭欄位標籤與左側識別品號捲出畫面，導致同仁無法對應眼前數值的屬性（例如無法判斷 12,000 是預估量、實單還是歷史值，或是哪一個客戶/品號）。
+- **第一性原理分析**：
+  1. 傳統單向 Sticky 僅解決垂直捲動，但在寬表格（多欄位）向右捲動時，列主鍵（SKU/客戶）仍會遺失。
+  2. 最佳解決方案為 **Excel 雙向凍結視窗 (2D Freeze Panes: Top Row + Left Column + Top-Left Corner Intersection)**，並輔以 **懸浮即時數據屬性氣泡 (Live Attribute Tooltip)** 與 **一鍵凍結開關 (Freeze Toggle)**。
+
+#### 二、架構設計與具體改動 (CAPA)
+1. **全域凍結樣式系統 ([`src/index.css`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/index.css))**：
+   - 封裝 `.freeze-header` (Top `sticky top-0 z-20`)、`.freeze-col-left` (Left `sticky left-0 z-10`) 與 `.freeze-corner` (Corner `sticky top-0 left-0 z-30`)。
+   - 新增向右立體分割陰影 `.freeze-shadow-right`，營造如同 Excel 凍結線之高級視覺分割。
+2. **總覽儀表板需求比對表 ([`src/components/DashboardView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/DashboardView.tsx))**：
+   - 導入 2D 凍結視窗：表頭永遠置頂，最左側「成品料號 / 客戶」橫向捲動時永遠釘在最左側。
+   - 加入「❄️ 凍結窗格: 開啟 / 關閉」一鍵開關按鈕。
+   - 每一格數值加入即時懸浮屬性提示（如 `[A01-200-131 / MDX] 預示量: 100,000 PCS`）。
+3. **7 大核心資料表維護 ([`src/components/DataTablesView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/DataTablesView.tsx))**：
+   - 凍結首列與首欄主鍵（PK / SKU），右側「操作」欄同步凍結 (`sticky right-0`)，捲動 50+ 筆資料時操作列永遠在手邊。
+4. **出貨排程審查看板 ([`src/components/ShipScheduleClearanceView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/ShipScheduleClearanceView.tsx))**：
+   - 首欄「客戶 / 成品料號」與表頭雙向凍結，修正「3F WIP」為標準專業術語「在製品 WIP (折算良品)」。
+
+## V-20260824-32 — 演練模式與模擬數據全面去識別化規範落實 (Data Privacy & Anonymization)
+
+**執行人：** Antigravity AI (Wesley Chang @Mouldex)  
+**狀態：** ✅ Complete / Verified  
+**TypeScript 編譯：** 0 錯誤 / 0 警告 (`tsc --noEmit`)  
+**原則落實：** Data Privacy & Anonymization、Rule 8 Compliance、MECE、Zero Real-Entity Leakage  
+
+#### 一、需求與第一性原理
+- **需求**：演練模式或模擬數據中，客戶代碼或供應商代碼採用 "A客戶、B客戶、...." 或 "A供應商、B供應商、..."，嚴禁使用真實資料。
+- **第一性原理**：示範系統與教育訓練環境中，必須具備最高級別的商業機密與數據隱私防護，禁止任何真實客戶簡稱、品牌名稱或供應商登記名稱殘留。
+
+#### 二、架構設計與具體改動 (CAPA)
+1. **沉澱防禦規則**：
+   - 於 [`AGENTS.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/AGENTS.md) 與 [`GEMINI.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/GEMINI.md) 寫入第 8 條「演練模式與模擬數據去識別化規範 (Data Privacy & Anonymization Rule)」。
+2. **種子數據全面去識別化 ([`src/data/seedData.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/data/seedData.ts))**：
+   - 客戶代碼：`MDX` ➔ `A客戶`、`ICU` ➔ `B客戶`、`MED` ➔ `C客戶`、`OEM` ➔ `D客戶`、`GEN` ➔ `通用客戶`。
+   - 供應商名稱：全面替換為 `A供應商 (國內陸運)`、`B供應商 (國外海運進口)`、`C供應商 (國內陸運)`、`D供應商 (國外海運進口)`、`E供應商 (國外海運進口)`、`F供應商 (國外海運進口)`、`G供應商 (廠內常備)`、`H供應商 (國內陸運)`。
+   - 訂單號與標籤：`PO-A-202608-01`、`PO-B-202608-01`、`MAT-LABEL-A`、`MAT-LABEL-B`。
+3. **UI 元件與資料交換樣板去識別化**：
+   - [`src/components/SalesWorkbenchView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/SalesWorkbenchView.tsx)：預設檢索關鍵字與客戶快速選單改為 `A客戶`、`B客戶`、`C客戶`。
+   - [`src/components/OrderTensionTrackerView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/OrderTensionTrackerView.tsx)：搜尋框提示改為 `A客戶 / B客戶`。
+   - [`src/utils/fieldMeta.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/utils/fieldMeta.ts) & [`src/utils/dataExchange.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/utils/dataExchange.ts)：匯入樣板與防呆規則之範例全面改為 `A客戶`、`B客戶`、`通用客戶`。
+4. **主檔案字典手冊全面同步**：
+   - 更新 [`src/data/masterFieldDictionary.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/data/masterFieldDictionary.ts) 並重新編譯獨立手冊 [`docs/PMS_Master_Field_Data_Dictionary.html`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/PMS_Master_Field_Data_Dictionary.html)。
+
+---
+
+*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-24 V-20260824-32*
 
 
 

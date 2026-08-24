@@ -32,7 +32,8 @@ export interface GlossaryEntry {
   related?: string[]   // 關聯術語 ID（選填）
   tableName?: string   // 所屬資料表（針對 fields 分類）
   tableLabel?: string  // 資料表中文字（針對 fields 分類）
-  dataType?: string    // 欄位型別與約束（針對 fields 分類）
+  dataType?: string    // 欄位型別與約束（針對 fields 分表）
+  uiLocation?: string  // 📍 在數據鏈或介面中的位置
   plainDefinition?: string    // 💡 白話大白話解說
   businessPurpose?: string    // 🎯 業務價值與用途
   mrpImpact?: string          // ⚙️ 系統推導與運算連動
@@ -47,6 +48,7 @@ export interface MasterFieldDefinition {
   tableLabel: string
   dataType: string
   constraint: 'PK' | 'FK' | 'PK/FK' | 'Required' | 'Optional' | 'Computed'
+  uiLocation?: string            // 📍 在數據鏈或介面中的位置
   plainDefinition: string        // 💡 白話通俗定義（用工廠日常口語講清楚）
   definition: string             // 權威業務定義
   businessPurpose: string        // 🎯 業務價值與用途（為什麼需要它）
@@ -404,7 +406,7 @@ const BASE_GLOSSARY_ENTRIES: GlossaryEntry[] = [
     en: 'Actual Order',
     category: 'process',
     definition: '客戶已確認的正式訂單。與「預估需求」不同，實際訂單具有法律效力的承諾交貨量與交期。MRP 計算時會將實際訂單納入需求總量。',
-    example: '訂單 ORD-20260820-001：客戶 MDX 下單 A01-200-131，5,000 PCS，交期 11/15',
+    example: '訂單 ORD-20260820-001：A客戶 下單 A01-200-131，5,000 PCS，交期 11/15',
     related: ['demand_forecast', 'target_date'],
   },
   {

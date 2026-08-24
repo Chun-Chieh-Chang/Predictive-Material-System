@@ -8,6 +8,7 @@ import { Search, BookOpen, ChevronRight } from 'lucide-react'
 import {
   GLOSSARY_ENTRIES,
   GLOSSARY_CATEGORIES,
+  MASTER_TABLE_SCHEMAS,
   searchGlossary,
   type GlossaryCategory,
   type GlossaryEntry,
@@ -27,11 +28,18 @@ const CATEGORY_COLORS: Record<GlossaryCategory, { bg: string; border: string; te
 const GlossaryView: React.FC = () => {
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState<GlossaryCategory | 'all'>('all')
+  const [activeTableFilter, setActiveTableFilter] = useState<string>('all')
 
   const filtered = useMemo(() => {
-    const bySearch = search.trim() ? searchGlossary(search) : GLOSSARY_ENTRIES
-    return activeCategory === 'all' ? bySearch : bySearch.filter(e => e.category === activeCategory)
-  }, [search, activeCategory])
+    let list = search.trim() ? searchGlossary(search) : GLOSSARY_ENTRIES
+    if (activeCategory !== 'all') {
+      list = list.filter(e => e.category === activeCategory)
+    }
+    if (activeCategory === 'fields' && activeTableFilter !== 'all') {
+      list = list.filter(e => e.tableName === activeTableFilter)
+    }
+    return list
+  }, [search, activeCategory, activeTableFilter])
 
   const grouped = useMemo(() => {
     if (activeCategory !== 'all') return null
@@ -43,19 +51,44 @@ const GlossaryView: React.FC = () => {
     return map
   }, [activeCategory, filtered])
 
+  // Group fields by tableName when in fields tab
+  const groupedFieldsByTable = useMemo(() => {
+    if (activeCategory !== 'fields') return null
+    const map = new Map<string, { tableLabel: string; entries: GlossaryEntry[] }>()
+    for (const table of MASTER_TABLE_SCHEMAS) {
+      const entries = filtered.filter(e => e.tableName === table.tableKey)
+      if (entries.length > 0) {
+        map.set(table.tableKey, { tableLabel: table.tableLabel, entries })
+      }
+    }
+    return map
+  }, [activeCategory, filtered])
+
   return (
     <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-950">
       {/* Header */}
       <div className="px-6 py-5 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/60 flex items-center justify-center">
-            <BookOpen className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+        <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/60 flex items-center justify-center">
+              <BookOpen className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-slate-900 dark:text-white">專業術語與主檔案欄位辭典</h1>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {GLOSSARY_ENTRIES.length} 個術語 · 8 大主表欄位定義 · 完整數據鏈位置
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-lg font-bold text-slate-900 dark:text-white">專業術語辭典</h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              {GLOSSARY_ENTRIES.length} 個術語 · {GLOSSARY_CATEGORIES.length} 大分類
-            </p>
+          <div className="flex items-center gap-2">
+            <a
+              href="./docs/PMS_Master_Field_Data_Dictionary.html"
+              target="_blank"
+              rel="noreferrer"
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 hover:bg-sky-100 dark:hover:bg-sky-900 transition-colors flex items-center gap-1.5"
+            >
+              <span>📄 開啟獨立 HTML 完整手冊</span>
+            </a>
           </div>
         </div>
 
@@ -66,7 +99,7 @@ const GlossaryView: React.FC = () => {
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="搜尋術語、英文或說明…"
+            placeholder="搜尋欄位、代碼、中文名稱、數據鏈位置或大白話…"
             className="w-full pl-9 pr-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400"
           />
         </div>
@@ -74,7 +107,7 @@ const GlossaryView: React.FC = () => {
         {/* Category Tabs */}
         <div className="flex gap-1.5 flex-wrap">
           <button
-            onClick={() => setActiveCategory('all')}
+            onClick={() => { setActiveCategory('all'); setActiveTableFilter('all'); }}
             className={`px-3 py-1.5 rounded-md text-xs font-semibold whitespace-nowrap transition-colors ${
               activeCategory === 'all'
                 ? 'bg-indigo-600 text-white'
@@ -88,7 +121,7 @@ const GlossaryView: React.FC = () => {
             return (
               <button
                 key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
+                onClick={() => { setActiveCategory(cat.id); setActiveTableFilter('all'); }}
                 className={`px-3 py-1.5 rounded-md text-xs font-semibold whitespace-nowrap transition-colors ${
                   activeCategory === cat.id
                     ? 'bg-indigo-600 text-white'
@@ -100,6 +133,41 @@ const GlossaryView: React.FC = () => {
             )
           })}
         </div>
+
+        {/* Sub-tabs for Master Tables when in fields category */}
+        {activeCategory === 'fields' && (
+          <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex gap-1.5 flex-wrap items-center">
+            <span className="text-xs font-bold text-slate-500 mr-1">主檔案切換:</span>
+            <button
+              onClick={() => setActiveTableFilter('all')}
+              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+                activeTableFilter === 'all'
+                  ? 'bg-sky-600 text-white'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+              }`}
+            >
+              全部主表
+            </button>
+            {MASTER_TABLE_SCHEMAS.map(table => {
+              const count = GLOSSARY_ENTRIES.filter(e => e.tableName === table.tableKey).length
+              return (
+                <button
+                  key={table.tableKey}
+                  onClick={() => setActiveTableFilter(table.tableKey)}
+                  className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors flex items-center gap-1 ${
+                    activeTableFilter === table.tableKey
+                      ? 'bg-sky-600 text-white'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                  }`}
+                >
+                  <span>{table.categoryIcon}</span>
+                  <span>{table.tableLabel.split('(')[0].trim()}</span>
+                  <span className="text-[10px] opacity-75 font-mono">({count})</span>
+                </button>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -107,8 +175,38 @@ const GlossaryView: React.FC = () => {
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-slate-400">
             <Search className="w-10 h-10 mb-4 opacity-40" />
-            <p className="text-sm">找不到符合「{search}」的術語</p>
-            <p className="text-xs mt-1">請嘗試其他關鍵字或切換分類</p>
+            <p className="text-sm">找不到符合「{search}」的術語或欄位</p>
+            <p className="text-xs mt-1">請嘗試其他關鍵字或切換主表分類</p>
+          </div>
+        ) : activeCategory === 'fields' && groupedFieldsByTable ? (
+          <div className="space-y-8 max-w-4xl">
+            {Array.from(groupedFieldsByTable.entries()).map(([tableKey, { tableLabel, entries }]) => {
+              const tableSchema = MASTER_TABLE_SCHEMAS.find(t => t.tableKey === tableKey)
+              const colors = CATEGORY_COLORS['fields']
+              return (
+                <div key={tableKey} className="space-y-3">
+                  <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{tableSchema?.categoryIcon || '📊'}</span>
+                      <div>
+                        <h2 className="text-sm font-bold text-slate-900 dark:text-white">{tableLabel}</h2>
+                        <span className="text-xs text-slate-500 font-mono">[{tableKey}] · {entries.length} 個欄位</span>
+                      </div>
+                    </div>
+                    {tableSchema?.ownerDepartment && (
+                      <span className="text-xs px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                        {tableSchema.ownerDepartment}
+                      </span>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    {entries.map(entry => (
+                      <GlossaryCard key={entry.id} entry={entry} colors={colors} />
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         ) : activeCategory === 'all' && grouped ? (
           <div className="space-y-6 max-w-4xl">
@@ -146,8 +244,8 @@ const GlossaryView: React.FC = () => {
 
       {/* Footer */}
       <div className="px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-[11px] text-slate-400 dark:text-slate-500 flex items-center justify-between">
-        <span>按 「全部」可瀏覽完整 {GLOSSARY_ENTRIES.length} 個術語</span>
-        <span>每次新增術語請同步更新 glossaryData.ts</span>
+        <span>已按主檔案名稱分組條列 · 點選卡片可展開查看數據鏈位置與白話解說</span>
+        <span>料事如神系統 © 2026</span>
       </div>
     </div>
   )
@@ -160,7 +258,6 @@ interface GlossaryCardProps {
 
 const GlossaryCard: React.FC<GlossaryCardProps> = ({ entry, colors }) => {
   const [expanded, setExpanded] = useState(false)
-  const isField = entry.category === 'fields' || !!entry.plainDefinition
 
   return (
     <div className={`${colors.bg} border ${colors.border} rounded-xl p-4 transition-all shadow-xs`}>
@@ -191,6 +288,16 @@ const GlossaryCard: React.FC<GlossaryCardProps> = ({ entry, colors }) => {
 
       {expanded && (
         <div className="mt-3 pt-3 border-t border-black/5 dark:border-white/5 space-y-3">
+          {/* 📍 在數據鏈或介面中的位置 */}
+          {entry.uiLocation && (
+            <div className="p-2.5 bg-sky-100/70 dark:bg-sky-950/50 rounded-lg border border-sky-200 dark:border-sky-800/80 text-xs">
+              <div className="font-bold text-sky-900 dark:text-sky-300 flex items-center gap-1.5 mb-1">
+                <span>📍 在數據鏈或介面中的位置：</span>
+              </div>
+              <div className="text-sky-800 dark:text-sky-200 leading-relaxed font-sans">{entry.uiLocation}</div>
+            </div>
+          )}
+
           {/* 💡 白話通俗定義 (生活化大白話) */}
           {entry.plainDefinition ? (
             <div className="p-3 bg-amber-50/80 dark:bg-amber-950/30 rounded-xl border border-amber-200 dark:border-amber-900/60 text-xs text-amber-900 dark:text-amber-200 leading-relaxed">

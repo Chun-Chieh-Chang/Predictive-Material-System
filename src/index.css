@@ -598,3 +598,44 @@ html:not(.dark) textarea:focus {
   border-color: #0284c7 !important;
   box-shadow: 0 0 0 2px #e0f2fe !important;
 }
+
+/* ── Excel-like Freeze Panes (凍結視窗) Utilities ───────────────── */
+.freeze-pane-container {
+  position: relative;
+  overflow: auto;
+  max-height: 520px;
+}
+
+/* Freeze Top Header Row */
+.freeze-header th,
+.freeze-pane-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+/* Freeze Left Column (e.g. SKU / Customer Anchor) */
+.freeze-col-left,
+.freeze-pane-table td.freeze-col,
+.freeze-pane-table th.freeze-col {
+  position: sticky;
+  left: 0;
+  z-index: 15;
+}
+
+/* Left-Top Corner Intersection (Highest z-index) */
+.freeze-corner,
+.freeze-pane-table thead th.freeze-col {
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 30;
+}
+
+/* Freeze Divider Shadow */
+.freeze-shadow-right {
+  box-shadow: 4px 0 8px -3px rgba(0, 0, 0, 0.12);
+}
+.dark .freeze-shadow-right {
+  box-shadow: 4px 0 8px -3px rgba(0, 0, 0, 0.45);
+}

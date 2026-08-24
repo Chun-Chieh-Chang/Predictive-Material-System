@@ -33,7 +33,7 @@ export interface MaterialClass {
 export interface ItemMaster {
   sku: string;                          // 品號 (PK)
   alt_sku?: string | null;              // 替代品號 (可選)
-  customer_id: string;                  // 客戶代碼 (MDX, ICU, etc.)
+  customer_id: string;                  // 客戶代碼 (A客戶, B客戶, etc.)
   category: string;                     // 產品/原料種類 (T接頭, ABS, etc.)
   color?: string;                       // 外觀顏色
   unit: string;                         // 計量單位 (PCS, KG)

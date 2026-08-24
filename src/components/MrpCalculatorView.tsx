@@ -456,7 +456,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-blue-900/60 hover:bg-sky-100 dark:hover:bg-blue-800 text-sky-800 dark:text-cyan-300 border border-sky-300 dark:border-blue-700 transition-colors cursor-pointer"
             >
               <Calculator className="w-3.5 h-3.5" />
-              <span>{expandedMathStage === 'stage1' ? '收合白盒算式' : '📐 展開白盒推導履歷 (OBJ-08)'}</span>
+              <span>{expandedMathStage === 'stage1' ? '收合公式明細' : '📐 展開計算公式明細'}</span>
             </button>
             <span className="text-xs font-mono bg-white dark:bg-blue-900/60 text-sky-800 dark:text-blue-200 px-3 py-1.5 rounded-lg border border-sky-200 dark:border-blue-700/50">
               = Max(0, {result.forecastQty + result.actualOrderQty} - {result.fgReadyQty} - {result.wipEffectiveQty})
@@ -470,7 +470,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
             <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
               <span className="font-bold text-sky-700 dark:text-cyan-400 flex items-center gap-1.5">
                 <Calculator className="w-4 h-4" />
-                <span>第 1 階白盒推導履歷 (Deterministic Formula Breakdown)</span>
+                <span>第 1 階計算公式明細 (Formula Breakdown)</span>
               </span>
               <span className="text-slate-500 dark:text-slate-400">標準 3 階 MRP 模型</span>
             </div>
@@ -633,7 +633,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
             <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
               <span className="font-bold text-purple-700 dark:text-purple-400 flex items-center gap-1.5">
                 <Calculator className="w-4 h-4" />
-                <span>第 2 階白盒推導履歷 (Mold & Cavities Math Breakdown)</span>
+                <span>第 2 階計算公式明細 (Mold & Cavities Math Breakdown)</span>
               </span>
               <span className="text-slate-500 dark:text-slate-400">模具 M:N 與穴數損耗折算</span>
             </div>
@@ -743,7 +743,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
             <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
               <span className="font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
                 <Calculator className="w-4 h-4" />
-                <span>第 3 階白盒推導履歷 (RM SCM Procurement Formula Breakdown)</span>
+                <span>第 3 階計算公式明細 (Procurement Formula Breakdown)</span>
               </span>
               <span className="text-slate-500 dark:text-slate-400">採購補貨與安全庫存整補</span>
             </div>
@@ -771,7 +771,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
             <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300">
               <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>
-                <strong>月內自用料虛擬預扣已生效：</strong>已依 3樓 WIP 待驗量自動預扣原料 <strong>{result.virtualBackflushDeductedKg.toLocaleString()} KG</strong>（ERP 帳面 {result.rmOnHandKg.toLocaleString()} KG $\rightarrow$ 真實可用 {result.effectiveRmOnHandKg?.toLocaleString()} KG）。
+                <strong>月內自用料虛擬預扣已生效：</strong>已依在製品 (WIP) 待驗量自動預扣原料 <strong>{result.virtualBackflushDeductedKg.toLocaleString()} KG</strong>（ERP 帳面 {result.rmOnHandKg.toLocaleString()} KG $\rightarrow$ 真實可用 {result.effectiveRmOnHandKg?.toLocaleString()} KG）。
               </span>
             </div>
             <span className="text-emerald-700 dark:text-emerald-400 font-mono font-semibold whitespace-nowrap">

@@ -4,7 +4,7 @@
  *
  * masterFieldDictionary.ts
  * 主檔案全欄位權威業務定義表 (Master Table Full Field Definition Dictionary)
- * 涵蓋系統 7 大核心營運主表 (3NF)、共計 90+ 個欄位之名稱、資料型別、約束條件、白話通俗解說、業務價值、填寫規範、實務示範與詳細解說。
+ * 涵蓋系統 8 大核心營運主表 (3NF)、共計 90+ 個欄位之名稱、資料型別、約束條件、白話通俗解說、業務價值、填寫規範、實務示範與詳細解說。
  */
 
 import { GlossaryEntry, MasterFieldDefinition } from './glossaryData';
@@ -37,7 +37,7 @@ export const MASTER_TABLE_SCHEMAS: {
         businessPurpose: '作為所有交易單據、BOM、庫存與 MRP 推導的唯一核心索引鍵。',
         fillGuide: '必填。英文字母大寫、數字與連字號組成，不可包含空格或特殊符號。成品建議以 A/B 編碼開頭，原料以材質規格命名。',
         example: 'A01-200-131',
-        exampleExplanation: '代表美商客戶 MDX 專用的「醫療級標準 T 接頭成品套組」。在客戶訂單、庫存快照與出貨單上皆以此品號溝通。',
+        exampleExplanation: '代表 A客戶 專用的「醫療級標準 T 接頭成品套組」。在客戶訂單、庫存快照與出貨單上皆以此品號溝通。',
         mrpImpact: '所有階層展開之基本錨點，決定品號身分與推導路徑。'
       },
       {
@@ -65,10 +65,10 @@ export const MASTER_TABLE_SCHEMAS: {
         plainDefinition: '「這個產品是賣給哪一家客戶的專屬品」。如果是全廠大家通用的原料（例如透明樹脂、通用紙箱），就填 GEN（代表通用 General）。',
         definition: '該品號所屬之專屬客戶代碼。成品與專用件對應終端客戶；通用原料標記為 GEN (General)。',
         businessPurpose: '用於區隔客戶專屬模具權利、出貨對象與客戶預測偏差分析。',
-        fillGuide: '必填。統一使用 3~6 碼大寫英文字母（如 MDX, ICU, GEN）。',
-        example: 'MDX',
-        exampleExplanation: '代表美國醫療器材大廠 MDX 公司。該成品專利與模具屬於 MDX，不可出貨給其他客戶。',
-        mrpImpact: '用於戰情室按客戶維度聚合需求與預測偏離度分析 (OBJ-01)。'
+        fillGuide: '必填。必填。填寫客戶代碼或名稱（如 A客戶, B客戶, 通用客戶）。',
+        example: 'A客戶',
+        exampleExplanation: '代表 A客戶 公司。該成品專利與模具屬於 A客戶，不可出貨給其他客戶。',
+        mrpImpact: '用於總覽儀表板按客戶維度彙整需求與預測偏差分析。'
       },
       {
         fieldKey: 'category',
@@ -490,7 +490,7 @@ export const MASTER_TABLE_SCHEMAS: {
     tableKey: 'yield_master',
     tableLabel: 'Sorting良率標準檔 (Yield Master)',
     categoryIcon: '🎯',
-    description: '3樓品檢全檢站 (Sorting) 之歷史檢驗合格良率標準檔，決定半成品折算良品之比率。',
+    description: '品檢全檢站 (Sorting) 之歷史檢驗合格良率標準檔，決定在製品折算良品之比率。',
     ownerDepartment: '品保部 / 製造部',
     fields: [
       {
@@ -515,12 +515,12 @@ export const MASTER_TABLE_SCHEMAS: {
         tableLabel: 'Sorting良率標準檔',
         dataType: 'number (FLOAT 0.01~1.0)',
         constraint: 'Required',
-        plainDefinition: '「3樓品檢人員在做 100% 全檢時，每 100 顆裡面預計有幾顆是合格的良品」。例如填 0.98 代表預期有 98% 是好的，有 2% 是黑點毛邊不良品。',
+        plainDefinition: '「品檢人員在做 100% 全檢時，每 100 顆裡面預計有幾顆是合格的良品」。例如填 0.98 代表預期有 98% 是好的，有 2% 是黑點毛邊不良品。',
         definition: '製造產出之毛品經品管全檢後預期的合格良品比率（如 0.98 代表 98%）。',
-        businessPurpose: '讓系統在計算 3樓 WIP 待驗半成品時，把不良品扣掉，只把真正能用的良品算進庫存。',
+        businessPurpose: '讓系統在計算在製品 (WIP) 待驗半品時，把不良品扣掉，只把真正能用的良品算進庫存。',
         fillGuide: '必填。以小數點表示（如 0.98 代表 98%）。嚴禁填寫整數 98 或百分比符號。',
         example: '0.98',
-        exampleExplanation: '代表該製品在 3樓全檢時歷史平均良率為 98%。若 3樓有 1,000 PCS 待驗品，系統只會認定有 980 PCS 為可用良品。',
+        exampleExplanation: '代表該製品在品檢全檢時歷史平均良率為 98%。若現有 1,000 PCS 待驗品，系統只會認定有 980 PCS 為可用良品。',
         mrpImpact: '第 1 階有效 WIP 折算公式：有效待驗良品 = WIP 待驗數量 × 標準全檢良率。'
       },
       {
@@ -574,7 +574,7 @@ export const MASTER_TABLE_SCHEMAS: {
         plainDefinition: '「這項原料是向哪一家廠商或代理商買的」。',
         definition: '供應該項原料之原廠石化商或代理商名稱。',
         businessPurpose: '採購發單對象、廠商評鑑與交期追蹤。',
-        fillGuide: '必填。填寫廠商全名（如 INEOS Styrolution, 奇美實業, 台塑石化）。',
+        fillGuide: '必填。填寫廠商全名（如 INEOS Styrolution, A供應商, 台塑石化）。',
         example: 'INEOS Styrolution (英力士苯領)',
         exampleExplanation: '代表該醫療級 MABS 塑料係直接向德國原廠英力士苯領採購。',
         mrpImpact: '顯示於採購建議單與在途 PO 供應商欄位。'
@@ -631,12 +631,12 @@ export const MASTER_TABLE_SCHEMAS: {
         tableLabel: '採購與供應商規則檔',
         dataType: 'number (FLOAT) | null',
         constraint: 'Optional',
-        plainDefinition: '「1樓原料倉庫針對這個原料，空間最多能放多少公斤」。防止採購一口氣買太多把倉庫塞爆。',
-        definition: '1樓原料倉庫該品項最大實體容納重量 (KG)。',
+        plainDefinition: '「原料倉庫針對這個原料，空間最多能放多少公斤」。防止採購一口氣買太多把倉庫塞爆。',
+        definition: '原料倉庫該品項最大實體容納重量 (KG)。',
         businessPurpose: '防爆倉警示：防止過度備料導致走道堵塞、消防違規或原料過期呆滯。',
         fillGuide: '選填。填寫公斤數（如 5000.0）。若無空間限制可留空。',
         example: '5000.0',
-        exampleExplanation: '1樓 A 區原料架位最大只能容納 10 個棧板（5,000 KG）。若進貨累積超過 5,000 KG 系統會發出爆倉警戒。',
+        exampleExplanation: '原料倉庫 A 區架位最大只能容納 10 個棧板（5,000 KG）。若進貨累積超過 5,000 KG 系統會發出爆倉警戒。',
         mrpImpact: '觸發「超備/倉容超限警示 (Overstock Risk)」。'
       },
       {
@@ -708,7 +708,7 @@ export const MASTER_TABLE_SCHEMAS: {
         fillGuide: '必填。填寫 YYYYMM-W週別（如 202608-W1, 202608-W2）。',
         example: '202608-W1',
         exampleExplanation: '2026年8月第1週客戶提供的滾動 3 個月 Forecast 版本。',
-        mrpImpact: '用於戰情室三向比對看板篩選版本與版本波動分析。'
+        mrpImpact: '用於總覽儀表板三向比對看板篩選版本與版本波動分析。'
       },
       {
         fieldKey: 'customer_id',
@@ -720,9 +720,9 @@ export const MASTER_TABLE_SCHEMAS: {
         plainDefinition: '「是哪一家客戶提供的預測」。',
         definition: '提供該預估數據之客戶識別碼。',
         businessPurpose: '按客戶彙總預測總量與分析客戶下單信用度。',
-        fillGuide: '必填。填寫客戶代碼（如 MDX, ICU）。',
-        example: 'MDX',
-        exampleExplanation: '美商客戶 MDX 提出的預測需求。',
+        fillGuide: '必填。填寫客戶代碼（如 A客戶, B客戶）。',
+        example: 'A客戶',
+        exampleExplanation: 'A客戶 提出的預測需求。',
         mrpImpact: '按客戶篩選匯總需求。'
       },
       {
@@ -836,9 +836,9 @@ export const MASTER_TABLE_SCHEMAS: {
         plainDefinition: '「客戶正式發給我們的採購單合約單號」。具有法律效力的正式訂單號碼。',
         definition: '客戶正式採購合約訂單編號，具有法律效力。',
         businessPurpose: '全廠出貨、請款、生產排工與進度追蹤之唯一訂單主鍵。',
-        fillGuide: '必填。填寫客戶採購單號（如 PO-2026-MDX-0881）。不可重複。',
-        example: 'PO-2026-MDX-0881',
-        exampleExplanation: 'MDX 客戶正式下達的採購訂單號碼。',
+        fillGuide: '必填。填寫客戶採購單號（如 PO-2026-A-0881）。不可重複。',
+        example: 'PO-2026-A-0881',
+        exampleExplanation: 'A客戶 正式下達的採購訂單號碼。',
         mrpImpact: '訂單物料緊張度診斷 (OBJ-06) 與週二出貨放行審查 (OBJ-05) 之唯一錨點。'
       },
       {
@@ -851,9 +851,9 @@ export const MASTER_TABLE_SCHEMAS: {
         plainDefinition: '「下這張正式訂單的客戶代碼」。',
         definition: '下達該筆訂單之客戶代碼。',
         businessPurpose: '客戶帳款、合約與出貨管理。',
-        fillGuide: '必填。填寫客戶代碼（如 MDX）。',
-        example: 'MDX',
-        exampleExplanation: '美商 MDX 客戶。',
+        fillGuide: '必填。填寫客戶代碼（如 A客戶）。',
+        example: 'A客戶',
+        exampleExplanation: 'A客戶。',
         mrpImpact: '按客戶匯總實單數量。'
       },
       {
@@ -869,7 +869,7 @@ export const MASTER_TABLE_SCHEMAS: {
         fillGuide: '必填。必須先在 item_master 建檔，從下拉選單選擇。',
         example: 'A01-200-131',
         exampleExplanation: '訂購 A01-200-131 T 接頭成品。',
-        mrpImpact: '計算成品淨需求與訂單緊張度全鏈路扣抵。'
+        mrpImpact: '計算成品淨需求與訂單缺料扣抵。'
       },
       {
         fieldKey: 'order_date',
@@ -939,7 +939,7 @@ export const MASTER_TABLE_SCHEMAS: {
     tableKey: 'inventory_wip_snapshot',
     tableLabel: '庫存與待驗快照檔 (Inventory & WIP Snapshot)',
     categoryIcon: '📦',
-    description: '記錄 4樓成品良品現貨、3樓待全檢半品 (WIP) 與 1樓原料實體可用庫存快照。',
+    description: '記錄成品良品現貨、在製品 (WIP) 待全檢半品與原料實體可用庫存快照。',
     ownerDepartment: '倉管課 / 品保部',
     fields: [
       {
@@ -979,12 +979,12 @@ export const MASTER_TABLE_SCHEMAS: {
         tableLabel: '庫存與待驗快照檔',
         dataType: 'number (INTEGER ≥ 0)',
         constraint: 'Required',
-        plainDefinition: '「4樓成品倉庫裡，已經全檢合格、包裝好，隨時可以直接裝箱出貨的現成良品數量」。',
-        definition: '4樓成品倉庫已檢驗合格、可立即包裝出貨之現貨 (PCS)。',
-        businessPurpose: '這是最硬的現貨！客戶訂單來時第一優先直接扣抵出貨。',
+        plainDefinition: '「成品倉庫裡，已經全檢合格、包裝好，隨時可以直接裝箱出貨的現成良品數量」。',
+        definition: '成品倉庫已檢驗合格、可立即包裝出貨之現貨 (PCS)。',
+        businessPurpose: '可立即出貨之合格現貨，客戶訂單進來時第一優先扣抵。',
         fillGuide: '必填。非負整數 PCS（如 3000）。原料品號請填 0。',
         example: '3000',
-        exampleExplanation: '4樓成品倉庫現有 3,000 件合格良品現貨。',
+        exampleExplanation: '成品倉庫現有 3,000 件合格良品現貨。',
         mrpImpact: '第 1 階成品淨缺口第一優先 1:1 扣抵扣除。'
       },
       {
@@ -994,12 +994,12 @@ export const MASTER_TABLE_SCHEMAS: {
         tableLabel: '庫存與待驗快照檔',
         dataType: 'number (INTEGER ≥ 0)',
         constraint: 'Required',
-        plainDefinition: '「射出機剛做完、目前堆在 3樓等待品管人員做 100% 全檢的半成品數量」。',
-        definition: '3樓待驗區射出完工但尚未全檢之在製半品 (PCS)。',
-        businessPurpose: '估算即將轉化為良品的潛在現貨，避免明明 3樓有一大堆剛做完的貨，生管卻又誤判重複下單生產。',
+        plainDefinition: '「射出機剛做完、目前堆在待驗區等待品管人員做 100% 全檢的半成品數量」。',
+        definition: '在製品待驗區射出完工但尚未全檢之在製半品 (PCS)。',
+        businessPurpose: '估算即將轉化為良品的潛在現貨，避免明明有剛做完的在製半品，生管卻又誤判重複下單生產。',
         fillGuide: '必填。非負整數 PCS（如 1000）。原料品號請填 0。',
         example: '1000',
-        exampleExplanation: '3樓待驗區有 1,000 件已射出成型但尚未全檢的半成品。',
+        exampleExplanation: '在製品待驗區有 1,000 件已射出成型但尚未全檢的半成品。',
         mrpImpact: '乘以良率後折算為有效庫存：有效待驗良品 = 1,000 × 98% = 980 PCS。'
       },
       {
@@ -1009,12 +1009,12 @@ export const MASTER_TABLE_SCHEMAS: {
         tableLabel: '庫存與待驗快照檔',
         dataType: 'number (FLOAT ≥ 0)',
         constraint: 'Required',
-        plainDefinition: '「1樓原料倉庫架子上，目前放著、隨時可以領去現場烘料開工的合格塑膠粒總重量（公斤）」。',
-        definition: '1樓原料倉庫實體在庫合格、未被預扣之原料現貨重 (KG)。',
+        plainDefinition: '「原料倉庫架子上，目前放著、隨時可以領去現場烘料開工的合格塑膠粒總重量（公斤）」。',
+        definition: '原料倉庫實體在庫合格、未被預扣之原料現貨重 (KG)。',
         businessPurpose: 'MRP 原料淨需求推導時的第一道現貨防線。',
         fillGuide: '必填。非負浮點數 KG（如 1250.0）。成品品號請填 0。',
         example: '1250.0',
-        exampleExplanation: '1樓倉庫現場實有 50 包（每包 25KG）共 1,250.0 KG 的 TERLUX 2802 塑膠粒。',
+        exampleExplanation: '原料倉庫現場實有 50 包（每包 25KG）共 1,250.0 KG 的 TERLUX 2802 塑膠粒。',
         mrpImpact: '第 3 階原料淨缺口扣抵公式：淨缺口 = 毛需求 - 原料可用庫存 - 在途PO + 安全庫存。'
       }
     ]
@@ -1187,7 +1187,7 @@ export const MASTER_TABLE_SCHEMAS: {
         fillGuide: '必填。必須先在 item_master 建檔，從下拉選單選擇。',
         example: 'A01-200-131',
         exampleExplanation: '檢驗 A01-200-131 T 接頭製品。',
-        mrpImpact: '合格良品將直接轉入 4樓成品良品在庫 (fg_ready_qty)。'
+        mrpImpact: '合格良品將直接轉入成品良品在庫 (fg_ready_qty)。'
       },
       {
         fieldKey: 'batch_no',
@@ -1226,12 +1226,12 @@ export const MASTER_TABLE_SCHEMAS: {
         tableLabel: 'Sorting 實際良率紀錄檔',
         dataType: 'number (INTEGER ≥ 1)',
         constraint: 'Required',
-        plainDefinition: '「這批送來 3樓品檢站的半成品總共有幾件」。',
+        plainDefinition: '「這批送來品檢站的半成品總共有幾件」。',
         definition: '該批次送檢之總件數 (PCS)。',
         businessPurpose: '核對製造課移交數量，計算全檢良率之分母。',
         fillGuide: '必填。正整數 PCS（如 5000）。',
         example: '5000',
-        exampleExplanation: '製造課移交 5,000 件半成品至 3樓全檢。',
+        exampleExplanation: '製造課移交 5,000 件半成品至品檢站全檢。',
         mrpImpact: '全檢良率計算分母。'
       },
       {
@@ -1243,11 +1243,11 @@ export const MASTER_TABLE_SCHEMAS: {
         constraint: 'Required',
         plainDefinition: '「全檢做完後，挑出來完全合格、可以出貨的良品有幾件」。',
         definition: '全檢合格可出貨之良品件數 (PCS)。',
-        businessPurpose: '實際可以貼標裝箱進 4樓倉庫的真實良品數量。',
+        businessPurpose: '實際可以貼標裝箱進成品倉庫的真實良品數量。',
         fillGuide: '必填。非負整數 PCS，必須 ≤ 全檢總數量。',
         example: '4910',
         exampleExplanation: '5,000 件送檢品中，經檢驗合格良品為 4,910 件（不良品 90 件報廢）。',
-        mrpImpact: '4,910 件良品直接轉化為 4樓現貨良品庫存。'
+        mrpImpact: '4,910 件良品直接轉化為成品現貨良品庫存。'
       },
       {
         fieldKey: 'actual_yield_rate',
@@ -1378,7 +1378,7 @@ export const MASTER_TABLE_SCHEMAS: {
         fillGuide: '必填。必須先在 item_master 建檔且分類為 RAW，從下拉選單選擇。',
         example: 'TERLUX 2802',
         exampleExplanation: '使用透明 MABS 塑料 TERLUX 2802 作為基礎基底。',
-        mrpImpact: '依據投入重量實時扣減 1樓原料庫存。'
+        mrpImpact: '依據投入重量實時扣減原料庫存。'
       },
       {
         fieldKey: 'base_resin_kg',
@@ -1519,23 +1519,116 @@ export const MASTER_TABLE_SCHEMAS: {
   }
 ];
 
+export const MASTER_FIELD_LOCATIONS: Record<string, Record<string, string>> = {
+  item_master: {
+    sku: '業務工作台（品號查詢/訂單明細）、生管採購工作台（MRP 品號選單）、總覽儀表板（品號過濾）、出貨排程審查看板（品號清單）、資料表維護',
+    alt_sku: '資料表維護（品號主檔）、生管採購工作台（替代料/備用料備料提醒）',
+    customer_id: '業務工作台（客戶查詢樞紐）、總覽儀表板（客戶維度過濾與預測比對）、資料表維護',
+    category: '出貨排程審查看板（產品類別篩選膠囊）、總覽儀表板、資料表維護',
+    material_class: '物料分類體系管理視圖、生管採購工作台（BOM 與良率分流判定）、資料表維護',
+    color: '生管採購工作台（外觀與混料配比換算）、資料表維護',
+    unit: '3 階 MRP 推導（PCS / KG / SET 跨階單位轉換基準）、資料表維護',
+    description: '資料表維護（品號規格書型號、醫療級認證與原廠包裝備註）',
+    std_sorting_yield: '出貨排程審查看板（WIP 待驗良品折算）、3 階 MRP 第 1 階算式過程、資料表維護',
+    supplier_name: '3 階 MRP 第 3 階採購建議（供應商對象）、在途原料物流追蹤、資料表維護',
+    lead_time_days: '生管採購工作台（最晚下單日 30 天時程軸）、3 階 MRP 第 3 階發單日倒推、資料表維護',
+    moq_kg: '3 階 MRP 第 3 階建議採購量向上整補、資料表維護',
+    safety_stock_kg: '3 階 MRP 第 3 階原料淨缺口緩衝算式、資料表維護'
+  },
+  mold_master: {
+    mold_id: '生管採購工作台（模具日產能卡片）、成型 BOM 關聯選單、資料表維護',
+    active_cavities: '3 階 MRP 第 2 階單穴克重算式、生管採購工作台（現場實際妥善穴數與日產能推估）、資料表維護',
+    design_cavities: '資料表維護（原始設計穴數，對比塞穴損耗）',
+    cycle_time_sec: '生管採購工作台（模具日產能公式: (86400 / 週期) × 妥善穴數）、資料表維護',
+    daily_capacity: '生管採購工作台（模具日產能卡片）、總覽儀表板（機台負荷估算）、資料表維護',
+    location: '資料表維護（模具庫位與機台位置）',
+    status: '訂單缺料分析（模具可用性環節診斷）、資料表維護'
+  },
+  product_mold_bom: {
+    sku: '3 階 MRP 第 2 階 BOM 展開入口、資料表維護',
+    mold_id: '3 階 MRP 第 2 階成型模具綁定、生管採購工作台、資料表維護',
+    rm_sku: '3 階 MRP 第 2 階到第 3 階原料關聯展開、資料表維護',
+    net_mold_weight_g: '3 階 MRP 第 2 階單穴耗料克重算式、資料表維護',
+    runner_weight_g: '3 階 MRP 第 2 階注塑廢料分攤算式、資料表維護',
+    unit_weight_g: '3 階 MRP 第 2 階單穴克重計算公式明細、資料表維護',
+    is_primary_mold: '3 階 MRP 自動選模策略（優先採用主力模具運算）、資料表維護',
+    std_mfg_scrap_rate: '3 階 MRP 第 2 階原料毛需求損耗膨脹算式、資料表維護',
+    color_mixing_ratio_pct: '3 階 MRP 第 3 階色母雙軌採購需求推算、生管採購工作台、資料表維護',
+    remarks: '資料表維護（BOM 工程變更與試模備註）',
+    valid_from: '資料表維護（BOM 生效起始日）',
+    valid_to: '資料表維護（BOM 失效截止日）'
+  },
+  inventory_wip_snapshot: {
+    snapshot_date: '全系統庫存快照基準日、資料匯入匯出中心、資料表維護',
+    sku: '庫存查詢、出貨排程審查看板、3 階 MRP 算式、資料表維護',
+    fg_ready_qty: '業務工作台（在庫現貨庫存）、出貨排程審查看板（放行第一道防線）、3 階 MRP 第 1 階淨需求扣抵、資料表維護',
+    wip_pending_qty: '出貨排程審查看板（WIP 良率折算支援）、3 階 MRP 第 1 階扣抵、訂單缺料分析（WIP 環節）、資料表維護',
+    rm_on_hand_kg: '生管採購工作台（原料在手存量）、3 階 MRP 第 3 階淨缺口扣抵、訂單缺料分析（原料在庫環節）、資料表維護'
+  },
+  po_in_transit: {
+    po_number: '生管採購工作台（在途採購單清單）、訂單缺料分析、資料表維護',
+    rm_sku: '3 階 MRP 第 3 階在途抵扣、資料表維護',
+    in_transit_qty_kg: '3 階 MRP 第 3 階原料淨缺口扣抵、資料表維護',
+    eta_date: '生管採購工作台（船期到廠倒數）、訂單缺料分析（在途 PO ETA 瓶頸診斷）、資料表維護',
+    actual_arrival_date: '資料表維護（到廠驗收核銷與準時率統計）',
+    eta_variance_days: '生管採購工作台（ETA 偏差天數示警）、資料表維護',
+    supplier_name: '生管採購工作台、資料表維護',
+    status: '訂單缺料分析（在途物流狀態）、生管採購工作台、資料表維護'
+  },
+  demand_forecast_log: {
+    demand_id: '預估需求流水追蹤、資料表維護',
+    version_no: '業務工作台（預估版本波動追單）、總覽儀表板（預測版本篩選）、資料表維護',
+    customer_id: '業務工作台（客戶維度查詢）、總覽儀表板（客戶預測偏差分析）、資料表維護',
+    sku: '業務工作台、總覽儀表板、3 階 MRP 成品總需求來源、資料表維護',
+    target_date: '業務工作台（交期確認）、生管採購工作台（最晚下單日倒推起點）、總覽儀表板、資料表維護',
+    demand_qty: '業務工作台（預測量）、總覽儀表板（三向交叉比對與 Bias% 計算）、3 階 MRP 總需求、資料表維護',
+    created_by_id: '資料表維護（審計日誌追蹤）',
+    created_by_name: '業務工作台、資料表維護',
+    notes: '業務工作台（商務情報備註）、資料表維護'
+  },
+  actual_order: {
+    order_id: '業務工作台（PO 查詢）、訂單缺料分析（逐筆訂單診斷）、出貨排程審查看板（訂單放行）、資料表維護',
+    customer_id: '業務工作台、訂單缺料分析、總覽儀表板、資料表維護',
+    sku: '業務工作台、訂單缺料分析、出貨排程審查看板、3 階 MRP 總需求來源、資料表維護',
+    order_date: '業務工作台、訂單缺料分析（急單識別與前置時間判定）、資料表維護',
+    target_date: '業務工作台（約定交期）、出貨排程審查看板（雙週放行目標日）、訂單缺料分析、資料表維護',
+    order_qty: '業務工作台、出貨排程審查看板（雙週待交數量）、總覽儀表板（實單比對）、訂單缺料分析、資料表維護',
+    status: '業務工作台、訂單缺料分析（過濾未結案訂單）、出貨排程審查看板、資料表維護'
+  },
+  sorting_actual_yield_log: {
+    log_id: '品檢日報記錄主鍵、資料表維護',
+    sku: '品檢良率統計、資料表維護',
+    batch_no: '製程批號追溯、資料表維護',
+    sorting_date: '品檢全檢日報日期、歷史良率趨勢統計、資料表維護',
+    qty_sorted: '全檢數量分母、資料表維護',
+    qty_passed: '合格良品數量分子、資料表維護',
+    actual_yield_rate: '品管動態反饋閉環（比對標準良率與動態調整）、資料表維護',
+    operator_id: '資料表維護（品管責任簽核）',
+    notes: '資料表維護（不良疵點原因記錄）'
+  }
+};
+
 /** 扁平化匯出全部欄位條目（用於注入術語辭典，提供超詳盡白話與填寫範例解說） */
 export const ALL_MASTER_FIELD_ENTRIES: GlossaryEntry[] = MASTER_TABLE_SCHEMAS.flatMap((table) =>
-  table.fields.map((f) => ({
-    id: `field_${f.tableName}_${f.fieldKey}`,
-    term: `${f.fieldLabel} (${f.fieldKey})`,
-    en: `${f.tableName}.${f.fieldKey} [${f.dataType}]`,
-    category: 'fields' as const,
-    plainDefinition: f.plainDefinition,
-    definition: f.definition,
-    businessPurpose: f.businessPurpose,
-    mrpImpact: f.mrpImpact,
-    fillGuide: f.fillGuide,
-    example: f.example,
-    exampleExplanation: f.exampleExplanation,
-    related: [f.tableName, 'mrp', 'fk_sku'],
-    tableName: f.tableName,
-    tableLabel: f.tableLabel,
-    dataType: `${f.dataType} | 約束: ${f.constraint}`
-  }))
+  table.fields.map((f) => {
+    const loc = f.uiLocation || MASTER_FIELD_LOCATIONS[f.tableName]?.[f.fieldKey] || '資料表維護 (DataTablesView)';
+    return {
+      id: `field_${f.tableName}_${f.fieldKey}`,
+      term: `${f.fieldLabel} (${f.fieldKey})`,
+      en: `${f.tableName}.${f.fieldKey} [${f.dataType}]`,
+      category: 'fields' as const,
+      uiLocation: loc,
+      plainDefinition: f.plainDefinition,
+      definition: f.definition,
+      businessPurpose: f.businessPurpose,
+      mrpImpact: f.mrpImpact,
+      fillGuide: f.fillGuide,
+      example: f.example,
+      exampleExplanation: f.exampleExplanation,
+      related: [f.tableName, 'mrp', 'fk_sku'],
+      tableName: f.tableName,
+      tableLabel: f.tableLabel,
+      dataType: `${f.dataType} | 約束: ${f.constraint}`
+    };
+  })
 );

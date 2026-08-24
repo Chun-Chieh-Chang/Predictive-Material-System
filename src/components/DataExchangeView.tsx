@@ -63,7 +63,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
         const result = runDeepPipelineSimulation(db);
         setSimResult(result);
         if (result.allPassed) {
-          onNotify(`全數據鏈路深度穿透模擬通過！健康評分: ${result.integrityReport.healthScore} 分，4 大業務場景 100% 跑通！`, 'success');
+          onNotify(`資料關聯完整性與流程模擬通過！健康評分: ${result.integrityReport.healthScore} 分，4 大業務場景驗證通過！`, 'success');
         } else {
           onNotify(`數據鏈路檢測到 ${result.integrityReport.errors.length} 項斷鏈錯誤，請檢視診斷報告！`, 'error');
         }
@@ -546,14 +546,14 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  全數據鏈路深度穿透模擬與防斷鏈診斷儀
+                  資料完整性檢核與業務流程模擬
                 </h3>
                 <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
-                  MECE 嚴格檢驗
+                  資料關聯防呆
                 </span>
               </div>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-                深度排查 10 大主檔外鍵關聯完整性、孤兒數據、過期冗餘記錄，並穿透模擬 4 大業務極限場景。
+                排查 10 大主檔外鍵關聯完整性、孤兒數據與無效記錄，並模擬 4 大業務情境。
               </p>
             </div>
           </div>
@@ -564,7 +564,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
             className="flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:from-indigo-500 text-white font-bold rounded-xl text-sm shadow-md shadow-purple-600/20 transition-all cursor-pointer disabled:opacity-50"
           >
             <Play className={`w-4 h-4 ${isRunningSim ? 'animate-spin' : ''}`} />
-            <span>{isRunningSim ? '正在深度穿透模擬中...' : '⚡ 執行全數據鏈路深度模擬'}</span>
+            <span>{isRunningSim ? '正在執行模擬中...' : '⚡ 執行資料完整性與流程模擬'}</span>
           </button>
         </div>
 
@@ -617,7 +617,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
 
               {/* Scenario Pass Rate */}
               <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
-                <span className="text-xs font-medium text-slate-500">4大極限場景穿透測試</span>
+                <span className="text-xs font-medium text-slate-500">4大業務情境模擬</span>
                 <div className="flex items-baseline gap-2 mt-1">
                   <span className={`text-2xl font-bold font-mono ${simResult.passedCount === simResult.totalScenarios ? 'text-emerald-500' : 'text-amber-500'}`}>
                     {simResult.passedCount} / {simResult.totalScenarios}
@@ -625,7 +625,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
                   <span className="text-xs text-slate-400">場景通過</span>
                 </div>
                 <span className="text-[11px] text-slate-400 mt-1 block">
-                  {simResult.allPassed ? '100% 業務閉環貫通' : '部分場景存在邏輯盲點'}
+                  {simResult.allPassed ? '全數情境驗證通過' : '部分場景存在邏輯問題'}
                 </span>
               </div>
             </div>
@@ -652,7 +652,7 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
                 <Flame className="w-4 h-4 text-indigo-500" />
-                <span>4 大端到端極限業務場景模擬驗證報告 (Penetration Scenarios)</span>
+                <span>4 大業務情境模擬驗證報告 (Simulation Scenarios)</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
@@ -687,10 +687,10 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
           <div className="p-8 rounded-xl bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/80 text-center space-y-2">
             <Activity className="w-8 h-8 text-purple-400 mx-auto" />
             <div className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-              全數據鏈路診斷儀處於待命狀態
+              資料完整性檢驗處於待命狀態
             </div>
             <p className="text-xs text-slate-500 max-w-md mx-auto">
-              點擊上方「⚡ 執行全數據鏈路深度模擬」按鈕，系統將自動以 MECE 原則排查 10 大主檔外鍵關聯完整性，並穿透模擬 4 大極限業務場景。
+              點擊上方「⚡ 執行資料完整性與流程模擬」按鈕，系統將自動檢查 10 大主檔外鍵關聯完整性，並模擬 4 大業務情境。
             </p>
           </div>
         )}

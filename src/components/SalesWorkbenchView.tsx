@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * SalesWorkbenchView.tsx
- * 業務專屬敏捷工作台 (Sales Agile Hub)
- * 一站式整合：三向查詢中心 (客戶/品號/PO)、預示量偏差示警與追單建議、
- * 訂單全鏈路物料健康度與交期答覆、週二出貨放行審查。
+ * 業務工作台 (Sales Hub)
+ * 一體化整合：客戶/品號/PO 三向查詢、客戶預示量波動與 Bias% 追單、
+ * 訂單物料狀況與交期回覆、出貨排程放行審查。
  */
 
 import React, { useState, useMemo } from 'react';
@@ -47,7 +47,7 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
 }) => {
   // ── 查詢維度與狀態 ──────────────────────────────────────────────────────────
   const [queryType, setQueryType] = useState<'customer' | 'sku' | 'po'>('customer');
-  const [searchKeyword, setSearchKeyword] = useState('MDX');
+  const [searchKeyword, setSearchKeyword] = useState('A客戶');
   const [copiedScriptId, setCopiedScriptId] = useState<string | null>(null);
 
   // 所有客戶清單
@@ -86,7 +86,7 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
   }, [queryType, searchKeyword, db.item_master, orderList]);
 
   const activeSku = relevantSkus[0]?.sku || 'A01-200-131';
-  const selectedCustomer = relevantSkus[0]?.customer_id || (queryType === 'customer' ? searchKeyword : 'MDX');
+  const selectedCustomer = relevantSkus[0]?.customer_id || (queryType === 'customer' ? searchKeyword : 'A客戶');
 
   // ── 計算當前品號的預測偏差與分析 ─────────────────────────────────────────────
   const demandSummaries = useMemo(() => {
@@ -94,12 +94,12 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
   }, [activeSku, db]);
 
   const activeSummary = demandSummaries[0] || {
-    totalForecastQty: 10000,
-    totalActualOrderQty: 8500,
-    totalHistoricalQty: 9000,
-    overallBiasPct: -15,
-    overallAlertLevel: 'warning' as const,
-    recommendations: ['客戶訂單落後預估 15%，建議業務主動關切客戶庫存與下單排程。'],
+    totalForecastQty: 0,
+    totalActualOrderQty: 0,
+    totalHistoricalQty: 0,
+    overallBiasPct: 0,
+    overallAlertLevel: 'info' as const,
+    recommendations: ['查無該品號之業務預估或訂單記錄，請至「資料表維護」新增需求。'],
   };
 
   // ── 關聯訂單與物料緊張度計算 ─────────────────────────────────────────────────
@@ -175,15 +175,15 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
             <div className="flex items-center space-x-2.5 mb-2">
               <span className="bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-500/30 text-sky-700 dark:text-sky-300 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 font-mono">
                 <Sparkles className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
-                SALES AGILE WORKBENCH
+                SALES HUB
               </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">三向快查 · 偏差示警 · 交期秒答</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">需求預估 · 訂單狀況 · 交期確認</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-              業務敏捷工作台
+              業務工作台
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              專為業務同仁打造的一站式作戰中心。免跳轉即可同屏檢索客戶預示量波動、訂單物料緊張度與週二出貨放行狀態。
+              提供業務人員快速檢索客戶預示量變化、訂單備料狀況與出貨排程放行資訊。
             </p>
           </div>
 
@@ -193,14 +193,14 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-700 dark:text-white border border-slate-200 dark:border-white/20 text-xs font-bold transition-all cursor-pointer"
             >
               <BarChart3 className="w-4 h-4 text-sky-600 dark:text-sky-300" />
-              <span>全戰情儀表板</span>
+              <span>物料需求總覽</span>
             </button>
             <button
               onClick={onNavigateToOrderTension}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition-all shadow-md shadow-sky-600/20 cursor-pointer"
             >
               <Activity className="w-4 h-4" />
-              <span>訂單物料示警</span>
+              <span>訂單缺料分析</span>
             </button>
           </div>
         </div>
@@ -215,10 +215,10 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
             </div>
             <div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                三向快速檢索中心 (3-Way Query Hub)
+                快速查詢 (客戶 / 品號 / 訂單)
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                切換查詢維度，全頁連動載入專屬物料鏈路與訂單情報
+                切換查詢維度，即時查看關聯物料與訂單數據
               </p>
             </div>
           </div>
@@ -227,7 +227,7 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
             {/* Query Dimension Tabs */}
             <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold">
               <button
-                onClick={() => { setQueryType('customer'); setSearchKeyword('MDX'); }}
+                onClick={() => { setQueryType('customer'); setSearchKeyword('A客戶'); }}
                 className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                   queryType === 'customer'
                     ? 'bg-white dark:bg-slate-900 text-sky-700 dark:text-sky-300 shadow-xs font-bold'
@@ -463,8 +463,8 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
                 <div className="h-full bg-sky-400" style={{ width: `${Math.min(100, Math.round((clearanceSummary.wipNeeded / (clearanceSummary.totalTarget || 1)) * 100))}%` }} title="WIP 待驗覆蓋" />
               </div>
               <div className="flex justify-between text-[10px] text-slate-500 font-mono">
-                <span>🟢 4F 良品在庫 ({clearanceSummary.readyCovered.toLocaleString()} PCS)</span>
-                <span>🔵 3F WIP 檢驗 ({clearanceSummary.wipNeeded.toLocaleString()} PCS)</span>
+                <span>🟢 成品良品在庫 ({clearanceSummary.readyCovered.toLocaleString()} PCS)</span>
+                <span>🔵 在製品 WIP 檢驗 ({clearanceSummary.wipNeeded.toLocaleString()} PCS)</span>
               </div>
             </div>
           </div>
@@ -490,10 +490,10 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
             </div>
             <div>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                訂單物料緊張度診斷與「一鍵生成交期回覆話術」
+                訂單物料狀況與客戶交期回覆參考
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                點擊任一訂單即可複製專業客戶回覆話術，無需跨部門詢問
+                點擊任一訂單即可複製客戶交期回覆訊息
               </p>
             </div>
           </div>
@@ -502,7 +502,7 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
             onClick={onNavigateToOrderTension}
             className="text-xs text-purple-700 dark:text-purple-400 hover:underline font-bold flex items-center gap-1 cursor-pointer"
           >
-            <span>全屏診斷 6 大物料節點</span>
+            <span>查看各供應鏈環節明細</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>

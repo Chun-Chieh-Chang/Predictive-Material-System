@@ -28,156 +28,156 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     // ═════════════════════════════════════════════════════════════════
     {
       sku: 'RAW-PP-5011',
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'RAW',
       category: 'PP 聚丙烯醫療粒子',
       color: '本白 (Natural White)',
       unit: 'KG',
-      description: '台塑化醫療包裝級高流動性 PP 原料 (MI=15)',
-      supplier_name: '台灣化學纖維 (國內陸運)',
+      description: '醫療包裝級高流動性 PP 原料 (MI=15)',
+      supplier_name: 'A供應商 (國內陸運)',
       lead_time_days: 30,
       moq_kg: 2000,
       safety_stock_kg: 1000
     },
     {
       sku: 'RAW-PP-7022',
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'RAW',
       category: 'PP 耐衝擊高韌性粒子',
       color: '半透本色',
       unit: 'KG',
-      description: '台塑化射出級高韌性耐疲勞 PP 粒子',
-      supplier_name: '台灣化學纖維 (國內陸運)',
+      description: '射出級高韌性耐疲勞 PP 粒子',
+      supplier_name: 'A供應商 (國內陸運)',
       lead_time_days: 30,
       moq_kg: 2000,
       safety_stock_kg: 800
     },
     {
       sku: 'RAW-ABS-2802',
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'RAW',
       category: 'MABS 醫療級高透原料',
       color: '透明本色 (Crystal Clear)',
       unit: 'KG',
-      description: 'INEOS Styrolution 醫療級高透明耐衝擊 MABS 原料',
-      supplier_name: 'INEOS Styrolution (德國原廠/海運進口)',
+      description: '醫療級高透明耐衝擊 MABS 原料',
+      supplier_name: 'B供應商 (國外海運進口)',
       lead_time_days: 120,
       moq_kg: 5000,
       safety_stock_kg: 2500
     },
     {
       sku: 'RAW-ABS-757',
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'RAW',
       category: 'ABS 射出級工程塑膠粒',
       color: '象牙白 (Ivory)',
       unit: 'KG',
-      description: '奇美 POLYLAC PA-757 射出成型級通用 ABS 粒',
-      supplier_name: '奇美實業 (國內陸運)',
+      description: '射出成型級通用 ABS 粒',
+      supplier_name: 'C供應商 (國內陸運)',
       lead_time_days: 20,
       moq_kg: 1000,
       safety_stock_kg: 500
     },
     {
       sku: 'RAW-PC-110',
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'RAW',
       category: 'PC 醫療級耐高溫聚碳酸酯',
       color: '透明微藍',
       unit: 'KG',
-      description: '奇美 WONDERLITE PC-110 醫療耐滅菌級 PC 粒',
-      supplier_name: '奇美實業 (國內陸運)',
+      description: '醫療耐滅菌級 PC 粒',
+      supplier_name: 'C供應商 (國內陸運)',
       lead_time_days: 25,
       moq_kg: 1000,
       safety_stock_kg: 600
     },
     {
       sku: 'RAW-PC-1250Y',
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'RAW',
       category: 'PC 光學級聚碳酸酯',
       color: '高清全透',
       unit: 'KG',
-      description: '帝人 Panlite 1250Y 醫療低粘度高流動透明 PC 粒',
-      supplier_name: '日本帝人 Teijin (海運進口)',
+      description: '醫療低粘度高流動透明 PC 粒',
+      supplier_name: 'D供應商 (國外海運進口)',
       lead_time_days: 75,
       moq_kg: 2000,
       safety_stock_kg: 1000
     },
     {
       sku: 'RAW-PMMA-80N',
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'RAW',
       category: 'PMMA 壓克力高透光粒子',
       color: '全透光 (Optic Clear)',
       unit: 'KG',
-      description: '奇美 ACRYREX PMMA-80N 高透光耐候壓克力成型粒',
-      supplier_name: '奇美實業 (國內陸運)',
+      description: '高透光耐候壓克力成型粒',
+      supplier_name: 'C供應商 (國內陸運)',
       lead_time_days: 25,
       moq_kg: 1000,
       safety_stock_kg: 500
     },
     {
       sku: 'RAW-PVC-M4910',
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'RAW',
       category: 'PVC 醫療硬質塑膠粒子',
       color: '半透本色',
       unit: 'KG',
-      description: 'Avient PolyOne 醫療導管專用無毒硬質 PVC 粒',
-      supplier_name: 'Avient PolyOne (美國/海運進口)',
+      description: '醫療導管專用無毒硬質 PVC 粒',
+      supplier_name: 'E供應商 (國外海運進口)',
       lead_time_days: 90,
       moq_kg: 3000,
       safety_stock_kg: 1500
     },
     {
       sku: 'RAW-TPU-95A',
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'RAW',
       category: 'TPU 醫療彈性體粒子',
       color: '半透霧面 (Shore 95A)',
       unit: 'KG',
-      description: 'Covestro Desmopan 醫療止水抗壓彈性體 TPU',
-      supplier_name: '科思創 Covestro (海運進口)',
+      description: '醫療止水抗壓彈性體 TPU',
+      supplier_name: 'F供應商 (國外海運進口)',
       lead_time_days: 60,
       moq_kg: 1500,
       safety_stock_kg: 800
     },
     {
       sku: 'MB-WHITE-01',
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'RAW',
       category: '白玉色母 (White Masterbatch)',
       color: '鈦白 (TiO2 40%)',
       unit: 'KG',
-      description: '科萊恩醫療專用高濃度白色色母粒 (添加比 2%)',
-      supplier_name: '科萊恩 Clariant (廠內常備)',
+      description: '醫療專用高濃度白色色母粒 (添加比 2%)',
+      supplier_name: 'G供應商 (廠內常備)',
       lead_time_days: 14,
       moq_kg: 100,
       safety_stock_kg: 50
     },
     {
       sku: 'MB-BLUE-02',
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'RAW',
       category: '醫療天藍色母 (Medical Blue)',
       color: '天藍 (Pantone 2915C)',
       unit: 'KG',
-      description: '立安醫療專用無毒天藍色母粒 (添加比 1.5%)',
-      supplier_name: '立安色母 (國內陸運)',
+      description: '醫療專用無毒天藍色母粒 (添加比 1.5%)',
+      supplier_name: 'H供應商 (國內陸運)',
       lead_time_days: 10,
       moq_kg: 50,
       safety_stock_kg: 30
     },
     {
       sku: 'MB-GREEN-03',
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'RAW',
       category: '安全綠色母 (Safety Green)',
       color: '青綠 (Pantone 347C)',
       unit: 'KG',
-      description: '立安食品醫療級安全綠色母粒 (添加比 1.5%)',
-      supplier_name: '立安色母 (國內陸運)',
+      description: '食品醫療級安全綠色母粒 (添加比 1.5%)',
+      supplier_name: 'H供應商 (國內陸運)',
       lead_time_days: 10,
       moq_kg: 50,
       safety_stock_kg: 30
@@ -189,17 +189,17 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     {
       sku: 'MAT-POUCH-100',
       alt_sku: null,
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'MAT',
       category: '泰維克滅菌袋 (100x150mm)',
       color: '白/透明',
       unit: 'PCS',
-      description: '杜邦 Tyvek 醫療級單片環氧乙烷 EO 滅菌袋'
+      description: '醫療級單片環氧乙烷 EO 滅菌袋'
     },
     {
       sku: 'MAT-POUCH-250',
       alt_sku: null,
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'MAT',
       category: '透析管路專用滅菌袋 (250x400mm)',
       color: '白/透明',
@@ -209,7 +209,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     {
       sku: 'MAT-BOX-01',
       alt_sku: null,
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'MAT',
       category: '外銷瓦楞紙箱 A型 (50x40x35cm)',
       color: '牛皮紙色',
@@ -219,7 +219,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     {
       sku: 'MAT-BOX-02',
       alt_sku: null,
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'MAT',
       category: '外銷瓦楞中箱 B型 (40x30x25cm)',
       color: '牛皮紙色',
@@ -227,29 +227,29 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       description: '三層外銷分裝中箱 (容量 200 PCS)'
     },
     {
-      sku: 'MAT-LABEL-MDX',
+      sku: 'MAT-LABEL-A',
       alt_sku: null,
-      customer_id: 'MDX',
+      customer_id: 'A客戶',
       material_class: 'MAT',
-      category: 'MDX 客戶追溯條碼標籤貼紙',
+      category: 'A客戶 追溯條碼標籤貼紙',
       color: '白底黑字',
       unit: 'PCS',
-      description: 'MDX 專用抗酒精擦拭熱轉印 UDI 追溯標籤'
+      description: 'A客戶 專用抗酒精擦拭熱轉印 UDI 追溯標籤'
     },
     {
-      sku: 'MAT-LABEL-ICU',
+      sku: 'MAT-LABEL-B',
       alt_sku: null,
-      customer_id: 'ICU',
+      customer_id: 'B客戶',
       material_class: 'MAT',
-      category: 'ICU 雙層醫療序號標籤貼紙',
+      category: 'B客戶 雙層醫療序號標籤貼紙',
       color: '白底藍字',
       unit: 'PCS',
-      description: 'ICU 專用雙層可撕式醫療追溯標籤'
+      description: 'B客戶 專用雙層可撕式醫療追溯標籤'
     },
     {
       sku: 'MAT-DESIC-10G',
       alt_sku: null,
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'MAT',
       category: '醫療級矽膠乾燥劑 (10g)',
       color: '透明袋/藍珠',
@@ -259,7 +259,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     {
       sku: 'MAT-CAP-SEAL',
       alt_sku: null,
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'MAT',
       category: '接頭防塵保護易撕膜 (PE)',
       color: '透明',
@@ -272,57 +272,57 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     // ═════════════════════════════════════════════════════════════════
     {
       sku: 'A01-200-131',
-      customer_id: 'MDX',
+      customer_id: 'A客戶',
       material_class: 'PART',
       category: 'T接頭 (T-Connector)',
       color: '本色 (Natural)',
       unit: 'PCS',
-      description: 'MDX 醫療級主力通風管 T型三向接頭本體',
+      description: 'A客戶 醫療級主力通風管 T型三向接頭本體',
       std_sorting_yield: 0.98
     },
     {
       sku: 'A01-210-251',
-      customer_id: 'MDX',
+      customer_id: 'A客戶',
       material_class: 'PART',
       category: 'T接頭加壓款 (Pressure T-Connector)',
       color: '半透本色',
       unit: 'PCS',
-      description: 'MDX 抽吸管 T型加壓接頭 (雙品號並存)',
+      description: 'A客戶 抽吸管 T型加壓接頭 (雙品號並存)',
       std_sorting_yield: 0.96
     },
     {
       sku: 'C09-200-251',
-      customer_id: 'MDX',
+      customer_id: 'A客戶',
       material_class: 'PART',
       category: 'Y管 (Y-Connector)',
       color: '本色 (Natural)',
       unit: 'PCS',
-      description: 'MDX 呼吸照護迴路分流 Y管',
+      description: 'A客戶 呼吸照護迴路分流 Y管',
       std_sorting_yield: 0.95
     },
     {
       sku: 'B02-100-011',
-      customer_id: 'ICU',
+      customer_id: 'B客戶',
       material_class: 'PART',
       category: '直通接頭 (Straight Adapter)',
       color: '白色 (White)',
       unit: 'PCS',
-      description: 'ICU 輸液導管高密封直通對接頭',
+      description: 'B客戶 輸液導管高密封直通對接頭',
       std_sorting_yield: 0.99
     },
     {
       sku: 'P-CON-STR02',
-      customer_id: 'ICU',
+      customer_id: 'B客戶',
       material_class: 'PART',
       category: '快插母端接頭 (Female Quick Adapter)',
       color: '天藍色 (Blue)',
       unit: 'PCS',
-      description: 'ICU 快速插拔母端直通接頭',
+      description: 'B客戶 快速插拔母端直通接頭',
       std_sorting_yield: 0.985
     },
     {
       sku: 'P-VALVE-BODY01',
-      customer_id: 'MED',
+      customer_id: 'C客戶',
       material_class: 'PART',
       category: '三通閥體 (3-Way Valve Body)',
       color: '高透 (Clear)',
@@ -332,7 +332,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'P-VALVE-CORE01',
-      customer_id: 'MED',
+      customer_id: 'C客戶',
       material_class: 'PART',
       category: '三通旋塞芯 (Stopcock Core)',
       color: '天藍色 (Blue)',
@@ -342,7 +342,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'P-VALVE-CAP01',
-      customer_id: 'MED',
+      customer_id: 'C客戶',
       material_class: 'PART',
       category: '旋塞端蓋 (Stopcock Cap)',
       color: '高透 (Clear)',
@@ -352,7 +352,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'P-CHECK-BODY',
-      customer_id: 'ICU',
+      customer_id: 'B客戶',
       material_class: 'PART',
       category: '止回閥透明閥體 (Check Valve Body)',
       color: '高透光',
@@ -362,7 +362,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'P-CHECK-CORE',
-      customer_id: 'ICU',
+      customer_id: 'B客戶',
       material_class: 'PART',
       category: '止回閥膜片座 (Check Valve Disc)',
       color: '霧面 (Shore 95A)',
@@ -372,7 +372,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'P-FILTER-TOP',
-      customer_id: 'OEM',
+      customer_id: 'D客戶',
       material_class: 'PART',
       category: '過濾器上蓋 (Filter Housing Top)',
       color: '全透光 (Clear)',
@@ -382,7 +382,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'P-FILTER-BTM',
-      customer_id: 'OEM',
+      customer_id: 'D客戶',
       material_class: 'PART',
       category: '過濾器下蓋 (Filter Housing Bottom)',
       color: '全透光 (Clear)',
@@ -392,7 +392,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'P-LUER-MALE',
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'PART',
       category: '標準魯爾公接頭 (Male Luer Lock)',
       color: '象牙白 (White)',
@@ -402,7 +402,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'P-LUER-FEMALE',
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'PART',
       category: '標準魯爾母接頭 (Female Luer Lock)',
       color: '象牙白 (White)',
@@ -412,7 +412,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'P-SYR-BARREL50',
-      customer_id: 'MED',
+      customer_id: 'C客戶',
       material_class: 'PART',
       category: '50ml 注射筒外筒 (50ml Barrel)',
       color: '高透本色',
@@ -422,7 +422,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'P-SYR-PLUNGER50',
-      customer_id: 'MED',
+      customer_id: 'C客戶',
       material_class: 'PART',
       category: '50ml 推桿活塞 (50ml Plunger)',
       color: '本白色',
@@ -432,7 +432,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'P-DIAL-SHELL',
-      customer_id: 'ICU',
+      customer_id: 'B客戶',
       material_class: 'PART',
       category: '透析器筒體 (Dialyzer Shell)',
       color: '透明高剛性',
@@ -442,7 +442,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'P-DIAL-CAP',
-      customer_id: 'ICU',
+      customer_id: 'B客戶',
       material_class: 'PART',
       category: '透析器導流端蓋 (Dialyzer Header Cap)',
       color: '天藍色 (Blue)',
@@ -456,7 +456,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     // ═════════════════════════════════════════════════════════════════
     {
       sku: 'CP-3WAY-VALVE',
-      customer_id: 'MED',
+      customer_id: 'C客戶',
       material_class: 'COMP',
       category: '三通旋塞閥次總成 (3-Way Stopcock)',
       color: '透明/藍芯',
@@ -466,7 +466,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'CP-CHECK-VALVE',
-      customer_id: 'ICU',
+      customer_id: 'B客戶',
       material_class: 'COMP',
       category: '單向止回閥總成 (Check Valve Unit)',
       color: '全透明',
@@ -476,7 +476,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'CP-FILTER-UNIT',
-      customer_id: 'OEM',
+      customer_id: 'D客戶',
       material_class: 'COMP',
       category: '精密微孔過濾組件 (IV Filter Unit)',
       color: '透明',
@@ -486,7 +486,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'CP-LUER-ADAPTER',
-      customer_id: 'GEN',
+      customer_id: '通用客戶',
       material_class: 'COMP',
       category: '雙向魯爾快速轉接器 (Dual Luer Adapter)',
       color: '白色',
@@ -496,7 +496,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'CP-SYR-50ML',
-      customer_id: 'MED',
+      customer_id: 'C客戶',
       material_class: 'COMP',
       category: '50ml 預組裝注射器空筒 (50ml Syringe Unit)',
       color: '本色/白桿',
@@ -506,7 +506,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'CP-BREATH-Y-CONN',
-      customer_id: 'MDX',
+      customer_id: 'A客戶',
       material_class: 'COMP',
       category: '呼吸迴路雙向分流連接總成 (Breathing Y-Unit)',
       color: '本色',
@@ -516,7 +516,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'CP-PRESS-PORT',
-      customer_id: 'MDX',
+      customer_id: 'A客戶',
       material_class: 'COMP',
       category: '加壓監測接頭總成 (Pressure Port Unit)',
       color: '半透本色',
@@ -526,7 +526,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'CP-DIAL-CORE-UNIT',
-      customer_id: 'ICU',
+      customer_id: 'B客戶',
       material_class: 'COMP',
       category: '透析器膜管封裝總成 (Dialyzer Core Unit)',
       color: '透明/藍蓋',
@@ -540,7 +540,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     // ═════════════════════════════════════════════════════════════════
     {
       sku: 'SET-IV-EXT-01',
-      customer_id: 'MED',
+      customer_id: 'C客戶',
       material_class: 'SET',
       category: '標準輸液延長管套組 (150cm)',
       color: '透明無菌包裝',
@@ -550,7 +550,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'SET-IV-EXT-02',
-      customer_id: 'MED',
+      customer_id: 'C客戶',
       material_class: 'SET',
       category: '雙向加藥輸液延長管套組',
       color: '透明無菌包裝',
@@ -560,37 +560,37 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     },
     {
       sku: 'SET-BREATH-CIR-01',
-      customer_id: 'MDX',
+      customer_id: 'A客戶',
       material_class: 'SET',
       category: '成人呼吸照護加熱迴路套組',
       color: '透明/藍色管路',
       unit: 'SET',
-      description: 'MDX 成人呼吸機專用加熱迴路管路套組 (含Y管、T接頭、滅菌袋包裝)',
+      description: 'A客戶 成人呼吸機專用加熱迴路管路套組 (含Y管、T接頭、滅菌袋包裝)',
       std_sorting_yield: 0.99
     },
     {
       sku: 'SET-BREATH-CIR-02',
-      customer_id: 'MDX',
+      customer_id: 'A客戶',
       material_class: 'SET',
       category: '小兒專用低死腔呼吸迴路套組',
       color: '透明/青綠接頭',
       unit: 'SET',
-      description: 'MDX 小兒呼吸照護極低死腔迴路管路套組',
+      description: 'A客戶 小兒呼吸照護極低死腔迴路管路套組',
       std_sorting_yield: 0.99
     },
     {
       sku: 'SET-DIALYSIS-LINE',
-      customer_id: 'ICU',
+      customer_id: 'B客戶',
       material_class: 'SET',
       category: '血液透析體外循環導管組',
       color: '紅藍標識套組',
       unit: 'SET',
-      description: 'ICU 血液透析專用動靜脈體外循環導管與透析柱總套組',
+      description: 'B客戶 血液透析專用動靜脈體外循環導管與透析柱總套組',
       std_sorting_yield: 0.985
     },
     {
       sku: 'SET-INFUSION-PUMP',
-      customer_id: 'OEM',
+      customer_id: 'D客戶',
       material_class: 'SET',
       category: '微量注射泵專用輸液管路套件',
       color: '高精度透明套裝',
@@ -936,31 +936,31 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     {
       demand_id: 'FC-202608-001',
       version_no: '202608-W1',
-      customer_id: 'MDX',
+      customer_id: 'A客戶',
       sku: 'A01-200-131',
       target_date: '2026-11-30',
       demand_qty: 120000,
       created_by_id: 'usr_sales',
       created_by_name: '業務人員',
       created_at: '2026-08-01 09:30',
-      notes: 'MDX 歐美旺季初估需求'
+      notes: 'A客戶 歐美旺季初估需求'
     },
     {
       demand_id: 'FC-202608-002',
       version_no: '202608-W2',
-      customer_id: 'MDX',
+      customer_id: 'A客戶',
       sku: 'A01-200-131',
       target_date: '2026-11-30',
       demand_qty: 90000,
       created_by_id: 'usr_sales',
       created_by_name: '業務人員',
       created_at: '2026-08-08 14:15',
-      notes: 'MDX 下修 Forecast (-30,000 PCS)，系統觸發防爆倉注意'
+      notes: 'A客戶 下修 Forecast (-30,000 PCS)，系統觸發防爆倉注意'
     },
     {
       demand_id: 'FC-202608-003',
       version_no: '202608-W2',
-      customer_id: 'MDX',
+      customer_id: 'A客戶',
       sku: 'A01-210-251',
       target_date: '2026-12-15',
       demand_qty: 80000,
@@ -972,7 +972,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     {
       demand_id: 'FC-202608-004',
       version_no: '202608-W2',
-      customer_id: 'MDX',
+      customer_id: 'A客戶',
       sku: 'C09-200-251',
       target_date: '2026-10-31',
       demand_qty: 45000,
@@ -984,19 +984,19 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     {
       demand_id: 'FC-202608-005',
       version_no: '202608-W2',
-      customer_id: 'ICU',
+      customer_id: 'B客戶',
       sku: 'B02-100-011',
       target_date: '2026-09-30',
       demand_qty: 150000,
       created_by_id: 'usr_sales',
       created_by_name: '業務人員',
       created_at: '2026-08-10 11:00',
-      notes: 'ICU 急單專案'
+      notes: 'B客戶 急單專案'
     },
     {
       demand_id: 'FC-202608-006',
       version_no: '202608-W2',
-      customer_id: 'MDX',
+      customer_id: 'A客戶',
       sku: 'SET-BREATH-CIR-01',
       target_date: '2026-11-15',
       demand_qty: 25000,
@@ -1008,7 +1008,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     {
       demand_id: 'FC-202608-007',
       version_no: '202608-W2',
-      customer_id: 'MED',
+      customer_id: 'C客戶',
       sku: 'SET-IV-EXT-01',
       target_date: '2026-10-15',
       demand_qty: 60000,
@@ -1020,7 +1020,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
     {
       demand_id: 'FC-202608-008',
       version_no: '202608-W2',
-      customer_id: 'ICU',
+      customer_id: 'B客戶',
       sku: 'SET-DIALYSIS-LINE',
       target_date: '2026-12-01',
       demand_qty: 18000,
@@ -1033,8 +1033,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
 
   actual_order: [
     {
-      order_id: 'PO-MDX-202608-01',
-      customer_id: 'MDX',
+      order_id: 'PO-A-202608-01',
+      customer_id: 'A客戶',
       sku: 'A01-200-131',
       target_date: '2026-11-30',
       order_qty: 50000,
@@ -1042,8 +1042,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       order_date: '2026-08-15'
     },
     {
-      order_id: 'PO-MDX-202608-02',
-      customer_id: 'MDX',
+      order_id: 'PO-A-202608-02',
+      customer_id: 'A客戶',
       sku: 'A01-210-251',
       target_date: '2026-12-15',
       order_qty: 30000,
@@ -1051,8 +1051,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       order_date: '2026-08-18'
     },
     {
-      order_id: 'PO-ICU-202608-01',
-      customer_id: 'ICU',
+      order_id: 'PO-B-202608-01',
+      customer_id: 'B客戶',
       sku: 'B02-100-011',
       target_date: '2026-09-30',
       order_qty: 80000,
@@ -1060,8 +1060,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       order_date: '2026-08-12'
     },
     {
-      order_id: 'PO-MDX-202608-03',
-      customer_id: 'MDX',
+      order_id: 'PO-A-202608-03',
+      customer_id: 'A客戶',
       sku: 'SET-BREATH-CIR-01',
       target_date: '2026-11-15',
       order_qty: 15000,
@@ -1069,8 +1069,8 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       order_date: '2026-08-16'
     },
     {
-      order_id: 'PO-MED-202608-01',
-      customer_id: 'MED',
+      order_id: 'PO-C-202608-01',
+      customer_id: 'C客戶',
       sku: 'SET-IV-EXT-01',
       target_date: '2026-10-15',
       order_qty: 40000,
@@ -1215,7 +1215,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       rm_sku: 'RAW-ABS-2802',
       in_transit_qty_kg: 5000,
       eta_date: '2026-09-15',
-      supplier_name: 'INEOS Germany',
+      supplier_name: 'B供應商 (國外海運進口)',
       status: 'shipping'
     },
     {
@@ -1223,7 +1223,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       rm_sku: 'RAW-PVC-M4910',
       in_transit_qty_kg: 3000,
       eta_date: '2026-10-05',
-      supplier_name: 'Avient USA',
+      supplier_name: 'E供應商 (國外海運進口)',
       status: 'shipping'
     },
     {
@@ -1231,7 +1231,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       rm_sku: 'RAW-PC-1250Y',
       in_transit_qty_kg: 2000,
       eta_date: '2026-09-28',
-      supplier_name: 'Teijin Japan',
+      supplier_name: 'D供應商 (國外海運進口)',
       status: 'customs'
     }
   ],
@@ -1247,7 +1247,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       qty_passed: 9850,
       actual_yield_rate: 0.985,
       operator_id: 'usr_operator',
-      notes: '白班 3F 全檢合格入庫',
+      notes: '白班在製品檢驗合格入庫',
       created_at: '2026-08-20T17:00:00Z'
     },
     {
@@ -1259,7 +1259,7 @@ export const DEMO_SAMPLE_DATABASE: SystemDatabase = {
       qty_passed: 14880,
       actual_yield_rate: 0.992,
       operator_id: 'usr_operator',
-      notes: '白班 3F 直通接頭全檢',
+      notes: '白班在製品直通接頭全檢',
       created_at: '2026-08-20T17:30:00Z'
     }
   ],

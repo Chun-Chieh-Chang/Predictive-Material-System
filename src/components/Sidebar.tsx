@@ -80,17 +80,17 @@ const ACCENT: Record<string, GroupAccent> = {
 
 const NAV_GROUPS: NavGroup[] = [
   {
-    title: '決策戰情',
+    title: '決策總覽',
     accent: ACCENT.war_room,
     items: [
-      { id: 'sales_workbench', label: '業務敏捷工作台', sub: 'Sales Agile Hub', icon: Sparkles },
-      { id: 'dashboard', label: '綜合戰情儀表板', sub: 'Decision War Room', icon: BarChart3 },
-      { id: 'ship_schedule_clearance', label: '週二出貨審查', sub: 'Ship Clearance', icon: CalendarCheck },
-      { id: 'order_tension_tracker', label: '訂單物料示警', sub: 'Order Tension', icon: Activity },
+      { id: 'sales_workbench', label: '業務工作台', sub: 'Sales Hub', icon: Sparkles },
+      { id: 'dashboard', label: '物料需求總覽', sub: 'Overview Dashboard', icon: BarChart3 },
+      { id: 'ship_schedule_clearance', label: '出貨排程審查', sub: 'Ship Clearance', icon: CalendarCheck },
+      { id: 'order_tension_tracker', label: '訂單缺料分析', sub: 'Order Shortage Analysis', icon: Activity },
     ],
   },
   {
-    title: '物料推導',
+    title: '物料需求運算',
     accent: ACCENT.mrp,
     items: [
       { id: 'procurement_workbench', label: '生管採購工作台', sub: 'Procurement Hub', icon: Sparkles },
@@ -98,21 +98,21 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    title: '數據中心',
+    title: '資料管理',
     accent: ACCENT.data,
     items: [
-      { id: 'data_tables', label: '7 大核心主檔維護', sub: 'Master Data', icon: Database },
+      { id: 'data_tables', label: '資料表維護', sub: 'Data Tables', icon: Database },
       { id: 'material_class_management', label: '物料分類體系', sub: 'Material Classes', icon: Layers },
-      { id: 'data_exchange', label: '資料交換與模擬', sub: 'Data & Simulation', icon: FileSpreadsheet },
+      { id: 'data_exchange', label: '資料匯入匯出', sub: 'Import & Export', icon: FileSpreadsheet },
     ],
   },
   {
-    title: '系統支援',
+    title: '系統設定',
     accent: ACCENT.support,
     items: [
       { id: 'system_settings', label: '參數策略設定', sub: 'System Config', icon: SlidersHorizontal },
-      { id: 'glossary', label: '專業術語辭典', sub: 'Glossary', icon: BookOpen },
-      { id: 'prd_docs', label: 'PRD 規格與驗收總表', sub: 'PRD & Verification', icon: FileText },
+      { id: 'glossary', label: '名詞術語說明', sub: 'Glossary', icon: BookOpen },
+      { id: 'prd_docs', label: '系統規格與驗收', sub: 'PRD & Verification', icon: FileText },
     ],
   },
 ];

@@ -30,7 +30,7 @@ export interface DeepPipelineSimulationSuiteResult {
 }
 
 /**
- * 執行全數據鏈路深度穿透模擬測試套件 (End-to-End Penetration Test Suite)
+ * 執行資料關聯完整性與業務流程模擬測試套件 (End-to-End Simulation Test Suite)
  */
 export function runDeepPipelineSimulation(
   db: SystemDatabase,
@@ -44,7 +44,7 @@ export function runDeepPipelineSimulation(
 
   const scenarioResults: SimulationScenarioResult[] = [];
 
-  // ─── 場景 1：標準業務閉環穿透 (Baseline Pass-Through) ──────────────────────
+  // ─── 場景 1：標準業務流程計算 (Baseline Pass-Through) ──────────────────────
   const s1Start = performance.now();
   let s1Passed = false;
   const s1Outputs: Record<string, any> = {};
@@ -68,7 +68,7 @@ export function runDeepPipelineSimulation(
       mrp.unitWeightG > 0 &&
       mrp.suggestedOrderDate.length > 0;
 
-    s1Findings.push(`✅ 成功穿透 3 階 MRP：成品缺口 ${mrp.fgNetRequirementQty} PCS ➔ 單穴耗料 ${mrp.unitWeightG}g ➔ 建議採購 ${mrp.suggestedOrderQtyKg} KG (最晚下單: ${mrp.suggestedOrderDate})`);
+    s1Findings.push(`✅ 成功完成 3 階 MRP 計算：成品缺口 ${mrp.fgNetRequirementQty} PCS ➔ 單穴耗料 ${mrp.unitWeightG}g ➔ 建議採購 ${mrp.suggestedOrderQtyKg} KG (最晚下單: ${mrp.suggestedOrderDate})`);
   } catch (err: any) {
     s1Passed = false;
     s1Findings.push(`❌ 標準業務閉環計算失敗: ${err?.message}`);
@@ -76,7 +76,7 @@ export function runDeepPipelineSimulation(
 
   scenarioResults.push({
     scenarioId: 'SCENARIO-01',
-    scenarioName: '標準業務閉環全鏈路穿透 (Baseline Pass-Through)',
+    scenarioName: '標準業務流程計算驗證 (Baseline Pass-Through)',
     description: '驗證從客戶訂單 ➔ BOM 展開 ➔ 模具成型 ➔ WIP 良率折算 ➔ 原料採購建議之端到端數值流',
     passed: s1Passed,
     durationMs: Number((performance.now() - s1Start).toFixed(2)),
@@ -84,7 +84,7 @@ export function runDeepPipelineSimulation(
     findings: s1Findings
   });
 
-  // ─── 場景 2：模具塞穴降級與產能衝擊穿透 (Degraded Cavity Stress) ──────────
+  // ─── 場景 2：模具塞穴降級與產能衝擊驗證 (Degraded Cavity Stress) ──────────
   const s2Start = performance.now();
   let s2Passed = false;
   const s2Outputs: Record<string, any> = {};
@@ -205,7 +205,7 @@ export function runDeepPipelineSimulation(
         ...db.actual_order,
         {
           order_id: 'SURGE-PO-999',
-          customer_id: 'MDX',
+          customer_id: 'A客戶',
           sku: testSku,
           order_date: new Date().toISOString().split('T')[0],
           target_date: new Date(Date.now() + 120 * 86400000).toISOString().split('T')[0],

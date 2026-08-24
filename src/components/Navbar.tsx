@@ -28,29 +28,6 @@ import { PMS_VERSION } from '../utils/version';
 const ADMIN_COMBO_THRESHOLD = 5;
 const ADMIN_COMBO_WINDOW_MS = 1500;
 
-/** 將 Date 轉為台灣時間 YYYY-MM-DD 字串 */
-function formatTaiwanDate(date: Date): string {
-  const y  = date.getFullYear();
-  const m  = String(date.getMonth() + 1).padStart(2, '0');
-  const d  = String(date.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
-}
-
-/**
- * 即時顯示台灣日期的小元件，每日 00:00 自動換算。
- * 以 30 秒間隔檢查日期是否跨天，避免每秒更新造成不必要的 re-render。
- */
-const TaiwanDate: React.FC = () => {
-  const [dateStr, setDateStr] = useState(() => formatTaiwanDate(new Date()));
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const next = formatTaiwanDate(new Date());
-      if (next !== dateStr) setDateStr(next);
-    }, 30_000);
-    return () => clearInterval(timer);
-  }, [dateStr]);
-  return <>{dateStr}</>;
-};
 
 export type RoleMode = 'sales' | 'procurement' | 'full';
 
@@ -186,14 +163,14 @@ export const Navbar: React.FC<NavbarProps> = ({
     () => [
       {
         id: 'war_room',
-        label: '決策戰情',
-        enLabel: 'War Room',
+        label: '決策總覽',
+        enLabel: 'Overview',
         icon: BarChart3,
         defaultTab: 'dashboard',
         tabs: [
-          { id: 'dashboard', label: '綜合戰情儀表板', subLabel: 'War Room', icon: BarChart3, badge: alertCount > 0 ? alertCount : undefined },
-          { id: 'ship_schedule_clearance', label: '週二出貨審查', subLabel: 'Ship Clearance', icon: CalendarCheck },
-          { id: 'order_tension_tracker', label: '訂單物料示警', subLabel: 'Order Tension', icon: Activity },
+          { id: 'dashboard', label: '物料需求總覽', subLabel: 'Dashboard', icon: BarChart3, badge: alertCount > 0 ? alertCount : undefined },
+          { id: 'ship_schedule_clearance', label: '出貨排程審查', subLabel: 'Ship Clearance', icon: CalendarCheck },
+          { id: 'order_tension_tracker', label: '訂單缺料分析', subLabel: 'Shortage Analysis', icon: Activity },
         ],
       },
       {
@@ -292,7 +269,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </div>
 
-          {/* Role Switcher Capsule (方案 A: 頂部角色敏捷切換膠囊) */}
+          {/* Role Switcher Capsule (頂部角色切換膠囊) */}
           <div className="hidden md:flex items-center p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-inner">
             <button
               onClick={() => {
@@ -305,7 +282,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   ? 'bg-sky-600 text-white shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
-              title="業務專屬工作台：三向快查、預測偏差追單、訂單緊張度與週二放行"
+              title="業務工作台：客戶/品號快速查詢、預測偏差比對與出貨放行"
             >
               <span>💼 業務工作台</span>
             </button>
@@ -358,21 +335,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span>{isDemoMode ? '🎮 示範演練模式 (DEMO)' : '🟢 正式生產模式 (PROD)'}</span>
             </div>
 
-            {/* Connection Status Indicator */}
-            <div className="hidden lg:flex items-center space-x-2 bg-pms-pass-bg dark:bg-emerald-950/40 border border-pms-pass-border dark:border-emerald-800/60 text-pms-pass-text dark:text-emerald-400 px-2.5 py-1 rounded-md shadow-xs">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-pms-pass"></span>
-              </span>
-              <span className="text-sm font-semibold">
-                內網伺服器連線中
-              </span>
-              <span className="text-[11px] text-pms-pass/80 dark:text-emerald-400/80 font-mono ml-1">
-                <TaiwanDate />
-              </span>
-            </div>
-
-            <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-800 hidden lg:block"></div>
+            <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-800 hidden sm:block"></div>
 
             {/* Quick Action Buttons */}
             <div className="flex items-center space-x-2">
