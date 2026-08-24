@@ -14,6 +14,7 @@ import {
 } from '../data/glossaryData'
 
 const CATEGORY_COLORS: Record<GlossaryCategory, { bg: string; border: string; text: string; badge: string }> = {
+  fields:  { bg: 'bg-sky-50 dark:bg-sky-950/30',     border: 'border-sky-200 dark:border-sky-800',     text: 'text-sky-700 dark:text-sky-300',     badge: 'bg-sky-100 dark:bg-sky-900 text-sky-700 dark:text-sky-300' },
   fk_sku:  { bg: 'bg-blue-50 dark:bg-blue-950/30',    border: 'border-blue-200 dark:border-blue-800',   text: 'text-blue-700 dark:text-blue-300', badge: 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' },
   mrp:     { bg: 'bg-emerald-50 dark:bg-emerald-950/30', border: 'border-emerald-200 dark:border-emerald-800', text: 'text-emerald-700 dark:text-emerald-300', badge: 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300' },
   molding: { bg: 'bg-amber-50 dark:bg-amber-950/30',   border: 'border-amber-200 dark:border-amber-800',  text: 'text-amber-700 dark:text-amber-300', badge: 'bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300' },
@@ -159,16 +160,27 @@ interface GlossaryCardProps {
 
 const GlossaryCard: React.FC<GlossaryCardProps> = ({ entry, colors }) => {
   const [expanded, setExpanded] = useState(false)
+  const isField = entry.category === 'fields' || !!entry.plainDefinition
 
   return (
-    <div className={`${colors.bg} border ${colors.border} rounded-xl p-4 transition-all`}>
+    <div className={`${colors.bg} border ${colors.border} rounded-xl p-4 transition-all shadow-xs`}>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full text-left flex items-start justify-between gap-3"
+        className="w-full text-left flex items-start justify-between gap-3 cursor-pointer"
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <span className={`text-sm font-bold ${colors.text}`}>{entry.term}</span>
+            {entry.tableLabel && (
+              <span className="text-[10px] px-2 py-0.5 rounded-md font-semibold bg-sky-100 dark:bg-sky-900/60 text-sky-800 dark:text-sky-300 border border-sky-300 dark:border-sky-700 font-sans">
+                {entry.tableLabel}
+              </span>
+            )}
+            {entry.dataType && (
+              <span className="text-[10px] px-2 py-0.5 rounded-md font-mono bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
+                {entry.dataType}
+              </span>
+            )}
             {entry.en && (
               <span className="text-[11px] text-slate-400 dark:text-slate-500 font-mono">{entry.en}</span>
             )}
@@ -178,15 +190,67 @@ const GlossaryCard: React.FC<GlossaryCardProps> = ({ entry, colors }) => {
       </button>
 
       {expanded && (
-        <div className="mt-3 pt-3 border-t border-black/5 dark:border-white/5 space-y-2.5">
-          <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">{entry.definition}</p>
-          {entry.example && (
-            <div className="bg-white/70 dark:bg-slate-950/50 rounded-lg px-3 py-2 text-xs text-slate-600 dark:text-slate-400 font-mono leading-relaxed">
-              <span className="font-semibold text-slate-500 dark:text-slate-500">範例：</span>{entry.example}
+        <div className="mt-3 pt-3 border-t border-black/5 dark:border-white/5 space-y-3">
+          {/* 💡 白話通俗定義 (生活化大白話) */}
+          {entry.plainDefinition ? (
+            <div className="p-3 bg-amber-50/80 dark:bg-amber-950/30 rounded-xl border border-amber-200 dark:border-amber-900/60 text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
+              <div className="font-bold flex items-center gap-1.5 text-amber-800 dark:text-amber-300 mb-1">
+                <span>💡 大白話解說 (這是什麼？)：</span>
+              </div>
+              <p className="font-sans leading-relaxed text-[13px]">{entry.plainDefinition}</p>
+            </div>
+          ) : (
+            <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line font-sans">{entry.definition}</p>
+          )}
+
+          {/* 🎯 業務價值 & ⚙️ MRP 運算衝擊 */}
+          {(entry.businessPurpose || entry.mrpImpact) && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              {entry.businessPurpose && (
+                <div className="p-2.5 bg-purple-50/70 dark:bg-purple-950/30 rounded-lg border border-purple-200 dark:border-purple-900/50">
+                  <div className="font-bold text-purple-900 dark:text-purple-300 mb-0.5">🎯 這欄位有什麼用？</div>
+                  <div className="text-purple-800 dark:text-purple-300/90 leading-snug">{entry.businessPurpose}</div>
+                </div>
+              )}
+              {entry.mrpImpact && (
+                <div className="p-2.5 bg-cyan-50/70 dark:bg-cyan-950/30 rounded-lg border border-cyan-200 dark:border-cyan-900/50">
+                  <div className="font-bold text-cyan-900 dark:text-cyan-300 mb-0.5">⚙️ 系統怎麼拿來算？(MRP 衝擊)</div>
+                  <div className="text-cyan-800 dark:text-cyan-300/90 leading-snug">{entry.mrpImpact}</div>
+                </div>
+              )}
             </div>
           )}
+
+          {/* 📝 填寫規範與防呆要點 */}
+          {entry.fillGuide && (
+            <div className="p-2.5 bg-indigo-50/70 dark:bg-indigo-950/30 rounded-lg border border-indigo-200 dark:border-indigo-900/50 text-xs">
+              <div className="font-bold text-indigo-900 dark:text-indigo-300 mb-0.5">📝 該怎麼填？(填寫規範與要點)</div>
+              <div className="text-indigo-800 dark:text-indigo-300/90 leading-snug font-sans">{entry.fillGuide}</div>
+            </div>
+          )}
+
+          {/* 🔍 示範數值與詳細情境說明 */}
+          {entry.example && (
+            <div className="bg-white/90 dark:bg-slate-950/80 rounded-xl p-3 text-xs border border-slate-200 dark:border-slate-800 space-y-1.5">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-slate-700 dark:text-slate-300">實務示範填寫：</span>
+                <span className="px-2 py-0.5 rounded bg-sky-100 dark:bg-sky-950 text-sky-900 dark:text-sky-300 font-mono font-bold border border-sky-200 dark:border-sky-800">
+                  {entry.example}
+                </span>
+              </div>
+              {entry.exampleExplanation && (
+                <div className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed pt-1 border-t border-slate-100 dark:border-slate-800">
+                  <span className="font-semibold text-slate-500 dark:text-slate-400">💡 範例詳細說明：</span>
+                  {entry.exampleExplanation}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 關聯名詞 */}
           {entry.related && entry.related.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              <span className="text-[11px] text-slate-400">相關關聯：</span>
               {entry.related.map(r => (
                 <span key={r} className="text-[10px] px-2 py-0.5 rounded-full bg-white/80 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                   ↔ {r}

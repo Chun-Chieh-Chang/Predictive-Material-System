@@ -25,10 +25,15 @@ import {
   RotateCcw,
   ChevronDown,
   ChevronUp,
+  Tv,
+  BarChart3,
+  Calendar,
+  Search,
 } from 'lucide-react';
 import { SystemDatabase, MRPCalculationResult, SystemParameters, ProductMoldBOM, isShippableMaterialClass } from '../types';
 import { calculateAllMRP } from '../utils/mrpEngine';
 import { exportToExcel } from '../utils/dataExchange';
+import { analyzeDemandCrossComparison } from '../utils/demandAnalysisEngine';
 
 interface DashboardViewProps {
   db: SystemDatabase;
@@ -120,8 +125,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     return forecastDeviationData.filter((d) => d.customerId === deviationCustomerFilter);
   }, [forecastDeviationData, deviationCustomerFilter]);
 
-  // Collapsible section tracking (default: all open)
-  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
+  // ─── OBJ-01 & OBJ-02: 3-Way Demand Cross Comparison & Bias Engine ────────
+  const [demandCrossSkuFilter, setDemandCrossSkuFilter] = useState<string>('all');
+  const [isPresentationMode, setIsPresentationMode] = useState<boolean>(false);
+  const demandCrossSummaries = useMemo(() => {
+    return analyzeDemandCrossComparison(
+      db,
+      demandCrossSkuFilter,
+      deviationCustomerFilter === 'ALL' ? undefined : deviationCustomerFilter
+    );
+  }, [db, demandCrossSkuFilter, deviationCustomerFilter]);
+
+  // Collapsible section tracking (default: what_if_sandbox collapsed for clean high-signal view)
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set(['what_if_sandbox']));
   const toggleSection = (id: string) => {
     setCollapsedSections(prev => {
       const next = new Set(prev);
@@ -135,7 +151,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const activeMrp = mrpResults.find((r) => r.sku === selectedSku) || mrpResults[0];
   const relatedBoms: ProductMoldBOM[] = db.product_mold_bom.filter((b) => b.sku === selectedSku);
   const primaryBom = relatedBoms.find((b) => b.is_primary_mold) || relatedBoms[0];
-  const supplierRule = db.supplier_rule_master.find((s) => s.rm_sku === activeMrp?.rmSku);
+  // V2.0: supplier rules are now on item_master (RAW class)
+  const supplierRule = db.item_master.find((i) => i.sku === activeMrp?.rmSku);
 
   // Active Mold Selection
   const [overrideMoldId, setOverrideMoldId] = useState<string | null>(null);
@@ -215,7 +232,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const simLeadTime = overrideLeadTime !== null ? overrideLeadTime : (activeMrp?.leadTimeDays || supplierRule?.lead_time_days || 90);
   const simMoq = overrideMoq !== null ? overrideMoq : (activeMrp?.moqKg || supplierRule?.moq_kg || 1000);
   const simSafetyStock = overrideSafetyStock !== null ? overrideSafetyStock : (activeMrp?.safetyStockKg || supplierRule?.safety_stock_kg || 500);
-  const simUnitPrice = overrideUnitPrice !== null ? overrideUnitPrice : (supplierRule?.unit_price_usd || 3.2);
+  const simUnitPrice = overrideUnitPrice !== null ? overrideUnitPrice : 3.2; // V2.0: unit_price removed from schema, use default
 
   const simNetRMKg = Math.max(0, Number((simGrossRMKg - simRmOnHand - simRmInTransit + simSafetyStock).toFixed(2)));
   const simSuggestedPOKg = simNetRMKg > 0 ? Math.ceil(simNetRMKg / simMoq) * simMoq : 0;
@@ -238,7 +255,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const baseFgGap = activeMrp?.fgNetRequirementQty || 0;
   const baseNetRM = activeMrp?.rmNetRequirementKg || 0;
   const baseSuggestedPO = activeMrp?.suggestedOrderQtyKg || 0;
-  const baseCost = Math.round(baseSuggestedPO * (supplierRule?.unit_price_usd || 3.2));
+  const baseCost = Math.round(baseSuggestedPO * 3.2); // V2.0: unit_price removed from schema
   const baseDaysRemaining = activeMrp?.daysUntilLatestOrder || 0;
 
   const deltaDailyCap = simDailyCap - baseDailyCap;
@@ -474,14 +491,24 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <button
               onClick={handleResetSandbox}
               title="還原所有調整為標準主檔基準值"
-              className="flex items-center space-x-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-sm font-semibold border border-slate-700 transition-colors cursor-pointer"
+              className="flex items-center space-x-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-semibold border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>還原基準值</span>
             </button>
+
+            <button
+              onClick={() => toggleSection('what_if_sandbox')}
+              className="flex items-center space-x-1.5 px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-sm font-bold transition-all shadow-xs cursor-pointer"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <span>{isCollapsed('what_if_sandbox') ? '展開沙盒演練 ▾' : '收合沙盒 ▴'}</span>
+            </button>
           </div>
         </div>
 
+        {!isCollapsed('what_if_sandbox') && (
+        <>
         {/* Quick Scenario Preset Buttons */}
         <div className="mt-4 pt-1">
           <div className="flex items-center justify-between mb-2">
@@ -1072,7 +1099,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       />
                       <div className="flex justify-between text-[11px] text-slate-500 font-mono">
                         <span>$1.00</span>
-                        <span>基準: ${(supplierRule?.unit_price_usd || 3.2).toFixed(2)}</span>
+                        <span>基準: $3.20</span>
                         <span>$15.00</span>
                       </div>
                     </div>
@@ -1227,6 +1254,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
           </div>
         </div>
+        </>
+        )}
       </section>
 
       {/* 3. Decision War Room Priority Table (Full Width) */}
@@ -1330,40 +1359,55 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         )}
       </section>
 
-      {/* 3.5. Customer Forecast Accuracy & Supply Transparency Report (業務談判與供需透明化專區) */}
+      {/* 3.5. 3-Way Demand Cross-Comparison & Forecast Bias Alert Board (OBJ-01 & OBJ-02) */}
       <section className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 gap-4">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 flex items-center justify-center font-bold">
-              <TrendingUp className="w-5 h-5" />
+              <BarChart3 className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  客戶預測偏差分析與我方備料透明度報告
+                  三向需求交叉比對看板 (預示量 vs 實單 vs 歷年同期)
                 </h3>
                 <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                  業務談判數據背書
+                  OBJ-01 & OBJ-02 前瞻防斷料
                 </span>
               </div>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-                比對客戶歷史 Forecast 與實際訂單 (Actual PO) 偏差率，客觀佐證我方原料準備率，打破供需不對稱。
+                同屏交叉比對客戶滾動預測 (Forecast)、確認訂單 (Actual PO) 與歷年歷史同期下單基準，自動示警異常偏差率 (Bias%) 與斷料/呆滯風險。
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             {/* Customer Filter */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-slate-500">篩選客戶:</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs font-medium text-slate-500">客戶:</span>
               <select
                 value={deviationCustomerFilter}
                 onChange={(e) => setDeviationCustomerFilter(e.target.value)}
-                className="text-xs bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-800 dark:text-slate-200 font-semibold"
+                className="text-xs bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-800 dark:text-slate-200 font-semibold cursor-pointer"
               >
-                <option value="ALL">全部客戶 (All Customers)</option>
-                {Array.from(new Set(forecastDeviationData.map((d) => d.customerId))).map((c) => (
+                <option value="ALL">全部客戶 (All)</option>
+                {Array.from(new Set(db.item_master.map((d) => d.customer_id))).map((c) => (
                   <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* SKU Filter */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs font-medium text-slate-500">品號:</span>
+              <select
+                value={demandCrossSkuFilter}
+                onChange={(e) => setDemandCrossSkuFilter(e.target.value)}
+                className="text-xs bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-800 dark:text-slate-200 font-mono font-semibold cursor-pointer max-w-[160px]"
+              >
+                <option value="all">全品號 (All SKUs)</option>
+                {db.item_master.filter((i) => !i.material_class || ['PART', 'COMP', 'SET'].includes(i.material_class)).map((item) => (
+                  <option key={item.sku} value={item.sku}>{item.sku}</option>
                 ))}
               </select>
             </div>
@@ -1378,108 +1422,138 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {!isCollapsed('forecast_deviation') && (
-          <div className="mt-5 space-y-4">
+          <div className="mt-5 space-y-6">
+            {/* Top Aggregate Summary KPI Ribbon */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+              <div className="bg-sky-50 dark:bg-sky-950/40 p-3.5 rounded-xl border border-sky-200 dark:border-sky-800/60">
+                <span className="text-sky-700 dark:text-sky-300 uppercase block font-semibold">客戶預示總量 (Forecast)</span>
+                <div className="font-mono font-bold text-lg text-sky-900 dark:text-sky-200 mt-1">
+                  {demandCrossSummaries.reduce((s, d) => s + d.totalForecastQty, 0).toLocaleString()} <span className="text-xs font-normal">PCS</span>
+                </div>
+              </div>
+
+              <div className="bg-emerald-50 dark:bg-emerald-950/40 p-3.5 rounded-xl border border-emerald-200 dark:border-emerald-800/60">
+                <span className="text-emerald-700 dark:text-emerald-300 uppercase block font-semibold">確認實單總量 (Actual PO)</span>
+                <div className="font-mono font-bold text-lg text-emerald-900 dark:text-emerald-200 mt-1">
+                  {demandCrossSummaries.reduce((s, d) => s + d.totalActualOrderQty, 0).toLocaleString()} <span className="text-xs font-normal">PCS</span>
+                </div>
+              </div>
+
+              <div className="bg-purple-50 dark:bg-purple-950/40 p-3.5 rounded-xl border border-purple-200 dark:border-purple-800/60">
+                <span className="text-purple-700 dark:text-purple-300 uppercase block font-semibold">歷年同期基準 (Historical)</span>
+                <div className="font-mono font-bold text-lg text-purple-900 dark:text-purple-200 mt-1">
+                  {demandCrossSummaries.reduce((s, d) => s + d.totalHistoricalQty, 0).toLocaleString()} <span className="text-xs font-normal">PCS</span>
+                </div>
+              </div>
+
+              <div className="bg-amber-50 dark:bg-amber-950/40 p-3.5 rounded-xl border border-amber-200 dark:border-amber-800/60">
+                <span className="text-amber-700 dark:text-amber-300 uppercase block font-semibold">高危異常品項 (Bias &gt; 25%)</span>
+                <div className="font-mono font-bold text-lg text-amber-900 dark:text-amber-200 mt-1">
+                  {demandCrossSummaries.filter((d) => d.overallAlertLevel === 'critical').length} <span className="text-xs font-normal">項品號告警</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Detailed 3-Way Comparison Table */}
             <div className="overflow-x-auto scrollbar-sm">
               <table className="w-full text-left text-sm">
                 <thead className="bg-slate-50 dark:bg-slate-950/60 text-slate-600 dark:text-slate-400 font-semibold uppercase text-xs border-b border-slate-200 dark:border-slate-800">
                   <tr>
                     <th className="px-3.5 py-3">成品料號 / 客戶</th>
-                    <th className="px-3.5 py-3">預估版本</th>
-                    <th className="px-3.5 py-3 text-right">預估量 (Forecast)</th>
+                    <th className="px-3.5 py-3 text-right">預示量 (Forecast)</th>
                     <th className="px-3.5 py-3 text-right">實下訂單 (Actual PO)</th>
-                    <th className="px-3.5 py-3 text-center">預測偏差率 (Δ%)</th>
-                    <th className="px-3.5 py-3 text-center">預測準確度</th>
-                    <th className="px-3.5 py-3 text-right">我方已備原料 (在途+在庫)</th>
-                    <th className="px-3.5 py-3 text-center">我方備料履約率</th>
-                    <th className="px-3.5 py-3">談判客觀判定</th>
+                    <th className="px-3.5 py-3 text-right">歷年同期 (History)</th>
+                    <th className="px-3.5 py-3 text-center">三向對比長條圖</th>
+                    <th className="px-3.5 py-3 text-center">偏差率 (Bias %)</th>
+                    <th className="px-3.5 py-3 text-center">趨勢狀態</th>
+                    <th className="px-3.5 py-3">前瞻防斷料決策建言</th>
+                    <th className="px-3.5 py-3 text-center">MRP 推導</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono text-sm">
-                  {filteredDeviationData.map((row) => (
-                    <tr key={row.sku} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-                      <td className="px-3.5 py-3.5 font-sans">
-                        <div className="font-bold text-slate-900 dark:text-white text-sm">{row.sku}</div>
-                        <div className="text-xs text-slate-500 font-medium mt-0.5">{row.customerId} • {row.category}</div>
-                      </td>
-                      <td className="px-3.5 py-3.5">
-                        <span className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded text-xs">
-                          {row.forecastVersion}
-                        </span>
-                      </td>
-                      <td className="px-3.5 py-3.5 text-right font-medium text-slate-700 dark:text-slate-300">
-                        {row.forecastQty.toLocaleString()} PCS
-                      </td>
-                      <td className="px-3.5 py-3.5 text-right font-bold text-slate-900 dark:text-white">
-                        {row.actualPoQty.toLocaleString()} PCS
-                      </td>
-                      <td className="px-3.5 py-3.5 text-center">
-                        <span
-                          className={`font-bold px-2 py-0.5 rounded text-xs ${
-                            row.deviationPct < -30
-                              ? 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
-                              : row.deviationPct > 30
-                              ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800'
-                              : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
-                          }`}
-                        >
-                          {row.deviationPct > 0 ? `+${row.deviationPct}%` : `${row.deviationPct}%`}
-                        </span>
-                      </td>
-                      <td className="px-3.5 py-3.5 text-center">
-                        <div className="inline-flex items-center gap-2">
-                          <div className="w-16 bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                            <div
-                              className={`h-full rounded-full ${
-                                row.accuracyPct < 50
-                                  ? 'bg-red-500'
-                                  : row.accuracyPct < 80
-                                  ? 'bg-amber-500'
-                                  : 'bg-emerald-500'
-                              }`}
-                              style={{ width: `${row.accuracyPct}%` }}
-                            />
+                  {demandCrossSummaries.map((row) => {
+                    const maxVal = Math.max(row.totalForecastQty, row.totalActualOrderQty, row.totalHistoricalQty, 1);
+                    const forecastWidth = Math.round((row.totalForecastQty / maxVal) * 100);
+                    const actualWidth = Math.round((row.totalActualOrderQty / maxVal) * 100);
+                    const histWidth = Math.round((row.totalHistoricalQty / maxVal) * 100);
+
+                    const alertBadgeClass = row.overallAlertLevel === 'critical'
+                      ? 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800 font-bold'
+                      : row.overallAlertLevel === 'warning'
+                      ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 font-bold'
+                      : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800';
+
+                    return (
+                      <tr key={row.sku} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                        <td className="px-3.5 py-3.5 font-sans">
+                          <div className="font-bold text-slate-900 dark:text-white text-sm">{row.sku}</div>
+                          <div className="text-xs text-slate-500 font-medium mt-0.5">{row.customer_id}</div>
+                        </td>
+                        <td className="px-3.5 py-3.5 text-right font-medium text-sky-700 dark:text-sky-300">
+                          {row.totalForecastQty.toLocaleString()} PCS
+                        </td>
+                        <td className="px-3.5 py-3.5 text-right font-bold text-emerald-700 dark:text-emerald-300">
+                          {row.totalActualOrderQty.toLocaleString()} PCS
+                        </td>
+                        <td className="px-3.5 py-3.5 text-right font-medium text-purple-700 dark:text-purple-300">
+                          {row.totalHistoricalQty.toLocaleString()} PCS
+                        </td>
+                        <td className="px-3.5 py-3.5 min-w-[140px]">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-1 text-[10px]">
+                              <span className="w-8 text-sky-600 font-sans">預測</span>
+                              <div className="flex-1 bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                <div className="bg-sky-500 h-full rounded-full" style={{ width: `${forecastWidth}%` }} />
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1 text-[10px]">
+                              <span className="w-8 text-emerald-600 font-sans">實單</span>
+                              <div className="flex-1 bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${actualWidth}%` }} />
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1 text-[10px]">
+                              <span className="w-8 text-purple-600 font-sans">歷史</span>
+                              <div className="flex-1 bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                <div className="bg-purple-500 h-full rounded-full" style={{ width: `${histWidth}%` }} />
+                              </div>
+                            </div>
                           </div>
-                          <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                            {row.accuracyPct}%
+                        </td>
+                        <td className="px-3.5 py-3.5 text-center">
+                          <span className={`px-2 py-0.5 rounded text-xs ${alertBadgeClass}`}>
+                            {row.overallBiasPct > 0 ? `+${row.overallBiasPct}%` : `${row.overallBiasPct}%`}
                           </span>
-                        </div>
-                      </td>
-                      <td className="px-3.5 py-3.5 text-right">
-                        <div className="font-semibold text-purple-700 dark:text-purple-300 text-sm">
-                          {row.totalRmPreparedKg.toLocaleString()} KG
-                        </div>
-                        <div className="text-[11px] text-slate-400">
-                          (原料需求: {row.rmGrossReqKg.toLocaleString()} KG)
-                        </div>
-                      </td>
-                      <td className="px-3.5 py-3.5 text-center">
-                        <span
-                          className={`font-bold px-2 py-0.5 rounded text-xs ${
-                            row.prepRatioPct >= 100
-                              ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
-                              : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
-                          }`}
-                        >
-                          {row.prepRatioPct}% 履約率
-                        </span>
-                      </td>
-                      <td className="px-3.5 py-3.5 font-sans text-xs">
-                        {row.deviationPct < -30 ? (
-                          <div className="text-amber-700 dark:text-amber-400 font-medium">
-                            ⚠️ 客戶大幅下修 ({row.deviationPct}%)，我方已按預估備妥料，協調時應爭取庫存吸納補償
-                          </div>
-                        ) : row.deviationPct > 30 ? (
-                          <div className="text-blue-700 dark:text-blue-400 font-medium">
-                            🔥 客戶突發急單 (+{row.deviationPct}%)，請依原料到位時程排定階段出貨
-                          </div>
-                        ) : (
-                          <div className="text-emerald-700 dark:text-emerald-400 font-medium">
-                            🛡️ 供需穩定，我方原料已 100% 準備就緒，無斷料責任風險
-                          </div>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                        <td className="px-3.5 py-3.5 text-center font-sans text-xs">
+                          {row.trendSignal === 'surging' ? (
+                            <span className="text-red-600 dark:text-red-400 font-bold">🔥 暴增追加</span>
+                          ) : row.trendSignal === 'shrinking' ? (
+                            <span className="text-amber-600 dark:text-amber-400 font-bold">📉 急遽萎縮</span>
+                          ) : row.trendSignal === 'volatile' ? (
+                            <span className="text-orange-600 dark:text-orange-400 font-bold">⚡ 劇烈波動</span>
+                          ) : (
+                            <span className="text-emerald-600 dark:text-emerald-400 font-medium">🟢 平穩吻合</span>
+                          )}
+                        </td>
+                        <td className="px-3.5 py-3.5 font-sans text-xs max-w-[280px]">
+                          {row.recommendations.map((rec, rIdx) => (
+                            <div key={rIdx} className="text-slate-700 dark:text-slate-300 leading-snug">
+                              • {rec}
+                            </div>
+                          ))}
+                        </td>
+                        <td className="px-3.5 py-3.5 text-center">
+                          <button
+                            onClick={() => onNavigateToMRP(row.sku)}
+                            className="px-2.5 py-1 text-xs font-semibold text-sky-600 dark:text-cyan-400 hover:text-sky-700 bg-sky-50 dark:bg-sky-950/60 hover:bg-sky-100 border border-sky-200 dark:border-sky-800 rounded-lg transition-colors cursor-pointer"
+                          >
+                            MRP 推導
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -1576,11 +1650,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </p>
           </div>
           <button
-            onClick={() => onNavigateToTables('supplier_rule_master')}
+            onClick={() => onNavigateToTables('item_master')}
             id="view-supplier-rules-btn"
             className="text-xs text-sky-600 dark:text-cyan-400 font-semibold hover:text-sky-700 dark:hover:text-cyan-300 flex items-center space-x-1 cursor-pointer"
           >
-            <span>維護供應商交期規則</span>
+            <span>維護品號與採購規則</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>

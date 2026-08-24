@@ -9,13 +9,11 @@ import {
   ItemMaster,
   MoldMaster,
   ProductMoldBOM,
-  YieldMaster,
-  SupplierRuleMaster,
   DemandForecastLog,
   ActualOrder,
   InventoryWIPSnapshot,
   POInTransit,
-  ColorMixingLog
+  SortingActualYieldLog
 } from '../types';
 import { DEMO_SAMPLE_DATABASE } from '../data/seedData';
 
@@ -42,76 +40,64 @@ export function exportToJSON(db: SystemDatabase, filename = 'Predictive_Material
 
 // 0. Data Specification Dictionary (各權責單位填報規範與勾稽防呆清單 - 嚴格遵守 MECE 原則)
 const DATA_SPECIFICATION_DICTIONARY = [
-  // 1. 料號基本主檔 (權責: 資材(生管))
-  { '工作表': '料號基本主檔', '欄位名稱': '品號', '權責單位': '資材(生管)', '必填/選填': '必填 (PK)', '允許選項 / 資料型態': '文字 (英數，如 A01-200-131)', '勾稽與防呆規則': '全系統唯一識別碼，不可重複 (對接 ERP 品號)', '填寫範例': 'A01-200-131' },
-  { '工作表': '料號基本主檔', '欄位名稱': '替代品號', '權責單位': '資材(生管)', '必填/選填': '選填', '允許選項 / 資料型態': '文字', '勾稽與防呆規則': '工程變更或舊料號對照', '填寫範例': 'R1-2355' },
-  { '工作表': '料號基本主檔', '欄位名稱': '客戶代碼', '權責單位': '資材(生管)', '必填/選填': '必填', '允許選項 / 資料型態': '文字代碼 (如 MDX, ICU, GEN)', '勾稽與防呆規則': '用於區分客戶需求權限，通用原物料可填 GEN / ALL', '填寫範例': 'MDX' },
-  { '工作表': '料號基本主檔', '欄位名稱': '物料分類', '權責單位': '資材(生管)', '必填/選填': '必填', '允許選項 / 資料型態': '【選項】RAW (原料類) / MAT (物料類) / PART (零件類) / COMP (組件類) / SET (SET類)', '勾稽與防呆規則': '五層核心物料分類，決定 MRP 運算層級與庫存型態', '填寫範例': 'SET' },
-  { '工作表': '料號基本主檔', '欄位名稱': '產品種類', '權責單位': '資材(生管)', '必填/選填': '必填', '允許選項 / 資料型態': '文字 (如 T接頭, 塑膠本體, ABS原粒)', '勾稽與防呆規則': '業務與產品規格種類說明 (對接 ERP 品名規格)', '填寫範例': 'T接頭' },
-  { '工作表': '料號基本主檔', '欄位名稱': '外觀顏色', '權責單位': '資材(生管)', '必填/選填': '選填', '允許選項 / 資料型態': '文字 (如 本色, 藍色, 黑色)', '勾稽與防呆規則': '料件色系識別', '填寫範例': '本色' },
-  { '工作表': '料號基本主檔', '欄位名稱': '計量單位', '權責單位': '資材(生管)', '必填/選填': '必填', '允許選項 / 資料型態': '【選項】PCS (件數) / KG (公斤) / SET (套數)', '勾稽與防呆規則': '製品通常為 PCS/SET，原料為 KG (對接 ERP 計量單位)', '填寫範例': 'PCS' },
-  { '工作表': '料號基本主檔', '欄位名稱': '備註說明', '權責單位': '資材(生管)', '必填/選填': '選填', '允許選項 / 資料型態': '文字', '勾稽與防呆規則': '品名完整詳細說明', '填寫範例': 'T接頭 (T-Connector)' },
+  // 1. 品號主檔 (含良率與採購規則 - 權責: 資材(生管) / 品保 / 採購)
+  { '工作表': '品號主檔', '欄位名稱': '品號', '權責單位': '資材(生管)', '必填/選填': '必填 (PK)', '允許選項 / 資料型態': '文字 (英數，如 A01-200-131)', '勾稽與防呆規則': '全系統唯一識別碼，不可重複 (對接 ERP 品號)', '填寫範例': 'A01-200-131' },
+  { '工作表': '品號主檔', '欄位名稱': '替代品號', '權責單位': '資材(生管)', '必填/選填': '選填', '允許選項 / 資料型態': '文字', '勾稽與防呆規則': '工程變更或舊料號對照', '填寫範例': 'R1-2355' },
+  { '工作表': '品號主檔', '欄位名稱': '客戶代碼', '權責單位': '資材(生管)', '必填/選填': '必填', '允許選項 / 資料型態': '文字代碼 (如 MDX, ICU, GEN)', '勾稽與防呆規則': '用於區分客戶需求權限，通用原物料可填 GEN / ALL', '填寫範例': 'MDX' },
+  { '工作表': '品號主檔', '欄位名稱': '物料分類', '權責單位': '資材(生管)', '必填/選填': '必填', '允許選項 / 資料型態': '【選項】RAW (原料類) / MAT (物料類) / PART (零件類) / COMP (組件類) / SET (SET類)', '勾稽與防呆規則': '五層核心物料分類，決定 MRP 運算層級與庫存型態', '填寫範例': 'SET' },
+  { '工作表': '品號主檔', '欄位名稱': '產品種類', '權責單位': '資材(生管)', '必填/選填': '必填', '允許選項 / 資料型態': '文字 (如 T接頭, 塑膠本體, ABS原粒)', '勾稽與防呆規則': '業務與產品規格種類說明 (對接 ERP 品名規格)', '填寫範例': 'T接頭' },
+  { '工作表': '品號主檔', '欄位名稱': '外觀顏色', '權責單位': '資材(生管)', '必填/選填': '選填', '允許選項 / 資料型態': '文字 (如 本色, 藍色, 黑色)', '勾稽與防呆規則': '料件色系識別', '填寫範例': '本色' },
+  { '工作表': '品號主檔', '欄位名稱': '計量單位', '權責單位': '資材(生管)', '必填/選填': '必填', '允許選項 / 資料型態': '【選項】PCS (件數) / KG (公斤) / SET (套數)', '勾稽與防呆規則': '製品通常為 PCS/SET，原料為 KG (對接 ERP 計量單位)', '填寫範例': 'PCS' },
+  { '工作表': '品號主檔', '欄位名稱': '標準全檢良率', '權責單位': '品保', '必填/選填': '選填 (PART/COMP/SET 填)', '允許選項 / 資料型態': '數值 (0.01 ~ 1.0，如 0.98)', '勾稽與防呆規則': '3F WIP 待驗品良品折算率', '填寫範例': '0.98' },
+  { '工作表': '品號主檔', '欄位名稱': '供應商名稱', '權責單位': '採購', '必填/選填': '選填 (RAW 填)', '允許選項 / 資料型態': '文字 (如 INEOS)', '勾稽與防呆規則': '供貨廠商名稱', '填寫範例': 'INEOS' },
+  { '工作表': '品號主檔', '欄位名稱': '採購交期_天', '權責單位': '採購', '必填/選填': '選填 (RAW 填)', '允許選項 / 資料型態': '正整數 (天數，如 90)', '勾稽與防呆規則': '採購 Lead Time，用於倒推最晚發單日', '填寫範例': '90' },
+  { '工作表': '品號主檔', '欄位名稱': '最小起訂量_KG', '權責單位': '採購', '必填/選填': '選填 (RAW 填)', '允許選項 / 資料型態': '正數 (公斤，如 500)', '勾稽與防呆規則': 'MOQ 向上取整整補', '填寫範例': '500' },
+  { '工作表': '品號主檔', '欄位名稱': '安全庫存量_KG', '權責單位': '採購', '必填/選填': '選填 (RAW 填)', '允許選項 / 資料型態': '正數 (公斤，如 200)', '勾稽與防呆規則': '常備安全庫存', '填寫範例': '200' },
+  { '工作表': '品號主檔', '欄位名稱': '備註說明', '權責單位': '資材(生管)', '必填/選填': '選填', '允許選項 / 資料型態': '文字', '勾稽與防呆規則': '品名完整詳細說明', '填寫範例': 'T接頭 (T-Connector)' },
 
   // 2. 模具與產能主檔 (權責: 製造)
   { '工作表': '模具與產能主檔', '欄位名稱': '模具編號', '權責單位': '製造', '必填/選填': '必填 (PK)', '允許選項 / 資料型態': '文字 (如 MI17193)', '勾稽與防呆規則': '模具實體編號，不可重複', '填寫範例': 'MI17193' },
-  { '工作表': '模具與產能主檔', '欄位名稱': '設計穴數', '權責單位': '製造', '必填/選填': '必填', '允許選項 / 資料型態': '正整數 (如 8, 16, 24, 32)', '勾稽與防呆規則': '模具開模時原始設計之總出模穴數', '填寫範例': '16' },
-  { '工作表': '模具與產能主檔', '欄位名稱': '妥善穴數', '權責單位': '製造', '必填/選填': '必填', '允許選項 / 資料型態': '正整數 (1 ~ 設計穴數)', '勾稽與防呆規則': '目前產線實際可注塑出模之有效穴數，不可大於設計穴數', '填寫範例': '16' },
+  { '工作表': '模具與產能主檔', '欄位名稱': '妥善穴數', '權責單位': '製造', '必填/選填': '必填', '允許選項 / 資料型態': '正整數 (如 16, 22)', '勾稽與防呆規則': '目前產線實際可注塑出模之有效穴數（扣除塞穴）', '填寫範例': '22' },
   { '工作表': '模具與產能主檔', '欄位名稱': '成型週期_秒', '權責單位': '製造', '必填/選填': '必填', '允許選項 / 資料型態': '正數 (秒，如 27.1)', '勾稽與防呆規則': '射出成型標準秒數，必須 > 0，用於推算 24h 日產能', '填寫範例': '27.1' },
-  { '工作表': '模具與產能主檔', '欄位名稱': '存放位置/機台', '權責單位': '製造', '必填/選填': '選填', '允許選項 / 資料型態': '文字 (如 1號廠 射出機 A-03)', '勾稽與防呆規則': '模具架位或常駐機台', '填寫範例': '1號廠 射出機 A-03' },
   { '工作表': '模具與產能主檔', '欄位名稱': '運行狀態', '權責單位': '製造', '必填/選填': '必填', '允許選項 / 資料型態': '【選項】active (正常量產) / maintenance (保養維修中) / trial (試模階段) / retired (封存報廢)', '勾稽與防呆規則': '非 active 模具於 MRP 模擬時會提示保養或停用警訊', '填寫範例': 'active' },
 
   // 3. 產品模具成型關聯檔 (權責: 工程)
-  { '工作表': '產品模具成型關聯檔', '欄位名稱': '品號', '權責單位': '工程', '必填/選填': '必填 (FK)', '允許選項 / 資料型態': '文字 (對應製品品號 PART/COMP/SET)', '勾稽與防呆規則': '必須存在於「料號基本主檔」中', '填寫範例': 'A01-200-131' },
+  { '工作表': '產品模具成型關聯檔', '欄位名稱': '品號', '權責單位': '工程', '必填/選填': '必填 (FK)', '允許選項 / 資料型態': '文字 (對應製品品號 PART/COMP/SET)', '勾稽與防呆規則': '必須存在於「品號主檔」中', '填寫範例': 'A01-200-131' },
   { '工作表': '產品模具成型關聯檔', '欄位名稱': '模具編號', '權責單位': '工程', '必填/選填': '必填 (FK)', '允許選項 / 資料型態': '文字 (對應模具主檔)', '勾稽與防呆規則': '必須存在於「模具與產能主檔」中', '填寫範例': 'MI17193' },
-  { '工作表': '產品模具成型關聯檔', '欄位名稱': '使用原料品號', '權責單位': '工程', '必填/選填': '必填 (FK)', '允許選項 / 資料型態': '文字 (對應原料品號 RAW)', '勾稽與防呆規則': '必須對應於採購規則檔設定', '填寫範例': 'TERLUX 2802' },
-  { '工作表': '產品模具成型關聯檔', '欄位名稱': '整模重量_克', '權責單位': '工程', '必填/選填': '必填', '允許選項 / 資料型態': '正數 (公克，不含流道)', '勾稽與防呆規則': '一模所有產品淨重總和', '填寫範例': '9.63' },
-  { '工作表': '產品模具成型關聯檔', '欄位名稱': '流道重量_克', '權責單位': '工程', '必填/選填': '必填', '允許選項 / 資料型態': '正數或 0 (公克)', '勾稽與防呆規則': '冷流道或副流道重量', '填寫範例': '8.32' },
+  { '工作表': '產品模具成型關聯檔', '欄位名稱': '使用原料品號', '權責單位': '工程', '必填/選填': '必填 (FK)', '允許選項 / 資料型態': '文字 (對應原料品號 RAW)', '勾稽與防呆規則': '必須存在於「品號主檔」中且分類為 RAW', '填寫範例': 'TERLUX 2802' },
+  { '工作表': '產品模具成型關聯檔', '欄位名稱': '整模重量_克', '權責單位': '工程', '必填/選填': '必填', '允許選項 / 資料型態': '正數 (公克，不含流道)', '勾稽與防呆規則': '一模所有產品淨重總和', '填寫範例': '80.0' },
+  { '工作表': '產品模具成型關聯檔', '欄位名稱': '流道重量_克', '權責單位': '工程', '必填/選填': '必填', '允許選項 / 資料型態': '正數或 0 (公克)', '勾稽與防呆規則': '冷流道或副流道重量', '填寫範例': '16.0' },
   { '工作表': '產品模具成型關聯檔', '欄位名稱': '是否為主模', '權責單位': '工程', '必填/選填': '必填', '允許選項 / 資料型態': '【選項】TRUE (主模) / FALSE (備用模)', '勾稽與防呆規則': '每個品號建議至少指定一副主模 (TRUE)，備料推算基準', '填寫範例': 'TRUE' },
   { '工作表': '產品模具成型關聯檔', '欄位名稱': '標準生產損耗率', '權責單位': '工程', '必填/選填': '必填', '允許選項 / 資料型態': '數值 (0.0 ~ 0.15，如 3% 填 0.03)', '勾稽與防呆規則': '射出成型正常調機、啟動與料頭損耗 (不可超過計價成本上限 15%)', '填寫範例': '0.03' },
-  { '工作表': '產品模具成型關聯檔', '欄位名稱': '備註驗證狀態', '權責單位': '工程', '必填/選填': '選填', '允許選項 / 資料型態': '文字', '勾稽與防呆規則': '工程驗證通過狀態', '填寫範例': '驗證通過' },
+  { '工作表': '產品模具成型關聯檔', '欄位名稱': '色母/色粉配比(%)', '權責單位': '工程', '必填/選填': '選填', '允許選項 / 資料型態': '數值 (如 3.0 代表 3%)', '勾稽與防呆規則': '色母或色粉混合配比，本色件填 0 或留空', '填寫範例': '3.0' },
 
-  // 4. Sorting良率標準檔 (權責: 製造)
-  { '工作表': 'Sorting良率標準檔', '欄位名稱': '品號', '權責單位': '製造', '必填/選填': '必填 (PK, FK)', '允許選項 / 資料型態': '文字 (對應製品品號 PART/COMP/SET)', '勾稽與防呆規則': '必須為需全檢之製品料號', '填寫範例': 'A01-200-131' },
-  { '工作表': 'Sorting良率標準檔', '欄位名稱': '標準全檢良率', '權責單位': '製造', '必填/選填': '必填', '允許選項 / 資料型態': '小數 (0.01 ~ 1.0，如 98% 填 0.98)', '勾稽與防呆規則': '折算 Sorting 待驗品之合格折算率 (良率範圍: 0.01~1.0)', '填寫範例': '0.98' },
-  { '工作表': 'Sorting良率標準檔', '欄位名稱': '備註說明', '權責單位': '製造', '必填/選填': '選填', '允許選項 / 資料型態': '文字', '勾稽與防呆規則': '良率檢驗備註', '填寫範例': '標準全檢' },
-
-  // 5. 採購與供應商規則檔 (權責: 資材(生管))
-  { '工作表': '採購與供應商規則檔', '欄位名稱': '原料品號', '權責單位': '資材(生管)', '必填/選填': '必填 (PK)', '允許選項 / 資料型態': '文字 (如 TERLUX 2802)', '勾稽與防呆規則': '原料品號，需與 BOM 原料一致', '填寫範例': 'TERLUX 2802' },
-  { '工作表': '採購與供應商規則檔', '欄位名稱': '供應商名稱', '權責單位': '資材(生管)', '必填/選填': '必填', '允許選項 / 資料型態': '文字 (供應商全名)', '勾稽與防呆規則': '原料製造廠或一級代理商', '填寫範例': 'INEOS' },
-  { '工作表': '採購與供應商規則檔', '欄位名稱': '採購交期_天', '權責單位': '資材(生管)', '必填/選填': '必填', '允許選項 / 資料型態': '正整數 (海運天數，如 120)', '勾稽與防呆規則': '國外海運+報關+入庫總前置天數 (Lead Time)', '填寫範例': '120' },
-  { '工作表': '採購與供應商規則檔', '欄位名稱': '最小起訂量_KG', '權責單位': '資材(生管)', '必填/選填': '必填', '允許選項 / 資料型態': '正整數 (公斤，如 5000)', '勾稽與防呆規則': 'MOQ，採購發單時自動向上取整', '填寫範例': '5000' },
-  { '工作表': '採購與供應商規則檔', '欄位名稱': '安全庫存量_KG', '權責單位': '資材(生管)', '必填/選填': '必填', '允許選項 / 資料型態': '正整數 (公斤，如 2000)', '勾稽與防呆規則': '防範船期延誤之底線緩衝', '填寫範例': '2000' },
-  { '工作表': '採購與供應商規則檔', '欄位名稱': '實體倉容上限_KG', '權責單位': '資材(生管)', '必填/選填': '選填', '允許選項 / 資料型態': '正整數 (公斤，如 12000)', '勾稽與防呆規則': '原料實體貨架最高容納量，用於爆倉預警', '填寫範例': '12000' },
-  { '工作表': '採購與供應商規則檔', '欄位名稱': '預估單價_USD', '權責單位': '資材(生管)', '必填/選填': '選填', '允許選項 / 資料型態': '數值 (美元/公斤，如 3.85)', '勾稽與防呆規則': '用於計算預估採購總金額 (USD)', '填寫範例': '3.85' },
-
-  // 6. 業務預估需求檔 (權責: 業務)
+  // 4. 業務預估需求檔 (權責: 業務)
   { '工作表': '業務預估需求檔', '欄位名稱': '需求序號', '權責單位': '業務', '必填/選填': '必填 (PK)', '允許選項 / 資料型態': '文字 (如 FC-202608-001)', '勾稽與防呆規則': '預估單流水號', '填寫範例': 'FC-202608-001' },
   { '工作表': '業務預估需求檔', '欄位名稱': '預估版本號', '權責單位': '業務', '必填/選填': '必填', '允許選項 / 資料型態': '文字 (如 202608-W1)', '勾稽與防呆規則': 'Forecast 週滾動版本', '填寫範例': '202608-W1' },
   { '工作表': '業務預估需求檔', '欄位名稱': '客戶代碼', '權責單位': '業務', '必填/選填': '必填', '允許選項 / 資料型態': '文字 (如 MDX, ICU)', '勾稽與防呆規則': '需求所屬客戶代號', '填寫範例': 'MDX' },
-  { '工作表': '業務預估需求檔', '欄位名稱': '需求品號', '權責單位': '業務', '必填/選填': '必填 (FK)', '允許選項 / 資料型態': '文字 (對應料號主檔 PART/COMP/SET)', '勾稽與防呆規則': '必須存在於「料號基本主檔」', '填寫範例': 'A01-200-131' },
+  { '工作表': '業務預估需求檔', '欄位名稱': '需求品號', '權責單位': '業務', '必填/選填': '必填 (FK)', '允許選項 / 資料型態': '文字 (對應品號主檔 PART/COMP/SET)', '勾稽與防呆規則': '必須存在於「品號主檔」', '填寫範例': 'A01-200-131' },
   { '工作表': '業務預估需求檔', '欄位名稱': '需求交期', '權責單位': '業務', '必填/選填': '必填', '允許選項 / 資料型態': '日期字串 (YYYY-MM-DD)', '勾稽與防呆規則': '格式必須為 YYYY-MM-DD，用於倒推下單期限', '填寫範例': '2026-11-30' },
   { '工作表': '業務預估需求檔', '欄位名稱': '預估需求量_PCS', '權責單位': '業務', '必填/選填': '必填', '允許選項 / 資料型態': '正整數 (PCS)', '勾稽與防呆規則': '客戶預測總交貨件數', '填寫範例': '100000' },
-  { '工作表': '業務預估需求檔', '欄位名稱': '填報業務', '權責單位': '業務', '必填/選填': '必填', '允許選項 / 資料型態': '文字 (如 業務 / 業務人員)', '勾稽與防呆規則': '負責業務窗口或填表人稱謂', '填寫範例': '業務人員' },
 
-  // 7. 實際訂單檔 (權責: 業務)
+  // 5. 實際訂單檔 (權責: 業務)
   { '工作表': '實際訂單檔', '欄位名稱': '訂單號', '權責單位': '業務', '必填/選填': '必填 (PK)', '允許選項 / 資料型態': '文字 (如 PO-MDX-01)', '勾稽與防呆規則': '客戶正式採購單號 (Customer PO)', '填寫範例': 'PO-MDX-01' },
   { '工作表': '實際訂單檔', '欄位名稱': '客戶代碼', '權責單位': '業務', '必填/選填': '必填', '允許選項 / 資料型態': '文字 (如 MDX, ICU)', '勾稽與防呆規則': '訂單客戶代碼', '填寫範例': 'MDX' },
-  { '工作表': '實際訂單檔', '欄位名稱': '訂單品號', '權責單位': '業務', '必填/選填': '必填 (FK)', '允許選項 / 資料型態': '文字 (對應料號主檔 PART/COMP/SET)', '勾稽與防呆規則': '必須存在於「料號基本主檔」', '填寫範例': 'A01-200-131' },
+  { '工作表': '實際訂單檔', '欄位名稱': '訂單品號', '權責單位': '業務', '必填/選填': '必填 (FK)', '允許選項 / 資料型態': '文字 (對應品號主檔 PART/COMP/SET)', '勾稽與防呆規則': '必須存在於「品號主檔」', '填寫範例': 'A01-200-131' },
   { '工作表': '實際訂單檔', '欄位名稱': '下單日期', '權責單位': '業務', '必填/選填': '必填', '允許選項 / 資料型態': '日期字串 (YYYY-MM-DD)', '勾稽與防呆規則': '客戶正式發單日期', '填寫範例': '2026-08-01' },
   { '工作表': '實際訂單檔', '欄位名稱': '約定交期', '權責單位': '業務', '必填/選填': '必填', '允許選項 / 資料型態': '日期字串 (YYYY-MM-DD)', '勾稽與防呆規則': '承諾出貨交期', '填寫範例': '2026-11-30' },
   { '工作表': '實際訂單檔', '欄位名稱': '實際訂單量_PCS', '權責單位': '業務', '必填/選填': '必填', '允許選項 / 資料型態': '正整數 (PCS)', '勾稽與防呆規則': '正式訂單數量', '填寫範例': '50000' },
   { '工作表': '實際訂單檔', '欄位名稱': '訂單狀態', '權責單位': '業務', '必填/選填': '必填', '允許選項 / 資料型態': '【選項】confirmed (已確認) / in_production (生產中) / partial_shipped (部分出貨) / completed (已結案) / cancelled (已取消)', '勾稽與防呆規則': '僅 confirmed、in_production 與 partial_shipped 計入需求運算', '填寫範例': 'confirmed' },
 
-  // 8. 庫存與待驗快照檔 (權責: 資材(生管))
+  // 6. 庫存與待驗快照檔 (權責: 資材(生管))
   { '工作表': '庫存與待驗快照檔', '欄位名稱': '快照結算日', '權責單位': '資材(生管)', '必填/選填': '必填 (PK)', '允許選項 / 資料型態': '日期字串 (YYYY-MM-DD)', '勾稽與防呆規則': '結算盤點基準日', '填寫範例': '2026-08-20' },
-  { '工作表': '庫存與待驗快照檔', '欄位名稱': '料號', '權責單位': '資材(生管)', '必填/選填': '必填 (PK, FK)', '允許選項 / 資料型態': '文字 (對應製品或原料品號)', '勾稽與防呆規則': '必須存在於「料號基本主檔」', '填寫範例': 'A01-200-131' },
+  { '工作表': '庫存與待驗快照檔', '欄位名稱': '料號', '權責單位': '資材(生管)', '必填/選填': '必填 (PK, FK)', '允許選項 / 資料型態': '文字 (對應製品或原料品號)', '勾稽與防呆規則': '必須存在於「品號主檔」', '填寫範例': 'A01-200-131' },
   { '工作表': '庫存與待驗快照檔', '欄位名稱': '成品在庫良品_PCS', '權責單位': '資材(生管)', '必填/選填': '必填', '允許選項 / 資料型態': '非負整數 (PCS)', '勾稽與防呆規則': '庫房已檢驗合格可立即出貨之庫存 (若為原料請填0)', '填寫範例': '15000' },
   { '工作表': '庫存與待驗快照檔', '欄位名稱': 'Sorting待驗品_PCS', '權責單位': '資材(生管)', '必填/選填': '必填', '允許選項 / 資料型態': '非負整數 (PCS)', '勾稽與防呆規則': '射出完成但尚未經全檢之 WIP (若為原料請填0)', '填寫範例': '20000' },
   { '工作表': '庫存與待驗快照檔', '欄位名稱': '原料可用庫存_KG', '權責單位': '資材(生管)', '必填/選填': '必填', '允許選項 / 資料型態': '非負數 (KG)', '勾稽與防呆規則': '原料倉庫實體在庫可用原料公斤數 (若為成品請填0)', '填寫範例': '0' },
 
-  // 9. 在途採購訂單檔 (權責: 資材(生管))
+  // 7. 在途採購訂單檔 (權責: 資材(生管))
   { '工作表': '在途採購訂單檔', '欄位名稱': '採購單號', '權責單位': '資材(生管)', '必填/選填': '必填 (PK)', '允許選項 / 資料型態': '文字 (如 PO-RM-01)', '勾稽與防呆規則': '向原料廠發出之正式發單 PO 號', '填寫範例': 'PO-RM-01' },
-  { '工作表': '在途採購訂單檔', '欄位名稱': '原料品號', '權責單位': '資材(生管)', '必填/選填': '必填 (FK)', '允許選項 / 資料型態': '文字 (對應採購規則檔原料品號)', '勾稽與防呆規則': '必須存在於「採購與供應商規則檔」', '填寫範例': 'TERLUX 2802' },
+  { '工作表': '在途採購訂單檔', '欄位名稱': '原料品號', '權責單位': '資材(生管)', '必填/選填': '必填 (FK)', '允許選項 / 資料型態': '文字 (對應原料品號 RAW)', '勾稽與防呆規則': '必須存在於「品號主檔」且分類為 RAW', '填寫範例': 'TERLUX 2802' },
   { '工作表': '在途採購訂單檔', '欄位名稱': '在途採購量_KG', '權責單位': '資材(生管)', '必填/選填': '必填', '允許選項 / 資料型態': '正數 (KG)', '勾稽與防呆規則': '正在海上航運或報關中的數量', '填寫範例': '5000' },
   { '工作表': '在途採購訂單檔', '欄位名稱': '預計到廠日', '權責單位': '資材(生管)', '必填/選填': '必填', '允許選項 / 資料型態': '日期字串 (YYYY-MM-DD)', '勾稽與防呆規則': '海運 ETA 日期，比對是否趕得上需求交期', '填寫範例': '2026-09-15' },
   { '工作表': '在途採購訂單檔', '欄位名稱': '供應商名稱', '權責單位': '資材(生管)', '必填/選填': '選填', '允許選項 / 資料型態': '文字 (如 INEOS)', '勾稽與防呆規則': '發單之供應商名稱', '填寫範例': 'INEOS' },
@@ -132,16 +118,20 @@ export function exportToExcel(db: SystemDatabase, filename = '料事如神系統
   // Sheet 1: 料號基本主檔 (資材(生管))
   const itemData = db.item_master.map((i) => ({
     '品號': i.sku,
-    '替代品號': i.alt_sku || '',
     '客戶代碼': i.customer_id,
     '物料分類': i.material_class || '',
     '物料類別': i.category,
     '外觀顏色': i.color || '',
     '計量單位': i.unit,
+    '標準全檢良率': i.std_sorting_yield != null ? i.std_sorting_yield : '',
+    '供應商名稱': i.supplier_name || '',
+    '採購交期_天': i.lead_time_days != null ? i.lead_time_days : '',
+    '最小起訂量_KG': i.moq_kg != null ? i.moq_kg : '',
+    '安全庫存量_KG': i.safety_stock_kg != null ? i.safety_stock_kg : '',
     '備註說明': i.description || ''
   }));
   const wsItem = XLSX.utils.json_to_sheet(itemData);
-  XLSX.utils.book_append_sheet(wb, wsItem, '料號基本主檔');
+  XLSX.utils.book_append_sheet(wb, wsItem, '品號主檔');
 
   // Sheet 2: 模具與產能主檔 (製造)
   const moldData = db.mold_master.map((m) => {
@@ -150,11 +140,9 @@ export function exportToExcel(db: SystemDatabase, filename = '料事如神系統
     return {
       '模具編號': m.mold_id,
       '對應生產品號': linkedSkus || '無對應品號',
-      '設計穴數': m.design_cavities,
       '妥善穴數': m.active_cavities,
       '成型週期_秒': m.cycle_time_sec,
       '日產能_PCS(系統計算)': Math.round((86400 / m.cycle_time_sec) * m.active_cavities),
-      '存放位置/機台': m.location || '',
       '運行狀態': m.status || 'active'
     };
   });
@@ -180,44 +168,10 @@ export function exportToExcel(db: SystemDatabase, filename = '料事如神系統
       '是否為主模': b.is_primary_mold ? 'TRUE' : 'FALSE',
       '標準生產損耗率': b.std_mfg_scrap_rate,
       '色母/色粉配比(%)': b.color_mixing_ratio_pct ? Number(b.color_mixing_ratio_pct).toFixed(1) : '—',
-      '備註驗證狀態': b.remarks || ''
     };
   });
   const wsBOM = XLSX.utils.json_to_sheet(bomData);
   XLSX.utils.book_append_sheet(wb, wsBOM, '產品模具成型關聯檔');
-
-  // Sheet 4: Sorting良率標準檔 (製造)
-  const yieldData = db.yield_master.map((y) => {
-    const fgItem = itemMap.get(y.sku);
-    return {
-      '品號': y.sku,
-      '成品品名(參考)': fgItem?.description || fgItem?.category || '',
-      '標準全檢良率': y.std_sorting_yield,
-      '備註說明': y.notes || '標準全檢'
-    };
-  });
-  const wsYield = XLSX.utils.json_to_sheet(yieldData);
-  XLSX.utils.book_append_sheet(wb, wsYield, 'Sorting良率標準檔');
-
-  // Sheet 5: 採購與供應商規則檔 (資材(生管))
-  const supplierData = db.supplier_rule_master.map((s) => {
-    const rmItem = itemMap.get(s.rm_sku);
-    const linkedBoms = db.product_mold_bom.filter((b) => b.rm_sku === s.rm_sku);
-    const linkedFgSkus = Array.from(new Set(linkedBoms.map((b) => b.sku))).join(', ');
-    return {
-      '原料品號': s.rm_sku,
-      '原料說明(參考)': rmItem?.description || rmItem?.category || '',
-      '供應商名稱': s.supplier_name,
-      '採購交期_天': s.lead_time_days,
-      '最小起訂量_KG': s.moq_kg,
-      '安全庫存量_KG': s.safety_stock_kg,
-      '實體倉容上限_KG': s.max_storage_capacity_kg || 12000,
-      '預估單價_USD': s.unit_price_usd || 0,
-      '關聯成品品號(參考)': linkedFgSkus || '無'
-    };
-  });
-  const wsSupplier = XLSX.utils.json_to_sheet(supplierData);
-  XLSX.utils.book_append_sheet(wb, wsSupplier, '採購與供應商規則檔');
 
   // Sheet 6: 業務預估需求檔 (業務)
   const forecastData = db.demand_forecast_log.map((f) => {
@@ -229,9 +183,7 @@ export function exportToExcel(db: SystemDatabase, filename = '料事如神系統
       '需求品號': f.sku,
       '成品品名(參考)': fgItem?.description || fgItem?.category || '',
       '需求交期': f.target_date,
-      '預估需求量_PCS': f.demand_qty,
-      '填報業務': f.created_by_name || f.created_by_id || '',
-      '備註說明': f.notes || ''
+      '預估需求量_PCS': f.demand_qty
     };
   });
   const wsForecast = XLSX.utils.json_to_sheet(forecastData);
@@ -285,33 +237,28 @@ export function exportToExcel(db: SystemDatabase, filename = '料事如神系統
   const wsPO = XLSX.utils.json_to_sheet(poData);
   XLSX.utils.book_append_sheet(wb, wsPO, '在途採購訂單檔');
 
-  // Sheet 10: 色母/色粉混合製程紀錄檔 (製造)
-  const mixLogData = (db.color_mixing_log || []).map((m) => {
-    const baseItem = itemMap.get(m.base_resin_sku);
-    const colorItem = itemMap.get(m.colorant_sku);
+  // Sheet 8: Sorting 實際良率紀錄檔 (品保)
+  const sortingData = (db.sorting_actual_yield_log || []).map((s) => {
+    const fgItem = itemMap.get(s.sku);
     return {
-      '紀錄ID': m.mix_log_id,
-      '混合批次號': m.batch_no || '',
-      '混合日期': m.mixing_date,
-      '混合作業員ID': m.operator_id,
-      '基礎樹脂品號': m.base_resin_sku,
-      '基礎樹脂說明(參考)': baseItem?.description || baseItem?.category || '',
-      '基礎樹脂用量_KG': m.base_resin_kg,
-      '色母/色粉品號': m.colorant_sku,
-      '色母/色粉說明(參考)': colorItem?.description || colorItem?.category || '',
-      '色母/色粉用量_KG': m.colorant_kg,
-      '混合配比(%)（計算值）': m.mixing_ratio_pct ? Number(m.mixing_ratio_pct).toFixed(2) : '',
-      '混合後總重量_KG（計算值）': m.total_batch_kg ? Number(m.total_batch_kg).toFixed(2) : '',
-      '成型模具編號(FK)': m.mold_id || '',
-      '對應SET品號(FK)': m.sku || '',
-      '製程標籤': m.process_tag || 'mixed',
-      '備註': m.notes || ''
+      '紀錄編號': s.log_id,
+      '品號': s.sku,
+      '成品品名(參考)': fgItem?.description || fgItem?.category || '',
+      '生產批號': s.batch_no,
+      '全檢日期': s.sorting_date,
+      '全檢數量_PCS': s.qty_sorted,
+      '合格數量_PCS': s.qty_passed,
+      '實際全檢良率': s.actual_yield_rate ? `${(s.actual_yield_rate * 100).toFixed(2)}%` : '',
+      '作業員ID': s.operator_id,
+      '備註': s.notes || ''
     };
   });
-  const wsMixLog = XLSX.utils.json_to_sheet(mixLogData.length > 0 ? mixLogData : [{ '紀錄ID': '(尚無混合紀錄)', '混合批次號': '', '混合日期': '', '混合作業員ID': '', '基礎樹脂品號': '', '基礎樹脂說明(參考)': '', '基礎樹脂用量_KG': '', '色母/色粉品號': '', '色母/色粉說明(參考)': '', '色母/色粉用量_KG': '', '混合配比(%)': '', '混合後總重量_KG': '', '成型模具編號': '', '對應SET品號': '', '製程標籤': '', '備註': '' }]);
-  XLSX.utils.book_append_sheet(wb, wsMixLog, '色母色粉混合製程紀錄');
+  if (sortingData.length > 0) {
+    const wsSorting = XLSX.utils.json_to_sheet(sortingData);
+    XLSX.utils.book_append_sheet(wb, wsSorting, 'Sorting實際良率紀錄');
+  }
 
-  // Sheet 11: 變更稽核日誌 (唯讀匯出，不可從此工作表匯入覆蓋)
+  // Sheet 9: 變更稽核日誌 (唯讀匯出，不可從此工作表匯入覆蓋)
   const auditLog = db.audit_log || [];
   const auditData = auditLog.length > 0
     ? auditLog.map((entry) => ({
@@ -341,43 +288,46 @@ export function downloadTemplateExcel() {
   const wsDict = XLSX.utils.json_to_sheet(DATA_SPECIFICATION_DICTIONARY);
   XLSX.utils.book_append_sheet(wb, wsDict, '填報規範與勾稽字典');
 
-  // Sheet 1: 料號基本主檔 (資材(生管))
-  const itemHeaders = [{ '品號': '', '替代品號': '', '客戶代碼': '', '物料類別': '', '外觀顏色': '', '計量單位': '', '備註說明': '' }];
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(itemHeaders), '料號基本主檔');
+  // Sheet 1: 品號主檔 (含良率與採購規則 - 資材/品保/採購)
+  const itemHeaders = [{
+    '品號': '', '替代品號': '', '客戶代碼': '', '物料分類': '', '物料類別': '',
+    '外觀顏色': '', '計量單位': '', '標準全檢良率': '', '供應商名稱': '',
+    '採購交期_天': '', '最小起訂量_KG': '', '安全庫存量_KG': '', '備註說明': ''
+  }];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(itemHeaders), '品號主檔');
 
   // Sheet 2: 模具與產能主檔 (製造)
-  const moldHeaders = [{ '模具編號': '', '對應生產品號': '', '設計穴數': '', '妥善穴數': '', '成型週期_秒': '', '存放位置/機台': '', '運行狀態': '' }];
+  const moldHeaders = [{ '模具編號': '', '妥善穴數': '', '成型週期_秒': '', '運行狀態': 'active' }];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(moldHeaders), '模具與產能主檔');
 
   // Sheet 3: 產品模具成型關聯檔 (工程)
-  const bomHeaders = [{ '品號': '', '成品品名(參考)': '', '模具編號': '', '使用原料品號': '', '原料說明(參考)': '', '整模重量_克': '', '流道重量_克': '', '是否為主模': '', '標準生產損耗率': '', '備註驗證狀態': '' }];
+  const bomHeaders = [{
+    '品號': '', '模具編號': '', '使用原料品號': '', '整模重量_克': '',
+    '流道重量_克': '', '是否為主模': 'TRUE', '標準生產損耗率': '0.03', '色母/色粉配比(%)': ''
+  }];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(bomHeaders), '產品模具成型關聯檔');
 
-  // Sheet 4: Sorting良率標準檔 (製造)
-  const yieldHeaders = [{ '品號': '', '成品品名(參考)': '', '標準全檢良率': '', '備註說明': '' }];
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(yieldHeaders), 'Sorting良率標準檔');
-
-  // Sheet 5: 採購與供應商規則檔 (資材(生管))
-  const supplierHeaders = [{ '原料品號': '', '原料說明(參考)': '', '供應商名稱': '', '採購交期_天': '', '最小起訂量_KG': '', '安全庫存量_KG': '', '實體倉容上限_KG': '', '預估單價_USD': '', '關聯成品品號(參考)': '' }];
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(supplierHeaders), '採購與供應商規則檔');
-
-  // Sheet 6: 業務預估需求檔 (業務)
-  const forecastHeaders = [{ '需求序號': '', '預估版本號': '', '客戶代碼': '', '需求品號': '', '成品品名(參考)': '', '需求交期': '', '預估需求量_PCS': '', '填報業務': '', '備註說明': '' }];
+  // Sheet 4: 業務預估需求檔 (業務)
+  const forecastHeaders = [{ '需求序號': '', '預估版本號': '', '客戶代碼': '', '需求品號': '', '需求交期': '', '預估需求量_PCS': '' }];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(forecastHeaders), '業務預估需求檔');
 
-  // Sheet 7: 實際訂單檔 (業務)
-  const orderHeaders = [{ '訂單號': '', '客戶代碼': '', '訂單品號': '', '成品品名(參考)': '', '下單日期': '', '約定交期': '', '實際訂單量_PCS': '', '訂單狀態': '' }];
+  // Sheet 5: 實際訂單檔 (業務)
+  const orderHeaders = [{ '訂單號': '', '客戶代碼': '', '訂單品號': '', '下單日期': '', '約定交期': '', '實際訂單量_PCS': '', '訂單狀態': 'confirmed' }];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(orderHeaders), '實際訂單檔');
 
-  // Sheet 8: 庫存與待驗快照檔 (資材(生管))
-  const invHeaders = [{ '快照結算日': '', '料號': '', '品名/物料說明(參考)': '', '成品在庫良品_PCS': '', 'Sorting待驗品_PCS': '', '原料可用庫存_KG': '' }];
+  // Sheet 6: 庫存與待驗快照檔 (資材(生管))
+  const invHeaders = [{ '快照結算日': '', '料號': '', '成品在庫良品_PCS': '', 'Sorting待驗品_PCS': '', '原料可用庫存_KG': '' }];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(invHeaders), '庫存與待驗快照檔');
 
-  // Sheet 9: 在途採購訂單檔 (資材(生管))
-  const poHeaders = [{ '採購單號': '', '原料品號': '', '原料說明(參考)': '', '在途採購量_KG': '', '預計到廠日': '', '供應商名稱': '', '在途狀態': '' }];
+  // Sheet 7: 在途採購訂單檔 (資材(生管))
+  const poHeaders = [{ '採購單號': '', '原料品號': '', '在途採購量_KG': '', '預計到廠日': '', '供應商名稱': '', '在途狀態': 'shipping' }];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(poHeaders), '在途採購訂單檔');
 
-  XLSX.writeFile(wb, '料事如神系統_正式空白匯入範本_v1.0.xlsx');
+  // Sheet 8: Sorting 實際良率紀錄檔 (品保)
+  const sortingHeaders = [{ '紀錄編號': '', '品號': '', '生產批號': '', '全檢日期': '', '全檢數量_PCS': '', '合格數量_PCS': '', '作業員ID': '', '備註': '' }];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(sortingHeaders), 'Sorting實際良率紀錄');
+
+  XLSX.writeFile(wb, '料事如神系統_正式空白匯入範本_v2.0.xlsx');
 }
 
 // 3b. Download Demo / Training Sample Excel (離線示範演練測試包 - 標註 SAMPLE 專用)
@@ -418,10 +368,14 @@ export function importFromJSON(jsonText: string, currentDB: SystemDatabase): { d
           customer_id: String(row.customer_id).trim(),
           category: String(row.category).trim(),
           material_class: row.material_class ? String(row.material_class).trim().toUpperCase() as any : null,
-          material_class_label: row.material_class_label ? String(row.material_class_label).trim() : null,
           color: row.color ? String(row.color).trim() : '',
           unit: row.unit ? String(row.unit).trim() : 'PCS',
-          description: row.description ? String(row.description).trim() : ''
+          description: row.description ? String(row.description).trim() : '',
+          std_sorting_yield: row.std_sorting_yield != null ? Number(row.std_sorting_yield) : null,
+          supplier_name: row.supplier_name ? String(row.supplier_name).trim() : null,
+          lead_time_days: row.lead_time_days != null ? Number(row.lead_time_days) : null,
+          moq_kg: row.moq_kg != null ? Number(row.moq_kg) : null,
+          safety_stock_kg: row.safety_stock_kg != null ? Number(row.safety_stock_kg) : null
         };
         if (existingIdx >= 0) {
           newDB.item_master[existingIdx] = item;
@@ -430,7 +384,7 @@ export function importFromJSON(jsonText: string, currentDB: SystemDatabase): { d
         }
         count++;
       });
-      report.importedCounts['料號基本主檔'] = count;
+      report.importedCounts['品號主檔'] = count;
     }
 
     // Validate and Upsert mold_master
@@ -442,15 +396,11 @@ export function importFromJSON(jsonText: string, currentDB: SystemDatabase): { d
           return;
         }
         const existingIdx = newDB.mold_master.findIndex((m) => m.mold_id === row.mold_id);
-        const designCav = Number(row.design_cavities) || 16;
-        const activeCav = Number(row.active_cavities) || designCav;
         const mold: MoldMaster = {
           mold_id: String(row.mold_id).trim(),
-          design_cavities: designCav,
-          active_cavities: Math.min(designCav, Math.max(1, activeCav)),
+          active_cavities: Math.max(1, Number(row.active_cavities) || 16),
           cycle_time_sec: Math.max(1, Number(row.cycle_time_sec) || 30),
-          status: row.status || 'active',
-          location: row.location || ''
+          status: row.status || 'active'
         };
         if (existingIdx >= 0) {
           newDB.mold_master[existingIdx] = mold;
@@ -478,9 +428,6 @@ export function importFromJSON(jsonText: string, currentDB: SystemDatabase): { d
           runner_weight_g: Number(row.runner_weight_g) || 0,
           is_primary_mold: Boolean(row.is_primary_mold),
           std_mfg_scrap_rate: Number(row.std_mfg_scrap_rate) || 0.03,
-          remarks: row.remarks || '',
-          valid_from: String(row.valid_from || '2025-01-01'),
-          valid_to: row.valid_to ? String(row.valid_to) : null,
           color_mixing_ratio_pct: row.color_mixing_ratio_pct != null ? Number(row.color_mixing_ratio_pct) : null,
         };
         if (existingIdx >= 0) {
@@ -493,47 +440,55 @@ export function importFromJSON(jsonText: string, currentDB: SystemDatabase): { d
       report.importedCounts['產品模具成型關聯檔'] = count;
     }
 
-    // Validate and Upsert color_mixing_log
-    if (Array.isArray(parsed.color_mixing_log)) {
+    // Validate and Upsert sorting_actual_yield_log
+    if (Array.isArray(parsed.sorting_actual_yield_log)) {
       let count = 0;
-      parsed.color_mixing_log.forEach((row: any) => {
-        if (!row.mix_log_id) return;
-        const existingIdx = newDB.color_mixing_log.findIndex((m) => m.mix_log_id === row.mix_log_id);
-        const mixLog: ColorMixingLog = {
-          mix_log_id: String(row.mix_log_id).trim(),
-          batch_no: row.batch_no ? String(row.batch_no).trim() : null,
-          mixing_date: String(row.mixing_date || new Date().toISOString().slice(0, 10)),
-          operator_id: row.operator_id ? String(row.operator_id).trim() : '',
-          base_resin_sku: row.base_resin_sku ? String(row.base_resin_sku).trim() : '',
-          base_resin_kg: Number(row.base_resin_kg) || 0,
-          colorant_sku: row.colorant_sku ? String(row.colorant_sku).trim() : '',
-          colorant_kg: Number(row.colorant_kg) || 0,
-          mixing_ratio_pct: Number(row.mixing_ratio_pct) || 0,
-          total_batch_kg: Number(row.total_batch_kg) || 0,
-          mold_id: row.mold_id ? String(row.mold_id).trim() : null,
-          sku: row.sku ? String(row.sku).trim() : null,
-          process_tag: ['mixed', 'pre_mix', 'direct'].includes(row.process_tag) ? row.process_tag : 'mixed',
+      parsed.sorting_actual_yield_log.forEach((row: any) => {
+        if (!row.log_id || !row.sku) return;
+        const existingIdx = newDB.sorting_actual_yield_log.findIndex((s) => s.log_id === row.log_id);
+        const sortingLog: SortingActualYieldLog = {
+          log_id: String(row.log_id).trim(),
+          sku: String(row.sku).trim(),
+          batch_no: String(row.batch_no || '').trim(),
+          sorting_date: String(row.sorting_date || new Date().toISOString().slice(0, 10)),
+          qty_sorted: Number(row.qty_sorted) || 0,
+          qty_passed: Number(row.qty_passed) || 0,
+          actual_yield_rate: Number(row.actual_yield_rate) || (row.qty_sorted ? Number(row.qty_passed) / Number(row.qty_sorted) : 1),
+          operator_id: String(row.operator_id || '').trim(),
           notes: row.notes ? String(row.notes).trim() : null,
           created_at: row.created_at || new Date().toISOString(),
         };
         if (existingIdx >= 0) {
-          newDB.color_mixing_log[existingIdx] = mixLog;
+          newDB.sorting_actual_yield_log[existingIdx] = sortingLog;
         } else {
-          newDB.color_mixing_log.push(mixLog);
+          newDB.sorting_actual_yield_log.push(sortingLog);
         }
         count++;
       });
-      report.importedCounts['色母色粉混合製程紀錄'] = count;
+      report.importedCounts['Sorting實際良率紀錄'] = count;
     }
 
-    // Validate other tables
-    if (Array.isArray(parsed.yield_master)) {
-      newDB.yield_master = parsed.yield_master;
-      report.importedCounts['Sorting良率標準檔'] = parsed.yield_master.length;
+    // Legacy migration: merge yield_master & supplier_rule_master into item_master if present in JSON backup
+    if (Array.isArray((parsed as any).yield_master)) {
+      (parsed as any).yield_master.forEach((y: any) => {
+        const item = newDB.item_master.find(i => i.sku === y.sku);
+        if (item && y.std_sorting_yield != null) {
+          item.std_sorting_yield = Number(y.std_sorting_yield);
+        }
+      });
+      report.importedCounts['Sorting良率標準 (已合併至品號)'] = (parsed as any).yield_master.length;
     }
-    if (Array.isArray(parsed.supplier_rule_master)) {
-      newDB.supplier_rule_master = parsed.supplier_rule_master;
-      report.importedCounts['採購與供應商規則檔'] = parsed.supplier_rule_master.length;
+    if (Array.isArray((parsed as any).supplier_rule_master)) {
+      (parsed as any).supplier_rule_master.forEach((s: any) => {
+        const item = newDB.item_master.find(i => i.sku === s.rm_sku);
+        if (item) {
+          if (s.supplier_name) item.supplier_name = String(s.supplier_name);
+          if (s.lead_time_days != null) item.lead_time_days = Number(s.lead_time_days);
+          if (s.moq_kg != null) item.moq_kg = Number(s.moq_kg);
+          if (s.safety_stock_kg != null) item.safety_stock_kg = Number(s.safety_stock_kg);
+        }
+      });
+      report.importedCounts['採購與供應商規則 (已合併至品號)'] = (parsed as any).supplier_rule_master.length;
     }
     if (Array.isArray(parsed.demand_forecast_log)) {
       newDB.demand_forecast_log = parsed.demand_forecast_log;
@@ -548,23 +503,19 @@ export function importFromJSON(jsonText: string, currentDB: SystemDatabase): { d
       report.importedCounts['庫存與待驗快照檔'] = parsed.inventory_wip_snapshot.length;
     }
     if (Array.isArray(parsed.po_in_transit)) {
-      // 同步計算 eta_variance_days 若 actual_arrival_date 已存在，并验证PO状态
       const validPoStatuses = ['ordered', 'shipping', 'customs', 'arrived', 'delayed', 'partial_arrived'];
       const validatedPOs: POInTransit[] = parsed.po_in_transit.map((p: any) => {
-        const item: POInTransit = { ...p };
-        // PO 在途状态 validate：仅允许合法选项
+        const item: POInTransit = {
+          po_number: String(p.po_number || '').trim(),
+          rm_sku: String(p.rm_sku || '').trim(),
+          in_transit_qty_kg: Number(p.in_transit_qty_kg) || 0,
+          eta_date: String(p.eta_date || '').trim(),
+          supplier_name: p.supplier_name ? String(p.supplier_name).trim() : undefined,
+          status: 'shipping'
+        };
         const rawStatus = String(p.status || 'shipping').trim().toLowerCase();
-        if (!validPoStatuses.includes(rawStatus)) {
-          item.status = 'shipping';
-        } else {
-          item.status = rawStatus as 'ordered' | 'shipping' | 'customs' | 'arrived' | 'delayed' | 'partial_arrived';
-        }
-        if (p.actual_arrival_date && p.eta_date) {
-          const eta = new Date(String(p.eta_date));
-          const actual = new Date(String(p.actual_arrival_date));
-          if (!isNaN(eta.getTime()) && !isNaN(actual.getTime())) {
-            item.eta_variance_days = Math.round((actual.getTime() - eta.getTime()) / (24 * 60 * 60 * 1000));
-          }
+        if (validPoStatuses.includes(rawStatus)) {
+          item.status = rawStatus as any;
         }
         return item;
       });
@@ -597,8 +548,8 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
     const workbook = XLSX.read(data, { type: 'array' });
     const newDB: SystemDatabase = { ...currentDB };
 
-    // Sheet: 料號基本主檔
-    const sheetItem = workbook.Sheets['料號基本主檔'] || workbook.Sheets['item_master'];
+    // Sheet: 品號主檔 (含良率與採購規則)
+    const sheetItem = workbook.Sheets['品號主檔'] || workbook.Sheets['料號基本主檔'] || workbook.Sheets['item_master'];
     if (sheetItem) {
       const rows: any[] = XLSX.utils.sheet_to_json(sheetItem);
       let count = 0;
@@ -614,14 +565,19 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
           category: String(r['物料類別'] || r['category'] || '零件').trim(),
           color: String(r['外觀顏色'] || r['color'] || '本色').trim(),
           unit: String(r['計量單位'] || r['unit'] || 'PCS').trim(),
-          description: String(r['備註說明'] || r['description'] || '').trim()
+          description: String(r['備註說明'] || r['description'] || '').trim(),
+          std_sorting_yield: r['標準全檢良率'] != null && r['標準全檢良率'] !== '' ? Number(r['標準全檢良率']) : (r['std_sorting_yield'] != null ? Number(r['std_sorting_yield']) : undefined),
+          supplier_name: r['供應商名稱'] ? String(r['供應商名稱']).trim() : (r['supplier_name'] ? String(r['supplier_name']).trim() : undefined),
+          lead_time_days: r['採購交期_天'] != null && r['採購交期_天'] !== '' ? Number(r['採購交期_天']) : (r['lead_time_days'] != null ? Number(r['lead_time_days']) : undefined),
+          moq_kg: r['最小起訂量_KG'] != null && r['最小起訂量_KG'] !== '' ? Number(r['最小起訂量_KG']) : (r['moq_kg'] != null ? Number(r['moq_kg']) : undefined),
+          safety_stock_kg: r['安全庫存量_KG'] != null && r['安全庫存量_KG'] !== '' ? Number(r['安全庫存量_KG']) : (r['safety_stock_kg'] != null ? Number(r['safety_stock_kg']) : undefined)
         };
         const idx = newDB.item_master.findIndex((i) => i.sku === item.sku);
         if (idx >= 0) newDB.item_master[idx] = item;
         else newDB.item_master.push(item);
         count++;
       });
-      report.importedCounts['料號基本主檔'] = count;
+      report.importedCounts['品號主檔'] = count;
     }
 
     // Sheet: 模具與產能主檔
@@ -632,14 +588,11 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
       rows.forEach((r) => {
         const moldId = r['模具編號'] || r['mold_id'];
         if (!moldId) return;
-        const designCav = Number(r['設計穴數'] || r['design_cavities'] || 16);
-        const activeCav = Number(r['妥善穴數'] || r['active_cavities'] || designCav);
+        const activeCav = Number(r['妥善穴數'] || r['active_cavities'] || r['設計穴數'] || 16);
         const mold: MoldMaster = {
           mold_id: String(moldId).trim(),
-          design_cavities: designCav,
-          active_cavities: Math.min(designCav, Math.max(1, activeCav)),
+          active_cavities: Math.max(1, activeCav),
           cycle_time_sec: Number(r['成型週期_秒'] || r['cycle_time_sec'] || 25),
-          location: r['存放位置/機台'] || r['location'] || '',
           status: r['運行狀態'] || 'active'
         };
         const idx = newDB.mold_master.findIndex((m) => m.mold_id === mold.mold_id);
@@ -669,9 +622,6 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
           runner_weight_g: Number(r['流道重量_克'] || r['runner_weight_g'] || 5),
           is_primary_mold: isPrimary,
           std_mfg_scrap_rate: Number(r['標準生產損耗率'] || r['std_mfg_scrap_rate'] || 0.03),
-          remarks: r['備註驗證狀態'] || r['remarks'] || '',
-          valid_from: String(r['BOM生效起始日'] || r['valid_from'] || '2025-01-01'),
-          valid_to: r['BOM失效日'] || r['valid_to'] || null,
           color_mixing_ratio_pct: r['色母/色粉配比(%)'] && r['色母/色粉配比(%)'] !== '—' ? Number(r['色母/色粉配比(%)']) : null,
         };
         const idx = newDB.product_mold_bom.findIndex((b) => b.sku === bom.sku && b.mold_id === bom.mold_id);
@@ -682,7 +632,7 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
       report.importedCounts['產品模具成型關聯檔'] = count;
     }
 
-    // Sheet: Sorting良率標準檔 (Sorting 全檢良率)
+    // Sheet: Sorting良率標準檔 (舊版相容：自動合併至品號主檔)
     const sheetYield = workbook.Sheets['Sorting良率標準檔'] || workbook.Sheets['yield_master'] || workbook.Sheets['製造良率標準檔'] || workbook.Sheets['品管良率標準檔'];
     if (sheetYield) {
       const rows: any[] = XLSX.utils.sheet_to_json(sheetYield);
@@ -691,20 +641,16 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
         const sku = r['品號'] || r['sku'];
         if (!sku) return;
         const yieldVal = Number(r['標準全檢良率'] || r['std_sorting_yield'] || 0.98);
-        const yItem: YieldMaster = {
-          sku: String(sku).trim(),
-          std_sorting_yield: Math.min(1, Math.max(0.01, yieldVal)),
-          notes: String(r['備註說明'] || r['notes'] || '').trim()
-        };
-        const idx = newDB.yield_master.findIndex((y) => y.sku === yItem.sku);
-        if (idx >= 0) newDB.yield_master[idx] = yItem;
-        else newDB.yield_master.push(yItem);
-        count++;
+        const item = newDB.item_master.find(i => i.sku === String(sku).trim());
+        if (item) {
+          item.std_sorting_yield = Math.min(1, Math.max(0.01, yieldVal));
+          count++;
+        }
       });
-      report.importedCounts['Sorting良率標準檔'] = count;
+      report.importedCounts['Sorting良率標準 (合併至品號)'] = count;
     }
 
-    // Sheet: 採購與供應商規則檔
+    // Sheet: 採購與供應商規則檔 (舊版相容：自動合併至品號主檔)
     const sheetSupplier = workbook.Sheets['採購與供應商規則檔'] || workbook.Sheets['supplier_rule_master'];
     if (sheetSupplier) {
       const rows: any[] = XLSX.utils.sheet_to_json(sheetSupplier);
@@ -712,21 +658,16 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
       rows.forEach((r) => {
         const rmSku = r['原料品號'] || r['rm_sku'];
         if (!rmSku) return;
-        const suppItem: SupplierRuleMaster = {
-          rm_sku: String(rmSku).trim(),
-          supplier_name: String(r['供應商名稱'] || r['supplier_name'] || '').trim(),
-          lead_time_days: Number(r['採購交期_天'] || r['lead_time_days'] || 90),
-          moq_kg: Number(r['最小起訂量_KG'] || r['moq_kg'] || 1000),
-          safety_stock_kg: Number(r['安全庫存量_KG'] || r['safety_stock_kg'] || 0),
-          max_storage_capacity_kg: Number(r['實體倉容上限_KG'] || r['max_storage_capacity_kg'] || 12000),
-          unit_price_usd: Number(r['預估單價_USD'] || r['unit_price_usd'] || 0)
-        };
-        const idx = newDB.supplier_rule_master.findIndex((s) => s.rm_sku === suppItem.rm_sku);
-        if (idx >= 0) newDB.supplier_rule_master[idx] = suppItem;
-        else newDB.supplier_rule_master.push(suppItem);
-        count++;
+        const item = newDB.item_master.find(i => i.sku === String(rmSku).trim());
+        if (item) {
+          item.supplier_name = String(r['供應商名稱'] || r['supplier_name'] || item.supplier_name || '').trim();
+          item.lead_time_days = Number(r['採購交期_天'] || r['lead_time_days'] || item.lead_time_days || 30);
+          item.moq_kg = Number(r['最小起訂量_KG'] || r['moq_kg'] || item.moq_kg || 1000);
+          item.safety_stock_kg = Number(r['安全庫存量_KG'] || r['safety_stock_kg'] || item.safety_stock_kg || 0);
+          count++;
+        }
       });
-      report.importedCounts['採購與供應商規則檔'] = count;
+      report.importedCounts['採購與供應商規則 (合併至品號)'] = count;
     }
 
     // Sheet: 業務預估需求檔
@@ -745,10 +686,7 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
           sku: String(sku).trim(),
           target_date: String(r['需求交期'] || r['target_date'] || '2026-11-30').trim(),
           demand_qty: Number(r['預估需求量_PCS'] || r['demand_qty'] || 10000),
-          created_by_id: String(r['填報業務'] || r['created_by'] || r['created_by_id'] || 'Admin').trim(),
-          created_by_name: r['created_by_name'] || null,
-          created_at: new Date().toISOString(),
-          notes: r['備註說明'] || ''
+          created_at: new Date().toISOString()
         };
         const idx = newDB.demand_forecast_log.findIndex((f) => f.demand_id === forecast.demand_id);
         if (idx >= 0) newDB.demand_forecast_log[idx] = forecast;
@@ -823,23 +761,11 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
         const poStatus: 'ordered' | 'shipping' | 'customs' | 'arrived' | 'delayed' | 'partial_arrived' =
           validPoStatuses.includes(rawStatus) ? rawStatus as 'ordered' | 'shipping' | 'customs' | 'arrived' | 'delayed' | 'partial_arrived' : 'shipping';
         const etaDate = String(r['預計到廠日'] || r['eta_date'] || '2026-09-15').trim();
-        const actualArrivalDate = r['實際到廠日'] || r['actual_arrival_date'];
-        // eta_variance_days：若實際到廠日已填寫，自動計算偏差天數
-        let etaVarianceDays: number | null = null;
-        if (actualArrivalDate) {
-          const eta = new Date(etaDate);
-          const actual = new Date(String(actualArrivalDate).trim());
-          if (!isNaN(eta.getTime()) && !isNaN(actual.getTime())) {
-            etaVarianceDays = Math.round((actual.getTime() - eta.getTime()) / (24 * 60 * 60 * 1000));
-          }
-        }
         const poItem: POInTransit = {
           po_number: String(poNum).trim(),
           rm_sku: String(rmSku).trim(),
           in_transit_qty_kg: Number(r['在途採購量_KG'] || r['in_transit_qty_kg'] || 0),
           eta_date: etaDate,
-          actual_arrival_date: actualArrivalDate ? String(actualArrivalDate).trim() : null,
-          eta_variance_days: etaVarianceDays,
           supplier_name: String(r['供應商名稱'] || r['supplier_name'] || '').trim(),
           status: poStatus
         };
@@ -851,37 +777,35 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
       report.importedCounts['在途採購訂單檔'] = count;
     }
 
-    // Sheet: 色母/色粉混合製程紀錄檔
-    const sheetMixLog = workbook.Sheets['色母色粉混合製程紀錄'] || workbook.Sheets['color_mixing_log'];
-    if (sheetMixLog) {
-      const rows: any[] = XLSX.utils.sheet_to_json(sheetMixLog);
+    // Sheet: Sorting 實際良率紀錄檔 (全檢回饋閉環)
+    const sheetSorting = workbook.Sheets['Sorting實際良率紀錄'] || workbook.Sheets['sorting_actual_yield_log'];
+    if (sheetSorting) {
+      const rows: any[] = XLSX.utils.sheet_to_json(sheetSorting);
       let count = 0;
       rows.forEach((r) => {
-        const mixLogId = r['紀錄ID'] || r['mix_log_id'];
-        if (!mixLogId) return;
-        const mixLog: ColorMixingLog = {
-          mix_log_id: String(mixLogId).trim(),
-          batch_no: r['混合批次號'] || r['batch_no'] || null,
-          mixing_date: String(r['混合日期'] || r['mixing_date'] || new Date().toISOString().slice(0, 10)),
-          operator_id: String(r['混合作業員ID'] || r['operator_id'] || '').trim(),
-          base_resin_sku: String(r['基礎樹脂品號'] || r['base_resin_sku'] || '').trim(),
-          base_resin_kg: Number(r['基礎樹脂用量_KG'] || r['base_resin_kg'] || 0),
-          colorant_sku: String(r['色母/色粉品號'] || r['colorant_sku'] || '').trim(),
-          colorant_kg: Number(r['色母/色粉用量_KG'] || r['colorant_kg'] || 0),
-          mixing_ratio_pct: Number(r['混合配比(%)（計算值）'] || r['mixing_ratio_pct'] || 0),
-          total_batch_kg: Number(r['混合後總重量_KG（計算值）'] || r['total_batch_kg'] || 0),
-          mold_id: r['成型模具編號(FK)'] || r['mold_id'] || null,
-          sku: r['對應SET品號(FK)'] || r['sku'] || null,
-          process_tag: ['mixed', 'pre_mix', 'direct'].includes(String(r['製程標籤'] || r['process_tag'] || 'mixed').toLowerCase()) ? String(r['製程標籤'] || r['process_tag'] || 'mixed').toLowerCase() as 'mixed' | 'pre_mix' | 'direct' : 'mixed',
-          notes: r['備註'] || r['notes'] || null,
+        const logId = r['紀錄編號'] || r['log_id'];
+        const sku = r['品號'] || r['sku'];
+        if (!logId || !sku) return;
+        const qtySorted = Number(r['全檢數量_PCS'] || r['qty_sorted'] || 0);
+        const qtyPassed = Number(r['合格數量_PCS'] || r['qty_passed'] || 0);
+        const sortingLog: SortingActualYieldLog = {
+          log_id: String(logId).trim(),
+          sku: String(sku).trim(),
+          batch_no: String(r['生產批號'] || r['batch_no'] || '').trim(),
+          sorting_date: String(r['全檢日期'] || r['sorting_date'] || new Date().toISOString().slice(0, 10)),
+          qty_sorted: qtySorted,
+          qty_passed: qtyPassed,
+          actual_yield_rate: qtySorted > 0 ? qtyPassed / qtySorted : 1,
+          operator_id: String(r['作業員ID'] || r['operator_id'] || '').trim(),
+          notes: r['備註'] || r['notes'] ? String(r['備註'] || r['notes']).trim() : null,
           created_at: r['created_at'] || new Date().toISOString(),
         };
-        const idx = newDB.color_mixing_log.findIndex((m) => m.mix_log_id === mixLog.mix_log_id);
-        if (idx >= 0) newDB.color_mixing_log[idx] = mixLog;
-        else newDB.color_mixing_log.push(mixLog);
+        const idx = newDB.sorting_actual_yield_log.findIndex((s) => s.log_id === sortingLog.log_id);
+        if (idx >= 0) newDB.sorting_actual_yield_log[idx] = sortingLog;
+        else newDB.sorting_actual_yield_log.push(sortingLog);
         count++;
       });
-      report.importedCounts['色母色粉混合製程紀錄'] = count;
+      report.importedCounts['Sorting實際良率紀錄'] = count;
     }
 
     // Execute deep relational chain audit
@@ -899,19 +823,21 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
 function runRelationalAudit(db: SystemDatabase, report: ValidationReport) {
   const itemMap = new Set(db.item_master.map((i) => i.sku));
   const moldMap = new Set(db.mold_master.map((m) => m.mold_id));
-  const supplierRuleMap = new Set(db.supplier_rule_master.map((s) => s.rm_sku));
 
   // 1. Audit ProductMoldBOM linkages
   const primaryMoldCounts: Record<string, number> = {};
   db.product_mold_bom.forEach((b) => {
     if (!itemMap.has(b.sku)) {
-      report.warnings.push(`[BOM 關聯異常] 成品品號「${b.sku}」未建立於料號基本主檔中。`);
+      report.warnings.push(`[BOM 關聯異常] 成品品號「${b.sku}」未建立於品號主檔中。`);
     }
     if (!moldMap.has(b.mold_id)) {
       report.errors.push(`[模具斷鏈] 成型 BOM 中的模具編號「${b.mold_id}」(品號 ${b.sku}) 不存在於模具與產能主檔中，將導致無法推算產能與單穴克重！`);
     }
-    if (!supplierRuleMap.has(b.rm_sku)) {
-      report.warnings.push(`[原料採購規則缺失] 成型 BOM 中原料「${b.rm_sku}」(品號 ${b.sku}) 尚未於採購規則檔設定採購交期與 MOQ。`);
+    const rmItem = db.item_master.find(i => i.sku === b.rm_sku);
+    if (!rmItem) {
+      report.warnings.push(`[原料缺失] 成型 BOM 中原料「${b.rm_sku}」(品號 ${b.sku}) 尚未於品號主檔建立。`);
+    } else if (rmItem.lead_time_days == null || rmItem.moq_kg == null) {
+      report.warnings.push(`[原料採購規則缺失] 原料「${b.rm_sku}」(品號 ${b.sku}) 尚未設定採購交期或 MOQ，MRP 將改採預設參數。`);
     }
     if (b.is_primary_mold) {
       primaryMoldCounts[b.sku] = (primaryMoldCounts[b.sku] || 0) + 1;
@@ -929,7 +855,7 @@ function runRelationalAudit(db: SystemDatabase, report: ValidationReport) {
   // 2. Audit Sales Forecast linkages
   db.demand_forecast_log.forEach((f) => {
     if (!itemMap.has(f.sku)) {
-      report.warnings.push(`[業務預估品號異常] 預估需求單「${f.demand_id}」之品號「${f.sku}」不存在於料號基本主檔。`);
+      report.warnings.push(`[業務預估品號異常] 預估需求單「${f.demand_id}」之品號「${f.sku}」不存在於品號主檔。`);
     }
     const hasBOM = db.product_mold_bom.some((b) => b.sku === f.sku);
     if (!hasBOM) {
@@ -940,7 +866,7 @@ function runRelationalAudit(db: SystemDatabase, report: ValidationReport) {
   // 3. Audit Actual Orders linkages
   db.actual_order.forEach((o) => {
     if (!itemMap.has(o.sku)) {
-      report.warnings.push(`[訂單品號異常] 實際訂單「${o.order_id}」之品號「${o.sku}」不存在於料號基本主檔。`);
+      report.warnings.push(`[訂單品號異常] 實際訂單「${o.order_id}」之品號「${o.sku}」不存在於品號主檔。`);
     }
   });
 
@@ -952,37 +878,24 @@ function runRelationalAudit(db: SystemDatabase, report: ValidationReport) {
     if (m.active_cavities <= 0) {
       report.errors.push(`[妥善穴數錯誤] 模具「${m.mold_id}」之妥善穴數不可為 0！`);
     }
-    if (m.active_cavities > m.design_cavities) {
-      report.warnings.push(`[穴數邏輯異常] 模具「${m.mold_id}」妥善穴數 (${m.active_cavities}) 大於設計穴數 (${m.design_cavities})。`);
+  });
+
+  // 5. Audit Sorting Yield Standards (on ItemMaster)
+  db.item_master.forEach((i) => {
+    if (i.std_sorting_yield != null && (i.std_sorting_yield <= 0 || i.std_sorting_yield > 1)) {
+      report.warnings.push(`[良率數值範圍異常] 品號「${i.sku}」標準良率值為 ${i.std_sorting_yield}，良率應介於 0.01 ~ 1.0 (例如 98% 填 0.98)。`);
     }
   });
 
-  // 5. Audit Sorting Yield Standards
-  db.yield_master.forEach((y) => {
-    if (y.std_sorting_yield <= 0 || y.std_sorting_yield > 1) {
-      report.warnings.push(`[良率數值範圍異常] 品號「${y.sku}」標準良率值為 ${y.std_sorting_yield}，良率應填寫 0.01 ~ 1.0 (例如 98% 填 0.98)。`);
-    }
-  });
-
-  // 6. Audit Supplier Procurement Rules
-  db.supplier_rule_master.forEach((s) => {
-    if (s.lead_time_days <= 0) {
-      report.warnings.push(`[採購交期缺失] 原料「${s.rm_sku}」採購交期為 0 天，可能導致排程倒推下單日異常。`);
-    }
-    if (s.moq_kg <= 0) {
-      report.warnings.push(`[MOQ缺失] 原料「${s.rm_sku}」最小起訂量為 0 KG。`);
-    }
-  });
-
-  // 7. Audit PO In Transit → Supplier Rule linkage
-  const supplierSkus = new Set(db.supplier_rule_master.map((s) => s.rm_sku));
+  // 6. Audit PO In Transit → Raw Material linkage
   db.po_in_transit.forEach((p) => {
-    if (!supplierSkus.has(p.rm_sku)) {
-      report.warnings.push(`[PO 採購規則缺失] 在途訂單「${p.po_number}」之原料「${p.rm_sku}」尚未於採購規則檔設定，MRP 將使用全廠預設參數。`);
+    const rm = db.item_master.find(i => i.sku === p.rm_sku);
+    if (!rm) {
+      report.warnings.push(`[PO 原料缺失] 在途訂單「${p.po_number}」之原料「${p.rm_sku}」不存在於品號主檔。`);
     }
   });
 
-  // 8. Audit snapshot_date + sku uniqueness
+  // 7. Audit snapshot_date + sku uniqueness
   const snapshotKeys = new Set<string>();
   db.inventory_wip_snapshot.forEach((s) => {
     const key = `${s.snapshot_date}|${s.sku}`;

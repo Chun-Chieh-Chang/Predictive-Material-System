@@ -71,14 +71,12 @@ export function scanDatabaseIntegrity(
     db.item_master.filter((i) => i.material_class === 'RAW').map((i) => i.sku)
   );
   const moldSet = new Set(db.mold_master.map((m) => m.mold_id));
-  const supplierRuleSet = new Set(db.supplier_rule_master.map((s) => s.rm_sku));
-  const yieldSet = new Set(db.yield_master.map((y) => y.sku));
 
   let totalRecords = 0;
 
   // 1. 掃描 product_mold_bom (最核心關聯檔)
   const bomPkSet = new Set<string>();
-  const activeBoms = db.product_mold_bom.filter((b) => !b.valid_to || new Date(b.valid_to) >= new Date());
+  const activeBoms = db.product_mold_bom; // V2.0: valid_to removed
 
   db.product_mold_bom.forEach((bom, idx) => {
     totalRecords++;
@@ -135,14 +133,15 @@ export function scanDatabaseIntegrity(
       });
     }
 
-    // 外鍵 4: rm_sku 必須有 supplier_rule_master 規則 (採購防斷鏈)
-    if (!supplierRuleSet.has(bom.rm_sku)) {
+    // 外鍵 4 (V2.0): rm_sku 對應的 item_master 是否已填採購規則欄位
+    const rmItem = db.item_master.find((i) => i.sku === bom.rm_sku);
+    if (rmItem && !rmItem.lead_time_days) {
       warnings.push({
         type: 'orphan_data',
         table: 'product_mold_bom',
         pkValue: pk,
         field: 'rm_sku',
-        detail: `原料 [${bom.rm_sku}] 尚未在採購規則檔 (supplier_rule_master) 中定義交期與 MOQ，MRP 將改採預設參數`,
+        detail: `原料 [${bom.rm_sku}] 尚未在品號主檔中定義交期 (lead_time_days) 與 MOQ，MRP 將改採預設參數`,
         severity: 'warning'
       });
     }
@@ -170,16 +169,6 @@ export function scanDatabaseIntegrity(
       });
     }
 
-    // 過期 BOM 檢查
-    if (bom.valid_to && new Date(bom.valid_to) < new Date()) {
-      warnings.push({
-        type: 'redundant_data',
-        table: 'product_mold_bom',
-        pkValue: pk,
-        detail: `BOM 已於 ${bom.valid_to} 失效，屬於歷史冗餘版本`,
-        severity: 'info'
-      });
-    }
   });
 
   // 2. 掃描 mold_master (孤兒模具排查)
@@ -196,13 +185,13 @@ export function scanDatabaseIntegrity(
       });
     }
 
-    if (mold.active_cavities > mold.design_cavities) {
+    if (mold.active_cavities <= 0) {
       warnings.push({
         type: 'invalid_range',
         table: 'mold_master',
         pkValue: mold.mold_id,
         field: 'active_cavities',
-        detail: `妥善穴數 (${mold.active_cavities}) 大於設計穴數 (${mold.design_cavities})，邏輯異常`,
+        detail: `妥善穴數 (${mold.active_cavities}) 必須大於 0`,
         severity: 'warning'
       });
     }
@@ -317,34 +306,16 @@ export function scanDatabaseIntegrity(
     }
   });
 
-  // 8. 掃描 yield_master (良率標準外鍵斷鏈)
-  db.yield_master.forEach((ym) => {
+  // 8. V2.0: 掃描 item_master RAW 類 — 檢查採購視必要欄位完整性
+  db.item_master.filter((i) => i.material_class === 'RAW').forEach((item) => {
     totalRecords++;
-    if (!itemSet.has(ym.sku)) {
-      errors.push({
-        type: 'broken_fk',
-        table: 'yield_master',
-        field: 'sku',
-        value: ym.sku,
-        pkValue: ym.sku,
-        reason: `良率標準檔的品號 [${ym.sku}] 在品號主檔中不存在！`,
-        severity: 'critical'
-      });
-    }
-  });
-
-  // 9. 掃描 supplier_rule_master (採購規則外鍵斷鏈)
-  db.supplier_rule_master.forEach((srm) => {
-    totalRecords++;
-    if (!itemSet.has(srm.rm_sku)) {
-      errors.push({
-        type: 'broken_fk',
-        table: 'supplier_rule_master',
-        field: 'rm_sku',
-        value: srm.rm_sku,
-        pkValue: srm.rm_sku,
-        reason: `採購規則檔的原料品號 [${srm.rm_sku}] 在品號主檔中不存在！`,
-        severity: 'critical'
+    if (!item.lead_time_days || !item.moq_kg || !item.safety_stock_kg) {
+      warnings.push({
+        type: 'orphan_data',
+        table: 'item_master',
+        pkValue: item.sku,
+        detail: `原料品號 [${item.sku}] 缺少採購必要資訊 (lead_time_days / moq_kg / safety_stock_kg)，MRP 將改採預設參數`,
+        severity: 'warning'
       });
     }
   });

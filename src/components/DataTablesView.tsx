@@ -25,10 +25,10 @@ import {
 } from '../utils/fieldMeta';
 
 export type TableKey =
-  | 'item_master' | 'mold_master' | 'product_mold_bom' | 'yield_master'
-  | 'supplier_rule_master' | 'demand_forecast_log' | 'actual_order'
+  | 'item_master' | 'mold_master' | 'product_mold_bom'
+  | 'demand_forecast_log' | 'actual_order'
   | 'inventory_wip_snapshot' | 'po_in_transit'
-  | 'sorting_actual_yield_log' | 'color_mixing_log';
+  | 'sorting_actual_yield_log';
 
 interface DataTablesViewProps {
   db: SystemDatabase;
@@ -43,15 +43,11 @@ function scanFkImpact(db: SystemDatabase, tableKey: TableKey, record: Record<str
   if (tableKey === 'item_master') {
     const sku = record['sku'] as string;
     const bomCount = db.product_mold_bom.filter(b => b.sku === sku || b.rm_sku === sku).length;
-    const yieldCount = db.yield_master.filter(y => y.sku === sku).length;
-    const supCount = db.supplier_rule_master.filter(s => s.rm_sku === sku).length;
     const demCount = db.demand_forecast_log.filter(f => f.sku === sku).length;
     const orderCount = db.actual_order.filter(o => o.sku === sku).length;
     const invCount = db.inventory_wip_snapshot.filter(i => i.sku === sku).length;
     const poCount = db.po_in_transit.filter(p => p.rm_sku === sku).length;
     if (bomCount) impacts.push(`產品模具成型關聯檔：${bomCount} 筆`);
-    if (yieldCount) impacts.push(`Sorting良率標準檔：${yieldCount} 筆`);
-    if (supCount) impacts.push(`採購與供應商規則檔：${supCount} 筆`);
     if (demCount) impacts.push(`業務預估需求檔：${demCount} 筆`);
     if (orderCount) impacts.push(`實際訂單檔：${orderCount} 筆`);
     if (invCount) impacts.push(`庫存與待驗快照檔：${invCount} 筆`);
@@ -214,17 +210,14 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
   const tableData = useMemo(() => (db as any)[activeTable] as Record<string, unknown>[], [db, activeTable]);
 
   const tablesMeta = [
-    { key: 'item_master' as TableKey, label: '料號基本主檔', dept: '資材(生管)', count: db.item_master.length, icon: Layers },
+    { key: 'item_master' as TableKey, label: '品號主檔 (含良率/採購規則)', dept: '資材(生管)', count: db.item_master.length, icon: Layers },
     { key: 'mold_master' as TableKey, label: '模具與產能主檔', dept: '製造', count: db.mold_master.length, icon: Cpu },
     { key: 'product_mold_bom' as TableKey, label: '產品模具成型關聯檔', dept: '工程', count: db.product_mold_bom.length, icon: Boxes },
-    { key: 'yield_master' as TableKey, label: 'Sorting良率標準檔', dept: '製造', count: db.yield_master.length, icon: ShieldCheck },
-    { key: 'supplier_rule_master' as TableKey, label: '採購與供應商規則檔', dept: '資材(生管)', count: db.supplier_rule_master.length, icon: Truck },
     { key: 'demand_forecast_log' as TableKey, label: '業務預估需求檔', dept: '業務', count: db.demand_forecast_log.length, icon: FileSpreadsheet },
     { key: 'actual_order' as TableKey, label: '實際訂單檔', dept: '業務', count: db.actual_order.length, icon: PackageCheck },
     { key: 'inventory_wip_snapshot' as TableKey, label: '庫存與待驗快照檔', dept: '資材(生管)', count: db.inventory_wip_snapshot.length, icon: Database },
     { key: 'po_in_transit' as TableKey, label: '在途採購訂單檔', dept: '資材(生管)', count: db.po_in_transit.length, icon: Truck },
     { key: 'sorting_actual_yield_log' as TableKey, label: 'Sorting 實際良率紀錄檔', dept: '製造', count: (db as any).sorting_actual_yield_log?.length ?? 0, icon: ClipboardList },
-    { key: 'color_mixing_log' as TableKey, label: '色母/色粉混合製程紀錄檔', dept: '工程', count: (db as any).color_mixing_log?.length ?? 0, icon: Beaker },
   ];
 
   const getRecordKey = (record: Record<string, unknown>) =>

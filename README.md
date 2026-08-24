@@ -1,20 +1,21 @@
 # 料事如神系統 — Predictive Material System (PMS)
 
 > **QCC 料事如神圈 · 射出成型智能備料與產能排程推估平台**  
-> Baseline Version：`V-20260823-52` | Developed by Wesley Chang @Mouldex, Aug-2026
+> Baseline Version：`V-20260824-01` | Developed by Wesley Chang @Mouldex, Aug-2026  
+> 軟體工程準則：Andrej Karpathy 軟體工程核心準則（謀定而後動 · 簡潔至上 · 外科手術式精準修改 · 目標導向與閉環驗證）
 
 ---
 
 ## 系統概述
 
-料事如神系統 (PMS) 是一套專為**射出成型製造業**設計的前端智能物料需求運算與資料維運平台。系統以全瀏覽器本地端運行（LocalStorage 持久化），無需後端伺服器，即可完成從客戶預測 (Forecast) 到採購決策的完整 3 階 MRP 推導、雙週出貨可行性審查、訂單全鏈路物料緊張度追蹤與數據鏈路穿透模擬。
+料事如神系統 (PMS) 是一套專為**射出成型醫材與精密製造業**設計的前端智能物料需求運算與資料維運平台。系統以全瀏覽器本地端運行（LocalStorage 持久化），無需後端伺服器，即可完成從客戶預示量 (Forecast)、實單 (PO) 到採購決策的完整 3 階 MRP 推導、雙週出貨可行性審查、訂單全鏈路物料緊張度追蹤與數據鏈路穿透模擬。
 
 **核心解決問題：**
-- 快速判斷「現有庫存 + WIP + 在途料」能否滿足客戶需求與雙週出貨排程
-- 自動展開原料毛需求（BOM 爆炸），結合良率與損耗率精算
-- 動態產能排程，識別產能瓶頸（赤字天數、塞穴降級、時序差與虛擬預扣）
-- 採購決策輔助：建議採購量（向上取整 MOQ、分批到貨防爆倉）與最晚下單日
-- 訂單物料緊張度 6 大環節瓶頸診斷與全數據鏈路健康度排查
+- **三向交叉比對與防斷料**：同屏比對「預示量、實單、歷史同期」，自動計算預測偏差率 (Bias%) 與三色燈號預警。
+- **前瞻採購時程推算**：依據 Lead Time 自動倒推最晚發單日與倒數防線，杜絕因海運長交期導致停線斷料。
+- **3 階 MRP 算式透明化**：白盒展開成品淨缺口、模具單穴耗料克重、安全存量與 MOQ 向上整補完整推導履歷。
+- **出貨協調會賦能**：每週二出貨排程審查看板快速推算「現有庫存 + 3F WIP待驗良品折算」，5 分鐘內完成放行決策。
+- **高內聚 7 大核心主檔**：消除多頭維護，良率標準與採購規則直合於品號主檔，遵循 3NF 關聯式架構。
 
 ---
 
@@ -46,7 +47,7 @@ npm run dev
 # → 開啟 http://localhost:3000
 ```
 
-> **注意：** 本系統為純前端架構，`.env` 設定（`GEMINI_API_KEY`）僅供後端 API 預留架構使用，純 UI 功能無需配置。
+> **注意：** 本系統為純前端架構，支援開箱即用 52 筆工業級示範庫 (DEMO) 與正式生產數據 (PROD) 智慧雙模切換。
 
 ---
 
@@ -55,41 +56,37 @@ npm run dev
 ```
 料事如神系統 (PMS)
 ├── 📊 [決策戰情 War Room]
-│   ├── 綜合戰情儀表板 (DashboardView) — MRP 全局告警、庫存熱圖、客戶預測偏差分析
+│   ├── 綜合戰情儀表板 (DashboardView) — 三向需求交叉比對看板、客戶預測偏差分析 (Bias%)、備料透明度背書
 │   ├── 週二出貨審查看板 (ShipScheduleClearanceView) — 雙週出貨可行性放行審查、良品+WIP折算、What-If 模擬
 │   └── 訂單物料示警 (OrderTensionTrackerView) — 逐筆訂單 6 大供應鏈瓶頸診斷、4 級緊張度告警與應變 SOP
 ├── 🧮 [物料推導 MRP Engine]
-│   └── 3 階 MRP 推導 (MrpCalculatorView) — 單品/全品 MRP 推導、分批到貨排程建議、多版本需求比較
+│   └── 3 階 MRP 推導 (MrpCalculatorView) — 單品/全品 MRP 推導、白盒推導履歷抽屜、採購排程時間軸與防斷料倒數
 ├── 🗄️ [數據中心 Data Center]
-│   ├── 10 大主檔維護 (DataTablesView) — 10 張主檔 CRUD 與 3 級變更管制（不含 audit_log）
+│   ├── 7 大核心主檔維護 (DataTablesView) — 7 大核心主檔 CRUD 與 3 級變更管制（含 FK 影響掃描）
 │   ├── 五層物料分類體系 (MaterialClassManagementView) — RAW/MAT/PART/COMP/SET 樹狀分類管理
-│   └── 資料交換與鏈路模擬 (DataExchangeView) — JSON/Excel 匯出入、全數據鏈路深度模擬與防斷鏈診斷
+│   └── 資料交換與鏈路模擬 (DataExchangeView) — JSON/Excel 雙向無損匯出入、全數據鏈路深度模擬與防斷鏈診斷
 └── ⚙️ [系統支援 System & Support]
-    ├── 參數策略配置 (SystemSettingsView) — 系統參數配置（預警門檻/排程策略/虛擬預扣開關）
-    ├── 專業術語辭典 (GlossaryView) — 7 大分類專有名詞檢索與通俗定義
-    ├── PRD 設計規格書 (PrdDocView) — 系統設計規格文件瀏覽器
+    ├── 參數策略配置 (SystemSettingsView) — 系統參數配置（預警門檻/排程策略/虛擬預扣開關/損耗率天花板）
+    ├── 專業術語辭典 (GlossaryView) — 7 大分類專有名詞檢索 + 主檔案全欄位權威白話定義庫 (90+ 欄位)
+    ├── PRD 規格文件 (PrdDocView) — 15 大核心可驗收目標 (OBJ-01 ~ OBJ-15) 規格與 DoD 驗收總表
     └── 自動化備份與復原 (BackupSettingsView) — 自動備份排程、恢復備份檔（Admin 模式）
 ```
 
 ---
 
-## 資料模型 — 10 大主檔
+## 資料模型 — 7 大核心營運主檔 (3NF 高內聚架構)
 
 | # | 主檔名稱 | 主鍵 | 說明 |
 |---|----------|------|------|
-| 1 | **料號基本主檔** (item_master) | `sku` | 成品/原料品號、客戶代碼、計量單位、五層分類 |
-| 2 | **模具產能主檔** (mold_master) | `mold_id` | 穴數、週期時間、日產能、機型與產線 |
-| 3 | **產品模具 BOM** (product_mold_bom) | `sku + mold_id` | 原料用料展開、損耗率、有效期 |
-| 4 | **良率標準檔** (yield_master) | `sku` | Sorting 全檢良率（僅 PART/COMP/SET）|
-| 5 | **採購供應商規則** (supplier_rule_master) | `rm_sku` | 交期、MOQ、安全庫存、單價 |
-| 6 | **業務需求預測** (demand_forecast_log) | `demand_id` | 分版本預估需求量 |
-| 7 | **實際訂單** (actual_order) | `order_id` | 確認訂單量、交期 |
-| 8 | **庫存 WIP 快照** (inventory_wip_snapshot) | `snapshot_date + sku` | 成品在庫、待驗品、原料庫存 |
-| 9 | **在途採購訂單** (po_in_transit) | `po_number` | 在途原料量、到廠日、ETA 偏差天數 |
-| 10 | **Sorting 良率紀錄** (sorting_actual_yield_log) | `log_id` | 全檢實際良率歷史軌跡（Phase 3）|
+| 1 | **品號主檔** (`item_master`) | `sku` | 成品/原料身分證，**已直接合入良率標準與採購規則**（交期/MOQ/安全存量） |
+| 2 | **模具與產能主檔** (`mold_master`) | `mold_id` | 妥善穴數、成型週期秒數、日產能計算值與模具運行狀態 |
+| 3 | **產品模具成型 BOM** (`product_mold_bom`) | `sku + mold_id` | 整模克重、流道克重、成型損耗率、**直接內嵌色母/色粉配比** |
+| 4 | **業務預估需求檔** (`demand_forecast_log`) | `demand_id` | 客戶滾動預示量 (Rolling Forecast) 與需求交期 |
+| 5 | **實際訂單檔** (`actual_order`) | `order_id` | 正式客戶合約訂單 (Customer PO)、下單日期與約定交期 |
+| 6 | **庫存與待驗快照檔** (`inventory_wip_snapshot`) | `snapshot_date + sku` | 4F 成品良品在庫、3F Sorting 待驗品、1F 原料可用庫存 |
+| 7 | **在途採購訂單檔** (`po_in_transit`) | `po_number` | 在途原料採購量、預計到廠日 (ETA) 與在途物流狀態 |
 
-另包含 **變更審計日誌** (audit_log)：記錄所有 Level 2/3 主檔異動（僅匯出，禁止匯入覆蓋）。
-另含 **物料分類體系** (material_classes)：五層樹狀分類（RAW/MAT/PART/COMP/SET），支援無限子節點。
+*附屬檔：`material_classes`（五層物料樹）、`sorting_actual_yield_log`（全檢實際良率歷史軌跡）、`audit_log`（異動審計日誌）。*
 
 ---
 
@@ -101,32 +98,13 @@ Phase 1 → 成品淨需求
 
 Phase 2 → 原料毛需求 (BOM 爆炸)
   FG 淨需求 × 單穴克重 ÷ (1 - 損耗率) ÷ 1000 = 原料毛需求 (KG)
+  (若有色母配比，同步計算色料毛需求 = 原料毛需求 × 配比%)
 
 Phase 3 → 採購決策
-  原料毛需求 - 原料在庫 - 在途原料 × 安全庫存係數 = 原料淨需求
+  原料毛需求 - (有效原料庫存 + 在途 PO) + 安全庫存 = 原料淨需求
   → 建議採購量 (向上取整至 MOQ 倍數)
   → 建議最晚下單日 (Target Date - Lead Time Days)
 ```
-
----
-
-## 系統參數（可配置，共 13 項）
-
-| 參數 | 預設值 | 說明 |
-|------|--------|------|
-| 採購緊急警戒天數 | 15 天 | 距最晚下單日低於此值觸發紅色告警 |
-| 供需超備倍數門檻 | 1.6 x | 庫存/需求 > 此倍數觸發滯料告警 |
-| 全廠倉容上限 | 12,000 KG | 單項原料實體倉容天花板 |
-| 多模備料策略 | 最保守重量 | 多模時選最大原料耗用量 |
-| 需求彙總模式 | 累加模式 | Forecast + Order 加總（可改為 PO 消耗/僅預測/僅訂單）|
-| 每日有效工時 | 24.0 小時 | 排程產能基礎 |
-| 產能瓶頸裕度天數 | 0 天 | 超出產能時的緩衝天數（赤字告警門檻）|
-| 塞穴告警門檻 | 100% | 穴數損耗達到此比例時觸發告警 |
-| 預設全檢良率 | 0.98 | 未指定時的 Sorting 良率基準 |
-| 預設成型損耗率 | 0.03 | 未指定時的 Mold BOM 損耗率 |
-| 預設採購交期 | 90 天 | 未指定時的 Supplier Rule 交期 |
-| 預設 MOQ | 1,000 KG | 未指定時的最低起訂量 |
-| 安全庫存係數 | 1.0 | 全廠安全庫存動態乘數 |
 
 ---
 
@@ -134,13 +112,12 @@ Phase 3 → 採購決策
 
 | 版本 | 日期 | 說明 |
 |------|------|------|
-| V-20260823-52 | 2026-08-23 | Smart Filter Hub 實作：MrpCalculatorView SKU 搜尋下拉選單 + ShipScheduleClearanceView 類別膠囊/即時搜尋、全域死碼 import 清理（7 檔案 14 處）、版本號對齊至 V-20260823-52 |
-| V-20260823-29 | 2026-08-23 | 52 筆代表性物料數據鏈與開箱智慧雙模換檔機制版、通配選擇器污染根除 (CAPA-011) |
-| V-20260823-16 | 2026-08-23 | 週二出貨審查看板、預測偏差分析、WIP 日動態推估、虛擬預扣、分批到貨排程建議、訂單緊張度引擎 |
-| V-20260821-22 | 2026-08-21 | 全域優化：移除 dead export、清理懸空依賴（motion/autoprefixer/esbuild/tsx）、修正 Demo 數據 material_class 欄位與 MrpCalculatorView SKU 篩選 Bug、Navbar 硬編日期動態化、同步更新 README/DEV_LOG |
-| V-20260821-21 | 2026-08-21 | SET 分類描述修正，明確支援直接 PART 一次組裝路徑；全域「8 大→10 大」文字盤點 |
-| V-20260821-20 | 2026-08-21 | 五層物料分類體系、FieldArchitectureAudit_Report、H-01~H-03 校驗函式、M-01~M-06 欄位擴充 |
-| V-20260820-12 | 2026-08-20 | 首個完整基準版本。10 大主檔 CRUD、3 階 MRP 引擎、JSON/Excel 雙向匯出入、3 級變更管制審計日誌、Light/Dark 雙主題、PRD 規格辭典模組 |
+| **V-20260824-01** | 2026-08-24 | **業務核心需求 15 大可驗收目標確立與 Karpathy 軟體工程準則全域植入版**：三向交叉比對看板、白盒推導履歷抽屜、採購排程時間軸、7 大核心主檔收斂與去冗、90+ 主檔全欄位名稱定義庫入庫、PRD 規格書 V1.3.0 發布、單元測試 100% 通過。 |
+| V-20260823-52 | 2026-08-23 | Smart Filter Hub 實作：MrpCalculatorView SKU 搜尋下拉選單 + ShipScheduleClearanceView 類別膠囊/即時搜尋、全域死碼 import 清理、版本號對齊。 |
+| V-20260823-29 | 2026-08-23 | 52 筆代表性物料數據鏈與開箱智慧雙模換檔機制版、通配選擇器污染根除 (CAPA-011)。 |
+| V-20260823-16 | 2026-08-23 | 週二出貨審查看板、預測偏差分析、WIP 日動態推估、虛擬預扣、分批到貨排程建議、訂單緊張度引擎。 |
+| V-20260821-20 | 2026-08-21 | 五層物料分類體系、FieldArchitectureAudit_Report、H-01~H-03 校驗函式。 |
+| V-20260820-12 | 2026-08-20 | 首個完整基準版本。主檔 CRUD、3 階 MRP 引擎、JSON/Excel 雙向匯出入、3 級變更管制審計日誌。 |
 
 ---
 
@@ -149,29 +126,38 @@ Phase 3 → 採購決策
 ```
 src/
 ├── main.tsx                  # 應用入口，ThemeProvider 包裝
-├── App.tsx                   # 根元件：路由、Toast、LocalStorage 持久化
-├── types.ts                  # 全局 TypeScript 型別定義（10 主檔 + MRP 結果 + 系統參數 + 物料分類）
+├── App.tsx                   # 根元件：路由、Toast、LocalStorage 持久化、雙模切換
+├── types.ts                  # 全局 TypeScript 型別定義（7 核心主檔 + MRP 結果 + 系統參數 + 物料分類）
 ├── index.css                 # 全局樣式（Tailwind base + 自定義 utility）
 ├── context/
 │   └── ThemeContext.tsx      # 主題狀態管理（Light/Dark + LocalStorage 持久化）
 ├── data/
-│   └── seedData.ts           # 三套資料庫：EMPTY / DEMO_SAMPLE / INITIAL
+│   ├── seedData.ts           # 52 筆全階層貫通代表性物料資料庫
+│   ├── glossaryData.ts       # 專業術語辭典基礎資料
+│   └── masterFieldDictionary.ts # 7 大主表 90+ 欄位權威業務定義字典
 ├── utils/
-│   ├── mrpEngine.ts          # 3 階 MRP 計算核心引擎
-│   ├── dataExchange.ts       # JSON/Excel 匯出入 + 資料規格字典
+│   ├── mrpEngine.ts          # 3 階 MRP 計算核心引擎（白盒推導 + 分批到貨 + 虛擬預扣）
+│   ├── demandAnalysisEngine.ts # 三向需求交叉比對與預測偏差 (Bias%) 分析引擎
+│   ├── wipEngine.ts          # WIP 日動態推估公式計算器（消除夜班 12h 時序差）
+│   ├── orderTensionEngine.ts # 訂單全鏈路 6 大環節瓶頸診斷引擎
+│   ├── dataExchange.ts       # JSON/Excel 雙向匯出入 + 資料填報規範字典
 │   ├── fieldMeta.ts          # 主檔欄位元數據（編輯等級、型態、驗證規則）
+│   ├── dataIntegrityScanner.ts # MECE 數據鏈路健康度與孤兒資料掃描器
 │   ├── backupService.ts      # 自動備份排程與本地存儲管理
 │   └── materialClassValidation.ts  # 五層物料分類驗證工具（SKU 前綴推斷、FK 校驗）
 └── components/
-    ├── Navbar.tsx             # 頂部導覽列（8 頁籤 + 主題切換 + 告警徽章 + 動態日期）
-    ├── DashboardView.tsx      # 決策戰情室（全局 MRP 摘要 + 告警列表）
-    ├── MrpCalculatorView.tsx  # MRP 計算器（單品推導 + 多版本比較）
-    ├── SystemSettingsView.tsx # 系統參數配置面板
-    ├── DataTablesView.tsx     # 10 大主檔 CRUD（3 級變更管制）
-    ├── DataExchangeView.tsx   # 無損資料中心（JSON/Excel 匯出入）
+    ├── Navbar.tsx             # 頂部導覽列（導航頁籤 + 主題切換 + 告警徽章 + Telemetry 雙模徽章）
+    ├── DashboardView.tsx      # 決策戰情室（三向需求交叉比對 + 預測偏差分析 + 供需透明度）
+    ├── MrpCalculatorView.tsx  # MRP 計算器（白盒推導履歷抽屜 + 防斷料倒數時間軸 + 採購建議）
+    ├── ShipScheduleClearanceView.tsx # 週二出貨排程審查看板（雙週放行審查 + What-If 模擬）
+    ├── OrderTensionTrackerView.tsx   # 訂單物料緊張追蹤看板（6 大環節穿透診斷 + RCA 應變）
+    ├── SystemSettingsView.tsx # 系統參數配置面板（沖銷模式/虛擬預扣/損耗率天花板）
+    ├── DataTablesView.tsx     # 7 大核心主檔 CRUD（3 級變更管制 + FK 影響掃描）
+    ├── DataExchangeView.tsx   # 無損資料中心（雙模換檔 + Excel/JSON 雙向匯出入 + 穿透模擬）
+    ├── GlossaryView.tsx       # 專業術語辭典（含 📊 主檔案欄位名稱定義表專屬專題）
+    ├── MaterialClassManagementView.tsx  # 五層物料分類樹管理 (RAW/MAT/PART/COMP/SET)
     ├── BackupSettingsView.tsx # 備份與復原設定面板
-    ├── MaterialClassManagementView.tsx  # 五層物料分類樹管理
-    └── PrdDocView.tsx         # PRD 規格辭典瀏覽器
+    └── PrdDocView.tsx         # PRD 規格與 15 大核心可驗收目標 (OBJ-01 ~ OBJ-15) 檢視
 ```
 
 ---

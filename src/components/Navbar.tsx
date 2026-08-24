@@ -219,7 +219,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         tabs: [
           { id: 'system_settings', label: '參數策略配置', subLabel: 'System Config', icon: SlidersHorizontal },
           { id: 'glossary', label: '專業術語辭典', subLabel: 'Glossary', icon: BookOpen },
-          { id: 'prd_docs', label: 'PRD 設計規格書', subLabel: 'PRD & Spec', icon: FileText },
+          { id: 'prd_docs', label: 'PRD 規格與驗收總表', subLabel: 'PRD & Verification', icon: FileText },
           ...(adminUnlocked
             ? [
                 {

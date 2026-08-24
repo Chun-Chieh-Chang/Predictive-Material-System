@@ -109,7 +109,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { id: 'system_settings', label: '參數策略設定', sub: 'System Config', icon: SlidersHorizontal },
       { id: 'glossary', label: '專業術語辭典', sub: 'Glossary', icon: BookOpen },
-      { id: 'prd_docs', label: 'PRD 規格辭典', sub: 'PRD & Spec', icon: FileText },
+      { id: 'prd_docs', label: 'PRD 規格與驗收總表', sub: 'PRD & Verification', icon: FileText },
     ],
   },
 ];

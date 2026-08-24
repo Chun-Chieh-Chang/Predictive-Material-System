@@ -24,10 +24,8 @@ import {
 // ─── 各表最低欄位定義（用於完整性驗證）─────────────────────────────────────────
 const TABLE_SCHEMA_MIN = {
   item_master:          ['sku', 'customer_id', 'category'],
-  mold_master:          ['mold_id', 'design_cavities', 'cycle_time_sec'],
+  mold_master:          ['mold_id', 'active_cavities', 'cycle_time_sec'],
   product_mold_bom:     ['sku', 'mold_id', 'rm_sku', 'net_mold_weight_g'],
-  yield_master:         ['sku', 'std_sorting_yield'],
-  supplier_rule_master: ['rm_sku', 'supplier_name', 'lead_time_days', 'moq_kg'],
   demand_forecast_log:  ['demand_id', 'sku', 'target_date', 'demand_qty'],
   actual_order:         ['order_id', 'sku', 'target_date', 'order_qty'],
   inventory_wip_snapshot: ['snapshot_date', 'sku'],
@@ -72,12 +70,11 @@ function countRecords(db: SystemDatabase): number {
     db.item_master.length +
     db.mold_master.length +
     db.product_mold_bom.length +
-    db.yield_master.length +
-    db.supplier_rule_master.length +
     db.demand_forecast_log.length +
     db.actual_order.length +
     db.inventory_wip_snapshot.length +
     db.po_in_transit.length +
+    ((db as any).sorting_actual_yield_log?.length ?? 0) +
     (db.audit_log?.length ?? 0)
   );
 }

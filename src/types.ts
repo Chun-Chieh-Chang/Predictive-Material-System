@@ -25,80 +25,72 @@ export interface MaterialClass {
   business_type: MaterialBusinessType; // 對應業務處理模式
 }
 
-/** 擴展的料號主檔（含分類字段） */
+/** 擴展的料號主檔（含分類字段）
+ *  V2.0 (Plan B): 合入 YieldMaster 與 SupplierRuleMaster 的核心欄位
+ *  RAW 類原料才填 std_sorting_yield / lead_time_days / moq_kg / safety_stock_kg / supplier_name
+ *  PART/COMP/SET 類成品才填 std_sorting_yield（全檢良率）
+ */
 export interface ItemMaster {
-  sku: string; // 品號 (PK)
-  alt_sku?: string | null; // 替代品號
-  customer_id: string; // 客戶代碼 (MDX, ICU, etc.)
-  category: string; // 產品/原料種類 (T接頭, ABS, etc.)
-  color?: string; // 外觀顏色
-  unit: string; // 計量單位 (PCS, KG)
-  description?: string; // 說明備註
-  // 分類體系字段（可選，舊資料無此欄位）
-  material_class?: MaterialClassCode | null;
-  material_class_label?: string | null; // 分類完整路徑標籤（e.g. RAW > ABS/MABS）
+  sku: string;                          // 品號 (PK)
+  alt_sku?: string | null;              // 替代品號 (可選)
+  customer_id: string;                  // 客戶代碼 (MDX, ICU, etc.)
+  category: string;                     // 產品/原料種類 (T接頭, ABS, etc.)
+  color?: string;                       // 外觀顏色
+  unit: string;                         // 計量單位 (PCS, KG)
+  description?: string;                 // 說明備註
+  material_class?: MaterialClassCode | null; // 分類代碼 (RAW / MAT / PART / COMP / SET)
+  // ── 合入自 yield_master（僅 PART/COMP/SET 類填寫）──
+  std_sorting_yield?: number | null;    // 標準全檢良率 (e.g. 0.98 = 98%)，null = 使用系統預設值
+  // ── 合入自 supplier_rule_master（僅 RAW 類填寫）──
+  supplier_name?: string | null;        // 供應商名稱
+  lead_time_days?: number | null;       // 採購交期_天 (國外海運 90~150 天)
+  moq_kg?: number | null;              // 最小起訂量_KG
+  safety_stock_kg?: number | null;     // 安全庫存量_KG
 }
 
-// 2. Mold Master (模具與產能主檔)
+// 2. Mold Master (模具與產能主檔) V2.0 (Plan B): 核心運算以 active_cavities 為準
 export interface MoldMaster {
-  mold_id: string; // 模具編號 (PK) (e.g. MI17193)
-  design_cavities: number; // 設計穴數 (原: 完整穴數)
-  active_cavities: number; // 妥善穴數 (原: 現況穴數)
-  cycle_time_sec: number; // 成型週期_秒
-  daily_capacity?: number; // 系統動態計算: (86400 / cycle_time_sec) * active_cavities
+  mold_id: string;          // 模具編號 (PK) (e.g. MI17193)
+  active_cavities: number;  // 妥善穴數（現場實際注膠穴數，已扣除塞穴）
+  design_cavities?: number; // 原始設計穴數 (可選備註)
+  cycle_time_sec: number;   // 成型週期_秒
+  daily_capacity?: number;  // 系統動態計算: (86400 / cycle_time_sec) * active_cavities
+  location?: string;        // 模具存放/機台位置 (可選)
   status?: 'active' | 'maintenance' | 'trial' | 'retired';
-  location?: string;
-  machine_type?: string;    // 成型機型號 (M-03)
-  production_line?: string; // 產線編號 (M-03)
 }
 
-// 3. Product Mold BOM (產品模具成型關聯檔)
+// 3. Product Mold BOM (產品模具成型關聯檔) V2.0 (Plan B)
 export interface ProductMoldBOM {
-  sku: string; // 品號 (FK)
-  mold_id: string; // 模具編號 (FK)
-  rm_sku: string; // 使用原料品號 (FK，僅 RAW 類)
-  net_mold_weight_g: number; // 整模重量_克 (不含流道)
-  runner_weight_g: number; // 流道重量_克
-  unit_weight_g?: number; // 系統動態計算: (net_mold_weight_g + runner_weight_g) / active_cavities
-  is_primary_mold: boolean; // 是否為主模 (Primary)
-  std_mfg_scrap_rate: number; // 標準生產損耗率 (e.g. 0.03 for 3%)
-  color_mixing_ratio_pct?: number | null; // 色母/色粉混合配比百分比 (e.g. 0.03 = 3%，null/0 = 純原料無配色)
-  remarks?: string; // 驗證狀態備註
-  valid_from: string;   // BOM 生效起始日 (YYYY-MM-DD, M-05)
-  valid_to: string | null; // BOM 失效日，null = 至今有效 (M-05)
+  sku: string;                           // 品號 (FK)
+  mold_id: string;                       // 模具編號 (FK)
+  rm_sku: string;                        // 使用原料品號 (FK，僅 RAW 類)
+  net_mold_weight_g: number;             // 整模重量_克（不含流道）
+  runner_weight_g: number;               // 流道重量_克
+  unit_weight_g?: number;                // 系統動態計算: (net_mold_weight_g + runner_weight_g) / active_cavities
+  is_primary_mold: boolean;              // 是否為主模 (Primary)
+  std_mfg_scrap_rate: number;           // 標準生產損耗率 (e.g. 0.03 = 3%)
+  color_mixing_ratio_pct?: number | null; // 色母/色粉混合配比 (e.g. 0.03 = 3%；null/0 = 純原料)
+  remarks?: string;                     // 備註驗證狀態 (可選)
+  valid_from?: string;                  // BOM生效日 (可選)
+  valid_to?: string | null;             // BOM失效日 (可選)
 }
 
-// 4. Yield Master (Sorting良率標準檔 - 權責: 製造)
-export interface YieldMaster {
-  sku: string; // 品號 (PK, FK)
-  std_sorting_yield: number; // 標準全檢良率 (e.g. 0.98 for 98%)
-  notes?: string; // 備註說明
-}
+// NOTE (V2.0 Plan B): YieldMaster 與 SupplierRuleMaster 已合入 ItemMaster，以下 interface 已廢棄刪除。
+// std_sorting_yield → ItemMaster.std_sorting_yield
+// lead_time_days / moq_kg / safety_stock_kg / supplier_name → ItemMaster 同名欄位（RAW 類才填）
 
-// 5. Supplier Rule Master (採購與供應商規則檔)
-export interface SupplierRuleMaster {
-  rm_sku: string; // 原料品號 (PK, FK，僅 RAW 類)
-  supplier_name: string; // 供應商名稱
-  lead_time_days: number; // 採購交期_天 (國外海運 90~150天)
-  moq_kg: number; // 最小起訂量_KG
-  safety_stock_kg: number; // 安全庫存量_KG
-  max_storage_capacity_kg?: number; // 實體倉容上限_KG
-  unit_price_usd?: number; // 預估單價 (USD/KG)
-  unit_price_twd?: number; // 預估單價 (TWD/KG, M-04)
-}
-
-// 6. Demand Forecast Log (業務預估需求檔)
+// 6. Demand Forecast Log (業務預估需求檔) V2.0 (Plan B)
 export interface DemandForecastLog {
-  demand_id: string; // 需求序號 (PK)
-  version_no: string; // 預估版本號 (e.g. 202608-W1)
-  customer_id: string; // 客戶代碼
-  sku: string; // 需求品號 (FK)
-  target_date: string; // 需求交期 (YYYY-MM-DD)
-  demand_qty: number; // 預估需求量_PCS
-  created_by_id: string; // 操作者帳號 ID (M-02，原 created_by)
-  created_by_name?: string | null; // 顯示用姓名 (M-02)
-  created_at: string; // 建立時間
-  notes?: string;
+  demand_id: string;        // 需求序號 (PK)
+  version_no: string;       // 預估版本號 (e.g. 202608-W1)
+  customer_id: string;      // 客戶代碼
+  sku: string;              // 需求品號 (FK)
+  target_date: string;      // 需求交期 (YYYY-MM-DD)
+  demand_qty: number;       // 預估需求量_PCS
+  created_at: string;       // 建立時間 (ISO timestamp)
+  created_by_id?: string;   // 填報業務員ID (可選)
+  created_by_name?: string | null; // 填報業務員名稱 (可選)
+  notes?: string;           // 備註說明 (可選)
 }
 
 // 7. Actual Order (實際訂單檔)
@@ -121,16 +113,16 @@ export interface InventoryWIPSnapshot {
   rm_on_hand_kg: number; // 原料可用庫存_KG (原料倉實體)
 }
 
-// 9. PO In Transit (在途採購訂單檔)
+// 9. PO In Transit (在途採購訂單檔) V2.0 (Plan B)
 export interface POInTransit {
-  po_number: string; // 採購單號 (PK)
-  rm_sku: string; // 原料品號 (FK，僅 RAW 類)
-  in_transit_qty_kg: number; // 在途採購量_KG
-  eta_date: string; // 預計到廠日 (YYYY-MM-DD)
-  actual_arrival_date?: string | null; // 實際到廠日 (M-01)
-  supplier_name?: string;
+  po_number: string;              // 採購單號 (PK)
+  rm_sku: string;                 // 原料品號 (FK，僅 RAW 類)
+  in_transit_qty_kg: number;      // 在途採購量_KG
+  eta_date: string;               // 預計到廠日 (YYYY-MM-DD)
+  actual_arrival_date?: string | null; // 實際到廠日 (可選)
+  eta_variance_days?: number | null;   // ETA 偏差天數 (可選計算值)
+  supplier_name?: string;         // 供應商名稱（顯示用）
   status: 'ordered' | 'shipping' | 'customs' | 'arrived' | 'delayed' | 'partial_arrived';
-  eta_variance_days?: number | null; // computed: actual - eta (M-01)
 }
 
 // 10. Sorting Actual Yield Log (Sorting 實際良率紀錄檔 — Phase 3 動態回饋閉環)
@@ -147,24 +139,8 @@ export interface SortingActualYieldLog {
   created_at: string;         // ISO timestamp
 }
 
-// 11. Color Mixing Log (色母/色粉預先混合製程紀錄檔)
-export interface ColorMixingLog {
-  mix_log_id: string;         // PK: MIX-{YYYYMMDDHHmmss}-{SEQ}
-  batch_no: string;           // 混合批次號（與生产批號關聯）
-  mixing_date: string;        // YYYY-MM-DD
-  operator_id: string;        // 混合作業員 ID
-  base_resin_sku: string;     // FK → item_master.sku（BASE RESIN，RAW 類）
-  base_resin_kg: number;      // 基礎樹脂用量 (KG)
-  colorant_sku: string;       // FK → item_master.sku（色母 CB- 或色粉 CP-，RAW 類）
-  colorant_kg: number;        // 色母/色粉用量 (KG)
-  mixing_ratio_pct: number;   // computed: (colorant_kg / base_resin_kg) * 100
-  total_batch_kg: number;     // computed: base_resin_kg + colorant_kg
-  mold_id?: string | null;    // FK → mold_master.mold_id（對應該成型模具）
-  sku?: string | null;        // FK → item_master.sku（對應的 SET 品號，可選）
-  process_tag?: 'mixed' | 'pre_mix' | 'direct'; // 製程標籤：直接成型/預先混合
-  notes?: string | null;
-  created_at: string;         // ISO timestamp
-}
+// NOTE (V2.0 Plan B): ColorMixingLog 已廢棄刪除。
+// 色母配比資訊已由 product_mold_bom.color_mixing_ratio_pct 承載，現場拌料日誌屬 MES 範疇。
 
 // Change Audit Log Entry (for Level 2 & Level 3 edits)
 // Level 3 = Engineering Change (Method A: mandatory reason)
@@ -183,21 +159,18 @@ export interface ChangeAuditEntry {
   mrp_impact_summary?: string; // Optional MRP delta summary string
 }
 
-// Full Database Schema Container for Export/Import
+// Full Database Schema Container for Export/Import (V2.0 Plan B: 7 core tables)
 export interface SystemDatabase {
-  item_master: ItemMaster[];
-  mold_master: MoldMaster[];
-  product_mold_bom: ProductMoldBOM[];
-  yield_master: YieldMaster[];
-  supplier_rule_master: SupplierRuleMaster[];
-  demand_forecast_log: DemandForecastLog[];
-  actual_order: ActualOrder[];
-  inventory_wip_snapshot: InventoryWIPSnapshot[];
-  po_in_transit: POInTransit[];
-  audit_log: ChangeAuditEntry[]; // Change audit trail (export-only, never import-overwrite)
-  material_classes: MaterialClass[]; // 物料分類樹（匯出時包含，匯入時若無此欄位則保留現有分類）
-  sorting_actual_yield_log: SortingActualYieldLog[]; // Phase 3 動態回饋閉環（初期為空陣列）
-  color_mixing_log: ColorMixingLog[]; // 色母/色粉混合製程紀錄（可為空陣列）
+  item_master: ItemMaster[];                      // 品號主檔（含良率與採購規則，合一）
+  mold_master: MoldMaster[];                      // 模具主檔
+  product_mold_bom: ProductMoldBOM[];             // 產品模具成型 BOM
+  demand_forecast_log: DemandForecastLog[];       // 業務預估需求
+  actual_order: ActualOrder[];                    // 實際訂單
+  inventory_wip_snapshot: InventoryWIPSnapshot[]; // 庫存與待驗快照
+  po_in_transit: POInTransit[];                   // 在途採購訂單
+  audit_log: ChangeAuditEntry[];                  // 異動稽核日誌（匯出用，不覆寫匯入）
+  material_classes: MaterialClass[];              // 物料分類樹
+  sorting_actual_yield_log: SortingActualYieldLog[]; // Phase 3 動態回饋閉環
 }
 
 
@@ -221,8 +194,8 @@ export interface MRPCalculationResult {
 
   // Phase 2: Weight & BOM Explosion
   activeMoldId: string;
-  designCavities: number;
   activeCavities: number;
+  designCavities?: number;
   cycleTimeSec: number;
   dailyCapacityPcs: number;
   netMoldWeightG: number;

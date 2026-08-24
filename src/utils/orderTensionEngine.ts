@@ -83,8 +83,8 @@ export function diagnoseAllOrderTensions(
       const fgReadyQty = latestSnapshot ? latestSnapshot.fg_ready_qty : 0;
       const wipPendingQty = latestSnapshot ? latestSnapshot.wip_pending_qty : 0;
 
-      const yieldRecord = db.yield_master.find((y) => y.sku === order.sku);
-      const sortingYield = yieldRecord ? yieldRecord.std_sorting_yield : params.defaultSortingYield;
+      const yieldItem = db.item_master.find((i) => i.sku === order.sku);
+      const sortingYield = yieldItem?.std_sorting_yield ?? params.defaultSortingYield;
       const wipEffectiveQty = Math.round(wipPendingQty * sortingYield);
 
       const totalSupply = fgReadyQty + wipEffectiveQty;
@@ -96,8 +96,7 @@ export function diagnoseAllOrderTensions(
       const moldRecord = primaryBom ? db.mold_master.find((m) => m.mold_id === primaryBom.mold_id) : undefined;
 
       const activeMoldId = primaryBom?.mold_id || 'DEFAULT_MOLD';
-      const designCavities = moldRecord?.design_cavities || 16;
-      const activeCavities = Math.max(1, moldRecord?.active_cavities || designCavities);
+      const activeCavities = Math.max(1, moldRecord?.active_cavities || 16);
       const cycleTimeSec = moldRecord?.cycle_time_sec || 30;
 
       const dailyOperatingSeconds = (params.dailyOperatingHours || 24) * 3600;
@@ -123,15 +122,10 @@ export function diagnoseAllOrderTensions(
       );
       const rmInTransitKg = rmPOs.reduce((sum, p) => sum + p.in_transit_qty_kg, 0);
 
-      const supplierRule = db.supplier_rule_master.find((s) => s.rm_sku === rmSku) || {
-        lead_time_days: params.defaultProcurementLeadTimeDays,
-        moq_kg: params.defaultMoqKg,
-        safety_stock_kg: 1000,
-        max_storage_capacity_kg: params.defaultWarehouseCapacityKg || 12000
-      };
-
-      const leadTimeDays = supplierRule.lead_time_days || params.defaultProcurementLeadTimeDays;
-      const safetyStockKg = Math.round((supplierRule.safety_stock_kg || 1000) * params.safetyStockMultiplier);
+      // V2.0: lookup from item_master instead of supplier_rule_master
+      const rmItem = db.item_master.find((i) => i.sku === rmSku);
+      const leadTimeDays = rmItem?.lead_time_days ?? params.defaultProcurementLeadTimeDays;
+      const safetyStockKg = Math.round((rmItem?.safety_stock_kg ?? 1000) * params.safetyStockMultiplier);
 
       // 虛擬預扣
       const virtualBackflushKg = params.enableVirtualBackflush
@@ -179,16 +173,16 @@ export function diagnoseAllOrderTensions(
           metricText: `需連續開機 ${requiredProdDays} 天 (交期剩 ${daysToDeliver} 天)`,
           actionGuide: '建議提前投產排線、啟動 24h 滿載加班，或加開備用模具同時射出！'
         });
-      } else if (activeCavities < designCavities) {
+      } else if (moldRecord && moldRecord.status === 'maintenance') {
         bottlenecks.push({
           stage: 'molding_capacity',
           level: 'purple',
           stageName: '模具射出產能',
-          stageBadge: `🟣 模具塞穴 (${activeCavities}/${designCavities}穴)`,
-          title: '模具塞穴導致產能折損與單穴耗料上升',
-          detail: `模具 [${activeMoldId}] 現況僅 ${activeCavities} 穴運作（設計為 ${designCavities} 穴），產能折損 ${(((designCavities - activeCavities) / designCavities) * 100).toFixed(0)}%。`,
-          metricText: `塞穴 ${designCavities - activeCavities} 穴 (折損 ${(((designCavities - activeCavities) / designCavities) * 100).toFixed(0)}%)`,
-          actionGuide: '請模修課安排停機保養修復塞穴，以恢復 100% 原始設計產能。'
+          stageBadge: `🟣 模具維修中`,
+          title: '模具維修保養中，恐延誤開機排產',
+          detail: `模具 [${activeMoldId}] 現況標記為 maintenance (維修中)，需待保養完成後方能投產。`,
+          metricText: `模具狀態: 維修中`,
+          actionGuide: '請模修課加速維修進度，以利如期開機。'
         });
       }
 
@@ -223,7 +217,7 @@ export function diagnoseAllOrderTensions(
 
       // 環節 4：🟠 在途原料船期環節 (In-Transit Sea Freight Delays)
       const delayedPOs = rmPOs.filter(
-        (p) => p.status === 'delayed' || (p.eta_variance_days && p.eta_variance_days > 0)
+        (p) => p.status === 'delayed'
       );
       if (delayedPOs.length > 0) {
         bottlenecks.push({

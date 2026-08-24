@@ -42,11 +42,37 @@ export function App() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Backward compat: ensure audit_log field exists
+        // Backward compat: ensure required array fields exist
         if (!parsed.audit_log) parsed.audit_log = [];
         if (!parsed.material_classes) parsed.material_classes = [];
         if (!parsed.sorting_actual_yield_log) parsed.sorting_actual_yield_log = [];
-        if (!parsed.color_mixing_log) parsed.color_mixing_log = [];
+
+        // V2.0 Scheme B Migration: merge legacy yield_master and supplier_rule_master into item_master
+        if (Array.isArray(parsed.yield_master)) {
+          parsed.yield_master.forEach((y: any) => {
+            const item = parsed.item_master?.find((i: any) => i.sku === y.sku);
+            if (item && y.std_sorting_yield != null && item.std_sorting_yield == null) {
+              item.std_sorting_yield = y.std_sorting_yield;
+            }
+          });
+          delete parsed.yield_master;
+        }
+        if (Array.isArray(parsed.supplier_rule_master)) {
+          parsed.supplier_rule_master.forEach((s: any) => {
+            const item = parsed.item_master?.find((i: any) => i.sku === s.rm_sku);
+            if (item) {
+              if (s.supplier_name && !item.supplier_name) item.supplier_name = s.supplier_name;
+              if (s.lead_time_days != null && item.lead_time_days == null) item.lead_time_days = s.lead_time_days;
+              if (s.moq_kg != null && item.moq_kg == null) item.moq_kg = s.moq_kg;
+              if (s.safety_stock_kg != null && item.safety_stock_kg == null) item.safety_stock_kg = s.safety_stock_kg;
+            }
+          });
+          delete parsed.supplier_rule_master;
+        }
+        if (parsed.color_mixing_log) {
+          delete parsed.color_mixing_log;
+        }
+
         // M-02: migrate created_by → created_by_id + created_by_name
         if (parsed.demand_forecast_log?.length && parsed.demand_forecast_log[0]['created_by'] !== undefined && parsed.demand_forecast_log[0]['created_by_id'] === undefined) {
           parsed.demand_forecast_log = parsed.demand_forecast_log.map((r: Record<string, unknown>) => ({

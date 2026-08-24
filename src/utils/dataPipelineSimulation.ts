@@ -94,8 +94,8 @@ export function runDeepPipelineSimulation(
     // 構造塞穴模具情境
     const primaryBom = db.product_mold_bom[0];
     const testMold = db.mold_master.find((m) => m.mold_id === primaryBom?.mold_id);
-    const designCav = testMold?.design_cavities || 16;
-    const degradedCav = Math.max(1, designCav - 4); // 塞 4 穴
+    const baseCav = testMold?.active_cavities || 16;
+    const degradedCav = Math.max(1, baseCav - 4); // 塞 4 穴
 
     const degradedDb: SystemDatabase = {
       ...db,
@@ -106,9 +106,9 @@ export function runDeepPipelineSimulation(
 
     const mrpDegraded = calculateMRPForSKU(degradedDb, primaryBom.sku, undefined, undefined, sysParams);
     if (!mrpDegraded) throw new Error(`查無料號 ${primaryBom?.sku} 之降級 MRP 運算結果`);
-    const normalUnitWeight = primaryBom ? (primaryBom.net_mold_weight_g + primaryBom.runner_weight_g) / designCav : 20;
+    const normalUnitWeight = primaryBom ? (primaryBom.net_mold_weight_g + primaryBom.runner_weight_g) / baseCav : 20;
 
-    s2Outputs.designCavities = designCav;
+    s2Outputs.designCavities = baseCav;
     s2Outputs.activeCavities = degradedCav;
     s2Outputs.normalUnitWeightG = Number(normalUnitWeight.toFixed(3));
     s2Outputs.degradedUnitWeightG = mrpDegraded.unitWeightG;
@@ -116,7 +116,7 @@ export function runDeepPipelineSimulation(
 
     // 塞穴時單穴克重必須上升
     s2Passed = mrpDegraded.unitWeightG > normalUnitWeight;
-    s2Findings.push(`✅ 妥善穴數由 ${designCav} 穴降為 ${degradedCav} 穴時，單穴耗料由 ${normalUnitWeight.toFixed(3)}g 上升至 ${mrpDegraded.unitWeightG.toFixed(3)}g (+${s2Outputs.weightInflationPct}%)，產能折損精確聯動！`);
+    s2Findings.push(`✅ 妥善穴數由 ${baseCav} 穴降為 ${degradedCav} 穴時，單穴耗料由 ${normalUnitWeight.toFixed(3)}g 上升至 ${mrpDegraded.unitWeightG.toFixed(3)}g (+${s2Outputs.weightInflationPct}%)，產能折損精確聯動！`);
   } catch (err: any) {
     s2Passed = false;
     s2Findings.push(`❌ 塞穴降級模擬失敗: ${err?.message}`);

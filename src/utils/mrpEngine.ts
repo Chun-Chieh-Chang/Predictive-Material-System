@@ -57,9 +57,9 @@ export function calculateMRPForSKU(
   const fgReadyQty = latestSnapshot ? latestSnapshot.fg_ready_qty : 0;
   const wipPendingQty = latestSnapshot ? latestSnapshot.wip_pending_qty : 0;
 
-  // Yield standard (Fallback to defaultSortingYield)
-  const yieldRecord = db.yield_master.find((y) => y.sku === sku);
-  const sortingYield = yieldRecord ? yieldRecord.std_sorting_yield : params.defaultSortingYield;
+  // Yield standard — V2.0: lookup from item_master.std_sorting_yield
+  const itemRecord = db.item_master.find((i) => i.sku === sku);
+  const sortingYield = itemRecord?.std_sorting_yield ?? params.defaultSortingYield;
 
   // Phase 1: Real FG Gap
   const wipEffectiveQty = Math.round(wipPendingQty * sortingYield);
@@ -111,13 +111,11 @@ export function calculateMRPForSKU(
 
   const activeMold = db.mold_master.find((m) => m.mold_id === activeBOM.mold_id) || {
     mold_id: activeBOM.mold_id,
-    design_cavities: 16,
     active_cavities: 16,
     cycle_time_sec: 30
   };
 
-  const designCavities = activeMold.design_cavities || 16;
-  const activeCavities = Math.max(1, activeMold.active_cavities || designCavities);
+  const activeCavities = Math.max(1, activeMold.active_cavities || 16);
   const cycleTimeSec = activeMold.cycle_time_sec || 30;
 
   // Formula: Daily Capacity = (Daily Operating Seconds / Cycle Time) * Active Cavities
@@ -158,18 +156,19 @@ export function calculateMRPForSKU(
   const rmPOs = db.po_in_transit.filter((p) => p.rm_sku === rmSku && !['arrived', 'partial_arrived'].includes(p.status));
   const rmInTransitKg = rmPOs.reduce((sum, p) => sum + p.in_transit_qty_kg, 0);
 
-  const supplierRule = db.supplier_rule_master.find((s) => s.rm_sku === rmSku) || {
-    rm_sku: rmSku,
-    supplier_name: '預設供應商',
-    lead_time_days: params.defaultProcurementLeadTimeDays,
-    moq_kg: params.defaultMoqKg,
-    safety_stock_kg: 1000
+  // V2.0: lookup supplier rules from item_master (RAW class) instead of supplier_rule_master
+  const rmItem = db.item_master.find((i) => i.sku === rmSku);
+  const supplierRule = {
+    supplier_name: rmItem?.supplier_name || '預設供應商',
+    lead_time_days: rmItem?.lead_time_days ?? params.defaultProcurementLeadTimeDays,
+    moq_kg: rmItem?.moq_kg ?? params.defaultMoqKg,
+    safety_stock_kg: rmItem?.safety_stock_kg ?? 1000,
   };
 
-  const baseSafetyStockKg = supplierRule.safety_stock_kg || 1000;
+  const baseSafetyStockKg = supplierRule.safety_stock_kg;
   const safetyStockKg = Math.round(baseSafetyStockKg * (params.safetyStockMultiplier || 1.0));
-  const moqKg = supplierRule.moq_kg || params.defaultMoqKg;
-  const leadTimeDays = supplierRule.lead_time_days || params.defaultProcurementLeadTimeDays;
+  const moqKg = supplierRule.moq_kg;
+  const leadTimeDays = supplierRule.lead_time_days;
 
   // Virtual Backflush calculation for in-house molding before month-end ERP deduction
   let virtualBackflushDeductedKg = 0;
@@ -210,18 +209,16 @@ export function calculateMRPForSKU(
     const colorantOnHandKg = colorantSnapshot ? colorantSnapshot.rm_on_hand_kg : 0;
     const colorantPOs = db.po_in_transit.filter((p) => p.rm_sku === rmSku && !['arrived', 'partial_arrived'].includes(p.status));
     const colorantInTransitKg = colorantPOs.reduce((sum, p) => sum + p.in_transit_qty_kg, 0);
-    const colorantRule = db.supplier_rule_master.find((s) => s.rm_sku === rmSku) || {
-      moq_kg: params.defaultMoqKg, lead_time_days: params.defaultProcurementLeadTimeDays, safety_stock_kg: 1000
-    };
-    const colorantNetKg = Math.max(0, Number((colorantGrossKg - colorantOnHandKg - colorantInTransitKg + (colorantRule.safety_stock_kg || 1000)).toFixed(2)));
+    const colorantRule = db.item_master.find((i) => i.sku === rmSku);
+    const colorantNetKg = Math.max(0, Number((colorantGrossKg - colorantOnHandKg - colorantInTransitKg + (colorantRule?.safety_stock_kg || 1000)).toFixed(2)));
     colorantDetail = {
       colorantSku: rmSku,
       colorantGrossKg,
       colorantOnHandKg,
       colorantInTransitKg,
       colorantNetRequirementKg: colorantNetKg,
-      colorantSuggestedQtyKg: colorantNetKg > 0 ? Math.ceil(colorantNetKg / (colorantRule.moq_kg || params.defaultMoqKg)) * (colorantRule.moq_kg || params.defaultMoqKg) : 0,
-      colorantLeadTimeDays: colorantRule.lead_time_days || params.defaultProcurementLeadTimeDays,
+      colorantSuggestedQtyKg: colorantNetKg > 0 ? Math.ceil(colorantNetKg / (colorantRule?.moq_kg || params.defaultMoqKg)) * (colorantRule?.moq_kg || params.defaultMoqKg) : 0,
+      colorantLeadTimeDays: colorantRule?.lead_time_days || params.defaultProcurementLeadTimeDays,
     };
   }
 
@@ -278,7 +275,7 @@ export function calculateMRPForSKU(
   }
 
   // Track 2: 🟠 實體倉容超載爆倉預警 (Physical Warehouse Overcapacity Risk)
-  const maxStorageCapacityKg = supplierRule.max_storage_capacity_kg || params.defaultWarehouseCapacityKg || 12000;
+  const maxStorageCapacityKg = params.defaultWarehouseCapacityKg || 12000;
   if (totalRMAvailable > maxStorageCapacityKg) {
     const overflowKg = totalRMAvailable - maxStorageCapacityKg;
     alerts.push({
@@ -297,19 +294,7 @@ export function calculateMRPForSKU(
       level: 'purple',
       title: '🟣 射出產能瓶頸預警 (交期緊迫)',
       description: `成品缺口 ${fgNetRequirementQty.toLocaleString()} PCS，以模具 [${activeMold.mold_id}] 妥善穴數 ${activeCavities} 穴 (日產能 ${dailyCapacityPcs.toLocaleString()} PCS) 計算，需連續生產 ${requiredProdDays} 天；但距離客戶交期僅剩 ${daysToDeliver} 天 (安全裕度 ${params.capacityBufferDays} 天)。`,
-      actionRecommendation: '產能不足！建議提早投線生產、修復塞穴 (恢復至設計穴數 ' + designCavities + ' 穴)，或啟動備用模具同時排產！'
-    });
-  }
-
-  // Cavity Degradation Warning
-  const cavityRatioPercent = (activeCavities / designCavities) * 100;
-  if (cavityRatioPercent < (params.cavityAlertThresholdPercent || 100)) {
-    alerts.push({
-      type: 'bottleneck',
-      level: 'purple',
-      title: `⚙️ 模具塞穴警示 (${designCavities - activeCavities} 穴停用)`,
-      description: `模具 [${activeMold.mold_id}] 設計穴數為 ${designCavities} 穴，目前妥善穴數僅 ${activeCavities} 穴 (妥善率 ${cavityRatioPercent.toFixed(0)}%)。此狀態已使單穴克重自動調升至 ${unitWeightG}g，日產能縮減至 ${dailyCapacityPcs.toLocaleString()} PCS。`,
-      actionRecommendation: '請製造與模具課排程進行模仁保養，恢復全穴數生產以提升產能與良率。'
+      actionRecommendation: '產能不足！建議提早投線生產、修復塞穴，或啟動備用模具同時排產！'
     });
   }
 
@@ -369,7 +354,6 @@ export function calculateMRPForSKU(
     wipEffectiveQty,
     fgNetRequirementQty,
     activeMoldId: activeMold.mold_id,
-    designCavities,
     activeCavities,
     cycleTimeSec,
     dailyCapacityPcs,

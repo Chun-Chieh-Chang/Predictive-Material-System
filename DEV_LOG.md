@@ -8,6 +8,55 @@
 
 ## 版本演進記錄
 
+### V-20260824-01 (2026-08-24) — 業務核心需求 15 大可驗收目標確立與 Karpathy 軟體工程準則全域植入版
+
+**狀態：** ✅ 穩定發布  
+**文件完整性：** 100% MECE 對齊
+
+#### 本版本完成功能清單
+
+**[階段一：植入 Andrej Karpathy LLM 軟體工程核心準則]**
+- 全域植入 `multica-ai/andrej-karpathy-skills` 4 大核心準則（謀定而後動、簡潔至上、外科手術式精準修改、目標導向與閉環驗證）。
+- 同步發布全環境設定：
+  - `.agents/skills/karpathy-guidelines/SKILL.md` (Antigravity/Gemini 本地技能)
+  - `.agents/rules/karpathy-guidelines.md` (Antigravity/Gemini 核心規則)
+  - `CLAUDE.md`, `GEMINI.md`, `AGENTS.md` (根目錄指令規範)
+  - `.cursor/rules/karpathy-guidelines.mdc` (Cursor 專案規則)
+  - `docs/Karpathy_Coding_Guidelines.md` (專案工程標準規格書)
+
+**[階段二：業務核心訴求 15 大具體目標與可驗證標準 (DoD) 確立]**
+- 依據業務單位 5 大核心訴求（掌握度與防斷料、資訊集中、算式透明、全員同台協同、保留 ERP 擴充性），拆解為 15 項量化可驗收目標 (OBJ-01 ~ OBJ-15)。
+- 發布 [PMS_Core_Development_Objectives.md](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/docs/PMS_Core_Development_Objectives.md) 與 [PMS_Business_Requirements_Document.md](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/docs/PMS_Business_Requirements_Document.md)。
+- 建立四階段敏捷落地計畫與自動化/人工驗收標準。
+
+**[階段三：Phase 1 落地實作與減法設計 (Subtraction & High-Signal Optimization)]**
+- **三向需求交叉比對看板 (OBJ-01 & OBJ-02)**：實作 `demandAnalysisEngine.ts`，同屏交叉比對預示量、實單與歷史同期，自動計算偏差率 (Bias%) 與三色燈號預警。
+- **3 階 MRP 算式透明化卡片 (OBJ-08)**：在 `MrpCalculatorView.tsx` 中實裝白盒推導履歷抽屜，點擊即看變數帶入與運算結果。
+- **採購排程時間軸與防斷料倒數 (OBJ-03)**：視覺化展示最晚下單發單日與倒數計時。
+- **減法設計 (Simplicity First Subtraction)**：將戰情室中冗長的 What-If 沙盒預設收合為輕量卡片，消除首頁視覺雜訊，讓關鍵缺料示警與三向需求比對一屏盡覽。
+- **客觀驗證**：`scratch/verify_phase1_engine.py` 數學單元測試 100% 通過 (PASS 5/5)，`npm run build` 0 錯誤。
+
+**[階段四：主檔案欄位全面審查去冗與主檔欄位名稱定義表全量入庫]**
+- **主檔欄位審查與去冗 (Schema Audit & Field Pruning)**：
+  - 審查全系統 11 張主檔表，清理非正規化冗餘欄位 `ItemMaster.material_class_label`，統一回歸五層分類樹與 3NF 關係約束。
+- **主檔全欄位名稱定義表全量建置 (Master Table Field Dictionary)**：
+  - 建立 `src/data/masterFieldDictionary.ts`，逐一為 11 張主表共 90+ 個欄位建立標準定義（中文名稱、英文代碼、型別/約束、業務定義、業務價值、實務範例、MRP 運算關聯）。
+  - 無縫植入「專業術語辭典」[GlossaryView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/GlossaryView.tsx)，新增 `📊 主檔案欄位名稱定義表` 專屬分類。
+  - 發布規格書 [docs/PMS_Data_Dictionary.md](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/docs/PMS_Data_Dictionary.md)。
+
+**[階段五：PRD 需求規格書與 15 大核心目標核查驗收總表發布]**
+- 更新 [PMS_Core_Development_Objectives.md](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/docs/PMS_Core_Development_Objectives.md) 升級為 `V1.3.0`，正式整合並取代先前所有 PRD 設計草案，作為本專案唯一驗收基準。
+- 完整增補「15 大核心目標落地實施與客觀核查驗收總表」，清晰列出每一項目標之對應業務訴求、交付檔案路徑、實施功能特點、DoD 衡量標準與客觀驗證核查結果（15/15 全數 100% 驗收通過）。
+
+**[階段六：主檔案 11 表縮減至 7 表 3NF 閉環與數據交換鏈路無損適配]**
+- **主檔架構收斂 (3NF Plan B)**：依據 Karpathy 簡潔至上原則，將原本碎片化的 11 張主檔精簡合併為 7 大核心營運主檔（良率標準與採購規則直合於品號主檔，色料配比直合於成型 BOM）。
+- **數據鏈路與交互介面無損適配 ([dataExchange.ts](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/utils/dataExchange.ts))**：
+  - 空白匯入範本升級為 `料事如神系統_正式空白匯入範本_v2.0.xlsx`（包含填報規範字典 + 7 大核心主檔 + Sorting實際良率紀錄）。
+  - Excel/JSON 匯入解析器支援直讀合併欄位 (`std_sorting_yield`, `supplier_name`, `lead_time_days`, `moq_kg`, `safety_stock_kg`)，並保持向下相容舊版分表備份。
+  - 完成 [docs/PMS-INV-20260822-02-MasterFileAudit.md](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/docs/PMS-INV-20260822-02-MasterFileAudit.md) 第七章閉環驗收總結。
+
+---
+
 ### V-20260823-29 (2026-08-23) — 52 筆代表性物料數據鏈與開箱智慧雙模換檔機制版
 
 **狀態：** ✅ 穩定發布  

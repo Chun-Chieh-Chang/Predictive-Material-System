@@ -59,5 +59,9 @@ rawdata/
 docs/*.mec-report.json
 *.mec-report.json
 
-# Audit logs — intentionally tracked (for retrospective analysis)
-# docs/.audit/ ← 已移除此排除規則，審計日誌將被提交至版控
+# Scratch temporary artifacts (intermediate parse cache)
+scratch/*.json
+scratch/*.png
+
+# Audit logs runtime checklist
+docs/.audit/*.jsonl

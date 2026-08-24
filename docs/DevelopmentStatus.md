@@ -1,45 +1,44 @@
 # 料事如神（PMS）開發進度與後續計畫
 
-> 版號：`V-20260823-52`　|　更新日期：2026-08-23　|　下次啟動時自動閱讀
+> 版號：`V-20260824-01`　|　更新日期：2026-08-24　|　狀態：✅ 15 大核心業務目標 100% 達成，7 大核心主檔閉環驗收
 
 ---
 
 ## 一、已完成功能清單（Commit 基準）
 
-### 版本 `V-20260823-30`（最新 — 52 筆代表性物料鏈路與全流程防護固化版）
+### 版本 `V-20260824-01`（最新 — 業務 15 大核心可驗收目標與 7 大核心主檔閉環版）
 
-#### 核心運算引擎 (4 大引擎)
+#### 核心運算引擎 (5 大引擎)
 | 項目 | 狀態 | 說明 |
 |------|------|------|
-| MRP 三階計算引擎 | ✅ | `mrpEngine.ts`：FG Net Req → BOM 爆炸 → 採購決策、分批到貨建議、虛擬預扣，支援 PART/COMP/SET 所有可出貨品 |
+| 三向需求交叉比對與偏差分析引擎 | ✅ | `demandAnalysisEngine.ts`：Forecast vs Actual vs 歷史同期三向比對、Bias% 運算、三色警示燈、供需透明度背書 |
+| 3 階白盒 MRP 推導核心引擎 | ✅ | `mrpEngine.ts`：FG Net Req → BOM 爆炸 → 採購決策、分批到貨建議、虛擬預扣，支援白盒推導履歷抽屜展開 |
 | WIP 日動態推估公式計算器 | ✅ | `wipEngine.ts`：$WIP(t) = WIP(t-1) + P(t) - S(t)$，含夜班 12h 無人挑選時序差補償，涵蓋 PART/COMP/SET |
 | 訂單全鏈路物料緊張度診斷引擎 | ✅ | `orderTensionEngine.ts`：6 大供應鏈環節瓶頸掃描、4 級緊張度告警與應變 SOP |
-| 全數據鏈路模擬與孤兒數據排查器 | ✅ | `dataIntegrityScanner.ts` & `dataPipelineSimulation.ts`：4 大業務場景穿透與 10 大主檔關聯校驗 |
+| 全數據鏈路模擬與孤兒數據排查器 | ✅ | `dataIntegrityScanner.ts` & `dataPipelineSimulation.ts`：7 大核心主檔關聯校驗與數據鏈路健康度 100 分防呆 |
 
 #### 業務賦能與視覺化看板 (11 大模組)
 | 視圖模組 | 檔案 | 狀態 | 說明 |
 |---------|------|------|------|
-| 出貨排程可行性審查看板 | `ShipScheduleClearanceView.tsx` | ✅ | 專為每週二出貨會議設計，良品+WIP折算、三色放行燈號、What-If 滑桿（涵蓋 PART/COMP/SET） |
-| 決策戰情室 | `DashboardView.tsx` | ✅ | 歷史預測偏差分析 (Forecast vs Actual)、供需透明度備料客觀背書、MRP 全局告警（涵蓋 PART/COMP/SET） |
+| 決策戰情室 | `DashboardView.tsx` | ✅ | 三向需求交叉比對看板、客戶預測偏差分析 (Bias%)、供需透明度備料客觀背書、MRP 全局告警 |
+| 3階 MRP 推導器 | `MrpCalculatorView.tsx` | ✅ | 單品/全品 MRP 推導、白盒推導履歷抽屜、採購排程時間軸與防斷料倒數卡片、分批進貨建議 |
+| 出貨排程可行性審查看板 | `ShipScheduleClearanceView.tsx` | ✅ | 專為每週二出貨會議設計，良品+3F WIP待驗折算、三色放行燈號、What-If 滑桿 |
 | 訂單物料緊張追蹤看板 | `OrderTensionTrackerView.tsx` | ✅ | 逐筆訂單 6 大環節瓶頸診斷、全文檢索、RCA 與應變 SOP |
-| 3階 MRP 推導器 | `MrpCalculatorView.tsx` | ✅ | 單品/全品 MRP 推導、分批進貨建議 (防 8,000 萬爆倉，解除 SET 限制) |
-| 參數策略設定 | `SystemSettingsView.tsx` | ✅ | 4 種需求沖銷模式切換 (疊加/沖銷/僅預估/僅實單)、虛擬預扣開關、損耗率天花板防呆 |
-| 無損資料中心 | `DataExchangeView.tsx` | ✅ | 全數據鏈路深度模擬診斷面板、Excel/JSON 雙向無損匯出入（含 material_class） |
-| 專業術語辭典 | `GlossaryView.tsx` | ✅ | 獨立專頁 7 大分類術語檢索 |
+| 7大主檔維護 | `DataTablesView.tsx` | ✅ | 7 大核心主檔 CRUD、3 級變更管制與外鍵關聯影響即時掃描 |
+| 專業術語辭典 | `GlossaryView.tsx` | ✅ | 7 大分類專有名詞檢索 + 主檔案全欄位權威白話定義庫 (90+ 欄位) |
+| 參數策略設定 | `SystemSettingsView.tsx` | ✅ | 4 種需求沖銷模式切換、虛擬預扣開關、損耗率天花板防呆 |
+| 無損資料中心 | `DataExchangeView.tsx` | ✅ | 智慧雙模切換 (Demo ↔ Prod)、Excel/JSON 雙向無損匯出入、全數據鏈路穿透模擬 |
 | 物料分類體系 | `MaterialClassManagementView.tsx` | ✅ | 五層樹狀分類管理 (RAW/MAT/PART/COMP/SET) |
-| 10大主檔維護 | `DataTablesView.tsx` | ✅ | 10 張主檔 CRUD 與 3 級變更管制（含 retired 模具與 partial_shipped 訂單） |
+| PRD 規格文件 | `PrdDocView.tsx` | ✅ | 15 大核心可驗收目標 (OBJ-01 ~ OBJ-15) 規格與 DoD 驗收總表 |
 | 備份與復原設定 | `BackupSettingsView.tsx` | ✅ | 自動排程備份與 JSON 備份還原 |
-| PRD 規格文件 | `PrdDocView.tsx` | ✅ | 完整系統規格文件與 Roadmap 檢視 |
 
-#### 52 筆代表性數據鏈與對比度改A錯B根除 (V-20260823-29)
+#### 7 大核心主檔與架構優化成果
 | 項目 | 狀態 | 說明 |
 |------|------|------|
-| 52 筆全階層代表性品號數據鏈 | ✅ | `seedData.ts`：涵蓋 RAW(12)、MAT(8)、PART(18)、COMP(8)、SET(6) 與 15 組模具/良率/在途訂單 |
-| 智慧雙模換檔機制 (Demo ↔ Prod) | ✅ | 開箱即用示範模式，頂部 Telemetry 模式指示燈，無損資料中心匯入真實資料自動換檔 |
-| 通配選擇器污染根除 (CAPA-011) | ✅ | 刪除 `[class*="from-*"] *`，精確收斂按鈕白字規則至 `button.bg-*`，徹底修復 Light Mode 淺色卡片泛白問題 |
-| 自進化檢測工具鏈升級 | ✅ | `contrast-check.mjs` 加入通配選擇器禁令靜態掃描，`CAPA-011` 通過 MECE 100/100 滿分校驗 |
-| 全自動自進化門禁 (Auto-Evolution Gate) | ✅ | `.impeccable/scripts/auto-evolution-gate.mjs` 每次 commit 自動抽取知識庫並校驗 MECE 評分 |
-| 業務人員稱謂標準化與去個資 | ✅ | 全系統特定個人姓名清理完成，統一為「業務人員」(`usr_sales`) |
+| 主檔架構 3NF 高內聚精簡 | ✅ | 從 11 張碎片化表格縮減為 7 張核心營運主檔，良率標準與採購規則直合於品號主檔，色料配比直合於成型 BOM |
+| 10+ 冗餘無運算欄位剔除 | ✅ | 移除 `material_class_label`, `valid_from`, `valid_to`, `created_by_id` 等非必要欄位，大幅減輕現場填報負擔 |
+| 90+ 主檔全欄位定義字典 | ✅ | `masterFieldDictionary.ts` 全面落地於辭典視圖與資料中心，消除跨部門語義衝突 |
+| 全自動門禁與代碼建置無痛編譯 | ✅ | Vite Build 通過（0 錯誤 / 0 警告），數學驗證腳本 100% PASS |
 
 ---
 

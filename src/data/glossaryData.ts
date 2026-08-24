@@ -20,6 +20,7 @@ export type GlossaryCategory =
   | 'process'      // 業務流程與角色術語
   | 'alert'        // 警報類型說明
   | 'doc'          // 文件與管理術語
+  | 'fields'       // 主檔案欄位名稱定義表 (Master Table Field Dictionary)
 
 export interface GlossaryEntry {
   id: string
@@ -29,9 +30,34 @@ export interface GlossaryEntry {
   definition: string   // 通俗解釋
   example?: string     // 實際範例（選填）
   related?: string[]   // 關聯術語 ID（選填）
+  tableName?: string   // 所屬資料表（針對 fields 分類）
+  tableLabel?: string  // 資料表中文字（針對 fields 分類）
+  dataType?: string    // 欄位型別與約束（針對 fields 分類）
+  plainDefinition?: string    // 💡 白話大白話解說
+  businessPurpose?: string    // 🎯 業務價值與用途
+  mrpImpact?: string          // ⚙️ 系統推導與運算連動
+  fillGuide?: string          // 📝 填寫規範與防呆要點
+  exampleExplanation?: string // 🔍 示範數值詳細說明
+}
+
+export interface MasterFieldDefinition {
+  fieldKey: string
+  fieldLabel: string
+  tableName: string
+  tableLabel: string
+  dataType: string
+  constraint: 'PK' | 'FK' | 'PK/FK' | 'Required' | 'Optional' | 'Computed'
+  plainDefinition: string        // 💡 白話通俗定義（用工廠日常口語講清楚）
+  definition: string             // 權威業務定義
+  businessPurpose: string        // 🎯 業務價值與用途（為什麼需要它）
+  fillGuide: string              // 📝 填寫規範與防呆要點（該怎麼填、注意事項）
+  example: string                // 實務示範數值
+  exampleExplanation: string     // 🔍 示範詳細解說（為什麼這樣填、情境背景）
+  mrpImpact: string              // ⚙️ 系統推導與 MRP 連動衝擊
 }
 
 export const GLOSSARY_CATEGORIES: { id: GlossaryCategory; label: string; icon: string }[] = [
+  { id: 'fields',    label: '主檔案欄位名稱定義表', icon: '📊' },
   { id: 'fk_sku',    label: 'FK / SKU 基礎',   icon: '🔗' },
   { id: 'mrp',       label: 'MRP 運算術語',    icon: '📐' },
   { id: 'molding',   label: '射出成型術語',    icon: '🏭' },
@@ -41,7 +67,7 @@ export const GLOSSARY_CATEGORIES: { id: GlossaryCategory; label: string; icon: s
   { id: 'doc',       label: '文件管理術語',    icon: '📄' },
 ]
 
-export const GLOSSARY_ENTRIES: GlossaryEntry[] = [
+const BASE_GLOSSARY_ENTRIES: GlossaryEntry[] = [
   // ── FK / SKU 基礎 ──────────────────────────────────────────────────────────
   {
     id: 'sku',
@@ -561,6 +587,16 @@ export const GLOSSARY_ENTRIES: GlossaryEntry[] = [
     definition: '系統設計的核心原則之一：各資料類別「彼此獨立、完全窮盡」，不重不漏。例如料號分類五層互不交叉，每筆品號必屬且僅屬其中一層。',
     example: 'RAW 類與 SET 類永不相交；任何 SKU 必能被歸入 RAW/MAT/PART/COMP/SET 其中之一',
   },
+]
+
+import { ALL_MASTER_FIELD_ENTRIES, MASTER_TABLE_SCHEMAS } from './masterFieldDictionary'
+
+export { MASTER_TABLE_SCHEMAS }
+
+/** 全域完整術語條目（含 90+ 個主檔欄位名稱定義） */
+export const GLOSSARY_ENTRIES: GlossaryEntry[] = [
+  ...ALL_MASTER_FIELD_ENTRIES,
+  ...BASE_GLOSSARY_ENTRIES,
 ]
 
 /** 依分類 ID 篩選 */

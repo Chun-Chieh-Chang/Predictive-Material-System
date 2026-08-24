@@ -79,9 +79,9 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
       const fgReadyQty = latestSnapshot ? latestSnapshot.fg_ready_qty : 0;
       const wipPendingQty = latestSnapshot ? latestSnapshot.wip_pending_qty : 0;
 
-      // 良率
-      const yieldRecord = db.yield_master.find((y) => y.sku === item.sku);
-      const sortingYield = yieldRecord ? yieldRecord.std_sorting_yield : (params?.defaultSortingYield || 0.98);
+      // 良率 — V2.0: from item_master.std_sorting_yield
+      const yieldItem = db.item_master.find((i) => i.sku === item.sku);
+      const sortingYield = yieldItem?.std_sorting_yield ?? (params?.defaultSortingYield || 0.98);
       const wipEffectiveQty = Math.round(wipPendingQty * sortingYield);
 
       // 排程需求：優先取 2 週內 actual_order 或 demand_forecast
