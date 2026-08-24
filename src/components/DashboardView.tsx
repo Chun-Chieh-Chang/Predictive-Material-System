@@ -468,15 +468,22 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
           </div>
 
-          {/* Sku Selector & Reset Button */}
+          {/* Sku Selector, Live Mini Capsule & Control Buttons */}
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center space-x-2 bg-slate-100 dark:bg-slate-950/80 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-800 shadow-xs">
               <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">模擬目標品號:</span>
               <select
                 value={selectedSku}
                 onChange={(e) => {
-                  setSelectedSku(e.target.value);
+                  const newSku = e.target.value;
+                  setSelectedSku(newSku);
                   handleResetSandbox();
+                  // 自動展開沙盒演練，給予使用者即時強烈的視覺回饋
+                  setCollapsedSections(prev => {
+                    const next = new Set(prev);
+                    next.delete('what_if_sandbox');
+                    return next;
+                  });
                 }}
                 className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-mono font-bold text-sm focus:outline-hidden cursor-pointer px-2.5 py-1 rounded-md border border-slate-300 dark:border-slate-700"
               >
@@ -486,6 +493,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   </option>
                 ))}
               </select>
+            </div>
+
+            {/* 即時常駐預覽數據膠囊 */}
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800/60 text-xs font-mono text-sky-900 dark:text-sky-200">
+              <span className="font-sans font-semibold text-slate-500 dark:text-slate-400">總需求:</span>
+              <span className="font-bold">{simTotalDemand.toLocaleString()} PCS</span>
+              <span className="text-slate-300 dark:text-slate-700">|</span>
+              <span className="font-sans font-semibold text-slate-500 dark:text-slate-400">淨缺口:</span>
+              <span className={`font-bold ${simFgGap > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                {simFgGap.toLocaleString()} PCS
+              </span>
+              <span className="text-slate-300 dark:text-slate-700">|</span>
+              <span className="font-sans font-semibold text-slate-500 dark:text-slate-400">日產能:</span>
+              <span className="font-bold">{simDailyCap.toLocaleString()} PCS</span>
             </div>
 
             <button
