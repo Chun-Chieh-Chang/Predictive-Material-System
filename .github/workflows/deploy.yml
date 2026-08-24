@@ -58,6 +58,9 @@ jobs:
     name: Build and Deploy to GitHub Pages
     needs: quality-gate
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -88,7 +91,7 @@ jobs:
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@v4
 
   # ─────────────────────────────────────────
   # Job: Deploy Verification（部署後自動驗證）

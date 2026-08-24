@@ -77,6 +77,7 @@ entries:
     title: "1. 問題描述"
     category: PROCESS
     tags:
+      - github-pages
       - deploy
       - progress
       - false
