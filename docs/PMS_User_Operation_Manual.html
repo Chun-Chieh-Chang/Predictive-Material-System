@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>料事如神系統 (PMS) — 業務與生管採購實務操作手冊</title>
+  <style>
+    :root {
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --card-bg: #FFFFFF;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --text-sub: #475569;
+      --border: #E2E8F0;
+      --primary: #0284C7;
+      --primary-light: #E0F2FE;
+      --primary-dark: #0369A1;
+      --accent: #8B5CF6;
+      --accent-light: #EDE9FE;
+      --success: #10B981;
+      --success-light: #D1FAE5;
+      --warning: #F59E0B;
+      --warning-light: #FEF3C7;
+      --danger: #EF4444;
+      --danger-light: #FEE2E2;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+
+    /* Header & Hero */
+    header {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: #F8FAFC;
+      padding: 40px 24px;
+      box-shadow: var(--shadow-md);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(56, 189, 248, 0.2);
+      color: #38BDF8;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+    }
+
+    .tagline {
+      font-size: 14px;
+      color: #94A3B8;
+      margin-top: 4px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 4px;
+      border-radius: 10px;
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-btn:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-btn.active {
+      background: var(--primary);
+      color: #FFFFFF;
+      box-shadow: 0 2px 4px rgba(2, 132, 199, 0.4);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 0 20px;
+    }
+
+    /* Role Banner */
+    .role-intro {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .role-avatar {
+      font-size: 40px;
+      background: var(--primary-light);
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+      flex-shrink: 0;
+    }
+
+    .role-text h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .role-text p {
+      font-size: 14px;
+      color: var(--text-sub);
+    }
+
+    /* Scenario Card */
+    .scenario-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .scenario-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #CBD5E1;
+    }
+
+    .scenario-header {
+      padding: 20px 24px;
+      background: #FAFAFA;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .scenario-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .scenario-tag {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    .pain-point {
+      margin: 16px 24px;
+      padding: 14px 18px;
+      background: #FFFBEB;
+      border-left: 4px solid var(--warning);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: 13.5px;
+      color: #92400E;
+    }
+
+    .pain-point strong {
+      color: #78350F;
+    }
+
+    .steps-container {
+      padding: 20px 24px 24px;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .step-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .step-item:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 17px;
+      top: 36px;
+      bottom: -16px;
+      width: 2px;
+      background: #E2E8F0;
+    }
+
+    .step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 4px rgba(2, 132, 199, 0.3);
+    }
+
+    .step-content {
+      flex: 1;
+      padding-top: 4px;
+    }
+
+    .step-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-ui-path {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .step-desc {
+      font-size: 14px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    .tip-box {
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: #F0FDF4;
+      border: 1px solid #BBF7D0;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #166534;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Visual Table in steps */
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 13px;
+    }
+
+    .mini-table th {
+      background: #F1F5F9;
+      color: #475569;
+      font-weight: 600;
+      text-align: left;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+    }
+
+    .mini-table td {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+    }
+
+    .badge-status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+
+    .badge-success { background: #DCFCE7; color: #15803D; }
+    .badge-warning { background: #FEF3C7; color: #B45309; }
+    .badge-danger  { background: #FEE2E2; color: #B91C1C; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 30px;
+      font-size: 13px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+
+    .section-view {
+      display: none;
+    }
+
+    .section-view.active {
+      display: block;
+    }
+
+    /* Print / Presentation mode */
+    @media print {
+      header { position: static; background: #0F172A; color: black; }
+      .nav-tabs { display: none; }
+      .section-view { display: block !important; page-break-after: always; }
+      body { background: white; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <div>
+        <div class="brand-title">
+          <span>🎯 料事如神系統 (PMS)</span>
+          <span class="badge-pill">V-20260824 實務操作手冊</span>
+        </div>
+        <div class="tagline">業務與生管/採購同仁日常高頻問題與情境引導指南 (Single Source of Truth)</div>
+      </div>
+
+      <nav class="nav-tabs" role="tablist">
+        <button class="nav-btn active" onclick="switchTab('sales')" id="tab-btn-sales">
+          <span>💼 業務同仁專區 (Sales)</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('production')" id="tab-btn-production">
+          <span>⚙️ 生管兼採購專區 (PP & Procurement)</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('faq')" id="tab-btn-faq">
+          <span>❓ 決策問答與防呆字典 (FAQ)</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 1: 業務同仁專區 (Sales Portal) -->
+    <!-- ========================================================================= -->
+    <div id="section-sales" class="section-view active">
+      <div class="role-intro">
+        <div class="role-avatar">💼</div>
+        <div class="role-text">
+          <h2>業務同仁實務操作指南 (Sales Operation Guide)</h2>
+          <p>
+            業務同仁的核心任務是：<strong>掌握客戶預示量變化、預防插單/抽單風險、精準回覆交期、於週會迅速對帳</strong>。本區塊模擬業務最常遇到的 4 大實務場景與點擊步驟。
+          </p>
+        </div>
+      </div>
+
+      <!-- S1 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div class="scenario-title">
+            <span>場景 S1：客戶傳來下季滾動預示量 (Rolling Forecast)，如何比對實單與預警？</span>
+          </div>
+          <span class="scenario-tag">決策戰情室 • 三向比對</span>
+        </div>
+        <div class="pain-point">
+          <strong>以往痛點：</strong> 客戶每次發預測都浮動很大，業務只能憑感覺接單，沒有工具比對實單與歷史同期，導致產線要麼備料過剩爆倉、要麼措手不及斷料。
+        </div>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">
+                進入戰情室首頁
+                <span class="step-ui-path">門戶：決策戰情室 (Dashboard)</span>
+              </div>
+              <div class="step-desc">
+                登入系統後預設即為「決策戰情室」。頂部直接查閱三向交叉總量：<strong>客戶預示量 (Forecast)</strong>、<strong>正式訂單 (PO)</strong>、<strong>歷年同期數據</strong>。
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">
+                篩選指定客戶或料號
+                <span class="step-ui-path">操作：客戶篩選下拉選單</span>
+              </div>
+              <div class="step-desc">
+                點擊上方「客戶篩選器」（例如選擇 <code>CUST-MED-01</code> 或指定料號 <code>A01-200-131</code>），圖表與數據表將在 <strong>0.1 秒內</strong> 完成即時聯動。
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">
+                解讀預測偏差率 (Bias %) 與決策建言
+                <span class="step-ui-path">檢視：三向需求交叉比對表</span>
+              </div>
+              <div class="step-desc">
+                查看表格中的動態標籤：
+                <table class="mini-table">
+                  <tr>
+                    <th>燈號狀態</th>
+                    <th>偏差率 (Bias %)</th>
+                    <th>業務應對動作</th>
+                  </tr>
+                  <tr>
+                    <td><span class="badge-status badge-success">🟢 正常吻合</span></td>
+                    <td>偏差 &le; &plusmn;10%</td>
+                    <td>供需節奏穩定，維持現有排程與溝通。</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge-status badge-warning">🟡 中度偏差</span></td>
+                    <td>偏差 &plusmn;11% ~ &plusmn;25%</td>
+                    <td>客戶下單節奏變更，建議於週二出貨會議列入追蹤。</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge-status badge-danger">🔴 嚴重偏離</span></td>
+                    <td>偏差 &gt; +25% 或 &lt; -25%</td>
+                    <td>
+                      若 <strong>暴增追加</strong>：主動向客戶確認後續是否持續，並促請生管提高原料；<br>
+                      若 <strong>急遽萎縮</strong>：請生管暫緩非必要進料以防庫存爆倉。
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S2 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div class="scenario-title">
+            <span>場景 S2：客戶突然要求緊急追加 50,000 PCS，能接單嗎？交期如何回覆？</span>
+          </div>
+          <span class="scenario-tag">訂單緊張度 • 產能推算</span>
+        </div>
+        <div class="pain-point">
+          <strong>以往痛點：</strong> 業務不敢當場答應客戶，必須跑產線問生管、問模具、問原料，跨部門來回對帳耗費 1~2 天，錯失訂單良機。
+        </div>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">
+                檢查該品號當前緊張度指標
+                <span class="step-ui-path">門戶：訂單緊張度監控 (Order Tension)</span>
+              </div>
+              <div class="step-desc">
+                進入緊張度視圖，輸入料號即可查看該品號目前模具是否妥善（有無塞穴或維修中）、原料現有庫存天數是否健康。
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">
+                進入 MRP 試算追加產能天數
+                <span class="step-ui-path">門戶：3階 MRP 推算</span>
+              </div>
+              <div class="step-desc">
+                切換至 MRP 推算器，選擇該品號。系統立即展開三階運算：
+                <ul style="margin-left: 20px; margin-top: 6px; font-size: 13.5px; color: var(--text-sub);">
+                  <li><strong>第 1 階</strong>：自動帶入目前庫存與半成品，扣除後算出真實淨需求量。</li>
+                  <li><strong>第 2 階</strong>：顯示該品號綁定模具的每日最大產能（例如 <code>16 穴 × 18 秒 = 64,000 PCS/日</code>），業務可立刻得知需要生產幾天。</li>
+                  <li><strong>第 3 階</strong>：查看原料現有庫存是否足夠，或是需要幾天採購交期 (Lead Time)。</li>
+                </ul>
+              </div>
+              <div class="tip-box">
+                💡 <strong>業務速查技巧</strong>：點擊「📐 展開白盒推導履歷」，將算式與交期推導直接截圖給主管或客戶看，數據透明極具說服力！
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S3 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div class="scenario-title">
+            <span>場景 S3：週產銷協調會時，如何一鍵切換簡報投影與專題過濾？</span>
+          </div>
+          <span class="scenario-tag">產銷會議 • 投影協同</span>
+        </div>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">
+                開啟投影簡報大字體模式
+                <span class="step-ui-path">操作：頂部工具列 [📽️ 投影模式]</span>
+              </div>
+              <div class="step-desc">
+                在會議室投影時，點擊右上角「投影模式」，介面會自動放大關鍵指標字體、隱藏冗餘邊框，確保後排同仁清晰可見。
+              </div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">
+                一鍵匯出 Excel 對帳報表
+                <span class="step-ui-path">操作：頂部 [📊 匯出資料]</span>
+              </div>
+              <div class="step-desc">
+                會議決議後，點擊匯出即可下載包含所有三向比對、MRP 計算明細之標準 Excel 報表，無須手動抄寫整理。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 2: 生管兼採購專區 (PP & Procurement Portal) -->
+    <!-- ========================================================================= -->
+    <div id="section-production" class="section-view">
+      <div class="role-intro">
+        <div class="role-avatar">⚙️</div>
+        <div class="role-text">
+          <h2>生管兼採購實務操作指南 (PP & Procurement Guide)</h2>
+          <p>
+            生管兼採購同仁的核心任務是：<strong>精準推算原物料需求、掌握模具穴數塞穴衝擊、鎖定最晚下單發單日、管制出貨放行庫存</strong>。本區塊針對製造排程與採購流程進行步驟拆解。
+          </p>
+        </div>
+      </div>
+
+      <!-- P1 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div class="scenario-title">
+            <span>場景 P1：本週有哪些品號必須採購原料？最晚下單發單日是哪天？</span>
+          </div>
+          <span class="scenario-tag">3階 MRP • 防斷料時間軸</span>
+        </div>
+        <div class="pain-point">
+          <strong>以往痛點：</strong> 原料交期長達 14~30 天，以往常因忘記前置時間，等產線要排機台才發現沒料停工待料。
+        </div>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">
+                切換至 3 階 MRP 推導視圖
+                <span class="step-ui-path">門戶：3階 MRP 推算</span>
+              </div>
+              <div class="step-desc">
+                選擇欲排產的料號（支援 SET 組件、COMP 零件、PART 單品），系統自動依據 BOM 展開物料層級。
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">
+                檢視第 3 階：採購排程時間軸與最晚發單日
+                <span class="step-ui-path">檢視：Phase 3 採購告警卡片</span>
+              </div>
+              <div class="step-desc">
+                系統依據公式倒推：
+                <div style="background: #F1F5F9; padding: 10px 14px; border-radius: 6px; font-family: monospace; margin: 8px 0; font-size: 13px;">
+                  最晚下單日 = 客戶交期 (Target Date) - 生產工時 (Production Days) - 採購交期 (Lead Time Days)
+                </div>
+                檢視右側的「<strong>防斷料倒數看板</strong>」：
+                <ul style="margin-left: 20px; margin-top: 6px; font-size: 13.5px; color: var(--text-sub);">
+                  <li>🔴 <strong>緊急斷料倒數 (&lt; 3 天)</strong>：需今日立即傳真或發單給供應商。</li>
+                  <li>🟡 <strong>採購警戒 (3~7 天)</strong>：應著手開立採購單進行詢價與簽核。</li>
+                  <li>🟢 <strong>安全備料 (&gt; 7 天)</strong>：交期安全充裕。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">
+                核對 MOQ (最小訂購量) 向上整補
+                <span class="step-ui-path">檢視：建議採購量 (Suggested Purchase Qty)</span>
+              </div>
+              <div class="step-desc">
+                系統會自動檢查供應商最小訂購量 (MOQ) 與安全庫存。若理論淨需求為 <code>135 KG</code>，但廠商 MOQ 為 <code>500 KG</code>，系統會自動建議採購 <code>500 KG</code>，並提示殘料將轉為安全存量。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- P2 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div class="scenario-title">
+            <span>場景 P2：現場回報模具塞穴（如 16 穴塞 2 穴剩 14 穴），耗料與產能如何重算？</span>
+          </div>
+          <span class="scenario-tag">模具降級 • 單穴克重膨脹</span>
+        </div>
+        <div class="pain-point">
+          <strong>以往痛點：</strong> 現場塞穴後，流道廢料重量由剩餘穴數分攤，單穴耗料上升；但生管仍用設計穴數手算，導致生產到最後一批突然缺料 5~10%。
+        </div>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">
+                在 MRP 第 2 階手動調整「妥善穴數」
+                <span class="step-ui-path">操作：Phase 2 模具規格欄位</span>
+              </div>
+              <div class="step-desc">
+                將模具的「妥善穴數 (Active Cavities)」由設計的 <code>16 穴</code> 直接改為現場實際的 <code>14 穴</code>。
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">
+                觀察單穴克重自動膨脹與每日產能下修
+                <span class="step-ui-path">檢視：白盒推導履歷抽屜</span>
+              </div>
+              <div class="step-desc">
+                系統數學引擎會瞬間重新計算：
+                <div style="background: #F1F5F9; padding: 10px 14px; border-radius: 6px; font-family: monospace; margin: 8px 0; font-size: 13px;">
+                  單穴克重 = (成品淨重 / 14 穴) + (流道重 / 14 穴) ➔ 克重自動調升！<br>
+                  每日產能 = (86,400秒 × 妥善稼動率 / 週期) × 14 穴 ➔ 每日產能同步下修！
+                </div>
+                採購原料毛需求量自動向上修正，徹底杜絕停工待料。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- P3 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div class="scenario-title">
+            <span>場景 P3：週五準備出貨給客戶，如何審查全檢庫存是否允許放行？</span>
+          </div>
+          <span class="scenario-tag">出貨放行審查 (Clearance)</span>
+        </div>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">
+                進入出貨放行審查門戶
+                <span class="step-ui-path">門戶：出貨放行審查 (Shipment Clearance)</span>
+              </div>
+              <div class="step-desc">
+                查看即將出貨的排程清單，包含預計出貨日、客戶名稱與預計出貨箱數。
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">
+                檢視「全檢良率折損後有效 WIP (Effective WIP)」
+                <span class="step-ui-path">審查：庫存扣留與放行燈號</span>
+              </div>
+              <div class="step-desc">
+                系統不僅看帳面在製品 (WIP)，還會乘以<strong>標準全檢良率 (Sorting Yield %)</strong> 算出實質良品數：
+                <ul style="margin-left: 20px; margin-top: 6px; font-size: 13.5px; color: var(--text-sub);">
+                  <li>🟢 <strong>放行合格 (Cleared)</strong>：良品庫存 &ge; 出貨需求，可列印出貨單。</li>
+                  <li>🔴 <strong>缺料扣留 (Hold)</strong>：扣除全檢不良後庫存不足，警示生管插單補產或向品保確認。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- P4 -->
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div class="scenario-title">
+            <span>場景 P4：如何匯入 ERP 最新品號與庫存 Excel，或備份主檔？</span>
+          </div>
+          <span class="scenario-tag">資料交換適配層 (Data Exchange V2.0)</span>
+        </div>
+        <div class="steps-container">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">
+                下載 V2.0 官方空白範本
+                <span class="step-ui-path">操作：主檔管理 ➔ [📥 下載 Excel 範本]</span>
+              </div>
+              <div class="step-desc">
+                系統產出符合 7 大核心主檔規範的標準 Excel 範本（包含品號、模具、BOM、在途單等工作表）。
+              </div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">
+                上傳並執行無損防呆校驗
+                <span class="step-ui-path">操作：主檔管理 ➔ [📤 上傳 Excel]</span>
+              </div>
+              <div class="step-desc">
+                選擇檔案上傳後，適配層會自動校驗資料型態（如良率必須介於 0~100%、穴數大於 0），並即時覆蓋更新至系統資料庫。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 3: 決策問答與防呆字典 (FAQ & Dictionary) -->
+    <!-- ========================================================================= -->
+    <div id="section-faq" class="section-view">
+      <div class="role-intro">
+        <div class="role-avatar">❓</div>
+        <div class="role-text">
+          <h2>常見問題與核心名詞字典 (FAQ & Field Glossary)</h2>
+          <p>
+            解答業務與生管在日常操作中最容易產生的疑惑，並提供標準欄位定義對照表。
+          </p>
+        </div>
+      </div>
+
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div class="scenario-title">
+            <span>💡 常見疑問快速解答</span>
+          </div>
+        </div>
+        <div style="padding: 24px;">
+          <div style="margin-bottom: 20px;">
+            <h3 style="font-size: 16px; color: var(--primary-dark); margin-bottom: 6px;">Q1：為什麼 MRP 算出來的採購量比客戶訂單量大很多？</h3>
+            <p style="font-size: 14px; color: var(--text-sub);">
+              <strong>答：</strong>這是因為系統完整考慮了 4 重製造損耗：① 成品全檢良率折損 (Sorting Yield)、② 射出成型標準損耗率 (Scrap Rate)、③ 模具流道廢料重量 (Runner Weight)、④ 供應商最小起訂量 (MOQ) 向上整補。這是完全符合第一性原理的實體精準算式。
+            </p>
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <h3 style="font-size: 16px; color: var(--primary-dark); margin-bottom: 6px;">Q2：如果這款產品有加色粉或色母，MRP 會分開算嗎？</h3>
+            <p style="font-size: 14px; color: var(--text-sub);">
+              <strong>答：</strong>會！在產品 BOM 表中已內建 <code>color_mixing_ratio_pct</code>（配比 %）。系統在第 2 階會自動將總膠料拆解為「本色原料 (KG)」與「色粉/色母 (KG)」，分別顯示獨立的最晚下單日。
+            </p>
+          </div>
+
+          <div>
+            <h3 style="font-size: 16px; color: var(--primary-dark); margin-bottom: 6px;">Q3：主檔案從 11 張縮減為 7 張後，良率與供應商規則去哪裡找？</h3>
+            <p style="font-size: 14px; color: var(--text-sub);">
+              <strong>答：</strong>已遵循資料庫 3NF 原則，直接整併入 <strong>「品號主檔 (Item Master)」</strong>。您只需在品號主檔中查詢該料號，即可同屏看到標準全檢良率 (<code>std_sorting_yield</code>)、供應商名稱 (<code>supplier_name</code>)、採購交期 (<code>lead_time_days</code>)、最小訂購量 (<code>moq_kg</code>) 與安全庫存 (<code>safety_stock_kg</code>)。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <div class="scenario-title">
+            <span>📚 核心欄位白話速查表 (Top Core Fields)</span>
+          </div>
+        </div>
+        <div style="padding: 20px 24px;">
+          <table class="mini-table">
+            <thead>
+              <tr>
+                <th style="width: 20%;">欄位代碼</th>
+                <th style="width: 20%;">業務白話名稱</th>
+                <th style="width: 15%;">所屬主檔</th>
+                <th>MRP 運算作用說明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>std_sorting_yield</code></td>
+                <td>全檢標準良率 (%)</td>
+                <td>品號主檔</td>
+                <td>折算在製品 (WIP) 的有效良品數量，防止出貨當天因不良品扣留而缺料。</td>
+              </tr>
+              <tr>
+                <td><code>lead_time_days</code></td>
+                <td>採購前置交期 (天)</td>
+                <td>品號主檔</td>
+                <td>由客戶目標交期倒推「最晚下單發單日」之關鍵變數。</td>
+              </tr>
+              <tr>
+                <td><code>moq_kg</code></td>
+                <td>最小訂購量 (KG)</td>
+                <td>品號主檔</td>
+                <td>採購原料時的向上取整補足基準，避免下單量低於廠商起訂門檻。</td>
+              </tr>
+              <tr>
+                <td><code>active_cavities</code></td>
+                <td>目前妥善穴數</td>
+                <td>模具主檔</td>
+                <td>現場塞穴時動態調降，自動調升單穴分攤克重並下修每日產能。</td>
+              </tr>
+              <tr>
+                <td><code>color_mixing_ratio_pct</code></td>
+                <td>色母/色粉配比 (%)</td>
+                <td>產品模具 BOM</td>
+                <td>將射出總克重精確拆分為塑膠生料與染色色粉之採購毛需求。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    料事如神圈 QCC 物料需求管理系統 (PMS) • 專為射出成型醫材與精密製造設計 • 版本 V-20260824
+  </footer>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+      const targetSection = document.getElementById('section-' + tabId);
+      const targetBtn = document.getElementById('tab-btn-' + tabId);
+
+      if (targetSection) targetSection.classList.add('active');
+      if (targetBtn) targetBtn.classList.add('active');
+    }
+  </script>
+</body>
+</html>
