@@ -37,6 +37,18 @@
 #### 已知後續事項
 - `docs/DevelopmentStatus.md` 其餘段落仍含歷史版號快照（屬當時記錄性質，不追溯改寫）。
 
+### V-20260826 (2026-08-26) — 文件過時內容二次稽核補齊版
+
+**狀態：** ✅ 穩定發布
+**驗證：** `npm run lint` 0 錯誤、`npm run build` 通過
+
+#### 本作業完成清單
+- 全 docs/ 目錄過時模式掃描（舊稱「戰情／7大主檔／gh-pages／死檔引用」等），區分活躍文件 vs 歷史案宗（CAPA/INV/驗證報告之版號快照不追溯改寫）。
+- `src/components/PrdDocView.tsx`（PRD 內嵌文檔）：OBJ-04「7大核心營運主檔」→ 8大（與同表 OBJ-04 明細自相矛盾修正）、OBJ-11「戰情儀表板」→ 物料需求總覽（對齊 AGENTS.md 第 7 章術語）。
+- `docs/PMS_Business_Requirements_Document.md`：「戰情首頁」「綜合戰情儀表板」→ 物料需求總覽（2 處）。
+- `docs/PMS_Core_Development_Objectives.md`：同上術語對齊（2 處）。
+- `docs/MECE-Workflow-Spec.md`：狀態「待實施」→ 已實施（husky pre-commit / pre-push hooks 實際運行中），更新日期同步。
+
 ---
 
 ### V-20260825-12 (2026-08-25) — Anti-Placebo 數據鏈誠實化：全域預設備胎全數拔除、主檔缺值即拒算並警示、多模具策略假選項修復版
