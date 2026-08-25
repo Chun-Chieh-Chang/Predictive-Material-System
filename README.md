@@ -1,7 +1,7 @@
 # 料事如神系統 — Predictive Material System (PMS)
 
 > **QCC 料事如神圈 · 射出成型智能備料與產能排程推估平台**  
-> Baseline Version：`V-20260824-24` | Developed by Wesley Chang @Mouldex, Aug-2026  
+> Baseline Version：`V-20260825-16`（SSOT 單一真相來源：`src/utils/version.ts`，pre-commit 自動同步） | Developed by Wesley Chang @Mouldex, Aug-2026  
 > 軟體工程準則：Andrej Karpathy 軟體工程核心準則（謀定而後動 · 簡潔至上 · 外科手術式精準修改 · 目標導向與閉環驗證）
 
 ---
@@ -27,7 +27,7 @@
 | 前端框架 | React 19 + TypeScript |
 | 建構工具 | Vite 6 |
 | 樣式 | Tailwind CSS v4 (JIT) |
-| UI 字體 | Plus Jakarta Sans / JetBrains Mono / Noto Sans TC |
+| UI 字體 | 系統字體堆疊（PingFang TC / Noto Sans TC / Microsoft JhengHei + SF Mono / Consolas） |
 | 圖示 | lucide-react |
 | Excel 匯出入 | xlsx (SheetJS) |
 | 資料持久化 | Browser LocalStorage |
@@ -73,7 +73,7 @@ npm run dev
 │   └── 資料匯入匯出與模擬 (DataExchangeView) — JSON/Excel 雙向匯出入、資料關聯完整性掃描與流程模擬
 └── ⚙️ [系統設定 System & Settings]
     ├── 參數策略設定 (SystemSettingsView) — 系統參數配置（預警門檻/排程策略/虛擬預扣開關/損耗率天花板）
-    ├── 名詞術語說明 (GlossaryView) — 7 大分類專有名詞檢索 + 主檔案欄位定義庫 (65+ 欄位)
+    ├── 名詞術語說明 (GlossaryView) — 8 大分類專有名詞檢索 + 主檔案欄位定義庫 (90+ 欄位)
     ├── 系統規格與驗收 (PrdDocView) — 15 大核心可驗收目標 (OBJ-01 ~ OBJ-15) 規格與驗收總表
     └── 自動化備份與復原 (BackupSettingsView) — 自動備份排程、恢復備份檔（Admin 模式）
 ```
@@ -93,7 +93,9 @@ npm run dev
 | 7 | **在途採購訂單檔** (`po_in_transit`) | `po_number` | 在途原料採購量、預計到廠日 (ETA) 與在途物流狀態 |
 | 8 | **Sorting 實際良率紀錄檔** (`sorting_actual_yield_log`) | `log_id` | 每日現場檢驗實績動態回饋、批號追溯與實際檢驗良率 |
 
-*附屬檔：`material_classes`（五層物料樹）、`sorting_actual_yield_log`（全檢實際良率歷史軌跡）、`audit_log`（異動審計日誌）。*
+*附屬檔：`material_classes`（五層物料樹）、`sorting_actual_yield_log`（全檢實際良率歷史軌跡，即主表 #8 之歷史軌跡用途說明）、`audit_log`（異動審計日誌）。*
+
+> **註**：主檔數量與名稱之單一事實來源為 `src/data/masterFieldDictionary.ts`（8 大核心主檔）；本文件與 `docs/PMS_Data_Dictionary.md`、`docs/PMS_Master_Field_Data_Dictionary.html` 均由其衍生，如有出入以 SSOT 為準。
 
 ---
 
@@ -105,7 +107,7 @@ Phase 1 → 成品淨需求
 
 Phase 2 → 原料毛需求 (BOM 爆炸)
   FG 淨需求 × 單穴克重 ÷ (1 - 損耗率) ÷ 1000 = 原料毛需求 (KG)
-  (若有色母配比，同步計算色料毛需求 = 原料毛需求 × 配比%)
+  (若有色母配比，拆分雙軌：樹脂 = 總量 ÷ (1 + 配比%)、色母 = 總量 − 樹脂)
 
 Phase 3 → 採購決策
   原料毛需求 - (有效原料庫存 + 在途 PO) + 安全庫存 = 原料淨需求
@@ -120,14 +122,9 @@ Phase 3 → 採購決策
 | 版本 | 日期 | 說明 |
 |------|------|------|
 | **V-20260825-12** | 2026-08-25 | **Anti-Placebo 數據鏈誠實化版**：拔除全域預設備胎（MRP/訂單張力/出貨審查共 10 處 fallback）、主檔缺值即拒算並精確警示缺哪個欄位、多模具策略假選項修復（conservative 改純最大克重）、完整性掃描新增 missing_field 規則、設定頁死旋鈕移除與倉容文案更正。 |
-| **V-20260825-11** | 2026-08-25 | **V2-Intranet 內網部署版**：PowerShell 5.1 檔案服務後端（零依賴 HttpListener + 樂觀鎖 404/409 + 滾動快照）、共用資料適配器 loadSharedData/saveSharedData 雙模式接線、GitHub Actions artifact 部署（gh-pages 移除）。 |
-| **V-20260824-24** | 2026-08-24 | **全專案整體程式碼與檔案優化版**：實裝「業務工作台」與「生管採購工作台」角色門戶；CAPA-001~014 報告全覆蓋（MECE 100/100 滿分驗證）；版號 SSOT 單一真相來源解除鎖定；雙通道 CI 部署與全色系對比度自動防禦門禁；存檔 IMPL-PLAN-002 自進化有機體實施計畫。 |
+| V-20260825-11 | 2026-08-25 | **V2-Intranet 內網部署版**：PowerShell 5.1 檔案服務後端（零依賴 HttpListener + 樂觀鎖 404/409 + 滾動快照）、共用資料適配器 loadSharedData/saveSharedData 雙模式接線、GitHub Actions artifact 部署（gh-pages 移除）。 |
+| V-20260824-24 | 2026-08-24 | **全專案整體程式碼與檔案優化版**：實裝「業務工作台」與「生管採購工作台」角色門戶；CAPA-001~014 報告全覆蓋（MECE 100/100 滿分驗證）；版號 SSOT 單一真相來源解除鎖定；雙通道 CI 部署與全色系對比度自動防禦門禁；存檔 IMPL-PLAN-002 自進化有機體實施計畫。 |
 | V-20260824-01 | 2026-08-24 | 業務核心需求 15 大可驗收目標確立與 Karpathy 軟體工程準則全域植入版：三向交叉比對看板、計算公式明細抽屜、採購排程時間軸、7 大核心主檔收斂與去冗、90+ 主檔全欄位名稱定義庫入庫、PRD 規格書 V1.3.0 發布、單元測試 100% 通過。 |
-| V-20260823-52 | 2026-08-23 | Smart Filter Hub 實作：MrpCalculatorView SKU 搜尋下拉選單 + ShipScheduleClearanceView 類別膠囊/即時搜尋、全域死碼 import 清理、版本號對齊。 |
-| V-20260823-29 | 2026-08-23 | 52 筆代表性物料數據鏈與開箱智慧雙模換檔機制版、通配選擇器污染根除 (CAPA-011)。 |
-| V-20260823-16 | 2026-08-23 | 週二出貨審查看板、預測偏差分析、WIP 日動態推估、虛擬預扣、分批到貨排程建議、訂單緊張度引擎。 |
-| V-20260821-20 | 2026-08-21 | 五層物料分類體系、FieldArchitectureAudit_Report、H-01~H-03 校驗函式。 |
-| V-20260820-12 | 2026-08-20 | 首個完整基準版本。主檔 CRUD、3 階 MRP 引擎、JSON/Excel 雙向匯出入、3 級變更管制審計日誌。 |
 | V-20260823-52 | 2026-08-23 | Smart Filter Hub 實作：MrpCalculatorView SKU 搜尋下拉選單 + ShipScheduleClearanceView 類別膠囊/即時搜尋、全域死碼 import 清理、版本號對齊。 |
 | V-20260823-29 | 2026-08-23 | 52 筆代表性物料數據鏈與開箱智慧雙模換檔機制版、通配選擇器污染根除 (CAPA-011)。 |
 | V-20260823-16 | 2026-08-23 | 週二出貨審查看板、預測偏差分析、WIP 日動態推估、虛擬預扣、分批到貨排程建議、訂單緊張度引擎。 |
@@ -142,14 +139,14 @@ Phase 3 → 採購決策
 src/
 ├── main.tsx                  # 應用入口，ThemeProvider 包裝
 ├── App.tsx                   # 根元件：路由、Toast、LocalStorage 持久化、雙模切換、內網共用資料同步
-├── types.ts                  # 全局 TypeScript 型別定義（7 核心主檔 + MRP 結果 + 系統參數 + 物料分類）
+├── types.ts                  # 全局 TypeScript 型別定義（8 核心主檔 + MRP 結果 + 系統參數 + 物料分類）
 ├── index.css                 # 全局樣式（Tailwind base + 自定義 utility）
 ├── context/
 │   └── ThemeContext.tsx      # 主題狀態管理（Light/Dark + LocalStorage 持久化）
 ├── data/
 │   ├── seedData.ts           # 52 筆全階層貫通代表性物料資料庫
 │   ├── glossaryData.ts       # 專業術語辭典基礎資料
-│   └── masterFieldDictionary.ts # 7 大主表 90+ 欄位權威業務定義字典
+│   └── masterFieldDictionary.ts # 8 大主表 90+ 欄位權威業務定義字典（欄位字典 SSOT）
 ├── utils/
 │   ├── mrpEngine.ts          # 3 階 MRP 計算核心引擎（公式推導 + 分批到貨 + 虛擬預扣 + 缺值拒算）
 │   ├── demandAnalysisEngine.ts # 三向需求交叉比對與預測偏差 (Bias%) 分析引擎

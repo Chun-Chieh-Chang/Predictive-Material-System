@@ -21,9 +21,8 @@ npm-debug.log*
 # Lock files (retain package-lock.json for reproducible installs)
 bun.lock
 
-# Environment variables (keep example, ignore all actual env files)
+# Environment variables (ignore all env files — 本專案為純前端，無 .env 需求)
 .env*
-!.env.example
 .env.local
 .env.*.local
 

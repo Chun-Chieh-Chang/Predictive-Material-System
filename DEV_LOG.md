@@ -8,6 +8,37 @@
 
 ## 版本演進記錄
 
+### V-20260825 (2026-08-25) — 全專案程式碼與檔案優化作業：死檔清除、文件 SSOT 對齊與 MECE 收斂版
+
+**狀態：** ✅ 穩定發布
+**驗證：** `npm run lint` 0 錯誤、`npm run build` 通過（含 DataPipelineView 懸停互動變更）
+
+#### 本作業完成清單
+
+**[階段一：死碼與無效資源盤點移除（零功能 Regression）]**
+- 刪除 `.env.example`：AI Studio 樣板殘留死檔，本專案為純前端、無任何環境變數引用；`.gitignore` 同步移除 `!.env.example` 白名單例外。
+- 刪除 `scripts/generate_html.py`：與 `scripts/generate_html_dictionary.ts` 功能完全重疊之舊版 Python 解析器（regex 硬解析 TS 原始碼），TS 版為唯一維護通道且 docs/ 內無任何引用。
+- 核心程式碼死碼掃描：12 個 utils 模組全數有引用、16 個 View 元件全數掛載、backupService / materialClassValidation 匯出函式均有呼叫端——無新增死碼可清。
+
+**[階段二：開發文件 100% 對齊]**
+- `README.md`：
+  - 版本記錄表刪除整段重複列印的 V-20260823~0820 五列（MECE 冗餘）；補回遺漏之 V-20260825-11 Intranet 部署說明併入 V2-Intranet 記錄。
+  - Baseline 版號滯後（V-20260824-24）改為指向 `src/utils/version.ts` SSOT 之動態描述。
+  - 技術棧字體欄更正為系統字體堆疊實際值（原 Plus Jakarta Sans / JetBrains Mono 為不實描述，index.css 未載入該字體）。
+  - MRP Phase 2 色母公式更正為程式真實邏輯「樹脂 = 總量 ÷ (1+配比)、色母 = 總量 − 樹脂」（原 × 配比% 寫法錯誤）。
+  - types.ts「7 核心」→ 8 核心、masterFieldDictionary「7 大主表」→ 8 大主表、GlossaryView 分類數對齊 glossaryData.ts 實際 8 類。
+  - 新增資料字典 SSOT 宣告：主檔數量以 `src/data/masterFieldDictionary.ts` 為準。
+- `docs/DevelopmentStatus.md`：標頭硬編碼版號（V-20260825-12，已滯後於 SSOT）改為指向 version.ts。
+- 新增 `docs/PMS_Data_Logic_Specification.html`（v2.0）：15 章節數據邏輯規格總覽，供業務／生管／採購跨單位討論基準（公式、參數、預警門檻全彙整）。
+
+**[階段三：MECE 指引檔收斂]**
+- `GEMINI.md` 由完整準則副本收斂為指標檔（SSOT = AGENTS.md），終結三份同源指引檔（AGENTS/GEMINI/CLAUDE）內容漂移風險；CLAUDE.md 標頭加入同一 SSOT 宣告。
+
+#### 已知後續事項
+- `docs/DevelopmentStatus.md` 其餘段落仍含歷史版號快照（屬當時記錄性質，不追溯改寫）。
+
+---
+
 ### V-20260825-12 (2026-08-25) — Anti-Placebo 數據鏈誠實化：全域預設備胎全數拔除、主檔缺值即拒算並警示、多模具策略假選項修復版
 
 **狀態：** ✅ 穩定發布  

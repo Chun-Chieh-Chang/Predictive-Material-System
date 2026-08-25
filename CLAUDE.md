@@ -1,5 +1,7 @@
 # CLAUDE.md — Karpathy Coding Guidelines & Project Rules
 
+> **SSOT 說明**：本專案行為準則之單一事實來源為 [AGENTS.md](AGENTS.md)（含 Zero-Mock / Anti-Placebo UI / 領域術語 / 資料去識別化等 8 大章節）。本檔為 Claude Code 慣例入口，內容以 AGENTS.md 為準；準則修訂僅修改 AGENTS.md。
+
 Behavioral guidelines to reduce common LLM coding mistakes, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls.
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
