@@ -14,7 +14,7 @@ import {
   ArrowRight,
   Cpu,
   Zap,
-  Download,
+  Upload,
   Info,
   Layers,
   SlidersHorizontal,
@@ -1296,7 +1296,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             id="war-room-export-btn"
             className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 transition-colors shrink-0 cursor-pointer"
           >
-            <Download className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <Upload className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>匯出建議採購清單 Excel</span>
           </button>
           <button

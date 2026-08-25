@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import {
   Copy,
-  Download,
+  Upload,
   Check,
   BookOpen,
   Code,
@@ -253,7 +253,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
             id="prd-download-md-btn"
             className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-sky-600 text-white hover:bg-sky-700 transition-colors shadow-xs cursor-pointer"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Upload className="w-3.5 h-3.5" />
             <span>匯出 PRD 驗收總表 (.md)</span>
           </button>
         </div>
