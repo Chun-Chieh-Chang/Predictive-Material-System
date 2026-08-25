@@ -66,3 +66,6 @@ docs/.audit/*.jsonl
 # Chat/upload temp artifacts
 /upload_*.jpg
 /upload_*.png
+
+# 業務需求文件（含訪談/計畫書，不入版控）
+/requirements/
