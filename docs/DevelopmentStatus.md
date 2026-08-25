@@ -1,12 +1,28 @@
 # 料事如神（PMS）開發進度與後續計畫
 
-> 版號：`V-20260824-29`　|　更新日期：2026-08-24　|　狀態：✅ 15 大核心業務目標 100% 達成，角色工作台落地，CAPA-001~015 全覆蓋閉環驗收
+> 版號：`V-20260825-36`　|　更新日期：2026-08-25　|　狀態：✅ 15 大核心業務目標 100% 達成，V2-Intranet 內網部署落地，Anti-Placebo 數據鏈誠實化完成
 
 ---
 
 ## 一、已完成功能清單（Commit 基準）
 
-### 版本 `V-20260824-29`（最新 — 全專案整體優化與平實業務術語標準化版）
+### 版本 `V-20260825-36`（最新 — Anti-Placebo 數據鏈誠實化版）
+
+#### 本版本重點變更
+| 項目 | 說明 |
+|------|------|
+| 全域預設備胎全數拔除 | 物料屬性（良率/損耗率/MOQ/交期/安全庫存）一律以主檔個別值為準，`mrpEngine` / `orderTensionEngine` / `ShipScheduleClearanceView` 共 10 處 fallback 移除 |
+| 主檔缺值即拒算並警示 | 缺值品號不列入計算，速覽表/缺料分析顯示 ⚠️ 並精確指出缺哪個欄位（`calcError` + `data_integrity` 警示類型） |
+| 多模具策略假選項修復 | `conservative_max_weight` 改為純最大單穴克重比較，三種策略行為互異 |
+| 無 BOM 訂單誠實標記 | SET-BREATH-CIR-01 / SET-IV-EXT-01 不再以 DEFAULT_MOLD/RAW-RESIN 假參數編造診斷，改標記「尚未建立成型 BOM」 |
+| 完整性掃描新增 missing_field | item_master 掃描段統一把關 RAW 三欄與成品良率完整性 |
+
+#### V2-Intranet 內網部署（本日稍早落地）
+| 項目 | 說明 |
+|------|------|
+| PowerShell 5.1 檔案服務後端 | `server/`：零依賴 HttpListener + 樂觀鎖 (404/409) + 滾動快照 |
+| 共用資料適配器 | `dataStoreAdapter.ts`：loadSharedData/saveSharedData，App 接線雙模式（local/intranet） |
+| 部署管線 | GitHub Actions artifact 部署（gh-pages 通道已移除） |
 
 #### 核心運算引擎 (5 大引擎)
 | 項目 | 狀態 | 說明 |
@@ -28,7 +44,7 @@
 | 訂單缺料分析看板 | `OrderTensionTrackerView.tsx` | ✅ | 逐筆訂單 6 大環節瓶頸診斷、全文檢索、缺料原因與處置建議 |
 | 資料表維護 | `DataTablesView.tsx` | ✅ | 8 大核心主檔 CRUD、3 級變更管制與外鍵關聯影響即時掃描 |
 | 名詞術語說明 | `GlossaryView.tsx` | ✅ | 7 大分類專有名詞檢索 + 主檔案全欄位定義庫 (90+ 欄位) |
-| 參數策略設定 | `SystemSettingsView.tsx` | ✅ | 4 種需求沖銷模式切換、虛擬預扣開關、損耗率天花板防呆 |
+| 參數策略設定 | `SystemSettingsView.tsx` | ✅ | 4 種需求沖銷模式切換、虛擬預扣開關、損耗率天花板防呆；物料屬性一律以主檔為準（缺值拒算，無全域預設） |
 | 資料匯入匯出 | `DataExchangeView.tsx` | ✅ | 智慧雙模切換 (Demo ↔ Prod)、Excel/JSON 雙向匯出入、資料關聯模擬 |
 | 物料分類體系 | `MaterialClassManagementView.tsx` | ✅ | 五層樹狀分類管理 (RAW/MAT/PART/COMP/SET) |
 | 系統規格與驗收 | `PrdDocView.tsx` | ✅ | 15 大核心可驗收目標 (OBJ-01 ~ OBJ-15) 規格與驗收總表 |
@@ -49,51 +65,14 @@
 
 ### 🔴 P0 — 高優先度（影響正確性）
 
-#### T-01：H-01/H-02/H-03 校驗接入 DataTablesView handleSave
-**現狀：** `validateRmSkuAsRaw()` / `validateYieldSku()` / `validateSupplierRmSku()` 已定義於 `materialClassValidation.ts`，但 `DataTablesView.tsx` 的 `handleSave` 流程中未呼叫。
-
-**實作位置：** `src/components/DataTablesView.tsx` → `validateRowData()` 或 `handleSave()`
-（待 MRP 完整整合後重新啟用）
-
-**實作邏輯：**
-（待 MRP 完整整合後重新啟用——原程式碼已移除）
-```typescript
-// if (field.key === 'rm_sku' && meta.key === 'product_mold_bom') {
-//   const result = validateRmSkuAsRaw(String(val), db.item_master);
-//   if (!result.valid) errors[field.key] = result.hint;
-// }
-// ...
-```
-
-**驗證方式（FT-01~FT-03）：**
-- 新增 product_mold_bom，rm_sku 選取 PART 類料號 → Toast 錯誤阻擋
-- 新增 yield_master，sku 選取 RAW 類料號 → Toast 錯誤阻擋
-- 新增 supplier_rule_master，rm_sku 選取 MAT 類料號 → Toast 錯誤阻擋
+#### T-01：H-01 分類限制（rm_sku 僅接受 RAW 類）
+**現狀：** 原 `validateRmSkuAsRaw()` 等校驗函式已於 2026-08-22 移除。目前 `rm_sku` 採 fk_select 下拉（來源 item_master），但**未過濾物料分類**；完整性掃描亦僅驗證存在性、未驗證類別。
+**待重新評估：** 於 fieldMeta fk_select 加入分類過濾，或於掃描器新增 H-01 類別檢查。
 
 ---
 
-#### T-02：M-05 BOM 有效期校驗接入 handleSave
-**現狀：** `checkBomValidityOverlap()` 已於 2026-08-22 移除（未接入保存流程，待 MRP 完整整合後重新評估）。
-
-**實作位置：** `src/components/DataTablesView.tsx` → `handleSave()`
-（待 MRP 完整整合後重新啟用）
-
-**實作邏輯：**
-```typescript
-// if (activeTable === 'product_mold_bom') {
-//   const overlapResult = checkBomValidityOverlap(
-//     db.product_mold_bom,
-//     editRow as ProductMoldBOM,
-//     originalRecord ? { sku: originalRecord.sku, mold_id: originalRecord.mold_id } : undefined
-//   );
-//   if (overlapResult.hasOverlap) {
-//     errors['valid_from'] = `與以下 BOM 有效期重疊：${overlapResult.overlappingIds.join(', ')}`;
-//     return;
-//   }
-// }
-```
-
-**驗證方式（FT-05）：** 新增 valid_to=2026-09-01 的 BOM entry，再新增 valid_from 與之重疊的 entry → 阻擋。
+#### T-02：M-05 BOM 有效期校驗
+**現狀：** `checkBomValidityOverlap()` 已於 2026-08-22 移除；V2.0 Plan B 已廢除 valid_from/valid_to 欄位，本項**已隨架構演進作廢**。
 
 ---
 
@@ -166,11 +145,9 @@
 
 | 約束 | 說明 |
 |------|------|
-| SSOT | 單一資料來源，LocalStorage 為唯一真實源頭 |
-| H-01 | `product_mold_bom.rm_sku` 僅接受 RAW 類 |
-| H-02 | `yield_master.sku` 僅接受 PART / COMP / SET 類 |
-| H-03 | `supplier_rule_master.rm_sku` 僅接受 RAW 類 |
-| M-05 | 同一 sku+mold_id 不允許有效日期重疊 |
+| SSOT | 單一資料來源，LocalStorage / 內網共用檔案（V2-Intranet）為真實源頭 |
+| H-01 | `product_mold_bom.rm_sku` 僅接受 RAW 類（目前僅 UI 下拉隱性約束，掃描器類別檢查待補，見 T-01） |
+| Anti-Placebo | 物料屬性缺值時引擎拒絕計算並警示，禁止全域預設頂替 |
 | 分類路徑 | SET 可包含直接 PART 領出組裝，或經 COMP 入庫後再領出組裝 |
 | Storage 上限 | localStorage 10MB，inventory_wip_snapshot 需定期歸檔 |
 | 多標籤同步 | storage event + debounce 30ms |
@@ -181,18 +158,18 @@
 
 | Commit | 說明 |
 |--------|------|
-| `8fa4560` | docs: 修正 SET 分類描述，明確支援直接 PART 一次組裝路徑 |
-| `73e57c8` | fix: 全域水平展開盤點 - 修正8大→10大殘留表述、清除unused import |
-| `78d547f` | fix: Navbar主檔標題修正為10大主檔維護 |
-| `63edce9` | feat: 欄位架構盤點實作 - H-01~H-03 FK分類校驗、M-01~M-05 欄位擴充、Sorting Yield Log 表結構 |
-| `2f0b5d9` | feat: 五層物料分類體系 - MaterialClass 架構、分類管理畫面 |
-| `8fe614e` | feat: 最小字體規範 ≥14px |
-| `c913db0` | feat: 字體改為 Apple San Francisco 系統字體 |
-| `9a97f28` | feat: PRD Rich 頁面改為淺藍漸層卡 |
-| `354d6ee` | fix: PRD Rich 頁面色彩對比度修復 |
-| `fa64ebc` | docs: 修訂 PRD 規格書 |
+| `597c990` | refactor(integrity): Anti-Placebo 數據鏈誠實化 — 拔除全域預設備胎、缺值拒算警示、多模具策略假選項修復 (V-20260825-36) |
+| `77ca77c` | chore(hygiene): requirements/ 業務需求文件排除版控 |
+| `2fd46b0` | ci(deploy): 移除 gh-pages 分支通道，改為純 GitHub Actions artifact 部署 |
+| `2f1196c` | docs(devlog): 記錄 V2-Intranet 本地部署後端與前端適配實作 |
+| `f43f263` | feat(intranet): App 接線共用資料來源 + MaterialClass 受控化 + Navbar 來源狀態/儲存按鈕 |
+| `4deb6ab` | feat(adapter): 新增內網共用資料適配器 loadSharedData/saveSharedData（樂觀鎖 404/409 處理） |
+| `9dfbcd6` | feat(server): 新增 V2-Intranet PowerShell 5.1 檔案服務後端（零依賴 HttpListener + 樂觀鎖 + 滾動快照） |
+| `1578619` | fix(privacy): 資料字典示範文案去識別化 — 移除真實供應商名稱 (V-20260825-05) |
+| `a6b7ffc` | docs(devlog): 記錄整體程式碼優化、MECE 整頓與資安盤點成果 (V-20260825-35) |
+| `126dacb` | chore(hygiene): 倉庫資源 MECE 整頓 — 敏感資料與一次性腳本退出版控 (V-20260825-03) |
 
 ---
 
 *本檔案由 AI 自動維護，下次啟動開發時優先閱讀。*
-*最後更新：2026-08-23 V-20260823-52*
+*最後更新：2026-08-25 V-20260825-36*

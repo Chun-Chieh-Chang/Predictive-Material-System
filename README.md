@@ -53,7 +53,7 @@ npm run dev
 
 ---
 
-## 系統架構 — 4 大 MECE 核心情境門戶 (13 大功能子視圖)
+## 系統架構 — 4 大 MECE 核心情境門戶 (14 大功能子視圖)
 
 ```
 料事如神系統 (PMS)
@@ -63,7 +63,8 @@ npm run dev
 ├── 📊 [決策總覽 Overview]
 │   ├── 物料需求總覽 (DashboardView) — 三向需求交叉比對看板、客戶預測偏差分析 (Bias%)
 │   ├── 出貨排程審查看板 (ShipScheduleClearanceView) — 雙週出貨可行性放行審查、良品+WIP折算、情境模擬
-│   └── 訂單缺料分析 (OrderTensionTrackerView) — 逐筆訂單 6 大供應鏈瓶頸診斷、缺料原因分析與處置建議
+│   ├── 訂單缺料分析 (OrderTensionTrackerView) — 逐筆訂單 6 大供應鏈瓶頸診斷、缺料原因分析與處置建議
+│   └── 數據流程圖 (DataPipelineView) — 數據流程與工作站管線總覽
 ├── 🧮 [物料需求運算 MRP Engine]
 │   └── 3 階 MRP 推導 (MrpCalculatorView) — 單品/全品 MRP 推導、計算公式明細、採購排程時間軸與下單倒數
 ├── 🗄️ [資料管理 Data Management]
@@ -118,6 +119,8 @@ Phase 3 → 採購決策
 
 | 版本 | 日期 | 說明 |
 |------|------|------|
+| **V-20260825-36** | 2026-08-25 | **Anti-Placebo 數據鏈誠實化版**：拔除全域預設備胎（MRP/訂單張力/出貨審查共 10 處 fallback）、主檔缺值即拒算並精確警示缺哪個欄位、多模具策略假選項修復（conservative 改純最大克重）、完整性掃描新增 missing_field 規則、設定頁死旋鈕移除與倉容文案更正。 |
+| **V-20260825-11** | 2026-08-25 | **V2-Intranet 內網部署版**：PowerShell 5.1 檔案服務後端（零依賴 HttpListener + 樂觀鎖 404/409 + 滾動快照）、共用資料適配器 loadSharedData/saveSharedData 雙模式接線、GitHub Actions artifact 部署（gh-pages 移除）。 |
 | **V-20260824-24** | 2026-08-24 | **全專案整體程式碼與檔案優化版**：實裝「業務工作台」與「生管採購工作台」角色門戶；CAPA-001~014 報告全覆蓋（MECE 100/100 滿分驗證）；版號 SSOT 單一真相來源解除鎖定；雙通道 CI 部署與全色系對比度自動防禦門禁；存檔 IMPL-PLAN-002 自進化有機體實施計畫。 |
 | V-20260824-01 | 2026-08-24 | 業務核心需求 15 大可驗收目標確立與 Karpathy 軟體工程準則全域植入版：三向交叉比對看板、計算公式明細抽屜、採購排程時間軸、7 大核心主檔收斂與去冗、90+ 主檔全欄位名稱定義庫入庫、PRD 規格書 V1.3.0 發布、單元測試 100% 通過。 |
 | V-20260823-52 | 2026-08-23 | Smart Filter Hub 實作：MrpCalculatorView SKU 搜尋下拉選單 + ShipScheduleClearanceView 類別膠囊/即時搜尋、全域死碼 import 清理、版本號對齊。 |
@@ -138,7 +141,7 @@ Phase 3 → 採購決策
 ```
 src/
 ├── main.tsx                  # 應用入口，ThemeProvider 包裝
-├── App.tsx                   # 根元件：路由、Toast、LocalStorage 持久化、雙模切換
+├── App.tsx                   # 根元件：路由、Toast、LocalStorage 持久化、雙模切換、內網共用資料同步
 ├── types.ts                  # 全局 TypeScript 型別定義（7 核心主檔 + MRP 結果 + 系統參數 + 物料分類）
 ├── index.css                 # 全局樣式（Tailwind base + 自定義 utility）
 ├── context/
@@ -148,26 +151,32 @@ src/
 │   ├── glossaryData.ts       # 專業術語辭典基礎資料
 │   └── masterFieldDictionary.ts # 7 大主表 90+ 欄位權威業務定義字典
 ├── utils/
-│   ├── mrpEngine.ts          # 3 階 MRP 計算核心引擎（公式推導 + 分批到貨 + 虛擬預扣）
+│   ├── mrpEngine.ts          # 3 階 MRP 計算核心引擎（公式推導 + 分批到貨 + 虛擬預扣 + 缺值拒算）
 │   ├── demandAnalysisEngine.ts # 三向需求交叉比對與預測偏差 (Bias%) 分析引擎
 │   ├── wipEngine.ts          # WIP 日動態推估公式計算器（消除夜班 12h 時序差）
-│   ├── orderTensionEngine.ts # 訂單 6 大環節瓶頸診斷引擎
+│   ├── orderTensionEngine.ts # 訂單 6 大環節瓶頸診斷引擎（無 BOM 訂單誠實標記）
+│   ├── dataIntegrityScanner.ts # 資料關聯完整性與孤兒資料掃描器（含 missing_field 檢查）
 │   ├── dataExchange.ts       # JSON/Excel 雙向匯出入 + 資料填報規範字典
 │   ├── fieldMeta.ts          # 主檔欄位元數據（編輯等級、型態、驗證規則）
-│   ├── dataIntegrityScanner.ts # 資料關聯完整性與孤兒資料掃描器
+│   ├── materialClassValidation.ts  # 五層物料分類驗證工具（SKU 前綴推斷、FK 校驗）
 │   ├── backupService.ts      # 自動備份排程與本地存儲管理
-│   └── materialClassValidation.ts  # 五層物料分類驗證工具（SKU 前綴推斷、FK 校驗）
+│   ├── dataStoreAdapter.ts   # V2-Intranet 共用資料適配器（loadSharedData/saveSharedData，樂觀鎖）
+│   └── version.ts            # 版號 SSOT 單一真相來源（sync-version.mjs 自動同步）
 └── components/
-    ├── Navbar.tsx             # 頂部導覽列（導航頁籤 + 主題切換 + 告警徽章 + Telemetry 雙模徽章）
+    ├── Navbar.tsx             # 頂部導覽列（導航頁籤 + 主題切換 + 告警徽章 + 內網來源狀態/儲存按鈕）
+    ├── Sidebar.tsx            # 左側導覽選單（桌面固定 / 行動抽屜）
+    ├── SalesWorkbenchView.tsx        # 業務工作台（客戶/品號快速查詢 · 預測偏差比對 · 交期確認）
+    ├── ProcurementWorkbenchView.tsx  # 生管採購工作台（下單倒數 · MRP 推導 · 模具產能 · 資料表維護入口）
     ├── DashboardView.tsx      # 物料需求總覽（三向需求交叉比對 + 預測偏差分析）
+    ├── DataPipelineView.tsx   # 數據流程與工作站管線總覽
     ├── MrpCalculatorView.tsx  # MRP 計算器（計算公式明細 + 最晚下單日倒數 + 採購建議）
     ├── ShipScheduleClearanceView.tsx # 出貨排程審查看板（雙週放行審查 + 情境模擬）
     ├── OrderTensionTrackerView.tsx   # 訂單缺料分析看板（6 大環節瓶頸診斷 + 處置建議）
-    ├── SystemSettingsView.tsx # 系統參數配置面板（沖銷模式/虛擬預扣/損耗率天花板）
     ├── DataTablesView.tsx     # 資料表維護（3 級變更管制 + FK 影響掃描）
     ├── DataExchangeView.tsx   # 資料匯入匯出與模擬（雙模換檔 + Excel/JSON 匯出入 + 關聯檢核）
     ├── GlossaryView.tsx       # 名詞術語說明（含資料表欄位定義）
     ├── MaterialClassManagementView.tsx  # 五層物料分類樹管理 (RAW/MAT/PART/COMP/SET)
+    ├── SystemSettingsView.tsx # 參數策略設定（沖銷模式/虛擬預扣/損耗率天花板；物料屬性以主檔為準）
     ├── BackupSettingsView.tsx # 備份與復原設定面板
     └── PrdDocView.tsx         # 系統規格與 15 大核心可驗收目標 (OBJ-01 ~ OBJ-15) 檢視
 ```

@@ -40,7 +40,7 @@ export interface ItemMaster {
   description?: string;                 // 說明備註
   material_class?: MaterialClassCode | null; // 分類代碼 (RAW / MAT / PART / COMP / SET)
   // ── 合入自 yield_master（僅 PART/COMP/SET 類填寫）──
-  std_sorting_yield?: number | null;    // 標準全檢良率 (e.g. 0.98 = 98%)，null = 使用系統預設值
+  std_sorting_yield?: number | null;    // 標準全檢良率 (e.g. 0.98 = 98%)，缺值時 MRP 將拒絕計算該品號（Anti-Placebo，禁止全域預設頂替）
   // ── 合入自 supplier_rule_master（僅 RAW 類填寫）──
   supplier_name?: string | null;        // 供應商名稱
   lead_time_days?: number | null;       // 採購交期_天 (國外海運 90~150 天)
