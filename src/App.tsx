@@ -10,6 +10,7 @@ import { PMS_VERSION } from './utils/version';
 import { SalesWorkbenchView } from './components/SalesWorkbenchView';
 import { ProcurementWorkbenchView } from './components/ProcurementWorkbenchView';
 import { DashboardView } from './components/DashboardView';
+import { DataPipelineView } from './components/DataPipelineView';
 import { MrpCalculatorView } from './components/MrpCalculatorView';
 import { ShipScheduleClearanceView } from './components/ShipScheduleClearanceView';
 import { OrderTensionTrackerView } from './components/OrderTensionTrackerView';
@@ -307,8 +308,8 @@ export function App() {
         setMobileOpen={setMenuOpen}
       />
 
-      {/* Page wrapper: pushes content right on desktop to accommodate fixed sidebar */}
-      <div className="lg:ml-64 flex flex-col min-h-screen">
+      {/* Page wrapper: Full-width layout without fixed sidebar obstruction */}
+      <div className="w-full flex flex-col min-h-screen">
 
       {/* Top Navbar */}
       <Navbar
@@ -328,7 +329,7 @@ export function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-[1720px] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 pt-6 pb-10">
+      <main className="flex-1 w-full max-w-[1850px] mx-auto px-2 sm:px-4 lg:px-6 pt-4 pb-8">
         {activeTab === 'sales_workbench' && (
           <SalesWorkbenchView
             db={db}
@@ -381,6 +382,14 @@ export function App() {
             onNavigateToSettings={handleNavigateToSettings}
             onNavigateToExchange={handleNavigateToExchange}
             onNavigateToOrderTension={() => setActiveTab('order_tension_tracker')}
+          />
+        )}
+
+        {activeTab === 'data_pipeline' && (
+          <DataPipelineView
+            database={db}
+            systemParameters={systemParams}
+            onNavigateToTab={(tab) => setActiveTab(tab)}
           />
         )}
 

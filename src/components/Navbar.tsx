@@ -21,6 +21,7 @@ import {
   BookOpen,
   Menu,
   X,
+  Workflow,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { PMS_VERSION } from '../utils/version';
@@ -35,6 +36,7 @@ export type NavTab =
   | 'sales_workbench'
   | 'procurement_workbench'
   | 'dashboard'
+  | 'data_pipeline'
   | 'mrp_calculator'
   | 'ship_schedule_clearance'
   | 'order_tension_tracker'
@@ -64,7 +66,7 @@ export interface DomainMeta {
 }
 
 export function getDomainForTab(tab: NavTab): PrimaryDomain {
-  if (tab === 'sales_workbench' || tab === 'dashboard' || tab === 'ship_schedule_clearance' || tab === 'order_tension_tracker') {
+  if (tab === 'sales_workbench' || tab === 'dashboard' || tab === 'data_pipeline' || tab === 'ship_schedule_clearance' || tab === 'order_tension_tracker') {
     return 'war_room';
   }
   if (tab === 'procurement_workbench' || tab === 'mrp_calculator') {
@@ -169,6 +171,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         defaultTab: 'dashboard',
         tabs: [
           { id: 'dashboard', label: '物料需求總覽', subLabel: 'Dashboard', icon: BarChart3, badge: alertCount > 0 ? alertCount : undefined },
+          { id: 'data_pipeline', label: '數據流程圖', subLabel: 'Data Pipeline', icon: Workflow },
           { id: 'ship_schedule_clearance', label: '出貨排程審查', subLabel: 'Ship Clearance', icon: CalendarCheck },
           { id: 'order_tension_tracker', label: '訂單缺料分析', subLabel: 'Shortage Analysis', icon: Activity },
         ],
@@ -357,6 +360,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <span className="hidden sm:inline font-semibold">淺色模式</span>
                   </>
                 )}
+              </button>
+
+              {/* Function Menu Drawer Button */}
+              <button
+                onClick={onMenuToggle}
+                id="nav-drawer-toggle-btn"
+                title={menuOpen ? '關閉功能選單' : '開啟功能選單'}
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white border border-slate-300 dark:border-slate-800 transition-all cursor-pointer shadow-xs"
+              >
+                <Menu className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+                <span className="hidden sm:inline font-semibold">選單</span>
               </button>
 
               {adminUnlocked && (

@@ -19,6 +19,7 @@ import {
   ChevronDown,
   ChevronRight,
   Sparkles,
+  Workflow,
   X,
 } from 'lucide-react';
 import { NavTab } from './Navbar';
@@ -85,6 +86,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { id: 'sales_workbench', label: '業務工作台', sub: 'Sales Hub', icon: Sparkles },
       { id: 'dashboard', label: '物料需求總覽', sub: 'Overview Dashboard', icon: BarChart3 },
+      { id: 'data_pipeline', label: '數據流程圖', sub: 'Data Pipeline', icon: Workflow },
       { id: 'ship_schedule_clearance', label: '出貨排程審查', sub: 'Ship Clearance', icon: CalendarCheck },
       { id: 'order_tension_tracker', label: '訂單缺料分析', sub: 'Order Shortage Analysis', icon: Activity },
     ],
@@ -283,19 +285,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
     />
   );
 
-  // ── Mobile drawer header actions ──────────────────────────────────────────
-  const mobileHeader = (
-    <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-800">
+  // ── Drawer Header ──
+  const drawerHeader = (
+    <div className="flex items-center justify-between px-4 py-3.5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
       <div className="flex items-center gap-2.5">
         <div className="w-8 h-8 bg-sky-500 rounded-lg flex items-center justify-center font-bold text-white text-sm shadow-md shadow-sky-500/30">
           料
         </div>
-        <span className="text-sm font-bold text-slate-900 dark:text-white">料事如神系統</span>
+        <div>
+          <span className="text-sm font-bold text-slate-900 dark:text-white block leading-none">系統功能選單</span>
+          <span className="text-[10px] text-slate-500 font-mono">Navigation Menu</span>
+        </div>
       </div>
       <button
         onClick={() => setMobileOpen(false)}
         className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800 transition-colors cursor-pointer"
-        title="關閉選單"
+        title="關閉選單 (Esc)"
         aria-label="關閉選單"
       >
         <X className="w-5 h-5" />
@@ -303,24 +308,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
     </div>
   );
 
-  // ── Desktop / mobile shared sidebar content ───────────────────────────────
+  // ── Shared sidebar content ──
   const sidebarContent = (
-    <div className="flex flex-col h-full">
-      {/* Brand header */}
-      <div className="hidden lg:flex items-center gap-2.5 px-4 py-3.5 border-b border-slate-200 dark:border-slate-800 shrink-0">
-        <div className="w-8 h-8 bg-sky-500 rounded-lg flex items-center justify-center font-bold text-white text-sm shadow-md shadow-sky-500/30 shrink-0">
-          料
-        </div>
-        <div className="min-w-0">
-          <div className="text-sm font-bold text-slate-900 dark:text-white leading-tight">料事如神系統</div>
-        </div>
-      </div>
-
-      {/* Mobile header */}
-      {mobileOpen && mobileHeader}
+    <div className="flex flex-col h-full bg-white dark:bg-slate-950">
+      {drawerHeader}
 
       {/* Scrollable nav area */}
-      <nav className="flex-1 overflow-y-auto px-2 py-2 scrollbar-thin" role="navigation" aria-label="主要導航">
+      <nav className="flex-1 overflow-y-auto px-2 py-2.5 scrollbar-thin" role="navigation" aria-label="主要導航">
         {NAV_GROUPS.map(renderGroup)}
 
         {/* Admin section (conditional) */}
@@ -368,7 +362,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* Footer */}
-      <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-800 shrink-0">
+      <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-800 shrink-0 bg-slate-50/50 dark:bg-slate-900/50">
         <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono leading-relaxed">
           Developed by Wesley Chang<br />
           @Mouldex · {new Date().getFullYear()}
@@ -377,36 +371,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
     </div>
   );
 
-  // ── Desktop: persistent left sidebar ──────────────────────────────────────
-  const desktopSidebar = (
-    <aside
-      className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:left-0 lg:z-30 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800"
-      aria-label="桌面端導航側邊欄"
-    >
-      {sidebarContent}
-    </aside>
-  );
-
-  // ── Mobile/Tablet: overlay drawer ─────────────────────────────────────────
-  const mobileDrawer = (
+  // ── Overlay Slide-over Drawer (From Right) ──
+  return (
     <>
       {overlay}
       <aside
         className={[
-          'fixed top-0 left-0 z-50 flex flex-col h-full w-72 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 shadow-2xl shadow-black/60 transition-transform duration-200',
-          mobileOpen ? 'translate-x-0' : '-translate-x-full',
+          'fixed top-0 right-0 z-50 flex flex-col h-full w-80 max-w-[90vw] bg-white dark:bg-slate-950 border-l border-slate-200 dark:border-slate-800 shadow-2xl shadow-black/60 transition-transform duration-300 ease-in-out',
+          mobileOpen ? 'translate-x-0' : 'translate-x-full',
         ].join(' ')}
-        aria-label="行動端導航抽屜"
+        aria-label="功能選單抽屜"
       >
         {sidebarContent}
       </aside>
-    </>
-  );
-
-  return (
-    <>
-      {desktopSidebar}
-      {mobileDrawer}
     </>
   );
 };

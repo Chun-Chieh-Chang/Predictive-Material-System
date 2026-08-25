@@ -65,3 +65,7 @@ scratch/*.png
 
 # Audit logs runtime checklist
 docs/.audit/*.jsonl
+
+# Chat/upload temp artifacts
+/upload_*.jpg
+/upload_*.png

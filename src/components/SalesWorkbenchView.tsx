@@ -102,7 +102,7 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
     recommendations: ['查無該品號之業務預估或訂單記錄，請至「資料表維護」新增需求。'],
   };
 
-  // ── 關聯訂單與物料緊張度計算 ─────────────────────────────────────────────────
+  // ── 關聯訂單與備料狀況分析計算 ─────────────────────────────────────────────────
   const relevantOrders = useMemo(() => {
     if (queryType === 'customer') {
       return orderList.filter(o => o.customer_id.toLowerCase() === searchKeyword.toLowerCase());
@@ -481,7 +481,7 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
         </div>
       </div>
 
-      {/* ── 卡片 3: 訂單全鏈路物料緊張度診斷與交期答覆產生器 (Full Width) ──── */}
+      {/* ── 卡片 3: 訂單備料狀況分析與交期回覆參考 (Full Width) ──── */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 gap-3">
           <div className="flex items-center space-x-2.5">

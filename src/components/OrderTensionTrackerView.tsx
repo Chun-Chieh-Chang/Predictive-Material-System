@@ -235,7 +235,7 @@ export const OrderTensionTrackerView: React.FC<OrderTensionTrackerViewProps> = (
         <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
           {/* Tension Level Tabs */}
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="font-semibold text-slate-500 dark:text-slate-400 mr-1">緊張度篩選:</span>
+            <span className="font-semibold text-slate-500 dark:text-slate-400 mr-1">缺料等級篩選:</span>
             <button
               onClick={() => setTensionLevelFilter('ALL')}
               className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${

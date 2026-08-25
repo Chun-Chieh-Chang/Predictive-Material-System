@@ -1169,7 +1169,31 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 ---
 
-*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-24 V-20260824-33*
+### V-20260825-34 (2026-08-25) — 數據流程圖與工作站節點視覺化 (n8n-style Node Flow & Pipeline View)
+
+**執行人：** Antigravity AI (Wesley Chang @Mouldex)  
+**狀態：** ✅ Complete / Verified  
+**TypeScript 編譯：** 0 錯誤 / 0 警告 (`tsc --noEmit`)  
+**原則落實：** First-Principles、n8n-style Workflow Canvas、Bézier Data Stream、Deep Data Inspection、Dark/Light Dual Theme Adaptation  
+
+#### 一、需求與背景
+- 使用者期望將 PMS 系統的端到端數據流程視覺化，設立必要的工作站與資訊節點，並以平滑貝茲曲線將節點串接起來，呈現真實數據處理邏輯，類似 n8n 的圖形化串接概念。
+- 要求先建置靜態流程圖，後續具備進階動態表現，並嚴格落實深淺雙色主題完美適配。
+
+#### 二、架構設計與成果
+1. **新建視覺化管線組件 (`src/components/DataPipelineView.tsx`)**：
+   - **4 大情境切換導覽卡 (Scenario Selector Tabs)**：全鏈路總覽 (Full E2E)、業務管理 (Sales Ops)、採購排程 (Procurement Ops)、生管與庫存 (Production Ops)。
+   - **點陣網格工作站畫布 (Dot Matrix Canvas)**：深色 `#090D16` / 淺色 `#F8FAFC` 雙主題適配，支援平移縮放 (60%~140%)、重置視角與全螢幕。
+   - **8 大核心工作站節點 + 4 大參數規則子節點**：具備輸入/輸出 Handles、即時資料統計徽章、健康度指示燈。
+   - **平滑貝茲連線 (Bézier Edges) 與動態粒子脈衝**：動態流動光點模擬資料傳輸，具備數據類型標籤。
+   - **深度數據穿透抽屜 (Deep Data Inspection Drawer)**：點擊任一節點展示工作站職責、推導算式、清洗防護規則、輸入/輸出 Schema，並提供一鍵跳轉對應資料表/計算機功能。
+   - **逐步運算重播模擬器 (Step Simulation Player)**：依資料流拓撲順序依序點亮工作站與數據抽屜。
+2. **導航與路由整合**：
+   - 於 `Navbar.tsx`、`Sidebar.tsx` 與 `App.tsx` 加入 `data_pipeline` 路由與 `Workflow` 圖示，收錄於「決策總覽 (War Room)」領域。
+
+---
+
+*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-25 V-20260825-34*
 
 
 

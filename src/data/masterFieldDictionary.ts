@@ -304,7 +304,7 @@ export const MASTER_TABLE_SCHEMAS: {
         fillGuide: '唯讀欄位（系統自動計算）。隨妥善穴數與成型週期變更即時重算。',
         example: '102,810',
         exampleExplanation: '計算式：(86,400秒 ÷ 18.5秒) × 22穴 = 102,810 PCS/日。生管若接到 30 萬訂單，可知至少需排產 3 個工作天。',
-        mrpImpact: '訂單緊張度 (Order Tension) 產能負荷診斷與出貨排程放行之重要產能指標。'
+        mrpImpact: '訂單缺料與產能負荷分析 (Order Shortage Analysis) 及出貨排程放行之重要產能指標。'
       },
       {
         fieldKey: 'status',
@@ -727,7 +727,7 @@ export const MASTER_TABLE_SCHEMAS: {
         fillGuide: '必填。填寫客戶採購單號（如 PO-2026-A-0881）。不可重複。',
         example: 'PO-2026-A-0881',
         exampleExplanation: 'A客戶 正式下達的採購訂單號碼。',
-        mrpImpact: '訂單物料緊張度診斷 (OBJ-06) 與週二出貨放行審查 (OBJ-05) 之唯一錨點。'
+        mrpImpact: '訂單缺料分析 (OBJ-06) 與週二出貨放行審查 (OBJ-05) 之唯一錨點。'
       },
       {
         fieldKey: 'customer_id',

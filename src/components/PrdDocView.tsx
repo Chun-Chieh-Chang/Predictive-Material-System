@@ -38,7 +38,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
 ## 🎯 專案開發總體目標架構 (Objectives Overview)
 本專案將業務單位的 5 大核心訴求，精確拆解為 15 項具體、可量化、可驗收的開發目標 (OBJ-01 ~ OBJ-15)：
 1. 【維度一：提高客戶下單掌握度，提升備料能力】OBJ-01 三向交叉比對、OBJ-02 預測偏離示警、OBJ-03 最晚採購發單日推算。
-2. 【維度二：提高資訊集中度，消除資訊孤島】OBJ-04 7大核心營運主檔集中維護、OBJ-05 週二出貨審查放行、OBJ-06 訂單緊張度診斷。
+2. 【維度二：提高資訊集中度，消除資訊孤島】OBJ-04 7大核心營運主檔集中維護、OBJ-05 週二出貨審查放行、OBJ-06 訂單缺料分析與瓶頸診斷。
 3. 【維度三：提高資訊透明度，數位化估算履歷】OBJ-07 標準 3 階 MRP 推導、OBJ-08 算式透明化卡片、OBJ-09 What-If 模擬。
 4. 【維度四：全體單位同台協同操作】OBJ-10 全員無門檻操作、OBJ-11 開會統一投影、OBJ-12 自動審計軌跡。
 5. 【維度五：保留企業級 ERP 擴充性】OBJ-13 3NF與五層分類、OBJ-14 適配層解耦、OBJ-15 開放契約與資料字典。
@@ -113,7 +113,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
       name: '訂單缺料分析與瓶頸診斷',
       category: '提高資訊集中度 / 增加效率',
       files: 'OrderTensionTrackerView.tsx',
-      summary: '穿透式診斷 6 大環節瓶頸，輸出 4 級緊張度評級與應變 SOP',
+      summary: '穿透式診斷 6 大環節瓶頸，輸出 4 級缺料風險評級與應變 SOP',
       dod: '逐筆訂單即時顯示各環節備料狀況與瓶頸分析',
       status: '✅ 100% 驗收通過'
     },
