@@ -51,17 +51,14 @@ sync.ffs_db
 
 # Raw business data (sensitive customer & supplier data, never commit)
 rawdata/
-
-# Metadata（保留版控）
-# metadata.json
+/新增資料夾/
 
 # Generated docs — only auto-generated reports, not source docs
 docs/*.mec-report.json
 *.mec-report.json
 
-# Scratch temporary artifacts (intermediate parse cache)
-scratch/*.json
-scratch/*.png
+# Scratch temporary artifacts (one-off ETL scripts & intermediate parse cache)
+/scratch/
 
 # Audit logs runtime checklist
 docs/.audit/*.jsonl

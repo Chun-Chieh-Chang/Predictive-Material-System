@@ -1,6 +1,0 @@
-{
-  "name": "料事如神系統 (Predictive Material System)",
-  "description": "從客戶預測(Forecast)到射出成型備料與生產管理的智能物料需求(MRP)運算與資料維運平台",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
