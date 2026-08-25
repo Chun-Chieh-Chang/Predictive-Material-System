@@ -40,9 +40,20 @@ export interface SharedSaveResult {
 }
 
 export async function loadSharedData(): Promise<SharedLoadResult> {
+  // 靜態託管環境（GitHub Pages 等）不可能存在內網檔案服務，
+  // 直接本機模式，避免每次載入產生 404/405 請求噪音與誤判初始化。
+  if (typeof location !== 'undefined' && /\.github\.io$/i.test(location.hostname)) {
+    return { mode: 'local', payload: null, version: 0, error: '靜態託管環境（GitHub Pages），使用本機模式' };
+  }
   try {
     const res = await fetch('/api/db', { method: 'GET' });
     if (res.status === 404) {
+      // 內網服務的 404 回應為 application/json（error: not_initialized）；
+      // 靜態主機的 404 為 text/html —— 以 Content-Type 判別，避免誤入初始化流程（PUT 405）。
+      const contentType = res.headers.get('content-type') ?? '';
+      if (!contentType.includes('application/json')) {
+        return { mode: 'local', payload: null, version: 0, error: '找不到內網檔案服務（/api/db），已切換本機模式' };
+      }
       return { mode: 'intranet', payload: null, version: 0 };
     }
     if (!res.ok) {
