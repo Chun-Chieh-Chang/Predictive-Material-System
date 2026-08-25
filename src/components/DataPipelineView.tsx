@@ -150,7 +150,19 @@ export const DataPipelineView: React.FC<DataPipelineViewProps> = ({
   onNavigateToTab,
 }) => {
   const [selectedScenario, setSelectedScenario] = useState<PipelineScenario>('all');
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>('mrp_core');
+  // Station Details 視窗：預設隱藏，滑鼠懸停工作站卡片顯示、離開即隱藏（250ms 緩衝供滑入面板接續操作）
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const stationHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clearStationHideTimer = () => {
+    if (stationHideTimerRef.current) {
+      clearTimeout(stationHideTimerRef.current);
+      stationHideTimerRef.current = null;
+    }
+  };
+  const scheduleStationHide = () => {
+    clearStationHideTimer();
+    stationHideTimerRef.current = setTimeout(() => setSelectedNodeId(null), 250);
+  };
   const [zoomLevel, setZoomLevel] = useState<number>(0.92);
   const [isDynamicFlowActive, setIsDynamicFlowActive] = useState<boolean>(true);
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
@@ -704,7 +716,6 @@ export const DataPipelineView: React.FC<DataPipelineViewProps> = ({
     } else {
       setIsSimulating(true);
       setSimulationStepIndex(0);
-      setSelectedNodeId(simulationNodeOrder[0] || null);
     }
   };
 
@@ -718,7 +729,6 @@ export const DataPipelineView: React.FC<DataPipelineViewProps> = ({
             if (simulationTimerRef.current) clearInterval(simulationTimerRef.current);
             return prev;
           }
-          setSelectedNodeId(simulationNodeOrder[next]);
           return next;
         });
       }, 1500);
@@ -734,7 +744,6 @@ export const DataPipelineView: React.FC<DataPipelineViewProps> = ({
     if (simulationTimerRef.current) clearInterval(simulationTimerRef.current);
     setIsSimulating(false);
     setSimulationStepIndex(-1);
-    setSelectedNodeId('mrp_core');
   };
 
   // Helper for computing SVG Bezier curve path
@@ -1024,15 +1033,13 @@ export const DataPipelineView: React.FC<DataPipelineViewProps> = ({
                       >
                         <div className="flex items-center justify-center h-full">
                           <span
-                            className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border shadow-md cursor-pointer transition-all ${
+                            className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border shadow-md transition-all ${
                               isConnectedToSelected
                                 ? 'bg-indigo-600 text-white border-indigo-400 ring-2 ring-indigo-400/30'
                                 : 'bg-slate-700 text-white border-slate-600 dark:bg-slate-800 dark:text-indigo-200 dark:border-indigo-500/50'
-                            }`}
-                            onClick={() => setSelectedNodeId(edge.toNodeId)}
-                          >
-                            {edge.label}
-                          </span>
+                            }`                            }>
+                              {edge.label}
+                            </span>
                         </div>
                       </foreignObject>
                     )}
@@ -1077,7 +1084,9 @@ export const DataPipelineView: React.FC<DataPipelineViewProps> = ({
               return (
                 <div
                   key={node.id}
-                  onClick={() => setSelectedNodeId(node.id)}
+                  onMouseEnter={() => { clearStationHideTimer(); setSelectedNodeId(node.id); }}
+                  onMouseLeave={scheduleStationHide}
+                  onClick={() => { clearStationHideTimer(); setSelectedNodeId(node.id); }}
                   style={{
                     position: 'absolute',
                     left: `${node.x}px`,
@@ -1183,6 +1192,8 @@ export const DataPipelineView: React.FC<DataPipelineViewProps> = ({
         {selectedNode && (
           <div
             ref={inspectorRef}
+            onMouseEnter={clearStationHideTimer}
+            onMouseLeave={scheduleStationHide}
             className="absolute w-96 md:w-[420px] max-h-[calc(100%-1.5rem)] rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl flex flex-col z-30 overflow-hidden"
             style={
               inspectorPos
@@ -1210,7 +1221,7 @@ export const DataPipelineView: React.FC<DataPipelineViewProps> = ({
                 </div>
               </div>
               <button
-                onClick={() => setSelectedNodeId(null)}
+                onClick={() => { clearStationHideTimer(); setSelectedNodeId(null); }}
                 className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
               >
                 <X className="w-4 h-4" />
