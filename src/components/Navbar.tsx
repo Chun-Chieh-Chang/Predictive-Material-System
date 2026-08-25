@@ -22,6 +22,7 @@ import {
   Menu,
   X,
   Workflow,
+  Save,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { PMS_VERSION } from '../utils/version';
@@ -92,6 +93,10 @@ interface NavbarProps {
   onMenuToggle: () => void;
   menuOpen: boolean;
   isDemoMode?: boolean;
+  dataSourceMode?: 'intranet' | 'local';
+  sharedSavedAt?: string | null;
+  savingShared?: boolean;
+  onSaveToShared?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -108,6 +113,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   onMenuToggle,
   menuOpen,
   isDemoMode = false,
+  dataSourceMode = 'local',
+  sharedSavedAt = null,
+  savingShared = false,
+  onSaveToShared,
 }) => {
   const { theme, toggleTheme } = useTheme();
 
@@ -361,6 +370,36 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </>
                 )}
               </button>
+
+              {/* ── V2-Intranet：資料來源狀態與手動儲存 ──────────────────────── */}
+              {dataSourceMode === 'intranet' ? (
+                <>
+                  <span
+                    className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800"
+                    title={sharedSavedAt ? `共用資料最後儲存：${new Date(sharedSavedAt).toLocaleTimeString()}` : '已連線內網共用資料夾'}
+                  >
+                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    {sharedSavedAt ? `已同步 ${new Date(sharedSavedAt).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })}` : '內網共用模式'}
+                  </span>
+                  <button
+                    onClick={onSaveToShared}
+                    disabled={savingShared}
+                    title="將目前資料儲存至內網共用資料夾"
+                    className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold bg-sky-600 hover:bg-sky-700 disabled:opacity-60 disabled:cursor-wait text-white border border-sky-700 transition-all cursor-pointer shadow-xs"
+                  >
+                    <Save className={`w-3.5 h-3.5 ${savingShared ? 'animate-pulse' : ''}`} />
+                    <span className="hidden sm:inline font-semibold">{savingShared ? '儲存中…' : '儲存到共用資料夾'}</span>
+                  </button>
+                </>
+              ) : (
+                <span
+                  className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800"
+                  title="無法連線內網資料服務，資料僅儲存於本機瀏覽器"
+                >
+                  <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                  離線本機模式
+                </span>
+              )}
 
               {/* Function Menu Drawer Button */}
               <button

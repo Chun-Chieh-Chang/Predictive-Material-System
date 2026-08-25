@@ -187,7 +187,6 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
   const handleLoadDemoSample = () => {
     try {
       const demoData = JSON.parse(JSON.stringify(DEMO_SAMPLE_DATABASE));
-      localStorage.setItem('PMS_DATABASE_STATE_V1', JSON.stringify(demoData));
       setDb(demoData);
       setDryRunReport(null);
       setPendingDB(null);
@@ -202,7 +201,6 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
   const handleClearDatabase = () => {
     try {
       const emptyData = JSON.parse(JSON.stringify(EMPTY_DATABASE));
-      localStorage.setItem('PMS_DATABASE_STATE_V1', JSON.stringify(emptyData));
       setDb(emptyData);
       setDryRunReport(null);
       setPendingDB(null);

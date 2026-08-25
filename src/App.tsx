@@ -25,6 +25,8 @@ import {
   SystemDatabase,
   SystemParameters,
   DEFAULT_SYSTEM_PARAMETERS,
+  DEFAULT_MATERIAL_CLASSES,
+  MaterialClass,
   BackupScheduleConfig,
   DEFAULT_BACKUP_CONFIG,
   BACKUP_CONFIG_STORAGE_KEY,
@@ -33,6 +35,7 @@ import {
 import { INITIAL_DATABASE } from './data/seedData';
 import { calculateAllMRP } from './utils/mrpEngine';
 import { performBackup, shouldTriggerBackup, loadBackupConfig } from './utils/backupService';
+import { loadSharedData, saveSharedData, DataSourceMode } from './utils/dataStoreAdapter';
 import { CheckCircle2, AlertCircle, X } from 'lucide-react';
 
 const STORAGE_KEY = 'PMS_DATABASE_STATE_V1';
@@ -103,57 +106,61 @@ function sanitizeAnonymization(rawDb: any): any {
   return rawDb;
 }
 
+/**
+ * 舊版資料遷移與去識別化清洗（LocalStorage 與內網共用載入共用此路徑）
+ */
+function migrateRawDbInner(parsed: any): SystemDatabase {
+  // Backward compat: ensure required array fields exist
+  if (!parsed.audit_log) parsed.audit_log = [];
+  if (!parsed.material_classes) parsed.material_classes = [];
+  if (!parsed.sorting_actual_yield_log) parsed.sorting_actual_yield_log = [];
+
+  // V2.0 Scheme B Migration: merge legacy yield_master and supplier_rule_master into item_master
+  if (Array.isArray(parsed.yield_master)) {
+    parsed.yield_master.forEach((y: any) => {
+      const item = parsed.item_master?.find((i: any) => i.sku === y.sku);
+      if (item && y.std_sorting_yield != null && item.std_sorting_yield == null) {
+        item.std_sorting_yield = y.std_sorting_yield;
+      }
+    });
+    delete parsed.yield_master;
+  }
+  if (Array.isArray(parsed.supplier_rule_master)) {
+    parsed.supplier_rule_master.forEach((s: any) => {
+      const item = parsed.item_master?.find((i: any) => i.sku === s.rm_sku);
+      if (item) {
+        if (s.supplier_name && !item.supplier_name) item.supplier_name = s.supplier_name;
+        if (s.lead_time_days != null && item.lead_time_days == null) item.lead_time_days = s.lead_time_days;
+        if (s.moq_kg != null && item.moq_kg == null) item.moq_kg = s.moq_kg;
+        if (s.safety_stock_kg != null && item.safety_stock_kg == null) item.safety_stock_kg = s.safety_stock_kg;
+      }
+    });
+    delete parsed.supplier_rule_master;
+  }
+  if (parsed.color_mixing_log) {
+    delete parsed.color_mixing_log;
+  }
+
+  // M-02: migrate created_by → created_by_id + created_by_name
+  if (parsed.demand_forecast_log?.length && parsed.demand_forecast_log[0]['created_by'] !== undefined && parsed.demand_forecast_log[0]['created_by_id'] === undefined) {
+    parsed.demand_forecast_log = parsed.demand_forecast_log.map((r: Record<string, unknown>) => ({
+      ...r,
+      created_by_id: r['created_by'] as string,
+      created_by_name: null as string | null,
+    }));
+  }
+
+  // Auto-Sanitization: Ensure Rule 8 Data Anonymization across all records
+  return sanitizeAnonymization(parsed);
+}
+
 export function App() {
   // Load state from LocalStorage or seed data
   const [db, setDb] = useState<SystemDatabase>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        let parsed = JSON.parse(saved);
-        // Backward compat: ensure required array fields exist
-        if (!parsed.audit_log) parsed.audit_log = [];
-        if (!parsed.material_classes) parsed.material_classes = [];
-        if (!parsed.sorting_actual_yield_log) parsed.sorting_actual_yield_log = [];
-
-        // V2.0 Scheme B Migration: merge legacy yield_master and supplier_rule_master into item_master
-        if (Array.isArray(parsed.yield_master)) {
-          parsed.yield_master.forEach((y: any) => {
-            const item = parsed.item_master?.find((i: any) => i.sku === y.sku);
-            if (item && y.std_sorting_yield != null && item.std_sorting_yield == null) {
-              item.std_sorting_yield = y.std_sorting_yield;
-            }
-          });
-          delete parsed.yield_master;
-        }
-        if (Array.isArray(parsed.supplier_rule_master)) {
-          parsed.supplier_rule_master.forEach((s: any) => {
-            const item = parsed.item_master?.find((i: any) => i.sku === s.rm_sku);
-            if (item) {
-              if (s.supplier_name && !item.supplier_name) item.supplier_name = s.supplier_name;
-              if (s.lead_time_days != null && item.lead_time_days == null) item.lead_time_days = s.lead_time_days;
-              if (s.moq_kg != null && item.moq_kg == null) item.moq_kg = s.moq_kg;
-              if (s.safety_stock_kg != null && item.safety_stock_kg == null) item.safety_stock_kg = s.safety_stock_kg;
-            }
-          });
-          delete parsed.supplier_rule_master;
-        }
-        if (parsed.color_mixing_log) {
-          delete parsed.color_mixing_log;
-        }
-
-        // M-02: migrate created_by → created_by_id + created_by_name
-        if (parsed.demand_forecast_log?.length && parsed.demand_forecast_log[0]['created_by'] !== undefined && parsed.demand_forecast_log[0]['created_by_id'] === undefined) {
-          parsed.demand_forecast_log = parsed.demand_forecast_log.map((r: Record<string, unknown>) => ({
-            ...r,
-            created_by_id: r['created_by'] as string,
-            created_by_name: null as string | null,
-          }));
-        }
-
-        // Auto-Sanitization: Ensure Rule 8 Data Anonymization across all records
-        parsed = sanitizeAnonymization(parsed);
-
-        return parsed;
+        return migrateRawDbInner(JSON.parse(saved));
       }
     } catch (e) {
       console.error('Failed to load from local storage', e);
@@ -188,9 +195,25 @@ export function App() {
     try {
       localStorage.setItem(PARAMS_STORAGE_KEY, JSON.stringify(systemParams));
     } catch (e) {
-      console.error('Failed to save system parameters from local storage', e);
+      console.error('Failed to save system parameters to local storage', e);
     }
   }, [systemParams]);
+
+  // ── 五層分類目錄（MaterialClassManagementView 編輯之共用分類資料）────────────
+  const [classDirectory, setClassDirectory] = useState<MaterialClass[]>(() => {
+    try {
+      const saved = localStorage.getItem('PMS_MATERIAL_CLASSES_V1');
+      return saved ? JSON.parse(saved) : DEFAULT_MATERIAL_CLASSES;
+    } catch { return DEFAULT_MATERIAL_CLASSES; }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('PMS_MATERIAL_CLASSES_V1', JSON.stringify(classDirectory));
+    } catch (e) {
+      console.error('Failed to save class directory', e);
+    }
+  }, [classDirectory]);
 
   const [roleMode, setRoleMode] = useState<RoleMode>(() => {
     try {
@@ -219,6 +242,64 @@ export function App() {
   const [activeMrpSku, setActiveMrpSku] = useState<string>('A01-200-131');
   const [activeTableKey, setActiveTableKey] = useState<TableKey>('item_master');
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // ── V2-Intranet：內網共用資料來源狀態 ────────────────────────────────────────
+  const [dataSource, setDataSource] = useState<DataSourceMode>('local');
+  const [dataSourceError, setDataSourceError] = useState<string | null>(null);
+  const [sharedVersion, setSharedVersion] = useState<number>(0);
+  const [sharedSavedAt, setSharedSavedAt] = useState<string | null>(null);
+  const [savingShared, setSavingShared] = useState<boolean>(false);
+
+  // 啟動時嘗試從內網檔案服務載入；404 = 首次初始化（以現狀回寫）；失敗 = 離線本機模式
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const result = await loadSharedData();
+      if (cancelled) return;
+      if (result.mode === 'intranet' && result.payload) {
+        setDb(migrateRawDbInner(result.payload.database as any));
+        setSystemParams({ ...DEFAULT_SYSTEM_PARAMETERS, ...result.payload.systemParams });
+        setClassDirectory(result.payload.materialClasses?.length ? result.payload.materialClasses : DEFAULT_MATERIAL_CLASSES);
+        setSharedVersion(result.version);
+        setDataSource('intranet');
+      } else if (result.mode === 'intranet' && !result.payload) {
+        const init = await saveSharedData(
+          { database: db, systemParams: systemParams, materialClasses: classDirectory },
+          0
+        );
+        if (cancelled) return;
+        if (init.ok) {
+          setSharedVersion(init.version);
+          setSharedSavedAt(init.savedAt ?? null);
+        }
+        setDataSource('intranet');
+      } else {
+        setDataSource('local');
+        setDataSourceError(result.error ?? null);
+      }
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 手動儲存至內網共用資料夾（樂觀鎖；409 = 他人已先儲存）
+  const handleSaveToShared = async () => {
+    setSavingShared(true);
+    const result = await saveSharedData(
+      { database: db, systemParams: systemParams, materialClasses: classDirectory },
+      sharedVersion
+    );
+    setSavingShared(false);
+    if (result.ok) {
+      setSharedVersion(result.version);
+      setSharedSavedAt(result.savedAt ?? null);
+      showToast('已儲存至內網共用資料夾，其他同仁重新載入即可取得最新資料。', 'success');
+    } else if (result.conflict) {
+      showToast(`儲存衝突：資料已被他人更新（伺服器版本 ${result.currentVersion}）。請重新載入頁面取得最新資料後再儲存。`, 'error');
+    } else {
+      showToast(`儲存失敗：${result.error ?? '未知錯誤'}`, 'error');
+    }
+  };
 
   // ── Admin 管理模式（5連擊解鎖）────────────────────────────────────────────────
   const [adminUnlocked, setAdminUnlocked] = useState(false);
@@ -326,6 +407,10 @@ export function App() {
         onMenuToggle={() => setMenuOpen((v) => !v)}
         menuOpen={menuOpen}
         isDemoMode={isDemoDatabase(db)}
+        dataSourceMode={dataSource}
+        sharedSavedAt={sharedSavedAt}
+        savingShared={savingShared}
+        onSaveToShared={handleSaveToShared}
       />
 
       {/* Main Content Area */}
@@ -432,7 +517,8 @@ export function App() {
 
         {activeTab === 'material_class_management' && (
           <MaterialClassManagementView
-            classes={db.material_classes}
+            classes={classDirectory}
+            onClassesChange={setClassDirectory}
             onNotify={showToast}
           />
         )}

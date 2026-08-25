@@ -17,6 +17,7 @@ import {
 
 interface Props {
   classes?: MaterialClass[];
+  onClassesChange?: (classes: MaterialClass[]) => void;
   onNotify?: (msg: string, type?: 'success' | 'error' | 'info') => void;
 }
 
@@ -33,35 +34,31 @@ const BUSINESS_TYPE_LABELS: Record<string, string> = {
   raw: '原料採購', material: '包材管理', part: '零件生產', component: '組裝生產', set: '成品出貨',
 };
 
-export function MaterialClassManagementView({ classes: propClasses, onNotify }: Props) {
-  const [classes, setClasses] = useState<MaterialClass[]>(() => {
-    try {
-      const saved = localStorage.getItem('PMS_MATERIAL_CLASSES_V1');
-      return saved ? JSON.parse(saved) : DEFAULT_MATERIAL_CLASSES;
-    } catch { return DEFAULT_MATERIAL_CLASSES; }
-  });
+export function MaterialClassManagementView({ classes: propClasses, onClassesChange, onNotify }: Props) {
+  // 受控元件：分類狀態由 App (classDirectory) 持有，隨共用資料儲存至內網資料夾
+  const [classes, setClasses] = useState<MaterialClass[]>(propClasses ?? DEFAULT_MATERIAL_CLASSES);
+
+  const updateClasses = (next: MaterialClass[]) => {
+    setClasses(next);
+    onClassesChange?.(next);
+  };
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [newPayload, setNewPayload] = useState<ClassAddPayload>({
     code: '', name: '', sort_order: 99, business_type: 'raw',
   });
 
-  //  Persist
-  React.useEffect(() => {
-    localStorage.setItem('PMS_MATERIAL_CLASSES_V1', JSON.stringify(classes));
-  }, [classes]);
-
   const handleAdd = () => {
     const result = addMaterialClass(classes, newPayload);
     if (result.error) { onNotify?.(result.error, 'error'); return; }
-    setClasses(result.classes);
+    updateClasses(result.classes);
     setShowAddModal(false);
     setNewPayload({ code: '', name: '', sort_order: 99, business_type: 'raw' });
     onNotify?.(`已新增分類「${newPayload.name}」`, 'success');
   };
 
   const handleToggle = (code: string) => {
-    setClasses(toggleMaterialClass(classes, code));
+    updateClasses(toggleMaterialClass(classes, code));
   };
 
   const rootClasses = useMemo(() => classes.filter(c => !c.parent_code), [classes]);
