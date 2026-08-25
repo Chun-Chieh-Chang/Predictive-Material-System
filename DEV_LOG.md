@@ -1193,7 +1193,34 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 ---
 
-*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-25 V-20260825-34*
+### V-20260825-35 (2026-08-25) — 整體程式碼與檔案優化作業 (Dead-Code Purge & Repo Hygiene)
+
+**執行人：** opencode (ox-alpha)  
+**狀態：** ✅ Complete / Verified  
+**TypeScript 編譯：** 0 錯誤 / 0 警告 (`tsc --noEmit`)  
+**原則落實：** Karpathy Surgical Changes、MECE、Zero-Mock、Data Privacy (AGENTS.md #8)
+
+#### 一、死碼盤點結論
+- `src/` 全部 16 個 View 元件、11 個 utils、context、data 均可自 `main.tsx` 到達，**無孤立檔案**。
+- npm 依賴（6 dependencies + 7 devDependencies）**零冗餘**；`console.log`/`debugger` 殘留 **0 筆**。
+
+#### 二、代碼清理（Commit: refactor/cleanup）
+1. **刪除零引用死碼**：`generateSystemWIPEstimations`（wipEngine）、`validateScrapRateCeiling`（materialClassValidation）、`SUPPLIER_RULE_MASTER_META`（fieldMeta）、`SYSTEM_TITLE/SUBTITLE/TAGLINE`（version.ts，自 `sync-version.mjs` 模板與產物兩端同步移除，維持 MECE 單一真相來源）。
+2. **15 項內部型別/常數降級為模組私有**（移除多餘 export）：wipEngine、fieldMeta（Editability/InputType/FieldOption/SORTING_ACTUAL_YIELD_LOG_META）、orderTensionEngine、demandAnalysisEngine、dataIntegrityScanner、dataPipelineSimulation、types.ts（MaterialBusinessType/AlertType/BackupStatus）。
+3. **修復 mec HIGH 缺陷**：`DataPipelineView.tsx` 公式盒 `bg-slate-900` 補齊 `dark:` 前綴與淺色對應色階，通過對比度架構校驗 100%。
+
+#### 三、倉庫資源 MECE 整頓（Commit: chore/hygiene）
+1. `scratch/` 35 個一次性 Python ETL 腳本退出版控（硬編碼舊專案路徑已失效，本機保留）。
+2. `docs/.audit/pre-task-checklist.jsonl` 退出版控，消除「已追蹤卻符合 gitignore」之矛盾。
+3. 刪除 `metadata.json`（AI Studio 描述檔，零引用）與 `assets/` 空殼目錄。
+4. `.gitignore` 新增 `/新增資料夾/`、`/scratch/` 完整排除規則。
+
+#### 四、資安與數據隱私
+- 盤點發現「新增資料夾/」13 個真實業務資料檔（客戶料號、廠內零件資料等）入版控，違反 AGENTS.md 第 8 條；經人工決策以 `git filter-repo` 自全部歷史徹底清除，並強制推送覆寫遠端。
+
+---
+
+*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-25 V-20260825-35*
 
 
 
