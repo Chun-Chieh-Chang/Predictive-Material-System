@@ -1220,7 +1220,47 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 ---
 
-*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-25 V-20260825-35*
+### V-20260825-36 (2026-08-25) — V2-Intranet 本地部署：PowerShell 檔案服務後端 + 前端共用資料適配器
+
+**執行人：** opencode (ox-alpha)  
+**狀態：** ✅ Complete / Verified  
+**TypeScript 編譯：** 0 錯誤 / 0 警告 (`tsc --noEmit`)  
+**建置驗證：** `vite build` 成功（dist/ 已重建）  
+**端到端 API 冒煙測試：** ✅ 通過（static 200 / GET db → 404 not_initialized / health ok 且 writable=true）  
+**原則落實：** Karpathy Surgical Changes、MECE（共用業務資料 ↔ 個人偏好 LocalStorage 拆分）、Zero-Mock、Data Privacy (AGENTS.md #8)、PS5.1 UTF-8 BOM 兼容
+
+#### 一、目標
+讓 PMS React SPA 可在僅有 Windows + PowerShell 5.1、無 Node.js 的廠內電腦直接運行：以 `dist/` 靜態檔 + 一個零依賴 PowerShell HttpListener 檔案服務提供內網共用資料夾（自動載入、手動儲存）。
+
+#### 二、新增檔案
+1. **`server/intranet-service.ps1`** — PS5.1 HttpListener 服務（零依賴）：
+   - 路由：`GET /api/health`（真實可寫性探測）、`GET /api/db`（404 not_initialized / 200 含 ETag 與快照計數）、`PUT /api/db`（樂觀鎖：`If-Match` 比對版本，衝突回 409 + `currentVersion`；寫入採 tmp→`[IO.File]::Move` 原子替換）、靜態 `dist/` 託管（`-LocalOnly` 內網綁定開關）。
+   - 側車 `db.meta.json`（伺服器持有 version / lastSavedAt）+ 滾動快照 ×30 天（保留期 30 日）。
+   - 採用 **UTF-8 BOM** 寫出 `.ps1`，確保 PowerShell 5.1 非 ASCII 註解/文案正常。
+2. **`server/README.md`** — 部署手冊：urlacl 保留、防火牆、啟動指令、API 規格、安全邊界說明（檔案服務非應用層權限控管）。
+3. **`src/utils/dataStoreAdapter.ts`** — 前端共用資料適配器：
+   - `loadSharedData()`：`GET /api/db`；404 回 `{mode:'intranet', payload:null}`（前端以現狀回寫初始化）；網路錯誤回 `{mode:'local'}`（離線本機模式）。
+   - `saveSharedData(payload, baseVersion)`：`PUT /api/db` 帶 `If-Match: <baseVersion>`；409 回 `{conflict:true, currentVersion}`。
+   - 型別 `SharedDataPayload` / `SharedLoadResult` / `SharedSaveResult`。
+
+#### 三、前端接線（Surgical Changes）
+1. **`src/App.tsx`**：
+   - 抽出模組級 `migrateRawDbInner()`（舊版遷移 + Rule 8 去識別化），LocalStorage 與內網共用載入共用同一路徑。
+   - 新增狀態：`dataSource` / `dataSourceError` / `sharedVersion` / `sharedSavedAt` / `savingShared`，以及 `classDirectory`（五層分類目錄，獨立於 `db.material_classes` 供 `MaterialClassManagementView` 編輯）。
+   - 啟動 effect：`loadSharedData()` → 成功則以共用資料初始化 `db`/`systemParams`/`classDirectory` 並切 `dataSource='intranet'`；空庫則以當前狀態 `PUT` 初始化；失敗則 `dataSource='local'`。
+   - `handleSaveToShared()`：手動儲存 + 樂觀鎖衝突處理（409 提示重新載入）。
+2. **`src/components/MaterialClassManagementView.tsx`**：改為受控元件，接收 `classes={classDirectory}` + `onClassesChange={setClassDirectory}`，移除內部 `PMS_MATERIAL_CLASSES_V1` 自持久化（由 App 統一管理）。
+3. **`src/components/DataExchangeView.tsx`**：移除兩處冗餘 `localStorage.setItem('PMS_DATABASE_STATE_V1')`（App 的 `useEffect([db])` 已統一持久化），消除雙重寫入。
+4. **`src/components/Navbar.tsx`**：新增 `dataSourceMode` / `sharedSavedAt` / `savingShared` / `onSaveToShared` props；內網模式顯示「已同步 HH:MM」綠徽章 + 「儲存到共用資料夾」按鈕（儲存中脈衝動畫），離線模式顯示琥珀色「離線本機模式」徽章。
+
+#### 四、驗證紀錄
+- `tsc --noEmit`：0 錯誤。
+- `vite build`：成功，dist/ 含 `api/db` 字串（適配器已打包）。
+- PowerShell 服務實測：靜態 200、首 GET db 404、health 可寫 = true、PUT 初始化 → 200 並產生快照。
+
+---
+
+*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-25 V-20260825-36*
 
 
 
