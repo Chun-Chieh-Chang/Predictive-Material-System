@@ -170,9 +170,9 @@ export const MASTER_TABLE_SCHEMAS: {
         plainDefinition: '「這項原料是向哪一家廠商或代理商買的」。',
         definition: '供應該項原料之原廠石化商或代理商名稱。',
         businessPurpose: '採購發單對象、廠商評鑑與交期追蹤。',
-        fillGuide: '必填。填寫廠商全名（如 INEOS Styrolution, A供應商, 台塑石化）。',
-        example: 'INEOS Styrolution (英力士苯領)',
-        exampleExplanation: '代表該醫療級 MABS 塑料係直接向德國原廠英力士苯領採購。',
+        fillGuide: '必填。填寫廠商全名（如 A供應商、B供應商 (國外海運進口)）。',
+        example: 'B供應商 (國外海運進口)',
+        exampleExplanation: '代表該醫療級 MABS 塑料係直接向國外原廠代理商採購。',
         mrpImpact: '顯示於採購建議單與在途 PO 供應商欄位。'
       },
       {
