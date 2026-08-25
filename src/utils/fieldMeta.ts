@@ -57,7 +57,7 @@ const ITEM_MASTER_META: TableMeta = {
     { key: 'description', label: '說明備註', editability: 1, inputType: 'text', maxLength: 200 },
     { key: 'std_sorting_yield', label: '標準全檢良率（PART/COMP/SET 填）', editability: 2, inputType: 'number', min: 0.01, max: 1.0, step: 0.001,
       validate: (v) => { if (v === null || v === undefined || v === '') return null; const val = Number(v); return (isFinite(val) && val >= 0.01 && val <= 1.0) ? null : '良率須介於 0.01 ~ 1.00'; },
-      formatDisplay: (v) => v != null ? `${(Number(v) * 100).toFixed(1)}%` : '—（系統預設）' },
+      formatDisplay: (v) => v != null ? `${(Number(v) * 100).toFixed(1)}%` : '—（未填）' },
     { key: 'supplier_name', label: '供應商名稱（RAW 填）', editability: 1, inputType: 'text', maxLength: 100 },
     { key: 'lead_time_days', label: '採購交期（天）（RAW 填）', editability: 2, inputType: 'number', min: 1, step: 1,
       validate: (v) => { if (v === null || v === undefined || v === '') return null; const val = Number(v); return (isFinite(val) && val >= 1) ? null : '交期必須 >= 1 天'; } },

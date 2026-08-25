@@ -11,6 +11,64 @@ import {
   DEFAULT_SYSTEM_PARAMETERS
 } from '../types';
 
+/**
+ * Anti-Placebo: 主檔關鍵欄位缺值時，回傳帶 calcError 的明確錯誤結果，
+ * 禁止靜默帶入全域預設值偽裝成有效運算。
+ */
+function buildCalcErrorResult(db: SystemDatabase, sku: string, message: string): MRPCalculationResult {
+  const item = db.item_master.find((i) => i.sku === sku);
+  const forecasts = db.demand_forecast_log.filter((f) => f.sku === sku);
+  const latestForecast = forecasts[forecasts.length - 1];
+  return {
+    sku,
+    productName: item?.category ?? sku,
+    customerId: item?.customer_id ?? '',
+    versionNo: latestForecast?.version_no ?? '',
+    targetDate: latestForecast?.target_date ?? '',
+    forecastQty: 0,
+    actualOrderQty: 0,
+    totalDemandQty: 0,
+    fgReadyQty: 0,
+    wipPendingQty: 0,
+    sortingYield: 0,
+    wipEffectiveQty: 0,
+    fgNetRequirementQty: 0,
+    activeMoldId: '',
+    activeCavities: 0,
+    cycleTimeSec: 0,
+    dailyCapacityPcs: 0,
+    netMoldWeightG: 0,
+    runnerWeightG: 0,
+    totalShotWeightG: 0,
+    unitWeightG: 0,
+    stdScrapRate: 0,
+    rmSku: '',
+    rmGrossRequirementKg: 0,
+    colorMixingRatioPct: 0,
+    rmOnHandKg: 0,
+    rmInTransitKg: 0,
+    safetyStockKg: 0,
+    rmNetRequirementKg: 0,
+    moqKg: 0,
+    leadTimeDays: 0,
+    suggestedOrderQtyKg: 0,
+    suggestedOrderDate: '',
+    daysUntilLatestOrder: 0,
+    colorantDetail: null,
+    daysToDeliver: 0,
+    requiredProdDays: 0,
+    capacityDeficitDays: 0,
+    alerts: [{
+      type: 'data_integrity',
+      level: 'red',
+      title: '⚠️ 主檔欄位缺值，無法計算',
+      description: message,
+      actionRecommendation: '請至「資料表維護」補齊該品號主檔欄位後重新計算。'
+    }],
+    calcError: message
+  };
+}
+
 export function calculateMRPForSKU(
   db: SystemDatabase,
   sku: string,
@@ -57,9 +115,12 @@ export function calculateMRPForSKU(
   const fgReadyQty = latestSnapshot ? latestSnapshot.fg_ready_qty : 0;
   const wipPendingQty = latestSnapshot ? latestSnapshot.wip_pending_qty : 0;
 
-  // Yield standard — V2.0: lookup from item_master.std_sorting_yield
+  // Yield standard — V2.0: lookup from item_master.std_sorting_yield（缺值即擋，禁止靜默帶入預設）
   const itemRecord = db.item_master.find((i) => i.sku === sku);
-  const sortingYield = itemRecord?.std_sorting_yield ?? params.defaultSortingYield;
+  if (itemRecord?.std_sorting_yield == null) {
+    return buildCalcErrorResult(db, sku, `成品 [${sku}] 主檔缺「標準全檢良率 (std_sorting_yield)」，無法計算 WIP 折算。`);
+  }
+  const sortingYield = itemRecord.std_sorting_yield;
 
   // Phase 1: Real FG Gap
   const wipEffectiveQty = Math.round(wipPendingQty * sortingYield);
@@ -93,19 +154,16 @@ export function calculateMRPForSKU(
         return currWeight < prevWeight ? curr : prev;
       }, bomRecords[0]);
     } else {
-      // Conservative Max Weight (Default)
-      activeBOM = bomRecords.find((b) => b.is_primary_mold);
-      if (!activeBOM) {
-        activeBOM = bomRecords.reduce((prev, curr) => {
-          const moldPrev = db.mold_master.find((m) => m.mold_id === prev.mold_id);
-          const moldCurr = db.mold_master.find((m) => m.mold_id === curr.mold_id);
-          const prevCav = moldPrev?.active_cavities || 1;
-          const currCav = moldCurr?.active_cavities || 1;
-          const prevWeight = (prev.net_mold_weight_g + prev.runner_weight_g) / prevCav;
-          const currWeight = (curr.net_mold_weight_g + curr.runner_weight_g) / currCav;
-          return currWeight >= prevWeight ? curr : prev;
-        }, bomRecords[0]);
-      }
+      // Conservative Max Weight (Default): assume the heaviest unit weight for procurement safety
+      activeBOM = bomRecords.reduce((prev, curr) => {
+        const moldPrev = db.mold_master.find((m) => m.mold_id === prev.mold_id);
+        const moldCurr = db.mold_master.find((m) => m.mold_id === curr.mold_id);
+        const prevCav = moldPrev?.active_cavities || 1;
+        const currCav = moldCurr?.active_cavities || 1;
+        const prevWeight = (prev.net_mold_weight_g + prev.runner_weight_g) / prevCav;
+        const currWeight = (curr.net_mold_weight_g + curr.runner_weight_g) / currCav;
+        return currWeight >= prevWeight ? curr : prev;
+      }, bomRecords[0]);
     }
   }
 
@@ -127,7 +185,11 @@ export function calculateMRPForSKU(
   const runnerWeightG = activeBOM.runner_weight_g;
   const totalShotWeightG = Number((netMoldWeightG + runnerWeightG).toFixed(3));
   const unitWeightG = Number((totalShotWeightG / activeCavities).toFixed(3));
-  const stdScrapRate = activeBOM.std_mfg_scrap_rate || params.defaultMfgScrapRate;
+  // 缺值即擋（注意：0 為合法值，不得用 || 判斷而誤覆蓋）
+  if (activeBOM.std_mfg_scrap_rate == null) {
+    return buildCalcErrorResult(db, sku, `BOM [${sku} × ${activeBOM.mold_id}] 缺「成型損耗率 (std_mfg_scrap_rate)」，無法計算原料毛需求。`);
+  }
+  const stdScrapRate = activeBOM.std_mfg_scrap_rate;
 
   // Formula: Raw Material Gross Req (KG) = [FG Gap * Unit Weight / 1000] / (1 - Scrap Rate)
   const rmGrossRequirementKg = Number(
@@ -156,13 +218,24 @@ export function calculateMRPForSKU(
   const rmPOs = db.po_in_transit.filter((p) => p.rm_sku === rmSku && !['arrived', 'partial_arrived'].includes(p.status));
   const rmInTransitKg = rmPOs.reduce((sum, p) => sum + p.in_transit_qty_kg, 0);
 
-  // V2.0: lookup supplier rules from item_master (RAW class) instead of supplier_rule_master
+  // V2.0: lookup supplier rules from item_master (RAW class) — 採購規則缺值即擋，禁止靜默帶入全域預設
   const rmItem = db.item_master.find((i) => i.sku === rmSku);
+  if (!rmItem) {
+    return buildCalcErrorResult(db, sku, `原料品號 [${rmSku}] 不存在於品號主檔，無法取得採購規則。`);
+  }
+  if (rmItem.lead_time_days == null || rmItem.moq_kg == null || rmItem.safety_stock_kg == null) {
+    const missingFields = [
+      rmItem.lead_time_days == null ? '採購交期 (lead_time_days)' : null,
+      rmItem.moq_kg == null ? '最小起訂量 (moq_kg)' : null,
+      rmItem.safety_stock_kg == null ? '安全庫存 (safety_stock_kg)' : null
+    ].filter(Boolean).join('、');
+    return buildCalcErrorResult(db, sku, `原料 [${rmSku}] 主檔缺${missingFields}，無法計算採購建議。`);
+  }
   const supplierRule = {
-    supplier_name: rmItem?.supplier_name || '預設供應商',
-    lead_time_days: rmItem?.lead_time_days ?? params.defaultProcurementLeadTimeDays,
-    moq_kg: rmItem?.moq_kg ?? params.defaultMoqKg,
-    safety_stock_kg: rmItem?.safety_stock_kg ?? 1000,
+    supplier_name: rmItem.supplier_name || '未填供應商',
+    lead_time_days: rmItem.lead_time_days,
+    moq_kg: rmItem.moq_kg,
+    safety_stock_kg: rmItem.safety_stock_kg,
   };
 
   const baseSafetyStockKg = supplierRule.safety_stock_kg;
@@ -209,16 +282,16 @@ export function calculateMRPForSKU(
     const colorantOnHandKg = colorantSnapshot ? colorantSnapshot.rm_on_hand_kg : 0;
     const colorantPOs = db.po_in_transit.filter((p) => p.rm_sku === rmSku && !['arrived', 'partial_arrived'].includes(p.status));
     const colorantInTransitKg = colorantPOs.reduce((sum, p) => sum + p.in_transit_qty_kg, 0);
-    const colorantRule = db.item_master.find((i) => i.sku === rmSku);
-    const colorantNetKg = Math.max(0, Number((colorantGrossKg - colorantOnHandKg - colorantInTransitKg + (colorantRule?.safety_stock_kg || 1000)).toFixed(2)));
+    const colorantRule = rmItem; // 色母與原料同一品號，採購規則已於上方驗證非空
+    const colorantNetKg = Math.max(0, Number((colorantGrossKg - colorantOnHandKg - colorantInTransitKg + colorantRule.safety_stock_kg).toFixed(2)));
     colorantDetail = {
       colorantSku: rmSku,
       colorantGrossKg,
       colorantOnHandKg,
       colorantInTransitKg,
       colorantNetRequirementKg: colorantNetKg,
-      colorantSuggestedQtyKg: colorantNetKg > 0 ? Math.ceil(colorantNetKg / (colorantRule?.moq_kg || params.defaultMoqKg)) * (colorantRule?.moq_kg || params.defaultMoqKg) : 0,
-      colorantLeadTimeDays: colorantRule?.lead_time_days || params.defaultProcurementLeadTimeDays,
+      colorantSuggestedQtyKg: colorantNetKg > 0 ? Math.ceil(colorantNetKg / colorantRule.moq_kg) * colorantRule.moq_kg : 0,
+      colorantLeadTimeDays: colorantRule.lead_time_days,
     };
   }
 

@@ -15,7 +15,8 @@ export type BottleneckStageType =
   | 'wip_sorting'           // 🟡 WIP 全檢驗收環節
   | 'in_transit_shipping'   // 🟠 在途海運船期環節
   | 'colorant_shortage'     // 🔵 色母配色缺料環節
-  | 'warehouse_overcapacity'; // 🟤 實體倉容超載環節
+  | 'warehouse_overcapacity' // 🟤 實體倉容超載環節
+  | 'data_integrity';       // ⚠️ 主檔欄位缺值（Anti-Placebo）
 
 interface OrderBottleneckItem {
   stage: BottleneckStageType;
@@ -41,6 +42,7 @@ export interface OrderTensionDiagnostic {
   overallTensionLevel: 'critical' | 'high' | 'medium' | 'normal';
   tensionScore: number; // 0 ~ 100 緊張指數 (100 = 極度危急)
   bottlenecks: OrderBottleneckItem[];
+  calcError?: string; // 主檔關鍵欄位缺值說明（非空時數字僅供佔位，不可作為決策依據）
   fgReadyQty: number;
   wipPendingQty: number;
   wipEffectiveQty: number;
@@ -84,7 +86,11 @@ export function diagnoseAllOrderTensions(
       const wipPendingQty = latestSnapshot ? latestSnapshot.wip_pending_qty : 0;
 
       const yieldItem = db.item_master.find((i) => i.sku === order.sku);
-      const sortingYield = yieldItem?.std_sorting_yield ?? params.defaultSortingYield;
+      const masterDataIssues: string[] = [];
+      if (yieldItem?.std_sorting_yield == null) {
+        masterDataIssues.push(`成品 [${order.sku}] 主檔缺「標準全檢良率」`);
+      }
+      const sortingYield = yieldItem?.std_sorting_yield ?? 0;
       const wipEffectiveQty = Math.round(wipPendingQty * sortingYield);
 
       const totalSupply = fgReadyQty + wipEffectiveQty;
@@ -108,7 +114,12 @@ export function diagnoseAllOrderTensions(
       const netMoldWeightG = primaryBom?.net_mold_weight_g || 300;
       const runnerWeightG = primaryBom?.runner_weight_g || 20;
       const unitWeightG = Number(((netMoldWeightG + runnerWeightG) / activeCavities).toFixed(3));
-      const scrapRate = primaryBom?.std_mfg_scrap_rate || params.defaultMfgScrapRate;
+      if (!primaryBom) {
+        masterDataIssues.push(`品號 [${order.sku}] 尚未建立成型 BOM，無法診斷模具與原料需求`);
+      } else if (primaryBom.std_mfg_scrap_rate == null) {
+        masterDataIssues.push(`BOM [${order.sku} × ${activeMoldId}] 缺「成型損耗率」`);
+      }
+      const scrapRate = primaryBom?.std_mfg_scrap_rate ?? 0;
 
       const rmGrossReqKg = Number(((fgGap * unitWeightG) / 1000 / Math.max(0.01, 1 - scrapRate)).toFixed(2));
 
@@ -122,10 +133,20 @@ export function diagnoseAllOrderTensions(
       );
       const rmInTransitKg = rmPOs.reduce((sum, p) => sum + p.in_transit_qty_kg, 0);
 
-      // V2.0: lookup from item_master instead of supplier_rule_master
+      // V2.0: lookup from item_master instead of supplier_rule_master — 採購規則缺值即標記，禁止靜默帶入全域預設
       const rmItem = db.item_master.find((i) => i.sku === rmSku);
-      const leadTimeDays = rmItem?.lead_time_days ?? params.defaultProcurementLeadTimeDays;
-      const safetyStockKg = Math.round((rmItem?.safety_stock_kg ?? 1000) * params.safetyStockMultiplier);
+      if (!rmItem) {
+        masterDataIssues.push(`原料 [${rmSku}] 不存在於品號主檔`);
+      } else {
+        const missingRmFields = [
+          rmItem.lead_time_days == null ? '採購交期' : null,
+          rmItem.moq_kg == null ? 'MOQ' : null,
+          rmItem.safety_stock_kg == null ? '安全庫存' : null
+        ].filter(Boolean).join('、');
+        if (missingRmFields) masterDataIssues.push(`原料 [${rmSku}] 主檔缺${missingRmFields}`);
+      }
+      const leadTimeDays = rmItem?.lead_time_days ?? 0;
+      const safetyStockKg = Math.round((rmItem?.safety_stock_kg ?? 0) * params.safetyStockMultiplier);
 
       // 虛擬預扣
       const virtualBackflushKg = params.enableVirtualBackflush
@@ -274,6 +295,19 @@ export function diagnoseAllOrderTensions(
         tensionScore = 10;
       }
 
+      if (masterDataIssues.length > 0) {
+        bottlenecks.unshift({
+          stage: 'data_integrity',
+          level: 'red',
+          stageName: '主檔完整性',
+          stageBadge: '⚠️ 主檔缺值',
+          title: '主檔欄位缺值，本單診斷數字不可作為決策依據',
+          detail: masterDataIssues.join('；'),
+          metricText: '—',
+          actionGuide: '請至「資料表維護」補齊主檔欄位後重新載入。'
+        });
+      }
+
       return {
         orderId: order.order_id,
         customerId: order.customer_id,
@@ -287,6 +321,7 @@ export function diagnoseAllOrderTensions(
         overallTensionLevel,
         tensionScore,
         bottlenecks,
+        calcError: masterDataIssues.length > 0 ? masterDataIssues.join('；') : undefined,
         fgReadyQty,
         wipPendingQty,
         wipEffectiveQty,

@@ -91,8 +91,6 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
         multiMoldStrategy: 'conservative_max_weight',
         demandConsumptionMode: 'additive',
         dailyOperatingHours: 24.0,
-        defaultSortingYield: 0.97,
-        defaultMfgScrapRate: 0.04,
         safetyStockMultiplier: 1.25
       });
       onNotify('已套用【高安全抗斷線模式】（30天下單預警、1.25x 安全庫存）！', 'success');
@@ -106,8 +104,6 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
         multiMoldStrategy: 'lowest_weight',
         demandConsumptionMode: 'po_consume',
         dailyOperatingHours: 24.0,
-        defaultSortingYield: 0.99,
-        defaultMfgScrapRate: 0.02,
         safetyStockMultiplier: 0.8
       });
       onNotify('已套用【精實低庫存模式】（7天預警、訂單沖銷、0.8x 安全庫存）！', 'success');
@@ -474,7 +470,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                 className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-orange-500"
               />
               <p className="text-[11px] text-slate-500 leading-relaxed">
-                當「原料庫存 + 在途總量 &gt; 實體倉容上限 <strong>{(params.defaultWarehouseCapacityKg || 12000).toLocaleString()} KG</strong>」時，觸發 🟠 實體倉容超載爆倉預警。（可在主檔依品號個別覆蓋）
+                  當「原料庫存 + 在途總量 &gt; 實體倉容上限 <strong>{(params.defaultWarehouseCapacityKg || 12000).toLocaleString()} KG</strong>」時，觸發 🟠 實體倉容超載爆倉預警。（全廠統一上限）
               </p>
             </div>
 
@@ -814,7 +810,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                    在頂新 ERP 月底正式開單扣料前，自動扣除「月內已成型」耗用原料，避免可用庫存虛增延誤長交期下單。
+                     在鼎新 ERP 月底正式開單扣料前，自動扣除「月內已成型」耗用原料，避免可用庫存虛增延誤長交期下單。
                   </p>
                 </div>
                 <button
@@ -872,73 +868,15 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
               </div>
               <div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  全局預設工藝與良率基準 (Global Baselines)
+                  資料品質防呆門檻 (Data Quality Guard)
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  當料號良率主檔 (Yield Master) 或 BOM 未個別指定時之全廠標準套用值
+                  物料屬性（良率/損耗率/MOQ/交期）一律以主檔個別值為準；主檔缺值時系統將拒絕計算並提示補件，不再套用全域預設
                 </p>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-              {/* Default Sorting Yield */}
-              <div className="bg-slate-50 dark:bg-slate-950/70 p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-bold text-slate-900 dark:text-white">
-                    全檢標準良率預設值
-                  </label>
-                  <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-sm">
-                    {(params.defaultSortingYield * 100).toFixed(1)}%
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="0.80"
-                  max="1.00"
-                  step="0.005"
-                  value={params.defaultSortingYield}
-                  onChange={(e) =>
-                    setParams({
-                      ...params,
-                      defaultSortingYield: Number(e.target.value)
-                    })
-                  }
-                  className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
-                />
-                <p className="text-[10px] text-slate-500">
-                  折算 Sorting 待驗品 (WIP) 為有效良品供給
-                </p>
-              </div>
-
-              {/* Default Scrap Rate */}
-              <div className="bg-slate-50 dark:bg-slate-950/70 p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-bold text-slate-900 dark:text-white">
-                    成型生產損耗率預設值
-                  </label>
-                  <span className="font-mono font-bold text-purple-600 dark:text-purple-400 text-sm">
-                    {(params.defaultMfgScrapRate * 100).toFixed(1)}%
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="0.00"
-                  max="0.10"
-                  step="0.005"
-                  value={params.defaultMfgScrapRate}
-                  onChange={(e) =>
-                    setParams({
-                      ...params,
-                      defaultMfgScrapRate: Number(e.target.value)
-                    })
-                  }
-                  className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-500"
-                />
-                <p className="text-[10px] text-slate-500">
-                  原料毛需求公式分母: (1 - 損耗率)
-                </p>
-              </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Max Allowed Scrap Rate (Ceiling Guard) */}
               <div className="bg-slate-50 dark:bg-slate-950/70 p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-2.5">
                 <div className="flex items-center justify-between">
@@ -965,35 +903,6 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                 />
                 <p className="text-[10px] text-slate-500">
                   BOM 損耗防呆上限（不可高於會計計價標準）
-                </p>
-              </div>
-
-              {/* Default Lead Time */}
-              <div className="bg-slate-50 dark:bg-slate-950/70 p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-bold text-slate-900 dark:text-white">
-                    預設採購前置交期
-                  </label>
-                  <span className="font-mono font-bold text-sky-600 dark:text-cyan-400 text-sm">
-                    {params.defaultProcurementLeadTimeDays} 天
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="30"
-                  max="180"
-                  step="5"
-                  value={params.defaultProcurementLeadTimeDays}
-                  onChange={(e) =>
-                    setParams({
-                      ...params,
-                      defaultProcurementLeadTimeDays: Number(e.target.value)
-                    })
-                  }
-                  className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500"
-                />
-                <p className="text-[10px] text-slate-500">
-                  供應商規則缺失時之國外海運預設前置期
                 </p>
               </div>
 

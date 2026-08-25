@@ -8,6 +8,46 @@
 
 ## 版本演進記錄
 
+### V-20260825-36 (2026-08-25) — Anti-Placebo 數據鏈誠實化：全域預設備胎全數拔除、主檔缺值即拒算並警示、多模具策略假選項修復版
+
+**狀態：** ✅ 穩定發布  
+**TypeScript 編譯：** 0 錯誤 (`npm run lint` 通過)  
+**無頭迴歸測試：** 11/11 通過（單模具品號計算結果零變動；多模具品號依新語意改採最重模具；缺值情境全數轉為明確錯誤）
+
+#### 背景（RCA）
+
+使用者回報「參數影響速覽」面板未連動設定參數。經無頭腳本逐一驗證 14 顆參數旋鈕，確認 React 響應鏈完好，真正病因為：
+1. **全域預設參數遭主檔值遮蔽**（17/17 BOM 自帶損耗率、9/9 RAW 自帶 MOQ/交期），備胎永不生效，形成「死旋鈕」
+2. **多模具策略假選項**：`conservative_max_weight` 與 `primary_mold_only` 程式行為完全等價（皆優先抓主模具旗標）
+3. **MECE 衝突**：物料屬性類參數同時存在主檔與全域兩個事實來源
+
+依使用者裁決：物料屬性一律以主檔為準，缺值即拒絕計算並提示補件，禁止靜默帶入全域預設。
+
+#### 本版本完成清單
+
+**[階段一：多模具策略語意修復]**
+- `mrpEngine.ts`：`conservative_max_weight` 移除 primary-first 邏輯，改為純「最大單穴克重」比較，三種策略自此行為互異。
+
+**[階段二：引擎備胎拔除與缺值拒算]**
+- `mrpEngine.ts`：移除 6 處 `?? params.defaultX` fallback（含 `safety_stock_kg ?? 1000` 魔法數字）；新增 `buildCalcErrorResult()`，主檔缺關鍵欄位時回傳 `calcError` + `data_integrity` 警示，速覽表顯示 ⚠️ 而非假數字。同時修正 `||` 將合法 0% 損耗率誤判為缺值的隱藏 bug。
+- `orderTensionEngine.ts`：同步拔除 3 處 fallback；無 BOM 訂單不再以 DEFAULT_MOLD/RAW-RESIN/300g 憑空編造，改標記「尚未建立成型 BOM」。影響所及：`SET-BREATH-CIR-01`、`SET-IV-EXT-01` 兩筆無 BOM 訂單由「假數字」轉為「⚠️ 主檔缺值」。
+- `ShipScheduleClearanceView.tsx`：良率缺值以 0 折算（WIP 不予認列，保守不放行）。
+
+**[階段三：缺值警示策略定調（存檔自由、計算誠實）]**
+- 使用者裁決：主檔存檔**不予阻擋**（保留「先建檔、後補件」作業彈性），缺值防線後撤至運算層——計算不出來時才彈出警示，明確指出缺哪個欄位待補。
+- 據此 `fieldMeta.ts` / `DataTablesView.tsx` 不導入 requiredWhen 存檔閘門；完整性把關由兩道非阻擋防線承擔：①引擎缺值拒算＋精確欄位提示（階段二）②完整性掃描 `missing_field` 清單（階段四）。
+
+**[階段四：完整性掃描與設定頁瘦身]**
+- `dataIntegrityScanner.ts`：新增 `missing_field` 警告類型於 item_master 掃描段統把關（取代舊 FK4 片段檢查及其過時文案「MRP 將改採預設參數」）。
+- `SystemSettingsView.tsx` + `types.ts`：拔除死旋鈕——預設全檢良率、預設成型損耗率、預設採購交期（MOQ 本就無 UI）；情境預設檔同步清理；保留有真實功能的 `maxAllowedScrapRatePct`（掃描防呆用）。修正倉容參數不實文案「可在主檔依品號個別覆蓋」（該欄位不存在）→「全廠統一上限」。
+
+#### 已知後續事項
+- 倉容 per-item 覆蓋欄位（`max_storage_capacity_kg`）列為日後功能開發候選。
+- 「損耗率計價成本天花板」名稱建議日後改名為「成型損耗率合理上限」（現系統無計價功能，名不符實）。
+- 版號 SSOT (`src/utils/version.ts`) 待提交前依熱同步機制刷新。
+
+---
+
 ### V-20260824-38 (2026-08-24) — SSOT 單一事實來源收斂、LocalStorage 自動去識別化清洗與 UI 互動斷層全盤清查修復版
 
 **狀態：** ✅ 穩定發布  
@@ -151,7 +191,7 @@
   - 機台產出估算：$P(t) = \text{工時} \times (3600 / \text{週期}) \times \text{妥善穴數} \times (1 - \text{損耗率})$
   - 包含夜間 12 小時無人挑選產出時序差修正、FIFO 庫齡超量預警
 - `mrpEngine.ts` & `SystemSettingsView.tsx` — **場內自用料月內虛擬預扣 (Virtual Backflush)**
-  - 消除頂新 ERP 月底才扣料導致月中可用庫存虛增之盲區
+   - 消除鼎新 ERP 月底才扣料導致月中可用庫存虛增之盲區
   - 系統參數支援 `enableVirtualBackflush` 動態開關與即時 MRP 聯動
 
 **[階段三：採購執行落地與倉容防呆 (Procurement Actionability)]**

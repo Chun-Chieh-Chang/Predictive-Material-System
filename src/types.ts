@@ -235,6 +235,9 @@ export interface MRPCalculationResult {
   // Alerts
   alerts: SystemAlert[];
 
+  // Master-data integrity: set when calculation is blocked by missing required fields (Anti-Placebo: 禁止靜默帶入預設值)
+  calcError?: string;
+
   // Phase 4: Temporal & Phased Execution (Gap Closure)
   virtualBackflushDeductedKg?: number; // 月內虛擬預扣用量 (KG)
   effectiveRmOnHandKg?: number; // 經虛擬預扣後的真實可用在庫 (KG)
@@ -247,7 +250,7 @@ export interface MRPCalculationResult {
   }[];
 }
 
-type AlertType = 'shortage' | 'overstock' | 'warehouse_overcapacity' | 'bottleneck' | 'normal';
+type AlertType = 'shortage' | 'overstock' | 'warehouse_overcapacity' | 'bottleneck' | 'normal' | 'data_integrity';
 
 export interface SystemAlert {
   type: AlertType;
@@ -276,12 +279,8 @@ export interface SystemParameters {
   enableVirtualBackflush: boolean; // 啟用場內自用料月內虛擬預扣 (預設: true)
   enablePhasedDeliveryAdvisor: boolean; // 啟用大宗採購分批到貨排程建議 (預設: true)
 
-  // 3. 全局預設工藝與良率基準 (Global Defaults)
-  defaultSortingYield: number; // 預設全檢良率 (預設: 0.98, 即 98%)
-  defaultMfgScrapRate: number; // 預設成型損耗率 (預設: 0.03, 即 3%)
-  maxAllowedScrapRatePct: number; // 損耗率計價成本天花板 (預設: 0.08, 即 8%)
-  defaultProcurementLeadTimeDays: number; // 預設採購交期 (預設: 90 天)
-  defaultMoqKg: number; // 預設 MOQ (預設: 1000 KG)
+  // 3. 資料品質防呆門檻與全廠槓桿（物料屬性一律以主檔個別值為準，缺值即拒絕計算，禁止全域預設頂替）
+  maxAllowedScrapRatePct: number; // BOM 成型損耗率合理上限（完整性掃描防呆用，預設: 0.08, 即 8%）
   safetyStockMultiplier: number; // 全廠安全庫存動態係數 (預設: 1.0x)
 }
 
@@ -296,11 +295,7 @@ export const DEFAULT_SYSTEM_PARAMETERS: SystemParameters = {
   dailyOperatingHours: 24.0,
   enableVirtualBackflush: true,
   enablePhasedDeliveryAdvisor: true,
-  defaultSortingYield: 0.98,
-  defaultMfgScrapRate: 0.03,
   maxAllowedScrapRatePct: 0.08,
-  defaultProcurementLeadTimeDays: 90,
-  defaultMoqKg: 1000,
   safetyStockMultiplier: 1.0
 };
 

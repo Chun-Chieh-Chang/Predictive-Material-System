@@ -19,7 +19,7 @@ interface IntegrityError {
 }
 
 interface IntegrityWarning {
-  type: 'orphan_data' | 'redundant_data' | 'invalid_range';
+  type: 'orphan_data' | 'redundant_data' | 'invalid_range' | 'missing_field';
   table: string;
   pkValue: string;
   field?: string;
@@ -133,18 +133,7 @@ export function scanDatabaseIntegrity(
       });
     }
 
-    // 外鍵 4 (V2.0): rm_sku 對應的 item_master 是否已填採購規則欄位
-    const rmItem = db.item_master.find((i) => i.sku === bom.rm_sku);
-    if (rmItem && !rmItem.lead_time_days) {
-      warnings.push({
-        type: 'orphan_data',
-        table: 'product_mold_bom',
-        pkValue: pk,
-        field: 'rm_sku',
-        detail: `原料 [${bom.rm_sku}] 尚未在品號主檔中定義交期 (lead_time_days) 與 MOQ，MRP 將改採預設參數`,
-        severity: 'warning'
-      });
-    }
+    // 外鍵 4 (V2.0): rm_sku 採購規則完整性 → 已移至 item_master 掃描段統一檢查（含交期/MOQ/安全庫存）
 
     // 邊界數值檢查
     if (bom.net_mold_weight_g <= 0) {
@@ -220,6 +209,37 @@ export function scanDatabaseIntegrity(
         detail: `品號 [${item.sku}] (${item.category}) 無任何訂單、預測或 BOM 關聯，屬於孤兒主檔`,
         severity: 'info'
       });
+    }
+
+    // 主檔關鍵計算欄位完整性（Anti-Placebo：缺值時 MRP / 缺料分析將拒絕計算該品號，不再靜默帶入全域預設）
+    const cls = String(item.material_class ?? '');
+    if (cls === 'RAW') {
+      const missingRawFields = [
+        item.lead_time_days == null ? '採購交期 (lead_time_days)' : null,
+        item.moq_kg == null ? 'MOQ (moq_kg)' : null,
+        item.safety_stock_kg == null ? '安全庫存 (safety_stock_kg)' : null
+      ].filter(Boolean);
+      if (missingRawFields.length > 0) {
+        warnings.push({
+          type: 'missing_field',
+          table: 'item_master',
+          pkValue: item.sku,
+          field: 'material_class=RAW',
+          detail: `原料 [${item.sku}] 主檔缺${missingRawFields.join('、')}，MRP 與訂單缺料分析將拒絕計算此原料之採購建議`,
+          severity: 'warning'
+        });
+      }
+    } else if (['PART', 'COMP', 'SET'].includes(cls)) {
+      if (item.std_sorting_yield == null) {
+        warnings.push({
+          type: 'missing_field',
+          table: 'item_master',
+          pkValue: item.sku,
+          field: 'std_sorting_yield',
+          detail: `成品 [${item.sku}] 主檔缺「標準全檢良率 (std_sorting_yield)」，MRP 將拒絕計算其 WIP 折算`,
+          severity: 'warning'
+        });
+      }
     }
   });
 
