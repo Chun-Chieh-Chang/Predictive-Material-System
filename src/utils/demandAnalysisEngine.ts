@@ -5,7 +5,7 @@
 
 import { SystemDatabase, DemandForecastLog, ActualOrder } from '../types';
 
-export interface DemandComparisonPoint {
+interface DemandComparisonPoint {
   periodKey: string;            // 週別或日期 (e.g. '2026-W34' or '2026-08-24')
   forecastQty: number;          // 客戶預示量 PCS
   actualOrderQty: number;       // 實際訂單量 PCS
@@ -16,7 +16,7 @@ export interface DemandComparisonPoint {
   alertMessage: string;
 }
 
-export interface DemandAnalysisSummary {
+interface DemandAnalysisSummary {
   sku: string;
   customer_id: string;
   totalForecastQty: number;

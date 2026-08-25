@@ -8,7 +8,7 @@ import { calculateAllMRP } from './mrpEngine';
 import { diagnoseAllOrderTensions } from './orderTensionEngine';
 import { calculateDailyWIP } from './wipEngine';
 
-export interface IntegrityError {
+interface IntegrityError {
   type: 'broken_fk';
   table: string;
   field: string;
@@ -18,7 +18,7 @@ export interface IntegrityError {
   severity: 'critical';
 }
 
-export interface IntegrityWarning {
+interface IntegrityWarning {
   type: 'orphan_data' | 'redundant_data' | 'invalid_range';
   table: string;
   pkValue: string;
@@ -27,7 +27,7 @@ export interface IntegrityWarning {
   severity: 'warning' | 'info';
 }
 
-export interface EnginePipelineStatus {
+interface EnginePipelineStatus {
   mrpEnginePass: boolean;
   mrpEngineError?: string;
   wipEnginePass: boolean;

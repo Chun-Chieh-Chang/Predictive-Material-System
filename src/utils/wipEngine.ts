@@ -3,9 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { SystemDatabase, ProductMoldBOM, MoldMaster, isShippableMaterialClass } from '../types';
-
-export interface DailyWIPEstimationInput {
+interface DailyWIPEstimationInput {
   sku: string;
   previousWipQty: number; // WIP(t-1) 前一日結存
   operatingHours: number; // 機台當日運轉工時 (e.g. 24h)
@@ -16,7 +14,7 @@ export interface DailyWIPEstimationInput {
   unitWeightG?: number; // 單穴重量 (克，含料頭流道)
 }
 
-export interface DailyWIPEstimationResult {
+interface DailyWIPEstimationResult {
   sku: string;
   previousWipQty: number;
   dailyProducedQty: number; // P(t) 當日機台成型產出量
@@ -84,49 +82,4 @@ export function calculateDailyWIP(input: DailyWIPEstimationInput): DailyWIPEstim
     estimatedBoxes,
     fifoAgingAlert
   };
-}
-
-/**
- * 依據全系統品號與當前設定，批量產出重點品項（如 8026 / SET 成品）之動態 WIP 總表
- */
-export function generateSystemWIPEstimations(
-  db: SystemDatabase,
-  overrides?: Record<string, Partial<DailyWIPEstimationInput>>
-): DailyWIPEstimationResult[] {
-  const targetSkus = db.item_master.filter((i) => isShippableMaterialClass(i.material_class));
-
-  return targetSkus.map((item) => {
-    const override = overrides?.[item.sku] || {};
-
-    // 抓取現況快照
-    const latestSnapshot = db.inventory_wip_snapshot
-      .filter((s) => s.sku === item.sku)
-      .sort((a, b) => new Date(b.snapshot_date).getTime() - new Date(a.snapshot_date).getTime())[0];
-
-    const currentWip = latestSnapshot ? latestSnapshot.wip_pending_qty : 15000;
-
-    // 抓取主模具與 BOM
-    const bom = db.product_mold_bom.find((b) => b.sku === item.sku && b.is_primary_mold) ||
-      db.product_mold_bom.find((b) => b.sku === item.sku);
-    const mold = bom ? db.mold_master.find((m) => m.mold_id === bom.mold_id) : undefined;
-
-    const cycleTimeSec = override.cycleTimeSec ?? mold?.cycle_time_sec ?? 30;
-    const activeCavities = override.activeCavities ?? mold?.active_cavities ?? 16;
-    const scrapRate = override.scrapRate ?? bom?.std_mfg_scrap_rate ?? 0.03;
-    const operatingHours = override.operatingHours ?? 24;
-    const actualSortedQty = override.actualSortedQty ?? Math.round(currentWip * 0.4); // 預設單日全檢 40%
-
-    const unitWeightG = bom ? Number(((bom.net_mold_weight_g + bom.runner_weight_g) / Math.max(1, activeCavities)).toFixed(3)) : 20;
-
-    return calculateDailyWIP({
-      sku: item.sku,
-      previousWipQty: override.previousWipQty ?? currentWip,
-      operatingHours,
-      cycleTimeSec,
-      activeCavities,
-      scrapRate,
-      actualSortedQty,
-      unitWeightG
-    });
-  });
 }

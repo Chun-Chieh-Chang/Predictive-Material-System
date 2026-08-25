@@ -17,7 +17,7 @@ export type BottleneckStageType =
   | 'colorant_shortage'     // 🔵 色母配色缺料環節
   | 'warehouse_overcapacity'; // 🟤 實體倉容超載環節
 
-export interface OrderBottleneckItem {
+interface OrderBottleneckItem {
   stage: BottleneckStageType;
   level: 'red' | 'orange' | 'yellow' | 'purple' | 'blue';
   stageName: string;

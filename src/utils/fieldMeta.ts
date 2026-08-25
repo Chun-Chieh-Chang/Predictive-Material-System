@@ -6,10 +6,10 @@
  * Field-level metadata for inline editing in DataTablesView.
  */
 
-export type Editability = 'locked' | 'computed' | 1 | 2 | 3;
-export type InputType = 'text' | 'number' | 'select' | 'fk_select' | 'date' | 'checkbox' | 'computed';
+type Editability = 'locked' | 'computed' | 1 | 2 | 3;
+type InputType = 'text' | 'number' | 'select' | 'fk_select' | 'date' | 'checkbox' | 'computed';
 
-export interface FieldOption { value: string; label: string; }
+interface FieldOption { value: string; label: string; }
 
 export interface FieldMeta {
   key: string;
@@ -114,9 +114,6 @@ const PRODUCT_MOLD_BOM_META: TableMeta = {
 
 // NOTE (V2.0 Plan B): YIELD_MASTER_META and SUPPLIER_RULE_MASTER_META removed (merged into ITEM_MASTER_META)
 
-const YIELD_MASTER_META_REMOVED = null; // V2.0: Merged into ITEM_MASTER
-export const SUPPLIER_RULE_MASTER_META = null; // V2.0: Merged into ITEM_MASTER
-
 const DEMAND_FORECAST_LOG_META: TableMeta = {
   key: 'demand_forecast_log', label: '業務預估需求檔', pkFields: ['demand_id'],
   fields: [
@@ -179,7 +176,7 @@ const PO_IN_TRANSIT_META: TableMeta = {
 };
 
 // 11. Sorting Actual Yield Log (Phase 3 動態回饋閉環)
-export const SORTING_ACTUAL_YIELD_LOG_META: TableMeta = {
+const SORTING_ACTUAL_YIELD_LOG_META: TableMeta = {
   key: 'sorting_actual_yield_log', label: 'Sorting 實際良率紀錄檔', pkFields: ['log_id'],
   fields: [
     { key: 'log_id', label: '紀錄 ID (PK)', editability: 'locked', inputType: 'text', required: true },

@@ -23,21 +23,6 @@ const SKU_PREFIX_RULES: Record<MaterialClassCode, string[]> = {
  * 損耗率計價成本天花板防呆校驗 (Cost Ceiling Guard)
  * 防止人員輸入過高損耗率（如誤填 20%）導致採購建議膨脹
  */
-export function validateScrapRateCeiling(
-  scrapRate: number,
-  maxAllowedRate: number = 0.08
-): { valid: boolean; message?: string } {
-  if (scrapRate < 0) {
-    return { valid: false, message: '損耗率不可為負數' };
-  }
-  if (scrapRate > maxAllowedRate) {
-    return {
-      valid: false,
-      message: `成型損耗率 ${(scrapRate * 100).toFixed(1)}% 已超出系統計價成本上限 ${(maxAllowedRate * 100).toFixed(1)}%，請重新核對定價成本規範！`
-    };
-  }
-  return { valid: true };
-}
 
 // ─── 分類有效性驗證 ──────────────────────────────────────────────────────────
 

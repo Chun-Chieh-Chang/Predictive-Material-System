@@ -9,7 +9,7 @@ import { calculateDailyWIP } from './wipEngine';
 import { diagnoseAllOrderTensions } from './orderTensionEngine';
 import { scanDatabaseIntegrity, DataIntegrityReport } from './dataIntegrityScanner';
 
-export interface SimulationScenarioResult {
+interface SimulationScenarioResult {
   scenarioId: string;
   scenarioName: string;
   description: string;

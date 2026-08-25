@@ -7,7 +7,7 @@
 // 五層核心物料分類體系，支援無限擴充
 
 /** 物料業務類別：決定存儲模式與 MRP 處置邏輯 */
-export type MaterialBusinessType = 'raw' | 'material' | 'part' | 'component' | 'set';
+type MaterialBusinessType = 'raw' | 'material' | 'part' | 'component' | 'set';
 
 /** 五層分類代碼：以 '-' 分隔階層路徑 */
 export type MaterialClassCode = 'RAW' | 'MAT' | 'PART' | 'COMP' | 'SET';
@@ -247,7 +247,7 @@ export interface MRPCalculationResult {
   }[];
 }
 
-export type AlertType = 'shortage' | 'overstock' | 'warehouse_overcapacity' | 'bottleneck' | 'normal';
+type AlertType = 'shortage' | 'overstock' | 'warehouse_overcapacity' | 'bottleneck' | 'normal';
 
 export interface SystemAlert {
   type: AlertType;
@@ -306,7 +306,7 @@ export const DEFAULT_SYSTEM_PARAMETERS: SystemParameters = {
 
 // ─── Backup System Types ───────────────────────────────────────────────────────
 
-export type BackupStatus = 'idle' | 'success' | 'failed' | 'pending';
+type BackupStatus = 'idle' | 'success' | 'failed' | 'pending';
 
 export interface BackupLogEntry {
   id: string;                         // Unique entry ID (timestamp + random)

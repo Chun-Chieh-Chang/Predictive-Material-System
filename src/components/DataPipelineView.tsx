@@ -1250,7 +1250,7 @@ export const DataPipelineView: React.FC<DataPipelineViewProps> = ({
                   <Calculator className="w-3.5 h-3.5 text-purple-500" />
                   推導算式與處理規則 (Domain Logic)
                 </div>
-                <div className="font-mono text-[11px] bg-slate-900 text-emerald-400 p-3 rounded-xl border border-slate-800 shadow-inner leading-relaxed">
+                <div className="font-mono text-[11px] bg-slate-100 dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-inner leading-relaxed">
                   {selectedNode.formulaDescription}
                 </div>
               </div>
