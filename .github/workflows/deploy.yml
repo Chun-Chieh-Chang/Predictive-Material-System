@@ -7,7 +7,6 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
   pages: write
   id-token: write
 
@@ -48,23 +47,17 @@ jobs:
         env:
           NODE_ENV: production
 
-      - name: Deploy to gh-pages branch (Channel A)
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-
-      - name: Setup GitHub Pages (Channel B)
+      - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
         continue-on-error: true
 
-      - name: Upload artifact to Pages (Channel B)
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './dist'
         continue-on-error: true
 
-      - name: Deploy to GitHub Pages (Channel B)
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
         continue-on-error: true
