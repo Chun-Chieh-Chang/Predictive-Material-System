@@ -1433,7 +1433,31 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 ---
 
-*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-26 V-20260826-40*
+### V-20260826-41 (2026-08-26) — 全專案整體程式碼與檔案優化（死碼清除＋文件同步＋資安盤點）
+
+**執行者**： opencode (ox-alpha)
+**狀態**： ✅Complete / Verified
+**驗證結果**： `tsc --noEmit` 0 錯誤 · `vite build` 成功 · 規格書 HTML/JS/錨點 ALL CHECKS PASSED
+**遵循原則**： Karpathy Surgical Changes（零功能 Regression）· MECE · Zero-Mock
+
+#### 一、全面盤點結論
+- 死碼掃描：追蹤中 37 個 src 檔、115 個匯出符號全數交叉比對，**真死碼 3 項**（其餘 14 個候選為檔案內使用之型別／函式，非死碼，保留）。
+- `src/extensions/`（impeccable 工具源碼）為未追蹤本機工具，不被應用程式 import、不進版控，無 MECE 影響，保留不動。
+- `bun.lock`／`dist/`／`scratch/`／`rawdata/`／`requirements/`／`.omo` 均未追蹤 ✓（單一鎖檔 package-lock.json）。
+- `wiki/` 目錄不存在——文件主體為 README.md＋docs/（45 檔），無 wiki 同步需求，如實記錄。
+
+#### 二、清理與同步內容
+1. **死碼移除**：`glossaryData.ts` 移除無呼叫端之 `getEntriesByCategory()`、`getEntryById()`；`masterFieldDictionary.ts` 移除無使用之 `MASTER_TABLE_GROUPS`。
+2. **README.md**：移除過時硬編碼「Baseline Version：V-20260825-16」（版號 SSOT 為 version.ts）；版本記錄表補入 V-20260826-37～40 兩列。
+3. **docs/DevelopmentStatus.md**：Commit 記錄表刷新為最近 10 筆（原表落後 5 筆）；新增「2026-08-26 進度摘要」章節（規格書 v3.1／獨立頁／多版本管理／待人工驗證項）。
+4. **docs/ 歷史稽核報告（20260822 系列）**：屬稽核軌跡且 pre-commit 知識庫索引相依，保留不動。
+
+#### 三、資安與數據隱私盤點
+- 追蹤檔全域掃描：無 API key／token／密碼／.env／真實客戶供應商名稱／公網 IP 硬編碼；示範資料維持 A客戶/B客戶、A供應商 去識別化格式（AGENTS.md #8 合規）。
+
+---
+
+*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-26 V-20260826-41*
 
 
 

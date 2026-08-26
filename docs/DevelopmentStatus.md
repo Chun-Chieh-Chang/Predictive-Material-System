@@ -158,18 +158,29 @@
 
 | Commit | 說明 |
 |--------|------|
-| `597c990` | refactor(integrity): Anti-Placebo 數據鏈誠實化 — 拔除全域預設備胎、缺值拒算警示、多模具策略假選項修復 |
-| `77ca77c` | chore(hygiene): requirements/ 業務需求文件排除版控 |
-| `2fd46b0` | ci(deploy): 移除 gh-pages 分支通道，改為純 GitHub Actions artifact 部署 |
-| `2f1196c` | docs(devlog): 記錄 V2-Intranet 本地部署後端與前端適配實作 |
-| `f43f263` | feat(intranet): App 接線共用資料來源 + MaterialClass 受控化 + Navbar 來源狀態/儲存按鈕 |
-| `4deb6ab` | feat(adapter): 新增內網共用資料適配器 loadSharedData/saveSharedData（樂觀鎖 404/409 處理） |
-| `9dfbcd6` | feat(server): 新增 V2-Intranet PowerShell 5.1 檔案服務後端（零依賴 HttpListener + 樂觀鎖 + 滾動快照） |
-| `1578619` | fix(privacy): 資料字典示範文案去識別化 — 移除真實供應商名稱 (V-20260825-05) |
-| `a6b7ffc` | docs(devlog): 記錄整體程式碼優化、MECE 整頓與資安盤點成果 (V-20260825-35) |
-| `126dacb` | chore(hygiene): 倉庫資源 MECE 整頓 — 敏感資料與一次性腳本退出版控 (V-20260825-03) |
+| `56f0139` | feat(mrp): 預估多版本管理補齊 — 版本選擇器＋版本衝擊分析＋最新版判定修正＋交叉比對多版本防護；規格書改獨立全版面頁（?page=spec） |
+| `e2a2503` | feat(spec): 數據邏輯規格書 v3.1 — 備料/交期互動流程圖（ISO 5807 符號）＋入門導覽＋章節摺疊，新增系統分頁 SSOT 即時連動 |
+| `cfdada8` | docs(audit): 文件二次稽核補齊 — 7大主檔矛盾修正、戰情舊稱對齊、MECE 狀態實況化 |
+| `4e0f1b1` | chore(cleanup): 全專案程式碼與檔案優化 — 死檔清除、文件 SSOT 對齊、MECE 收斂 |
+| `eb5d79e` | fix(ux): 資料管線站點懸停卡片延遲隱藏（250ms 緩衝）消除快速移動閃爍 |
+| `48cafbc` | fix(ux): 匯出按鈕圖標統一朝上（Download→Upload），與匯入向下構成雙向語意一致 |
+| `c5b6337` | fix(deploy): GitHub Pages 靜態託管誤判內網模式 — Content-Type 判別降級本機模式並新增 favicon |
+| `c2116cd` | docs(version): 版號標籤對齊版號 SSOT 實際值（Anti-Placebo = V-20260825-12） |
+| `3c64b9e` | docs(sync): 現狀文件對齊 Anti-Placebo 與 V2-Intranet 變更，倉庫殘留清理與 MECE 單鎖檔統一 (V-20260825-37) |
+| `597c990` | refactor(integrity): Anti-Placebo 數據鏈誠實化 — 拔除全域預設備胎、缺值拒算警示、多模具策略假選項修復 (V-20260825-36) |
+
+---
+
+## 六、2026-08-26 進度摘要（V-20260826-37 ～ 40）
+
+| 主題 | 內容 |
+|------|------|
+| 數據邏輯規格書 v3.1 | 備料補貨／交期估算兩大主軸互動流程圖（ISO 5807 標準符號、六種邊線路由零穿越）＋五欄式參數定義表＋統一核心鏈路整合分析；入門導覽（餐廳比喻＋術語浮窗＋FAQ）；19 章預設摺疊 |
+| 獨立全版面頁 | 「數據邏輯規格書」改 `?page=spec` 獨立頁開啟（無導航干擾、100dvh 響應式），SSOT postMessage 即時同步全域參數與七大資料表筆數 |
+| 預估多版本管理 | MRP 版本下拉選擇器＋版本衝擊分析（現版 vs 前一版）；最新版判定改 `created_at`→`version_no` 降序；需求交叉比對同期別僅採計最新版（修復重複累加失真） |
+| 待人工驗證 | 真人 UX 測試（3 名非業務測試者，檢核清單見 DEV_LOG V-20260826-38）、跨瀏覽器／手機實機視覺確認 |
 
 ---
 
 *本檔案由 AI 自動維護，下次啟動開發時優先閱讀。*
-*最後更新：2026-08-25*
+*最後更新：2026-08-26*

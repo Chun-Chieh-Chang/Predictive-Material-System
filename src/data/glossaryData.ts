@@ -601,11 +601,6 @@ export const GLOSSARY_ENTRIES: GlossaryEntry[] = [
   ...BASE_GLOSSARY_ENTRIES,
 ]
 
-/** 依分類 ID 篩選 */
-export function getEntriesByCategory(category: GlossaryCategory): GlossaryEntry[] {
-  return GLOSSARY_ENTRIES.filter(e => e.category === category)
-}
-
 /** 全文字搜尋（搜尋 term、en、definition、example） */
 export function searchGlossary(query: string): GlossaryEntry[] {
   if (!query.trim()) return GLOSSARY_ENTRIES
@@ -616,9 +611,4 @@ export function searchGlossary(query: string): GlossaryEntry[] {
     e.definition.toLowerCase().includes(q) ||
     (e.example && e.example.toLowerCase().includes(q))
   )
-}
-
-/** 依 ID 取得單一條目 */
-export function getEntryById(id: string): GlossaryEntry | undefined {
-  return GLOSSARY_ENTRIES.find(e => e.id === id)
 }

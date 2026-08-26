@@ -1,7 +1,7 @@
 # 料事如神系統 — Predictive Material System (PMS)
 
 > **QCC 料事如神圈 · 射出成型智能備料與產能排程推估平台**  
-> Baseline Version：`V-20260825-16`（SSOT 單一真相來源：`src/utils/version.ts`，pre-commit 自動同步） | Developed by Wesley Chang @Mouldex, Aug-2026  
+> 版號 SSOT 單一真相來源：`src/utils/version.ts`（pre-commit 自動同步） | Developed by Wesley Chang @Mouldex, Aug-2026  
 > 軟體工程準則：Andrej Karpathy 軟體工程核心準則（謀定而後動 · 簡潔至上 · 外科手術式精準修改 · 目標導向與閉環驗證）
 
 ---
@@ -121,6 +121,8 @@ Phase 3 → 採購決策
 
 | 版本 | 日期 | 說明 |
 |------|------|------|
+| **V-20260826-40** | 2026-08-26 | **預估多版本管理補齊版**：MRP 計算機版本下拉選擇器與「版本衝擊分析」（現版 vs 前一版六項指標差異）；最新版判定改 `created_at`→`version_no` 降序（擺脫陣列順序依賴）；需求交叉比對多版本防護（同期別僅採計最新版，修復重複累加失真）。 |
+| **V-20260826-37~39** | 2026-08-26 | **數據邏輯規格書 v3.1＋獨立頁版**：備料補貨／交期估算兩大主軸互動流程圖（ISO 5807 標準符號、六種路由零穿越）＋五欄式參數表＋統一核心鏈路整合分析；入門導覽（餐廳比喻＋術語浮窗＋FAQ）；19 章預設摺疊；新增「數據邏輯規格書」獨立全版面頁（`?page=spec`，SSOT postMessage 即時同步參數與資料筆數）。 |
 | **V-20260825-12** | 2026-08-25 | **Anti-Placebo 數據鏈誠實化版**：拔除全域預設備胎（MRP/訂單張力/出貨審查共 10 處 fallback）、主檔缺值即拒算並精確警示缺哪個欄位、多模具策略假選項修復（conservative 改純最大克重）、完整性掃描新增 missing_field 規則、設定頁死旋鈕移除與倉容文案更正。 |
 | V-20260825-11 | 2026-08-25 | **V2-Intranet 內網部署版**：PowerShell 5.1 檔案服務後端（零依賴 HttpListener + 樂觀鎖 404/409 + 滾動快照）、共用資料適配器 loadSharedData/saveSharedData 雙模式接線、GitHub Actions artifact 部署（gh-pages 移除）。 |
 | V-20260824-24 | 2026-08-24 | **全專案整體程式碼與檔案優化版**：實裝「業務工作台」與「生管採購工作台」角色門戶；CAPA-001~014 報告全覆蓋（MECE 100/100 滿分驗證）；版號 SSOT 單一真相來源解除鎖定；雙通道 CI 部署與全色系對比度自動防禦門禁；存檔 IMPL-PLAN-002 自進化有機體實施計畫。 |

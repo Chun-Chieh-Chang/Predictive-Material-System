@@ -1191,16 +1191,6 @@ export const ALL_MASTER_FIELDS: MasterFieldDefinition[] = MASTER_TABLE_SCHEMAS.f
   table => table.fields
 );
 
-// 匯出按主表分組清單
-export const MASTER_TABLE_GROUPS = MASTER_TABLE_SCHEMAS.map(table => ({
-  tableKey: table.tableKey,
-  tableLabel: table.tableLabel,
-  categoryIcon: table.categoryIcon,
-  description: table.description,
-  ownerDepartment: table.ownerDepartment,
-  fieldCount: table.fields.length
-}));
-
 // 注入各欄位在數據鏈或介面中的具體位置
 export const MASTER_FIELD_LOCATIONS: Record<string, string> = {
   // item_master
