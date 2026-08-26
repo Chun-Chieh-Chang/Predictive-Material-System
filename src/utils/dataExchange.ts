@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as XLSX from 'xlsx';
 import {
   SystemDatabase,
   ItemMaster,
@@ -105,7 +104,8 @@ const DATA_SPECIFICATION_DICTIONARY = [
 ];
 
 // 2. Export to Excel (.xlsx) with all 9 sheets in Chinese
-export function exportToExcel(db: SystemDatabase, filename = '料事如神系統_全表資料庫.xlsx') {
+export async function exportToExcel(db: SystemDatabase, filename = '料事如神系統_全表資料庫.xlsx') {
+  const XLSX = await import('xlsx');
   const wb = XLSX.utils.book_new();
 
   // Helper Lookups
@@ -281,7 +281,8 @@ export function exportToExcel(db: SystemDatabase, filename = '料事如神系統
 
 
 // 3. Download Formal Blank Template (正式空白填報範本 - 純淨無假資料，權責單位專用)
-export function downloadTemplateExcel() {
+export async function downloadTemplateExcel() {
+  const XLSX = await import('xlsx');
   const wb = XLSX.utils.book_new();
 
   // Sheet 0: 填報規範與勾稽字典 (首頁引導，符合 MECE 權責分工)
@@ -331,8 +332,8 @@ export function downloadTemplateExcel() {
 }
 
 // 3b. Download Demo / Training Sample Excel (離線示範演練測試包 - 標註 SAMPLE 專用)
-export function downloadDemoSampleExcel() {
-  exportToExcel(DEMO_SAMPLE_DATABASE, '料事如神系統_示範演練數據包_SAMPLE.xlsx');
+export async function downloadDemoSampleExcel() {
+  await exportToExcel(DEMO_SAMPLE_DATABASE, '料事如神系統_示範演練數據包_SAMPLE.xlsx');
 }
 
 // 4. Validate & Import JSON
@@ -545,6 +546,7 @@ export async function importFromExcel(file: File, currentDB: SystemDatabase): Pr
 
   try {
     const data = await file.arrayBuffer();
+    const XLSX = await import('xlsx');
     const workbook = XLSX.read(data, { type: 'array' });
     const newDB: SystemDatabase = { ...currentDB };
 

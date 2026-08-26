@@ -279,8 +279,8 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
 
           <div className="space-y-2 pt-1">
             <button
-              onClick={() => {
-                downloadTemplateExcel();
+              onClick={async () => {
+                await downloadTemplateExcel();
                 onNotify('正式空白匯入範本已成功匯出，可直接分發給各權責單位！', 'success');
               }}
               id="exchange-download-formal-template-btn"
@@ -291,8 +291,8 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
             </button>
 
             <button
-              onClick={() => {
-                exportToExcel(db, '料事如神系統_正式生產資料庫.xlsx');
+              onClick={async () => {
+                await exportToExcel(db, '料事如神系統_正式生產資料庫.xlsx');
                 onNotify('目前系統正式資料庫已成功匯出！', 'success');
               }}
               id="exchange-export-prod-excel-btn"
@@ -343,8 +343,8 @@ export const DataExchangeView: React.FC<DataExchangeViewProps> = ({
             </button>
 
             <button
-              onClick={() => {
-                downloadDemoSampleExcel();
+              onClick={async () => {
+                await downloadDemoSampleExcel();
                 onNotify('離線示範演練測試包已成功匯出，標明 SAMPLE 供演練使用！', 'success');
               }}
               id="exchange-download-demo-btn"

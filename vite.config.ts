@@ -21,10 +21,10 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           // 將第三方庫拆分為獨立 chunk，改善瀏覽器快取效率
+          // xlsx 不列入：改由 dataExchange.ts 動態 import，僅在匯入/匯出 Excel 時按需載入
           manualChunks: {
             'vendor-react':  ['react', 'react-dom'],
             'vendor-ui':     ['lucide-react'],
-            'vendor-xlsx':   ['xlsx'],
           },
         },
       },
