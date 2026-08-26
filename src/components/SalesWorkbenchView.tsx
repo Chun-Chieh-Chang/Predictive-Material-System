@@ -26,7 +26,11 @@ import {
   Check,
   ChevronRight,
   Sparkles,
+  ChevronUp,
+  X,
 } from 'lucide-react';
+import { ShipScheduleClearanceView } from './ShipScheduleClearanceView';
+import { OrderTensionTrackerView } from './OrderTensionTrackerView';
 
 interface SalesWorkbenchProps {
   db: SystemDatabase;
@@ -49,6 +53,8 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
   const [queryType, setQueryType] = useState<'customer' | 'sku' | 'po'>('customer');
   const [searchKeyword, setSearchKeyword] = useState('A客戶');
   const [copiedScriptId, setCopiedScriptId] = useState<string | null>(null);
+  // 嵌入全版檢視（展開/收合）
+  const [expandedCard, setExpandedCard] = useState<'clearance' | 'tension' | null>(null);
 
   // 所有客戶清單
   const customerList = useMemo(() => {
@@ -469,17 +475,47 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2">
+            {expandedCard === 'clearance' ? (
+              <button
+                onClick={() => setExpandedCard(null)}
+                className="text-xs text-emerald-700 dark:text-emerald-400 hover:underline font-bold flex items-center gap-1 cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />收合完整看板
+              </button>
+            ) : (
+              <button
+                onClick={() => setExpandedCard('clearance')}
+                className="text-xs text-emerald-700 dark:text-emerald-400 hover:underline font-bold flex items-center gap-1 cursor-pointer"
+              >
+                展開完整出貨放行看板<ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            )}
             <button
               onClick={onNavigateToShipClearance}
-              className="text-xs text-emerald-700 dark:text-emerald-400 hover:underline font-bold flex items-center gap-1 cursor-pointer"
+              className="text-xs text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 font-bold flex items-center gap-1 cursor-pointer"
             >
-              <span>進入週二協調放行看板</span>
-              <ChevronRight className="w-3.5 h-3.5" />
+              前往完整版獨頁
             </button>
           </div>
         </div>
       </div>
+
+      {/* ── 嵌入完整出貨放行看板（展開時）────────────────────────────── */}
+      {expandedCard === 'clearance' && (
+        <div className="bg-white dark:bg-slate-900 border border-emerald-300 dark:border-emerald-600/40 rounded-2xl p-6 shadow-md mt-2">
+          <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-700 mb-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-emerald-700 dark:text-emerald-400">完整出貨放行看板（嵌入式）</span>
+              <span className="text-[0.8rem] text-slate-400">內嵌於業務工作台</span>
+            </div>
+            <button onClick={() => setExpandedCard(null)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors">
+              <X className="w-4 h-4 text-slate-500" />
+            </button>
+          </div>
+          <ShipScheduleClearanceView db={db} params={params} onNavigateToMRP={() => {}} onNavigateToTables={() => {}} />
+        </div>
+      )}
 
       {/* ── 卡片 3: 訂單備料狀況分析與交期回覆參考 (Full Width) ──── */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs">
@@ -499,11 +535,11 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
           </div>
 
           <button
-            onClick={onNavigateToOrderTension}
+            onClick={() => setExpandedCard(expandedCard === 'tension' ? null : 'tension')}
             className="text-xs text-purple-700 dark:text-purple-400 hover:underline font-bold flex items-center gap-1 cursor-pointer"
           >
-            <span>查看各供應鏈環節明細</span>
-            <ChevronRight className="w-3.5 h-3.5" />
+            <span>{expandedCard === 'tension' ? '收合完整缺料分析' : '展開完整缺料分析'}</span>
+            {expandedCard === 'tension' ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
           </button>
         </div>
 
@@ -573,6 +609,22 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
           })}
         </div>
       </div>
+
+      {/* ── 嵌入完整缺料分析（展開時）────────────────────────────── */}
+      {expandedCard === 'tension' && (
+        <div className="bg-white dark:bg-slate-900 border border-purple-300 dark:border-purple-600/40 rounded-2xl p-6 shadow-md mt-2">
+          <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-700 mb-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-purple-700 dark:text-purple-400">完整缺料分析（嵌入式）</span>
+              <span className="text-[0.8rem] text-slate-400">內嵌於業務工作台</span>
+            </div>
+            <button onClick={() => setExpandedCard(null)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors">
+              <X className="w-4 h-4 text-slate-500" />
+            </button>
+          </div>
+          <OrderTensionTrackerView db={db} params={params} onNavigateToMRP={() => {}} onNavigateToTables={() => {}} />
+        </div>
+      )}
     </div>
   );
 };

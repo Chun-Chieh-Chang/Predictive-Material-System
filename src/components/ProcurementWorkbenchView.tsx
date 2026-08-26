@@ -19,13 +19,15 @@ import {
   Calculator,
   Database,
   ChevronRight,
+  ChevronUp,
   Sparkles,
   FileSpreadsheet,
   Clock,
   Wrench,
   ChevronDown,
-  ChevronUp,
+  X,
 } from 'lucide-react';
+import { MrpCalculatorView } from './MrpCalculatorView';
 
 interface ProcurementWorkbenchProps {
   db: SystemDatabase;
@@ -51,6 +53,8 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
 
   const [selectedSku, setSelectedSku] = useState(finishGoodSkus[0]?.sku || 'A01-200-131');
   const [expandedMathDrawer, setExpandedMathDrawer] = useState(false);
+  // 嵌入完整 MRP 計算機（展開/收合）
+  const [mrpExpanded, setMrpExpanded] = useState(false);
 
   // 全品項 MRP 運算結果（用於 30 天時程軸與缺料排行）
   const allMrpResults = useMemo(() => {
@@ -305,13 +309,18 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
             )}
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2">
             <button
-              onClick={() => onNavigateToMRP(selectedSku)}
+              onClick={() => setMrpExpanded(v => !v)}
               className="text-xs text-emerald-700 dark:text-emerald-400 hover:underline font-bold flex items-center gap-1 cursor-pointer"
             >
-              <span>查看 30 天完整時程明細</span>
-              <ChevronRight className="w-3.5 h-3.5" />
+              {mrpExpanded ? <><ChevronUp className="w-3.5 h-3.5" />收合完整 MRP 計算機</> : <><ChevronRight className="w-3.5 h-3.5" />展開完整 MRP 計算機</>}
+            </button>
+            <button
+              onClick={() => onNavigateToMRP(selectedSku)}
+              className="text-xs text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 font-bold flex items-center gap-1 cursor-pointer"
+            >
+              前往完整版獨頁
             </button>
           </div>
         </div>
@@ -445,6 +454,22 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
           ))}
         </div>
       </div>
+
+      {/* ── 嵌入完整 3 階 MRP 計算機（展開時）────────────────────────── */}
+      {mrpExpanded && (
+        <div className="bg-white dark:bg-slate-900 border border-emerald-300 dark:border-emerald-600/40 rounded-2xl p-6 shadow-md mt-2">
+          <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-700 mb-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-emerald-700 dark:text-emerald-400">完整 3 階 MRP 計算機（嵌入式）</span>
+              <span className="text-[0.8rem] text-slate-400">內嵌於生管採購工作台 · 當前料號：{selectedSku}</span>
+            </div>
+            <button onClick={() => setMrpExpanded(false)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors">
+              <X className="w-4 h-4 text-slate-500" />
+            </button>
+          </div>
+          <MrpCalculatorView db={db} params={params} initialSku={selectedSku} />
+        </div>
+      )}
     </div>
   );
 };
