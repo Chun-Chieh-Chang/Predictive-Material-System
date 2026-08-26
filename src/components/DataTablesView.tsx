@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { SystemDatabase, ChangeAuditEntry } from '../types';
 import { exportToExcel } from '../utils/dataExchange';
+import { useLongPressDragScroll } from '../hooks/useLongPressDragScroll';
 import {
   TableMeta, FieldMeta, getTableMeta, getPkDisplay, generateAuditId,
   ALL_TABLE_METAS
@@ -177,6 +178,9 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
   const [activeTable, setActiveTable] = useState<TableKey>(initialTable);
   const [searchTerm, setSearchTerm] = useState('');
   const [materialClassFilter, setMaterialClassFilter] = useState<string>('');
+
+  // 長按拖動捲動（寬表空白區長按 300ms 啟動）
+  const dragScrollRef = useLongPressDragScroll<HTMLDivElement>();
 
   // Inline Edit State
   const [editingKey, setEditingKey] = useState<string | null>(null); // composite key string
@@ -572,7 +576,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
         </div>
 
         {/* Table Container with Always-On Freeze Panes */}
-        <div className="overflow-x-auto overflow-y-auto max-h-[calc(100vh-280px)] scrollbar-sm relative">
+        <div ref={dragScrollRef} className="overflow-x-auto overflow-y-auto max-h-[calc(100vh-280px)] scrollbar-sm relative">
           <table className="w-full text-left text-sm border-collapse">
             <thead className="sticky top-0 z-20 bg-slate-100/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-700 dark:text-slate-300 font-semibold border-b border-slate-200 dark:border-slate-700 shadow-xs">
               <tr>

@@ -217,6 +217,18 @@
   background: rgba(71, 85, 105, 0.8);
 }
 
+/* 長按拖動捲動模式：隱藏 scrollbar 防閃爍 + 平滑過渡 */
+.drag-scrolling {
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* IE/舊版 Edge */
+}
+.drag-scrolling::-webkit-scrollbar {
+  display: none;                  /* Chrome/Edge */
+}
+.drag-scrolling * {
+  cursor: grabbing !important;
+}
+
 /* ==========================================================================
    QC Annual Summary Light Theme Color Logic (Default)
    Precision Workbench Styling
