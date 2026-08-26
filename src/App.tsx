@@ -317,8 +317,12 @@ export function App() {
 
   // ── Backup: Save config when changed ─────────────────────────────────────────
   useEffect(() => {
-    const { directoryHandle: _dh, ...serializable } = backupConfig;
-    localStorage.setItem(BACKUP_CONFIG_STORAGE_KEY, JSON.stringify(serializable));
+    try {
+      const { directoryHandle: _dh, ...serializable } = backupConfig;
+      localStorage.setItem(BACKUP_CONFIG_STORAGE_KEY, JSON.stringify(serializable));
+    } catch (e) {
+      console.warn('Failed to save backup config (storage unavailable)', e);
+    }
   }, [backupConfig]);
 
   // ── Backup: Schedule polling & on-launch auto-backup ─────────────────────────

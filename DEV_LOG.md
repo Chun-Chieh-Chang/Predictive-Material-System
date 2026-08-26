@@ -1457,7 +1457,28 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 ---
 
-*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-26 V-20260826-41*
+### V-20260826-42 (2026-08-26) — 修復受限環境（sandbox）下 App 崩潰：備份設定儲存未捕捉例外＋沙盒防護
+
+**執行者**： opencode (ox-alpha)
+**狀態**： ✅Complete / Verified
+**驗證結果**： `tsc --noEmit` 0 錯誤 · `vite build` 成功
+**遵循原則**： Karpathy Surgical Changes · Zero-Mock
+
+#### 一、缺陷現象與根因（RCA）
+- **現象**：使用者於 GitHub Pages 部署版開啟規格書獨立頁後，Console 出現大量 `SecurityError: The document is sandboxed and lacks the 'allow-same-origin' flag`（theme/db/systemParams/backupConfig 讀寫全數失敗），最後一筆**未捕捉**的 SecurityError 發生於 React commit 階段導致崩潰。
+- **排查**：直接抓取部署版 bundle 驗證——`srcDoc` 變數（Zf）內容為 90KB 完整規格書（無 `id="root"`、無 `main.tsx`、無 `/assets/`、`</script>` 已正確跳脫），**規格書 iframe 內容無污染**；docs 原檔零 localStorage 引用。
+- **根因**：`App.tsx` 備份設定儲存 effect（backupConfig → localStorage.setItem）**未包 try/catch**，為全部持久化路徑中唯一未防護者；App 一旦於 storage 受限環境啟動（如被 sandboxed 內嵌的場景），該 effect 即拋出未捕捉例外崩潰，其餘讀寫警告亦同時轟炸 Console。
+
+#### 二、修復內容（CAPA）
+1. `App.tsx` 備份設定儲存 effect 補上 try/catch（與其他持久化路徑防護等齊）。
+2. `main.tsx` 新增**沙盒防護**：偵測「處於 iframe 內且 localStorage 不可用」時不啟動完整 App，改渲染最小提示——保證任何 sandboxed 內嵌場景都不會再出現錯誤轟炸或崩潰；主視窗正常使用（含隱私模式，讀寫均已有防護）不受影響。
+
+#### 三、部署
+- 修復隨本次推送由 GitHub Actions 自動重新部署。
+
+---
+
+*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-26 V-20260826-42*
 
 
 
