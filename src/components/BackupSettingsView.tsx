@@ -257,7 +257,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
                 />
                 <span className="text-xs text-slate-500">台灣時間（建議離峰時段，如 02:00）</span>
               </div>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[0.9333rem] text-slate-500">
                 備份程式會在設定時間±2分鐘內自動執行。瀏覽器需保持開啟才能觸發排程。
               </p>
             </div>
@@ -266,7 +266,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-sm font-bold text-white">每次啟動頁面時自動備份</div>
-                <div className="text-[11px] text-slate-500 mt-0.5">開啟系統時立即產生最新備份（避免資料遺失）</div>
+                <div className="text-[0.9333rem] text-slate-500 mt-0.5">開啟系統時立即產生最新備份（避免資料遺失）</div>
               </div>
               <button
                 onClick={() => updateConfig({ autoDownloadOnLaunch: !config.autoDownloadOnLaunch })}
@@ -284,7 +284,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-sm font-bold text-white">備份失敗時發送通知</div>
-                <div className="text-[11px] text-slate-500 mt-0.5">發生錯誤時於介面上顯示紅燈告警</div>
+                <div className="text-[0.9333rem] text-slate-500 mt-0.5">發生錯誤時於介面上顯示紅燈告警</div>
               </div>
               <button
                 onClick={() => updateConfig({ alertOnError: !config.alertOnError })}
@@ -315,7 +315,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-sm font-bold text-slate-900 dark:text-white">授權目錄</div>
-                  <div className="text-[11px] text-slate-500 mt-0.5">
+                  <div className="text-[0.9333rem] text-slate-500 mt-0.5">
                     {config.directoryLabel
                       ? `已授權：${config.directoryLabel}`
                       : '尚未授權任何目錄'}
@@ -330,7 +330,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
                   <span>{config.directoryLabel ? '變更目錄' : '選擇目錄'}</span>
                 </button>
               </div>
-              <p className="text-[11px] text-slate-500 leading-relaxed">
+              <p className="text-[0.9333rem] text-slate-500 leading-relaxed">
                 點擊「選擇目錄」後，瀏覽器會顯示系統目錄對話框，請選取您希望存放備份檔案的資料夾
                 （可選取本機或網路磁碟機對應的本地路徑）。選擇後系統將獲得該目錄的寫入權限。
                 首次選取後，後續備份將直接寫入該目錄，無需重複授權。
@@ -340,7 +340,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
             <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 rounded-xl px-4 py-3">
               <div className="flex items-start space-x-2">
                 <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                <div className="text-[11px] text-amber-800 dark:text-amber-300/90 leading-relaxed">
+                <div className="text-[0.9333rem] text-amber-800 dark:text-amber-300/90 leading-relaxed">
                   <strong>技術限制說明：</strong>瀏覽器安全沙盒不允許直接存取 UNC 路徑
                   （如 <code className="font-mono bg-amber-100 dark:bg-amber-950/60 px-1 rounded">\\server\share</code>）。
                   建議做法：先在 Windows 將網路磁碟機掛載為本機磁碟符號（如 Z:），
@@ -381,7 +381,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
             </button>
 
             {lastBackupEntry && (
-              <div className="flex items-center space-x-2 text-[11px] text-slate-500 font-mono">
+              <div className="flex items-center space-x-2 text-[0.9333rem] text-slate-500 font-mono">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                 <span>上次成功：{lastBackupEntry.backupFileName}</span>
                 <span className="text-slate-400 dark:text-slate-600">｜</span>
@@ -429,7 +429,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
               <div className="flex flex-col items-center justify-center py-16 text-slate-400 dark:text-slate-600 space-y-3">
                 <FileArchive className="w-10 h-10 opacity-30" />
                 <p className="text-sm font-mono">尚無備份記錄</p>
-                <p className="text-[11px] text-slate-500 dark:text-slate-700">執行首次備份後將在此顯示完整日誌</p>
+                <p className="text-[0.9333rem] text-slate-500 dark:text-slate-700">執行首次備份後將在此顯示完整日誌</p>
               </div>
             ) : (
               [...logs].reverse().map((entry) => (
@@ -454,21 +454,21 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
                         {entry.status === 'success' ? 'SUCCESS' : 'FAILED'}
                       </span>
                     </div>
-                    <span className="text-slate-500 text-[10px]">{entry.timestamp}</span>
+                    <span className="text-slate-500 text-[0.8667rem]">{entry.timestamp}</span>
                   </div>
                   <div className="text-slate-700 dark:text-slate-400 truncate">{entry.backupFileName}</div>
-                  <div className="flex flex-wrap gap-x-4 text-[10px] text-slate-500">
+                  <div className="flex flex-wrap gap-x-4 text-[0.8667rem] text-slate-500">
                     <span>{entry.fileSizeBytes > 0 ? `${(entry.fileSizeBytes / 1024).toFixed(1)} KB` : '—'}</span>
                     <span>{entry.databaseSnapshotCount} 筆記錄</span>
                     <span>{entry.durationMs} ms</span>
                     {entry.targetDirectory && (
-                      <span className="max-w-[160px] truncate" title={entry.targetDirectory}>
+                      <span className="max-w-[10.6667rem] truncate" title={entry.targetDirectory}>
                         📁 {entry.targetDirectory}
                       </span>
                     )}
                   </div>
                   {entry.errorDetails && (
-                    <div className="text-red-700 dark:text-red-400/80 text-[10px] break-words bg-red-100/80 dark:bg-red-950/30 rounded-lg px-2 py-1.5 mt-1 border border-red-200 dark:border-red-900/40">
+                    <div className="text-red-700 dark:text-red-400/80 text-[0.8667rem] break-words bg-red-100/80 dark:bg-red-950/30 rounded-lg px-2 py-1.5 mt-1 border border-red-200 dark:border-red-900/40">
                       ⚠ {entry.errorDetails}
                     </div>
                   )}
@@ -479,7 +479,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
 
           {/* Log stats footer */}
           {logs.length > 0 && (
-            <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 font-mono">
+            <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-[0.9333rem] text-slate-500 font-mono">
               <span>
                 成功 {logs.filter((l) => l.status === 'success').length} 筆
                 {' · '}
@@ -515,7 +515,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
               onChange={(e) => updateConfig({ maxLogEntries: Math.max(30, Number(e.target.value)) })}
               className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white font-mono text-sm focus:outline-hidden focus:border-sky-500"
             />
-            <p className="text-[11px] text-slate-500">超出上限時自動清除最舊的記錄</p>
+            <p className="text-[0.9333rem] text-slate-500">超出上限時自動清除最舊的記錄</p>
           </div>
 
           <div className="bg-slate-50 dark:bg-slate-950/70 p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-2">
@@ -523,7 +523,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
             <div className="text-lg font-bold font-mono text-sky-700 dark:text-cyan-300">
               {(logs.reduce((sum, l) => sum + JSON.stringify(l).length, 0) / 1024).toFixed(1)} KB
             </div>
-            <p className="text-[11px] text-slate-500">存入 localStorage 的實際佔用量</p>
+            <p className="text-[0.9333rem] text-slate-500">存入 localStorage 的實際佔用量</p>
           </div>
 
           <div className="bg-slate-50 dark:bg-slate-950/70 p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-2">
@@ -533,7 +533,7 @@ export const BackupSettingsView: React.FC<BackupSettingsViewProps> = ({ db, onNo
                 ? new Date(lastBackupEntry.timestamp).toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
                 : '尚未執行'}
             </div>
-            <p className="text-[11px] text-slate-500">
+            <p className="text-[0.9333rem] text-slate-500">
               {daysSince === Infinity ? '請執行首次備份以開始記錄' : `距今 ${daysSince} 天`}
             </p>
           </div>

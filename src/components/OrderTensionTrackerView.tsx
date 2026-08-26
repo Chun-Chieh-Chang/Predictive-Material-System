@@ -439,7 +439,7 @@ export const OrderTensionTrackerView: React.FC<OrderTensionTrackerViewProps> = (
                               <span>【{b.stageName}】</span>
                               <span>{b.title}</span>
                             </span>
-                            <span className="font-mono text-[11px] text-slate-500 font-semibold">
+                            <span className="font-mono text-[0.9333rem] text-slate-500 font-semibold">
                               {b.metricText}
                             </span>
                           </div>

@@ -192,7 +192,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
                     }`}
                   >
                     {cat === 'ALL' ? '全部' : cat === 'SET' ? '成品 SET' : cat === 'COMP' ? '組件 COMP' : '單品 PART'}
-                    <span className="ml-1 text-[10px] opacity-75 font-mono">({count})</span>
+                    <span className="ml-1 text-[0.8667rem] opacity-75 font-mono">({count})</span>
                   </button>
                 );
               })}
@@ -202,7 +202,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
             <div className="relative" ref={dropdownRef}>
               <div
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center justify-between min-w-[260px] sm:min-w-[300px] px-3.5 py-2 rounded-xl bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 hover:border-sky-500 dark:hover:border-sky-500 shadow-xs cursor-pointer transition-all"
+                className="flex items-center justify-between min-w-[17.3333rem] sm:min-w-[20rem] px-3.5 py-2 rounded-xl bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 hover:border-sky-500 dark:hover:border-sky-500 shadow-xs cursor-pointer transition-all"
               >
                 <div className="flex items-center space-x-2 truncate mr-2">
                   <Search className="w-4 h-4 text-slate-400 shrink-0" />
@@ -218,7 +218,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
 
               {/* Dropdown Menu Popup */}
               {isDropdownOpen && (
-                <div className="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 w-[320px] sm:w-[380px] bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl z-50 overflow-hidden animate-in fade-in-50 zoom-in-95">
+                <div className="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 w-[21.3333rem] sm:w-[25.3333rem] bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl z-50 overflow-hidden animate-in fade-in-50 zoom-in-95">
                   {/* Search Input Box */}
                   <div className="p-3 border-b border-slate-100 dark:border-slate-800 flex items-center space-x-2 bg-slate-50 dark:bg-slate-950/60">
                     <Search className="w-4 h-4 text-slate-400 shrink-0" />
@@ -268,7 +268,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
                                 <span className="font-mono font-bold text-slate-900 dark:text-white">
                                   {item.sku}
                                 </span>
-                                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md border ${classColor}`}>
+                                <span className={`text-[0.8667rem] font-bold px-1.5 py-0.5 rounded-md border ${classColor}`}>
                                   {item.material_class}
                                 </span>
                               </div>
@@ -581,7 +581,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
             <div className="space-y-1.5 text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
               <div><strong>數學公式：</strong><code className="text-sky-800 dark:text-cyan-300 font-mono font-bold">FG_Net_Gap = Max(0, Total_Demand - FG_Ready - (WIP_Pending × Yield))</code></div>
               <div><strong>帶入實務變數：</strong></div>
-              <ul className="list-disc list-inside pl-2 space-y-1 text-slate-600 dark:text-slate-400 font-mono text-[11px]">
+              <ul className="list-disc list-inside pl-2 space-y-1 text-slate-600 dark:text-slate-400 font-mono text-[0.9333rem]">
                 <li><span className="text-slate-800 dark:text-slate-200 font-semibold">Total_Demand:</span> 預示量 {result.forecastQty.toLocaleString()} + 實單 {result.actualOrderQty.toLocaleString()} = {(result.forecastQty + result.actualOrderQty).toLocaleString()} PCS</li>
                 <li><span className="text-slate-800 dark:text-slate-200 font-semibold">FG_Ready (成品良品現貨):</span> {result.fgReadyQty.toLocaleString()} PCS (已在庫檢驗合格)</li>
                 <li><span className="text-slate-800 dark:text-slate-200 font-semibold">WIP_Effective (待驗品折算):</span> {result.wipPendingQty.toLocaleString()} PCS × {(result.sortingYield * 100).toFixed(0)}% (標準良率) = {result.wipEffectiveQty.toLocaleString()} PCS</li>
@@ -716,7 +716,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
               <span className="text-purple-700 dark:text-purple-300 uppercase block font-semibold">單穴耗用原料克重 (Unit Weight)</span>
               <button
                 onClick={() => setExpandedMathStage(expandedMathStage === 'stage2' ? null : 'stage2')}
-                className="text-[11px] font-semibold text-purple-700 dark:text-purple-300 hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-[0.9333rem] font-semibold text-purple-700 dark:text-purple-300 hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <Calculator className="w-3 h-3" />
                 <span>{expandedMathStage === 'stage2' ? '收合' : '算式履歷'}</span>
@@ -744,7 +744,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
             <div className="space-y-1.5 text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
               <div><strong>單穴用量公式：</strong><code className="text-purple-800 dark:text-purple-300 font-mono font-bold">Unit_Weight_g = (Net_Mold_Weight + Runner_Weight) / Active_Cavities</code></div>
               <div><strong>實務變數帶入：</strong></div>
-              <ul className="list-disc list-inside pl-2 space-y-1 text-slate-600 dark:text-slate-400 font-mono text-[11px]">
+              <ul className="list-disc list-inside pl-2 space-y-1 text-slate-600 dark:text-slate-400 font-mono text-[0.9333rem]">
                 <li>整模成品重: {result.netMoldWeightG}g + 流道重: {result.runnerWeightG}g = 整模克重 {result.totalShotWeightG}g</li>
                 <li>妥善穴數: {result.activeCavities} 穴 (設計穴數: {result.designCavities} 穴{result.activeCavities < result.designCavities ? `，因塞 ${result.designCavities - result.activeCavities} 穴導致單穴分攤上升` : '，全穴滿載'})</li>
                 <li>日產能推估: (86,400秒 ÷ {result.cycleTimeSec}秒週期) × {result.activeCavities}穴 = {result.dailyCapacityPcs.toLocaleString()} PCS/日</li>
@@ -826,7 +826,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
               <span className="text-sky-700 dark:text-blue-300 uppercase font-bold block">D. 建議採購下單量 (取整 MOQ)</span>
               <button
                 onClick={() => setExpandedMathStage(expandedMathStage === 'stage3' ? null : 'stage3')}
-                className="text-[11px] font-semibold text-sky-700 dark:text-cyan-300 hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-[0.9333rem] font-semibold text-sky-700 dark:text-cyan-300 hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <Calculator className="w-3 h-3" />
                 <span>{expandedMathStage === 'stage3' ? '收合' : '算式履歷'}</span>
@@ -853,13 +853,13 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
             </div>
             <div className="space-y-1.5 text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
               <div><strong>原料毛需求公式：</strong><code className="text-emerald-800 dark:text-emerald-300 font-mono font-bold">RM_Gross_Kg = (FG_Net_Gap × Unit_Weight_g / 1000) / (1 - Scrap_Rate)</code></div>
-              <ul className="list-disc list-inside pl-2 space-y-0.5 text-slate-600 dark:text-slate-400 font-mono text-[11px]">
+              <ul className="list-disc list-inside pl-2 space-y-0.5 text-slate-600 dark:text-slate-400 font-mono text-[0.9333rem]">
                 <li>FG 成品淨缺口: {result.fgNetRequirementQty.toLocaleString()} PCS × 單穴重 {result.unitWeightG}g ÷ 1,000 = {((result.fgNetRequirementQty * result.unitWeightG) / 1000).toFixed(2)} KG</li>
                 <li>製程損耗率: {(result.stdScrapRate * 100).toFixed(0)}% ➜ 毛需求 = {result.rmGrossRequirementKg.toLocaleString()} KG</li>
               </ul>
 
               <div className="pt-2 border-t border-slate-200 dark:border-slate-800"><strong>原料淨缺口與採購建議公式：</strong><code className="text-emerald-800 dark:text-emerald-300 font-mono font-bold">RM_Net_Gap = RM_Gross - (RM_OnHand + InTransit) + SafetyStock</code></div>
-              <ul className="list-disc list-inside pl-2 space-y-0.5 text-slate-600 dark:text-slate-400 font-mono text-[11px]">
+              <ul className="list-disc list-inside pl-2 space-y-0.5 text-slate-600 dark:text-slate-400 font-mono text-[0.9333rem]">
                 <li>可用在庫: {result.rmOnHandKg.toLocaleString()} KG + 在途 PO: {result.rmInTransitKg.toLocaleString()} KG</li>
                 <li>安全庫存防線: {result.safetyStockKg.toLocaleString()} KG</li>
                 <li>算式結果: {result.rmGrossRequirementKg.toLocaleString()} - {(result.rmOnHandKg + result.rmInTransitKg).toLocaleString()} + {result.safetyStockKg.toLocaleString()} = {result.rmNetRequirementKg.toLocaleString()} KG</li>
@@ -920,24 +920,24 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-center text-xs font-sans">
               <div className="p-2 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                <div className="text-slate-500 text-[10px]">1. 當前日期</div>
+                <div className="text-slate-500 text-[0.8667rem]">1. 當前日期</div>
                 <div className="font-mono font-bold text-slate-800 dark:text-slate-200 mt-0.5">{new Date().toISOString().split('T')[0]}</div>
-                <div className="text-[10px] text-emerald-600 font-medium">系統監控中</div>
+                <div className="text-[0.8667rem] text-emerald-600 font-medium">系統監控中</div>
               </div>
               <div className={`p-2 rounded border ${result.daysUntilLatestOrder < 0 ? 'bg-red-50 dark:bg-red-950/40 border-red-300 text-red-700 dark:text-red-300' : 'bg-amber-50 dark:bg-amber-950/40 border-amber-300 text-amber-700 dark:text-amber-300'}`}>
-                <div className="text-[10px]">2. 最晚採購下單日</div>
+                <div className="text-[0.8667rem]">2. 最晚採購下單日</div>
                 <div className="font-mono font-bold mt-0.5">{result.suggestedOrderDate}</div>
-                <div className="text-[10px] font-bold">{result.daysUntilLatestOrder < 0 ? `逾期 ${Math.abs(result.daysUntilLatestOrder)} 天` : `倒數 ${result.daysUntilLatestOrder} 天`}</div>
+                <div className="text-[0.8667rem] font-bold">{result.daysUntilLatestOrder < 0 ? `逾期 ${Math.abs(result.daysUntilLatestOrder)} 天` : `倒數 ${result.daysUntilLatestOrder} 天`}</div>
               </div>
               <div className="p-2 rounded bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 text-sky-800 dark:text-sky-200">
-                <div className="text-[10px]">3. 採購前置交期</div>
+                <div className="text-[0.8667rem]">3. 採購前置交期</div>
                 <div className="font-mono font-bold mt-0.5">{result.leadTimeDays} 天</div>
-                <div className="text-[10px] text-sky-600">在途運送 + 檢驗</div>
+                <div className="text-[0.8667rem] text-sky-600">在途運送 + 檢驗</div>
               </div>
               <div className="p-2 rounded bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-purple-800 dark:text-purple-200">
-                <div className="text-[10px]">4. 客戶約定交期</div>
+                <div className="text-[0.8667rem]">4. 客戶約定交期</div>
                 <div className="font-mono font-bold mt-0.5">{result.targetDate}</div>
-                <div className="text-[10px] text-purple-600">產線完工出貨</div>
+                <div className="text-[0.8667rem] text-purple-600">產線完工出貨</div>
               </div>
             </div>
           </div>
@@ -953,7 +953,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
                   建議分批/階段性到港排程 (防範 8,000 萬爆倉與倉容超載)
                 </span>
               </div>
-              <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+              <span className="px-2 py-0.5 rounded text-[0.9333rem] font-semibold bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
                 拆為 {result.phasedDeliveryPlan.length} 批進貨
               </span>
             </div>
@@ -975,7 +975,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
                   <div className="text-slate-700 dark:text-slate-300">
                     最晚下單: <strong className="text-slate-900 dark:text-white font-mono">{batch.orderDate}</strong> ➔ 預計到廠: <strong className="text-slate-900 dark:text-white font-mono">{batch.etaDate}</strong>
                   </div>
-                  <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                  <div className="text-[0.9333rem] text-slate-500 dark:text-slate-400 mt-1">
                     {batch.reason}
                   </div>
                 </div>

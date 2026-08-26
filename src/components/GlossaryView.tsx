@@ -162,7 +162,7 @@ const GlossaryView: React.FC = () => {
                 >
                   <span>{table.categoryIcon}</span>
                   <span>{table.tableLabel.split('(')[0].trim()}</span>
-                  <span className="text-[10px] opacity-75 font-mono">({count})</span>
+                  <span className="text-[0.8667rem] opacity-75 font-mono">({count})</span>
                 </button>
               )
             })}
@@ -219,7 +219,7 @@ const GlossaryView: React.FC = () => {
                     <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
                       {catInfo.icon} {catInfo.label}
                     </span>
-                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded ${colors.badge}`}>
+                    <span className={`text-[0.8667rem] font-mono px-2 py-0.5 rounded ${colors.badge}`}>
                       {entries.length} 項
                     </span>
                   </div>
@@ -243,7 +243,7 @@ const GlossaryView: React.FC = () => {
       </div>
 
       {/* Footer */}
-      <div className="px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-[11px] text-slate-400 dark:text-slate-500 flex items-center justify-between">
+      <div className="px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-[0.9333rem] text-slate-400 dark:text-slate-500 flex items-center justify-between">
         <span>已按主檔案名稱分組條列 · 點選卡片可展開查看數據鏈位置與白話解說</span>
         <span>料事如神系統 © 2026</span>
       </div>
@@ -269,17 +269,17 @@ const GlossaryCard: React.FC<GlossaryCardProps> = ({ entry, colors }) => {
           <div className="flex items-center gap-2 flex-wrap">
             <span className={`text-sm font-bold ${colors.text}`}>{entry.term}</span>
             {entry.tableLabel && (
-              <span className="text-[10px] px-2 py-0.5 rounded-md font-semibold bg-sky-100 dark:bg-sky-900/60 text-sky-800 dark:text-sky-300 border border-sky-300 dark:border-sky-700 font-sans">
+              <span className="text-[0.8667rem] px-2 py-0.5 rounded-md font-semibold bg-sky-100 dark:bg-sky-900/60 text-sky-800 dark:text-sky-300 border border-sky-300 dark:border-sky-700 font-sans">
                 {entry.tableLabel}
               </span>
             )}
             {entry.dataType && (
-              <span className="text-[10px] px-2 py-0.5 rounded-md font-mono bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
+              <span className="text-[0.8667rem] px-2 py-0.5 rounded-md font-mono bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
                 {entry.dataType}
               </span>
             )}
             {entry.en && (
-              <span className="text-[11px] text-slate-400 dark:text-slate-500 font-mono">{entry.en}</span>
+              <span className="text-[0.9333rem] text-slate-400 dark:text-slate-500 font-mono">{entry.en}</span>
             )}
           </div>
         </div>
@@ -304,7 +304,7 @@ const GlossaryCard: React.FC<GlossaryCardProps> = ({ entry, colors }) => {
               <div className="font-bold flex items-center gap-1.5 text-amber-800 dark:text-amber-300 mb-1">
                 <span>💡 大白話解說 (這是什麼？)：</span>
               </div>
-              <p className="font-sans leading-relaxed text-[13px]">{entry.plainDefinition}</p>
+              <p className="font-sans leading-relaxed text-[0.8667rem]">{entry.plainDefinition}</p>
             </div>
           ) : (
             <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line font-sans">{entry.definition}</p>
@@ -357,9 +357,9 @@ const GlossaryCard: React.FC<GlossaryCardProps> = ({ entry, colors }) => {
           {/* 關聯名詞 */}
           {entry.related && entry.related.length > 0 && (
             <div className="flex flex-wrap items-center gap-1.5 pt-1">
-              <span className="text-[11px] text-slate-400">相關關聯：</span>
+              <span className="text-[0.9333rem] text-slate-400">相關關聯：</span>
               {entry.related.map(r => (
-                <span key={r} className="text-[10px] px-2 py-0.5 rounded-full bg-white/80 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                <span key={r} className="text-[0.8667rem] px-2 py-0.5 rounded-full bg-white/80 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                   ↔ {r}
                 </span>
               ))}

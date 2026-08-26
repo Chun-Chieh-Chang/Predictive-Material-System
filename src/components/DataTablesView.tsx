@@ -124,7 +124,7 @@ function CellInput({
         value={value === undefined || value === null ? '' : String(value)}
         min={field.min} max={field.max} step={field.step}
         onChange={e => onChange(field.key, e.target.value === '' ? '' : Number(e.target.value))}
-        className={`${cls} min-w-[80px]`}
+        className={`${cls} min-w-[5.3333rem]`}
       />
     );
   }
@@ -508,7 +508,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
                       <td className="px-3 py-2 text-red-600 dark:text-red-400 line-through">{entry.old_value}</td>
                       <td className="px-3 py-2 text-pms-pass dark:text-emerald-400 font-semibold">{entry.new_value}</td>
                       <td className="px-3 py-2">
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${entry.change_level === 3 ? 'bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400' : 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400'}`}>
+                        <span className={`px-1.5 py-0.5 rounded text-[0.8667rem] font-bold ${entry.change_level === 3 ? 'bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400' : 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400'}`}>
                           L{entry.change_level}
                         </span>
                       </td>
@@ -538,7 +538,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
             >
               <Icon className={`w-4 h-4 ${isActive ? 'text-pms-cobalt dark:text-sky-300' : 'text-slate-400 dark:text-slate-500'}`} />
               <span>{t.label}</span>
-              <span className={`text-[10px] px-1.5 py-0.5 rounded font-sans ${isActive ? 'bg-pms-cobalt/20 text-pms-cobalt dark:text-sky-300' : 'bg-slate-200 dark:bg-slate-800 text-slate-500'}`}>{t.dept}</span>
+              <span className={`text-[0.8667rem] px-1.5 py-0.5 rounded font-sans ${isActive ? 'bg-pms-cobalt/20 text-pms-cobalt dark:text-sky-300' : 'bg-slate-200 dark:bg-slate-800 text-slate-500'}`}>{t.dept}</span>
               <span className={`text-sm px-2 py-0.5 rounded-full font-mono font-bold ${isActive ? 'bg-pms-cobalt text-white dark:bg-sky-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>{t.count}</span>
             </button>
           );
@@ -620,7 +620,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
                       ) : (
                         <div>
                           <CellInput field={field} value={addRowData[field.key]} editRow={addRowData} db={db} onChange={handleAddRowChange} error={addRowErrors[field.key]} />
-                          {addRowErrors[field.key] && <p className="text-red-500 text-[10px] mt-0.5">{addRowErrors[field.key]}</p>}
+                          {addRowErrors[field.key] && <p className="text-red-500 text-[0.8667rem] mt-0.5">{addRowErrors[field.key]}</p>}
                         </div>
                       )}
                     </td>
@@ -664,7 +664,7 @@ export const DataTablesView: React.FC<DataTablesViewProps> = ({
                             ) : (
                               <div>
                                 <CellInput field={field} value={editRow[field.key]} editRow={editRow} db={db} onChange={handleEditChange} error={validationErrors[field.key]} />
-                                {validationErrors[field.key] && <p className="text-red-500 text-[10px] mt-0.5">{validationErrors[field.key]}</p>}
+                                {validationErrors[field.key] && <p className="text-red-500 text-[0.8667rem] mt-0.5">{validationErrors[field.key]}</p>}
                               </div>
                             )
                           ) : (

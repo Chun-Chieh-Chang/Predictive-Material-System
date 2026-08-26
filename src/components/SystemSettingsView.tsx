@@ -239,7 +239,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
               {redAlerts.length}{' '}
               <span className="text-xs font-normal text-slate-500">筆品號</span>
             </div>
-            <span className="text-[11px] text-slate-500">
+            <span className="text-[0.9333rem] text-slate-500">
               下單期 &le; {params.shortageAlertBufferDays} 天
             </span>
           </div>
@@ -253,7 +253,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
               {yellowAlerts.length}{' '}
               <span className="text-xs font-normal text-slate-500">筆品號</span>
             </div>
-            <span className="text-[11px] text-slate-500">
+            <span className="text-[0.9333rem] text-slate-500">
               供需比 &gt; {params.overstockMultiplier}x | 倉容 {params.defaultWarehouseCapacityKg?.toLocaleString()} KG
             </span>
           </div>
@@ -267,7 +267,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
               {purpleAlerts.length}{' '}
               <span className="text-xs font-normal text-slate-500">筆品號</span>
             </div>
-            <span className="text-[11px] text-slate-500">
+            <span className="text-[0.9333rem] text-slate-500">
               日工時 {params.dailyOperatingHours}h
             </span>
           </div>
@@ -281,7 +281,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
               {totalFGGapPcs.toLocaleString()}{' '}
               <span className="text-xs font-normal text-slate-500">PCS</span>
             </div>
-            <span className="text-[11px] text-slate-500">
+            <span className="text-[0.9333rem] text-slate-500">
               模式: {params.demandConsumptionMode === 'additive' ? '疊加' : '沖銷'}
             </span>
           </div>
@@ -295,7 +295,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
               {totalPOQtyKg.toLocaleString()}{' '}
               <span className="text-xs font-normal text-slate-500">KG</span>
             </div>
-            <span className="text-[11px] text-slate-500">
+            <span className="text-[0.9333rem] text-slate-500">
               安全係數 {params.safetyStockMultiplier}x
             </span>
           </div>
@@ -381,7 +381,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                 }
                 className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-red-500"
               />
-              <p className="text-[11px] text-slate-500 leading-relaxed">
+              <p className="text-[0.9333rem] text-slate-500 leading-relaxed">
                 當「距離最晚下單日 &le; <strong>{params.shortageAlertBufferDays} 天</strong>」或已逾期時，系統觸發 🔴 缺料採購警戒通知。（PRD 標準: 15天）
               </p>
             </div>
@@ -425,7 +425,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                 }
                 className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
               />
-              <p className="text-[11px] text-slate-500 leading-relaxed">
+              <p className="text-[0.9333rem] text-slate-500 leading-relaxed">
                 當「原料庫存 + 在途量 &gt; 需求量 &times; <strong>{params.overstockMultiplier} 倍</strong>」時，觸發 🟡 供需超備與呆滯料過剩警示。（PRD 標準: 1.6倍）
               </p>
             </div>
@@ -469,7 +469,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                 }
                 className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-orange-500"
               />
-              <p className="text-[11px] text-slate-500 leading-relaxed">
+              <p className="text-[0.9333rem] text-slate-500 leading-relaxed">
                   當「原料庫存 + 在途總量 &gt; 實體倉容上限 <strong>{(params.defaultWarehouseCapacityKg || 12000).toLocaleString()} KG</strong>」時，觸發 🟠 實體倉容超載爆倉預警。（全廠統一上限）
               </p>
             </div>
@@ -512,7 +512,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                 }
                 className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-500"
               />
-              <p className="text-[11px] text-slate-500 leading-relaxed">
+              <p className="text-[0.9333rem] text-slate-500 leading-relaxed">
                 當「連續生產所需天數 + <strong>{params.capacityBufferDays} 天安全裕度</strong> &gt; 距離交期天數」時，觸發 🟣 產能不足排產警報。（PRD 標準: 0天）
               </p>
             </div>
@@ -555,7 +555,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                 }
                 className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
               />
-              <p className="text-[11px] text-slate-500 leading-relaxed">
+              <p className="text-[0.9333rem] text-slate-500 leading-relaxed">
                 當「妥善穴數 / 設計穴數 &lt; <strong>{params.cavityAlertThresholdPercent}%</strong>」時提示塞穴維修警告。（預設 100%，即任一穴停用立即提醒）
               </p>
             </div>
@@ -606,11 +606,11 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                   <div>
                     <div className="font-bold text-slate-900 dark:text-white flex items-center space-x-1.5">
                       <span>保守最重克重原則 (Conservative Max Weight)</span>
-                      <span className="text-[10px] bg-sky-100 dark:bg-blue-950/60 text-sky-800 dark:text-blue-300 border border-sky-300 dark:border-blue-800/60 px-1.5 py-0.5 rounded font-mono font-bold">
+                      <span className="text-[0.8667rem] bg-sky-100 dark:bg-blue-950/60 text-sky-800 dark:text-blue-300 border border-sky-300 dark:border-blue-800/60 px-1.5 py-0.5 rounded font-mono font-bold">
                         PRD 預設
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                    <p className="text-[0.9333rem] text-slate-500 dark:text-slate-400 mt-1">
                       當品號有多副模具時，自動取<strong>單穴克重最大</strong>之模具進行備料推算，從源頭杜絕原料不足停線。
                     </p>
                   </div>
@@ -635,7 +635,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                   />
                   <div>
                     <div className="font-bold text-slate-900 dark:text-white">主模優先原則 (Primary Mold Only)</div>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                    <p className="text-[0.9333rem] text-slate-500 dark:text-slate-400 mt-1">
                       嚴格僅依據 BOM 中標記為 <code className="text-sky-600 dark:text-cyan-300">Is_Primary_Mold = TRUE</code> 之主模具參數計算。
                     </p>
                   </div>
@@ -660,7 +660,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                   />
                   <div>
                     <div className="font-bold text-slate-900 dark:text-white">精實最輕原則 (Lowest Unit Weight)</div>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                    <p className="text-[0.9333rem] text-slate-500 dark:text-slate-400 mt-1">
                       成本導向，取單穴克重最低之模具備料（適合原料單價極高之特用工程塑料）。
                     </p>
                   </div>
@@ -686,9 +686,9 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                 >
                   <div className="font-bold flex items-center justify-between">
                     <span>疊加模式 (Additive)</span>
-                    <span className="text-[9px] bg-white/20 px-1 py-0.5 rounded font-mono">PRD 預設</span>
+                    <span className="text-[0.6rem] bg-white/20 px-1 py-0.5 rounded font-mono">PRD 預設</span>
                   </div>
-                  <div className="text-[10px] opacity-80 mt-1">
+                  <div className="text-[0.8667rem] opacity-80 mt-1">
                     Demand = Forecast + 實際訂單 PO
                   </div>
                 </button>
@@ -703,7 +703,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                   }`}
                 >
                   <div className="font-bold">訂單沖銷模式 (PO Consume)</div>
-                  <div className="text-[10px] opacity-80 mt-1">
+                  <div className="text-[0.8667rem] opacity-80 mt-1">
                     Demand = Max(Forecast, PO)
                   </div>
                 </button>
@@ -718,7 +718,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                   }`}
                 >
                   <div className="font-bold">僅計預估 (Forecast Only)</div>
-                  <div className="text-[10px] opacity-80 mt-1">
+                  <div className="text-[0.8667rem] opacity-80 mt-1">
                     Demand = Forecast（忽略未成案 PO）
                   </div>
                 </button>
@@ -733,7 +733,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                   }`}
                 >
                   <div className="font-bold">僅計實單 (Actual PO Only)</div>
-                  <div className="text-[10px] opacity-80 mt-1">
+                  <div className="text-[0.8667rem] opacity-80 mt-1">
                     Demand = 實際 PO（不看預估）
                   </div>
                 </button>
@@ -778,7 +778,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                     key={item.val}
                     type="button"
                     onClick={() => setParams({ ...params, dailyOperatingHours: item.val })}
-                    className={`flex-1 py-1.5 rounded-lg text-[11px] font-semibold border transition-all cursor-pointer ${
+                    className={`flex-1 py-1.5 rounded-lg text-[0.9333rem] font-semibold border transition-all cursor-pointer ${
                       params.dailyOperatingHours === item.val
                         ? 'bg-sky-50 dark:bg-cyan-950 text-sky-800 dark:text-cyan-300 border-sky-300 dark:border-cyan-700'
                         : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-slate-900'
@@ -789,7 +789,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                 ))}
               </div>
 
-              <div className="text-[11px] text-slate-600 dark:text-slate-400 font-mono bg-white dark:bg-slate-900 p-2 rounded-lg border border-slate-200 dark:border-slate-800">
+              <div className="text-[0.9333rem] text-slate-600 dark:text-slate-400 font-mono bg-white dark:bg-slate-900 p-2 rounded-lg border border-slate-200 dark:border-slate-800">
                 日產能公式: ({params.dailyOperatingHours * 3600} 秒 ÷ 成型週期) &times; 妥善穴數
               </div>
             </div>
@@ -805,11 +805,11 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                 <div>
                   <div className="font-semibold text-slate-900 dark:text-white text-sm flex items-center gap-1.5">
                     <span>場內自用料月內虛擬預扣 (Virtual Backflush)</span>
-                    <span className="text-[10px] bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-1.5 py-0.5 rounded font-mono font-bold">
+                    <span className="text-[0.8667rem] bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-1.5 py-0.5 rounded font-mono font-bold">
                       消滅時序差
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-[0.9333rem] text-slate-500 dark:text-slate-400 mt-0.5">
                      在鼎新 ERP 月底正式開單扣料前，自動扣除「月內已成型」耗用原料，避免可用庫存虛增延誤長交期下單。
                   </p>
                 </div>
@@ -833,11 +833,11 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                 <div>
                   <div className="font-semibold text-slate-900 dark:text-white text-sm flex items-center gap-1.5">
                     <span>大宗採購分批到貨排程建議 (Phased Inbound Advisor)</span>
-                    <span className="text-[10px] bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 px-1.5 py-0.5 rounded font-mono font-bold">
+                    <span className="text-[0.8667rem] bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 px-1.5 py-0.5 rounded font-mono font-bold">
                       防8000萬爆倉
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-[0.9333rem] text-slate-500 dark:text-slate-400 mt-0.5">
                     當建議採購量達貨櫃規模或倉容上限時，自動拆解為「首批 + 次批 (間隔 30 天)」階段性交貨建議。
                   </p>
                 </div>
@@ -901,7 +901,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                   }
                   className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-red-500"
                 />
-                <p className="text-[10px] text-slate-500">
+                <p className="text-[0.8667rem] text-slate-500">
                   BOM 損耗防呆上限（不可高於會計計價標準）
                 </p>
               </div>
@@ -930,7 +930,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                   }
                   className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
                 />
-                <p className="text-[10px] text-slate-500">
+                <p className="text-[0.8667rem] text-slate-500">
                   全廠安全庫存動態放大/縮減係數 (應對海運波動)
                 </p>
               </div>
@@ -954,7 +954,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
         <div className="overflow-x-auto scrollbar-sm">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-mono text-[11px]">
+              <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-mono text-[0.9333rem]">
                 <th className="py-2.5 px-3">品號 SKU</th>
                 <th className="py-2.5 px-3">客戶</th>
                 <th className="py-2.5 px-3">成品總需求</th>
@@ -977,7 +977,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                   <tr key={res.sku} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
                     <td className="py-3 px-3 font-bold text-slate-900 dark:text-white flex items-center space-x-1.5">
                       <span>{res.sku}</span>
-                      <span className="text-[10px] font-normal text-slate-500 font-sans">
+                      <span className="text-[0.8667rem] font-normal text-slate-500 font-sans">
                         ({res.productName})
                       </span>
                     </td>
@@ -997,7 +997,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                     <td className="py-3 px-3 text-slate-700 dark:text-slate-300">
                       {res.suggestedOrderDate}{' '}
                       <span
-                        className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
+                        className={`text-[0.8667rem] px-1.5 py-0.5 rounded font-bold ${
                           res.daysUntilLatestOrder <= params.shortageAlertBufferDays
                             ? 'bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800'
                             : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
@@ -1009,22 +1009,22 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
                     <td className="py-3 px-3">
                       <div className="flex items-center space-x-1">
                         {isRed && (
-                          <span className="px-2 py-0.5 bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-400 border border-red-200 dark:border-red-800/60 rounded text-[10px] font-sans font-semibold">
+                          <span className="px-2 py-0.5 bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-400 border border-red-200 dark:border-red-800/60 rounded text-[0.8667rem] font-sans font-semibold">
                             🔴 缺料
                           </span>
                         )}
                         {isYellow && (
-                          <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60 rounded text-[10px] font-sans font-semibold">
+                          <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60 rounded text-[0.8667rem] font-sans font-semibold">
                             🟡 呆滯
                           </span>
                         )}
                         {isPurple && (
-                          <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-400 border border-purple-200 dark:border-purple-800/60 rounded text-[10px] font-sans font-semibold">
+                          <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-400 border border-purple-200 dark:border-purple-800/60 rounded text-[0.8667rem] font-sans font-semibold">
                             🟣 產能
                           </span>
                         )}
                         {!isRed && !isYellow && !isPurple && (
-                          <span className="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 rounded text-[10px] font-sans font-semibold">
+                          <span className="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 rounded text-[0.8667rem] font-sans font-semibold">
                             🟢 正常
                           </span>
                         )}

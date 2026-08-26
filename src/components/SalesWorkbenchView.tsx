@@ -431,21 +431,21 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
             {/* 核心數據指標 */}
             <div className="grid grid-cols-3 gap-3 my-5">
               <div className="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700">
-                <span className="text-[11px] text-slate-500 dark:text-slate-400 block">待出貨目標量</span>
+                <span className="text-[0.9333rem] text-slate-500 dark:text-slate-400 block">待出貨目標量</span>
                 <div className="text-lg font-mono font-bold text-slate-900 dark:text-white mt-1">
                   {clearanceSummary.totalTarget.toLocaleString()} <span className="text-xs font-normal">PCS</span>
                 </div>
               </div>
 
               <div className="bg-emerald-50/60 dark:bg-emerald-950/30 p-3.5 rounded-xl border border-emerald-200 dark:border-emerald-800/40">
-                <span className="text-[11px] text-emerald-700 dark:text-emerald-300 font-semibold block">在庫現貨良品</span>
+                <span className="text-[0.9333rem] text-emerald-700 dark:text-emerald-300 font-semibold block">在庫現貨良品</span>
                 <div className="text-lg font-mono font-bold text-emerald-700 dark:text-emerald-400 mt-1">
                   {clearanceSummary.readyCovered.toLocaleString()} <span className="text-xs font-normal">PCS</span>
                 </div>
               </div>
 
               <div className="bg-sky-50/60 dark:bg-sky-950/30 p-3.5 rounded-xl border border-sky-200 dark:border-sky-800/40">
-                <span className="text-[11px] text-sky-700 dark:text-sky-300 font-semibold block">WIP 折算支援</span>
+                <span className="text-[0.9333rem] text-sky-700 dark:text-sky-300 font-semibold block">WIP 折算支援</span>
                 <div className="text-lg font-mono font-bold text-sky-700 dark:text-sky-400 mt-1">
                   {clearanceSummary.wipNeeded.toLocaleString()} <span className="text-xs font-normal">PCS</span>
                 </div>
@@ -462,7 +462,7 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
                 <div className="h-full bg-emerald-500" style={{ width: `${Math.min(100, Math.round((clearanceSummary.readyCovered / (clearanceSummary.totalTarget || 1)) * 100))}%` }} title="良品在庫覆蓋" />
                 <div className="h-full bg-sky-400" style={{ width: `${Math.min(100, Math.round((clearanceSummary.wipNeeded / (clearanceSummary.totalTarget || 1)) * 100))}%` }} title="WIP 待驗覆蓋" />
               </div>
-              <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+              <div className="flex justify-between text-[0.8667rem] text-slate-500 font-mono">
                 <span>🟢 成品良品在庫 ({clearanceSummary.readyCovered.toLocaleString()} PCS)</span>
                 <span>🔵 在製品 WIP 檢驗 ({clearanceSummary.wipNeeded.toLocaleString()} PCS)</span>
               </div>
@@ -530,13 +530,13 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
                     <span className="font-mono font-bold text-slate-900 dark:text-white text-sm">
                       {order.order_id}
                     </span>
-                    <span className="bg-sky-50 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 border border-sky-200 dark:border-sky-800/40 text-[11px] font-bold px-2 py-0.5 rounded-md font-mono">
+                    <span className="bg-sky-50 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 border border-sky-200 dark:border-sky-800/40 text-[0.9333rem] font-bold px-2 py-0.5 rounded-md font-mono">
                       {order.customer_id}
                     </span>
                     <span className="text-xs text-slate-600 dark:text-slate-400 font-mono">
                       {order.sku} ({item?.category || '成品'})
                     </span>
-                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md ${
+                    <span className={`text-[0.9333rem] font-bold px-2 py-0.5 rounded-md ${
                       isReadyCovered
                         ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300'
                         : 'bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300'

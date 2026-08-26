@@ -548,7 +548,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <Flame className="w-4 h-4 text-red-500 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
                 <div className="font-bold text-slate-900 dark:text-white group-hover:text-red-700 dark:group-hover:text-red-200">極限塞 2 穴</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">克重飆升/日產能降</div>
+                <div className="text-[0.9333rem] text-slate-500 dark:text-slate-400 truncate">克重飆升/日產能降</div>
               </div>
             </button>
 
@@ -559,7 +559,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <TrendingUp className="w-4 h-4 text-sky-600 dark:text-blue-400 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
                 <div className="font-bold text-slate-900 dark:text-white group-hover:text-sky-700 dark:group-hover:text-blue-200">旺季爆單 (+50%)</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">需求急增/交期提前</div>
+                <div className="text-[0.9333rem] text-slate-500 dark:text-slate-400 truncate">需求急增/交期提前</div>
               </div>
             </button>
 
@@ -570,7 +570,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <Truck className="w-4 h-4 text-amber-500 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
                 <div className="font-bold text-slate-900 dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-200">海運延誤 (+30天)</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">倒推下單日告急</div>
+                <div className="text-[0.9333rem] text-slate-500 dark:text-slate-400 truncate">倒推下單日告急</div>
               </div>
             </button>
 
@@ -581,7 +581,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <ShieldAlert className="w-4 h-4 text-orange-500 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
                 <div className="font-bold text-slate-900 dark:text-white group-hover:text-orange-700 dark:group-hover:text-orange-200">WIP 良率降 (80%)</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">挑檢損耗激增</div>
+                <div className="text-[0.9333rem] text-slate-500 dark:text-slate-400 truncate">挑檢損耗激增</div>
               </div>
             </button>
 
@@ -592,7 +592,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <Warehouse className="w-4 h-4 text-purple-500 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
                 <div className="font-bold text-slate-900 dark:text-white group-hover:text-purple-700 dark:group-hover:text-purple-200">零在庫斷料</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">無在手無在途</div>
+                <div className="text-[0.9333rem] text-slate-500 dark:text-slate-400 truncate">無在手無在途</div>
               </div>
             </button>
 
@@ -603,7 +603,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <Sparkles className="w-4 h-4 text-emerald-500 shrink-0 group-hover:scale-110 transition-transform" />
               <div className="truncate">
                 <div className="font-bold text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-200">24h 滿載加班</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">全穴滿載/縮短週期</div>
+                <div className="text-[0.9333rem] text-slate-500 dark:text-slate-400 truncate">全穴滿載/縮短週期</div>
               </div>
             </button>
           </div>
@@ -686,7 +686,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         onChange={(e) => setOverrideForecast(Number(e.target.value))}
                         className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-sky-500"
                       />
-                      <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                      <div className="flex justify-between text-[0.9333rem] text-slate-500 font-mono">
                         <span>5,000</span>
                         <span>基準: {activeMrp?.forecastQty.toLocaleString()}</span>
                         <span>300,000</span>
@@ -710,7 +710,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         onChange={(e) => setOverrideActualOrder(Number(e.target.value))}
                         className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-sky-500"
                       />
-                      <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                      <div className="flex justify-between text-[0.9333rem] text-slate-500 font-mono">
                         <span>0</span>
                         <span>基準: {activeMrp?.actualOrderQty.toLocaleString()}</span>
                         <span>200,000</span>
@@ -732,7 +732,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         <option value="forecast_only">僅計預估需求 (Forecast Only)</option>
                         <option value="actual_only">僅計正式實單 (Actual PO Only)</option>
                       </select>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400 block">
+                      <span className="text-[0.9333rem] text-slate-500 dark:text-slate-400 block">
                         目前總需求計算值: <strong className="text-slate-900 dark:text-white font-mono">{simTotalDemand.toLocaleString()} PCS</strong>
                       </span>
                     </div>
@@ -754,7 +754,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         onChange={(e) => setOverrideDateOffsetDays(Number(e.target.value))}
                         className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-amber-500"
                       />
-                      <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                      <div className="flex justify-between text-[0.9333rem] text-slate-500 font-mono">
                         <span>提前 30 天</span>
                         <span>基準: {activeMrp?.targetDate}</span>
                         <span>延後 60 天</span>
@@ -788,7 +788,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                           );
                         })}
                       </select>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400 block">
+                      <span className="text-[0.9333rem] text-slate-500 dark:text-slate-400 block">
                         目前模具: <strong className="text-slate-900 dark:text-white font-mono">{currentMoldId}</strong> (整模淨重 {simNetMoldWeight}g)
                       </span>
                     </div>
@@ -810,7 +810,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         onChange={(e) => setOverrideCavities(Number(e.target.value))}
                         className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-purple-500"
                       />
-                      <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                      <div className="flex justify-between text-[0.9333rem] text-slate-500 font-mono">
                         <span>1 穴 (極限)</span>
                         <span>基準: {currentMoldRecord?.active_cavities} 穴</span>
                         <span>設計: {simDesignCav} 穴</span>
@@ -836,7 +836,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         onChange={(e) => setOverrideCycleTime(Number(e.target.value))}
                         className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-slate-400"
                       />
-                      <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                      <div className="flex justify-between text-[0.9333rem] text-slate-500 font-mono">
                         <span>10s</span>
                         <span>基準: {currentMoldRecord?.cycle_time_sec}s</span>
                         <span>60s</span>
@@ -860,7 +860,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         onChange={(e) => setOverrideDailyHours(Number(e.target.value))}
                         className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-sky-400"
                       />
-                      <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                      <div className="flex justify-between text-[0.9333rem] text-slate-500 font-mono">
                         <span>8h (單班)</span>
                         <span>16h (雙班)</span>
                         <span>24h (全天)</span>
@@ -884,7 +884,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         onChange={(e) => setOverrideScrap(Number(e.target.value))}
                         className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-red-400"
                       />
-                      <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                      <div className="flex justify-between text-[0.9333rem] text-slate-500 font-mono">
                         <span>0%</span>
                         <span>基準: {((currentBomRecord?.std_mfg_scrap_rate || 0.03) * 100).toFixed(1)}%</span>
                         <span>15%</span>
@@ -915,7 +915,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         onChange={(e) => setOverrideYield(Number(e.target.value))}
                         className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                       />
-                      <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                      <div className="flex justify-between text-[0.9333rem] text-slate-500 font-mono">
                         <span>60%</span>
                         <span>基準: {((activeMrp?.sortingYield || 0.98) * 100).toFixed(1)}%</span>
                         <span>100%</span>
@@ -939,7 +939,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         onChange={(e) => setOverrideWipQty(Number(e.target.value))}
                         className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-slate-400"
                       />
-                      <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                      <div className="flex justify-between text-[0.9333rem] text-slate-500 font-mono">
                         <span>0</span>
                         <span>基準: {activeMrp?.wipPendingQty.toLocaleString()}</span>
                         <span>60,000</span>
@@ -965,7 +965,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         onChange={(e) => setOverrideFgReadyQty(Number(e.target.value))}
                         className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-sky-400"
                       />
-                      <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                      <div className="flex justify-between text-[0.9333rem] text-slate-500 font-mono">
                         <span>0</span>
                         <span>基準: {activeMrp?.fgReadyQty.toLocaleString()}</span>
                         <span>50,000</span>
@@ -989,7 +989,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         onChange={(e) => setOverrideRmOnHand(Number(e.target.value))}
                         className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-purple-400"
                       />
-                      <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                      <div className="flex justify-between text-[0.9333rem] text-slate-500 font-mono">
                         <span>0</span>
                         <span>基準: {activeMrp?.rmOnHandKg.toLocaleString()}</span>
                         <span>10,000</span>
@@ -1013,7 +1013,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         onChange={(e) => setOverrideRmInTransit(Number(e.target.value))}
                         className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-amber-400"
                       />
-                      <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                      <div className="flex justify-between text-[0.9333rem] text-slate-500 font-mono">
                         <span>0</span>
                         <span>基準: {activeMrp?.rmInTransitKg.toLocaleString()}</span>
                         <span>10,000</span>
@@ -1044,7 +1044,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         onChange={(e) => setOverrideLeadTime(Number(e.target.value))}
                         className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-amber-500"
                       />
-                      <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                      <div className="flex justify-between text-[0.9333rem] text-slate-500 font-mono">
                         <span>7天 (特急空運)</span>
                         <span>基準: {activeMrp?.leadTimeDays}天</span>
                         <span>180天 (海運延遲)</span>
@@ -1068,7 +1068,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         onChange={(e) => setOverrideMoq(Number(e.target.value))}
                         className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-sky-500"
                       />
-                      <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                      <div className="flex justify-between text-[0.9333rem] text-slate-500 font-mono">
                         <span>100 KG</span>
                         <span>基準: {activeMrp?.moqKg.toLocaleString()} KG</span>
                         <span>5,000 KG</span>
@@ -1094,7 +1094,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         onChange={(e) => setOverrideSafetyStock(Number(e.target.value))}
                         className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                       />
-                      <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                      <div className="flex justify-between text-[0.9333rem] text-slate-500 font-mono">
                         <span>0 KG</span>
                         <span>基準: {activeMrp?.safetyStockKg.toLocaleString()} KG</span>
                         <span>3,000 KG</span>
@@ -1118,7 +1118,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         onChange={(e) => setOverrideUnitPrice(Number(e.target.value))}
                         className="w-full h-1.5 bg-slate-200 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-sky-400"
                       />
-                      <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                      <div className="flex justify-between text-[0.9333rem] text-slate-500 font-mono">
                         <span>$1.00</span>
                         <span>基準: $3.20</span>
                         <span>$15.00</span>
@@ -1170,12 +1170,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <div className="grid grid-cols-2 gap-3 mt-3.5 text-sm">
                 {/* Tile 1: Unit Weight */}
                 <div className="bg-white dark:bg-slate-900/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
-                  <span className="text-slate-500 dark:text-slate-400 block text-[11px]">動態單穴克重</span>
+                  <span className="text-slate-500 dark:text-slate-400 block text-[0.9333rem]">動態單穴克重</span>
                   <div className="flex items-baseline justify-between mt-1">
                     <span className="text-base font-bold font-mono text-sky-700 dark:text-cyan-300">
                       {simUnitWeight.toFixed(3)} <span className="text-xs font-normal">g</span>
                     </span>
-                    <span className={`font-mono text-[11px] font-bold ${deltaUnitWeight > 0 ? 'text-red-600 dark:text-red-400' : deltaUnitWeight < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                    <span className={`font-mono text-[0.9333rem] font-bold ${deltaUnitWeight > 0 ? 'text-red-600 dark:text-red-400' : deltaUnitWeight < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`}>
                       {deltaUnitWeight > 0 ? `+${deltaUnitWeight}` : deltaUnitWeight === 0 ? '±0' : deltaUnitWeight}
                     </span>
                   </div>
@@ -1183,12 +1183,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                 {/* Tile 2: Daily Capacity */}
                 <div className="bg-white dark:bg-slate-900/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
-                  <span className="text-slate-500 dark:text-slate-400 block text-[11px]">日射出產能</span>
+                  <span className="text-slate-500 dark:text-slate-400 block text-[0.9333rem]">日射出產能</span>
                   <div className="flex items-baseline justify-between mt-1">
                     <span className="text-base font-bold font-mono text-slate-900 dark:text-white">
                       {simDailyCap.toLocaleString()} <span className="text-xs font-normal">PCS</span>
                     </span>
-                    <span className={`font-mono text-[11px] font-bold ${deltaDailyCap > 0 ? 'text-emerald-600 dark:text-emerald-400' : deltaDailyCap < 0 ? 'text-red-600 dark:text-red-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                    <span className={`font-mono text-[0.9333rem] font-bold ${deltaDailyCap > 0 ? 'text-emerald-600 dark:text-emerald-400' : deltaDailyCap < 0 ? 'text-red-600 dark:text-red-400' : 'text-slate-400 dark:text-slate-500'}`}>
                       {deltaDailyCap > 0 ? `+${deltaDailyCap.toLocaleString()}` : deltaDailyCap === 0 ? '±0' : deltaDailyCap.toLocaleString()}
                     </span>
                   </div>
@@ -1196,12 +1196,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                 {/* Tile 3: FG Net Gap */}
                 <div className="bg-white dark:bg-slate-900/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
-                  <span className="text-slate-500 dark:text-slate-400 block text-[11px]">成品淨缺口</span>
+                  <span className="text-slate-500 dark:text-slate-400 block text-[0.9333rem]">成品淨缺口</span>
                   <div className="flex items-baseline justify-between mt-1">
                     <span className="text-base font-bold font-mono text-sky-600 dark:text-blue-400">
                       {simFgGap.toLocaleString()} <span className="text-xs font-normal">PCS</span>
                     </span>
-                    <span className={`font-mono text-[11px] font-bold ${deltaFgGap > 0 ? 'text-red-600 dark:text-red-400' : deltaFgGap < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                    <span className={`font-mono text-[0.9333rem] font-bold ${deltaFgGap > 0 ? 'text-red-600 dark:text-red-400' : deltaFgGap < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`}>
                       {deltaFgGap > 0 ? `+${deltaFgGap.toLocaleString()}` : deltaFgGap === 0 ? '±0' : deltaFgGap.toLocaleString()}
                     </span>
                   </div>
@@ -1209,12 +1209,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                 {/* Tile 4: Net Raw Material */}
                 <div className="bg-white dark:bg-slate-900/80 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
-                  <span className="text-slate-500 dark:text-slate-400 block text-[11px]">原料淨需求 (KG)</span>
+                  <span className="text-slate-500 dark:text-slate-400 block text-[0.9333rem]">原料淨需求 (KG)</span>
                   <div className="flex items-baseline justify-between mt-1">
                     <span className="text-base font-bold font-mono text-purple-700 dark:text-purple-300">
                       {simNetRMKg.toLocaleString()} <span className="text-xs font-normal">KG</span>
                     </span>
-                    <span className={`font-mono text-[11px] font-bold ${deltaNetRM > 0 ? 'text-red-600 dark:text-red-400' : deltaNetRM < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                    <span className={`font-mono text-[0.9333rem] font-bold ${deltaNetRM > 0 ? 'text-red-600 dark:text-red-400' : deltaNetRM < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`}>
                       {deltaNetRM > 0 ? `+${deltaNetRM.toLocaleString()}` : deltaNetRM === 0 ? '±0' : deltaNetRM.toLocaleString()}
                     </span>
                   </div>
@@ -1233,7 +1233,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <span className="text-sky-800 dark:text-blue-300">預估採購總金額 (USD):</span>
                   <span className="font-mono font-bold text-sky-900 dark:text-cyan-300">
                     ${simTotalCostUsd.toLocaleString()} USD
-                    <span className={`ml-2 text-[11px] ${deltaCost > 0 ? 'text-red-600 dark:text-red-400' : deltaCost < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                    <span className={`ml-2 text-[0.9333rem] ${deltaCost > 0 ? 'text-red-600 dark:text-red-400' : deltaCost < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`}>
                       ({deltaCost > 0 ? `+$${deltaCost.toLocaleString()}` : deltaCost === 0 ? '±$0' : `-$${Math.abs(deltaCost).toLocaleString()}`})
                     </span>
                   </span>
@@ -1252,7 +1252,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <Sparkles className="w-3.5 h-3.5 text-sky-600 dark:text-cyan-400" />
                   <span>沙盒推演決策建言：</span>
                 </div>
-                <p className="text-slate-700 dark:text-slate-300 text-[11px] leading-relaxed">
+                <p className="text-slate-700 dark:text-slate-300 text-[0.9333rem] leading-relaxed">
                   {simDaysUntilLatestOrder < 0 ? (
                     <span className="text-red-600 dark:text-red-300 font-medium">
                       ⚠️ 警報：因交期 ({simLeadTime}天) 或需求調整，最晚下單日 ({simSuggestedOrderDate}) 已逾期 {Math.abs(simDaysUntilLatestOrder)} 天。建議立即啟動原廠空運特急件或自其他料號調撥在庫！
@@ -1438,7 +1438,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     return next;
                   });
                 }}
-                className="text-xs bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-800 dark:text-slate-200 font-mono font-semibold cursor-pointer max-w-[160px]"
+                className="text-xs bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-800 dark:text-slate-200 font-mono font-semibold cursor-pointer max-w-[10.6667rem]"
               >
                 <option value="all">全品號 (All SKUs)</option>
                 {db.item_master.filter((i) => !i.material_class || ['PART', 'COMP', 'SET'].includes(i.material_class)).map((item) => (
@@ -1494,7 +1494,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <table className="w-full text-left text-sm border-collapse">
                 <thead className="sticky top-0 z-20 bg-slate-100 dark:bg-slate-900 backdrop-blur-md text-slate-700 dark:text-slate-300 font-semibold uppercase text-xs border-b border-slate-200 dark:border-slate-700 shadow-xs">
                   <tr>
-                    <th className="sticky top-0 left-0 z-30 bg-slate-100 dark:bg-slate-900 px-3.5 py-3 freeze-shadow-right whitespace-nowrap min-w-[150px]">
+                    <th className="sticky top-0 left-0 z-30 bg-slate-100 dark:bg-slate-900 px-3.5 py-3 freeze-shadow-right whitespace-nowrap min-w-[10rem]">
                       成品料號 / 客戶
                     </th>
                     <th className="px-3.5 py-3 text-right whitespace-nowrap">預示量 (Forecast)</th>
@@ -1546,23 +1546,23 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                           {row.totalHistoricalQty.toLocaleString()} PCS
                         </td>
                         <td
-                          className="px-3.5 py-3.5 min-w-[140px]"
+                          className="px-3.5 py-3.5 min-w-[9.3333rem]"
                           title={`[${row.sku} / ${row.customer_id}] 預示量: ${row.totalForecastQty.toLocaleString()} PCS | 實單: ${row.totalActualOrderQty.toLocaleString()} PCS | 歷史: ${row.totalHistoricalQty.toLocaleString()} PCS`}
                         >
                           <div className="space-y-1">
-                            <div className="flex items-center gap-1 text-[10px]">
+                            <div className="flex items-center gap-1 text-[0.8667rem]">
                               <span className="w-8 text-sky-600 font-sans">預測</span>
                               <div className="flex-1 bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
                                 <div className="bg-sky-500 h-full rounded-full" style={{ width: `${forecastWidth}%` }} />
                               </div>
                             </div>
-                            <div className="flex items-center gap-1 text-[10px]">
+                            <div className="flex items-center gap-1 text-[0.8667rem]">
                               <span className="w-8 text-emerald-600 font-sans">實單</span>
                               <div className="flex-1 bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
                                 <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${actualWidth}%` }} />
                               </div>
                             </div>
-                            <div className="flex items-center gap-1 text-[10px]">
+                            <div className="flex items-center gap-1 text-[0.8667rem]">
                               <span className="w-8 text-purple-600 font-sans">歷史</span>
                               <div className="flex-1 bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
                                 <div className="bg-purple-500 h-full rounded-full" style={{ width: `${histWidth}%` }} />
@@ -1586,7 +1586,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                             <span className="text-emerald-600 dark:text-emerald-400 font-medium">🟢 平穩吻合</span>
                           )}
                         </td>
-                        <td className="px-3.5 py-3.5 font-sans text-xs max-w-[280px]">
+                        <td className="px-3.5 py-3.5 font-sans text-xs max-w-[18.6667rem]">
                           {row.recommendations.map((rec, rIdx) => (
                             <div key={rIdx} className="text-slate-700 dark:text-slate-300 leading-snug">
                               • {rec}

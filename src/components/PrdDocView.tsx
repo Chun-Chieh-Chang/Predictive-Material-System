@@ -363,7 +363,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify, onNavigateToSp
                     <td className="px-3.5 py-3.5 text-slate-600 dark:text-slate-300">
                       {row.category}
                     </td>
-                    <td className="px-3.5 py-3.5 font-mono text-slate-500 dark:text-slate-400 whitespace-pre-line text-[11px]">
+                    <td className="px-3.5 py-3.5 font-mono text-slate-500 dark:text-slate-400 whitespace-pre-line text-[0.9333rem]">
                       {row.files}
                     </td>
                     <td className="px-3.5 py-3.5 text-slate-700 dark:text-slate-300">
@@ -373,7 +373,7 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify, onNavigateToSp
                       {row.dod}
                     </td>
                     <td className="px-3.5 py-3.5 text-center">
-                      <span className="px-2 py-0.5 rounded font-bold text-[11px] bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 whitespace-nowrap">
+                      <span className="px-2 py-0.5 rounded font-bold text-[0.9333rem] bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 whitespace-nowrap">
                         {row.status}
                       </span>
                     </td>

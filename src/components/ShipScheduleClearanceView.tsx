@@ -321,7 +321,7 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
                 }`}
               >
                 {cat === 'ALL' ? '全部' : cat === 'SET' ? '成品 SET' : cat === 'COMP' ? '組件 COMP' : '單品 PART'}
-                <span className="ml-1.5 text-[10px] opacity-80 font-mono">({count})</span>
+                <span className="ml-1.5 text-[0.8667rem] opacity-80 font-mono">({count})</span>
               </button>
             );
           })}
@@ -330,7 +330,7 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
         {/* Search + Customer + Status Row */}
         <div className="flex flex-wrap items-center gap-4">
           {/* Search Input */}
-          <div className="relative flex-1 min-w-[200px] max-w-xs">
+          <div className="relative flex-1 min-w-[13.3333rem] max-w-xs">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
             <input
               type="text"
@@ -429,7 +429,7 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
           <table className="w-full text-left border-collapse">
             <thead className="sticky top-0 z-20 bg-slate-100/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-xs">
               <tr className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
-                <th className="py-3.5 px-4 whitespace-nowrap min-w-[180px] sticky top-0 left-0 z-30 bg-slate-100 dark:bg-slate-900 freeze-shadow-right">
+                <th className="py-3.5 px-4 whitespace-nowrap min-w-[12rem] sticky top-0 left-0 z-30 bg-slate-100 dark:bg-slate-900 freeze-shadow-right">
                   客戶 / 成品料號
                 </th>
                 <th className="py-3.5 px-4 text-right whitespace-nowrap">2週出貨排程</th>
@@ -479,7 +479,7 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
                         </div>
                         {/* Interactive Demand Simulator */}
                         <div className="mt-1 flex items-center justify-end gap-1.5">
-                          <span className="text-[11px] text-slate-400 font-mono">
+                          <span className="text-[0.9333rem] text-slate-400 font-mono">
                             {currentMultiplier.toFixed(1)}x
                           </span>
                           <input
@@ -506,7 +506,7 @@ export const ShipScheduleClearanceView: React.FC<ShipScheduleClearanceViewProps>
                           +{row.wipEffectiveQty.toLocaleString()}{' '}
                           <span className="text-xs font-normal text-slate-500">PCS</span>
                         </div>
-                        <div className="text-[11px] text-slate-400">
+                        <div className="text-[0.9333rem] text-slate-400">
                           (待驗 {row.wipPendingQty.toLocaleString()} × {(row.sortingYield * 100).toFixed(0)}%)
                         </div>
                       </td>

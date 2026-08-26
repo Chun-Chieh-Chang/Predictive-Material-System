@@ -24,12 +24,19 @@ import {
   Workflow,
   Save,
   Network,
+  ZoomIn,
+  ZoomOut,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { PMS_VERSION } from '../utils/version';
 
 const ADMIN_COMBO_THRESHOLD = 5;
 const ADMIN_COMBO_WINDOW_MS = 1500;
+
+// 介面縮放級距（WCAG 1.4.4 文字縮放；85% 時最小字 13px→11.05px 仍 ≥ Apple 11pt 下限）
+const UI_SCALE_STEPS = [85, 100, 115, 130, 140];
+const UI_SCALE_STORAGE_KEY = 'PMS_UI_SCALE_V1';
+const UI_SCALE_BASE_PX = 15;
 
 
 export type RoleMode = 'sales' | 'procurement' | 'full';
@@ -121,6 +128,24 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSaveToShared,
 }) => {
   const { theme, toggleTheme } = useTheme();
+
+  // ── 介面縮放：根字號驅動所有 rem 尺寸（文字與元件等比，避免硬編碼 px 換行）──
+  const [uiScale, setUiScale] = useState<number>(() => {
+    try {
+      const v = Number(localStorage.getItem(UI_SCALE_STORAGE_KEY));
+      if (UI_SCALE_STEPS.includes(v)) return v;
+    } catch { /* storage unavailable */ }
+    return 100;
+  });
+  useEffect(() => {
+    try { localStorage.setItem(UI_SCALE_STORAGE_KEY, String(uiScale)); } catch { /* ignore */ }
+    document.documentElement.style.fontSize = (UI_SCALE_BASE_PX * uiScale / 100) + 'px';
+  }, [uiScale]);
+  const stepUiScale = (dir: -1 | 1) => {
+    const idx = UI_SCALE_STEPS.indexOf(uiScale);
+    const next = UI_SCALE_STEPS[Math.min(UI_SCALE_STEPS.length - 1, Math.max(0, (idx === -1 ? UI_SCALE_STEPS.indexOf(100) : idx) + dir))];
+    setUiScale(next);
+  };
 
   // ── 5連擊 Admin 解鎖邏輯 ──────────────────────────────────────────
   const tapCountRef = useRef(0);
@@ -247,7 +272,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="bg-white/95 dark:bg-slate-950/90 backdrop-blur-md border-b border-slate-300 dark:border-slate-800/80 sticky top-0 z-40 transition-colors shadow-xs">
-      <div className="max-w-[1720px] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
+      <div className="max-w-[114.6667rem] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
         {/* Top Status & Brand Row */}
         <div className="flex items-center justify-between py-3 border-b border-slate-200 dark:border-slate-800/50">
           {/* Brand & Version */}
@@ -374,6 +399,39 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </button>
 
+              {/* UI Scale Control */}
+              <div
+                className="hidden sm:flex items-center rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 shadow-xs"
+                title="介面縮放：文字與元件等比縮放（點中間百分比回復 100%）"
+              >
+                <button
+                  onClick={() => stepUiScale(-1)}
+                  disabled={uiScale <= UI_SCALE_STEPS[0]}
+                  id="nav-ui-scale-out-btn"
+                  title="縮小介面"
+                  className="px-2 py-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 cursor-pointer"
+                >
+                  <ZoomOut className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => setUiScale(100)}
+                  id="nav-ui-scale-label"
+                  title="回復 100%"
+                  className="px-1 py-1.5 min-w-[3rem] text-center text-xs font-bold font-mono text-slate-600 dark:text-slate-300 hover:text-sky-600 dark:hover:text-sky-400 cursor-pointer"
+                >
+                  {uiScale}%
+                </button>
+                <button
+                  onClick={() => stepUiScale(1)}
+                  disabled={uiScale >= UI_SCALE_STEPS[UI_SCALE_STEPS.length - 1]}
+                  id="nav-ui-scale-in-btn"
+                  title="放大介面"
+                  className="px-2 py-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 cursor-pointer"
+                >
+                  <ZoomIn className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
               {/* ── V2-Intranet：資料來源狀態與手動儲存 ──────────────────────── */}
               {dataSourceMode === 'intranet' ? (
                 <>
@@ -491,7 +549,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <span>{tab.label}</span>
                   {tab.badge !== undefined && (
                     <span
-                      className={`ml-1 px-1.5 py-0.2 text-[11px] font-bold rounded-full ${
+                      className={`ml-1 px-1.5 py-0.2 text-[0.9333rem] font-bold rounded-full ${
                         typeof tab.badge === 'number' && tab.badge > 0
                           ? 'bg-rose-500 text-white'
                           : 'bg-emerald-500 text-white'

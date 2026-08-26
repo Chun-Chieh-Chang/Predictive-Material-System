@@ -614,7 +614,7 @@ export function App() {
 
       {/* Footer System Info */}
       <footer className="border-t border-slate-300 dark:border-slate-800 bg-white/90 dark:bg-slate-950/80 py-4 mt-auto transition-colors">
-        <div className="max-w-[1720px] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 flex flex-col sm:flex-row items-center justify-between text-sm text-slate-500 dark:text-slate-400 gap-2">
+        <div className="max-w-[114.6667rem] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 flex flex-col sm:flex-row items-center justify-between text-sm text-slate-500 dark:text-slate-400 gap-2">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <span className="font-bold text-slate-800 dark:text-slate-300">料事如神圈 QCC 物料需求管理系統</span>
             <span className="text-slate-300 dark:text-slate-700">•</span>

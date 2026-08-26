@@ -168,7 +168,7 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
             >
               <div className="flex items-center justify-between">
                 <span className="font-mono font-bold text-slate-900 dark:text-white text-sm">{item.sku}</span>
-                <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                <span className={`text-[0.9333rem] font-bold px-2 py-0.5 rounded-full ${
                   item.isUrgent
                     ? 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 animate-pulse'
                     : item.isWarning
@@ -236,33 +236,33 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 my-5">
                 {/* 階 1 */}
                 <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold block">第 1 階：FG 成品淨缺口</span>
+                  <span className="text-[0.9333rem] text-slate-500 dark:text-slate-400 font-semibold block">第 1 階：FG 成品淨缺口</span>
                   <div className="text-xl font-mono font-bold text-sky-700 dark:text-sky-400 mt-1">
                     {currentMrp.fgNetRequirementQty.toLocaleString()} <span className="text-xs font-normal text-slate-500">PCS</span>
                   </div>
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">
+                  <span className="text-[0.9333rem] text-slate-500 dark:text-slate-400 mt-1 block">
                     在庫良品: {currentMrp.fgReadyQty.toLocaleString()} | WIP待驗: {currentMrp.wipEffectiveQty.toLocaleString()}
                   </span>
                 </div>
 
                 {/* 階 2 */}
                 <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold block">第 2 階：單穴耗量與損耗</span>
+                  <span className="text-[0.9333rem] text-slate-500 dark:text-slate-400 font-semibold block">第 2 階：單穴耗量與損耗</span>
                   <div className="text-xl font-mono font-bold text-purple-700 dark:text-purple-400 mt-1">
                     {currentMrp.unitWeightG.toFixed(3)} <span className="text-xs font-normal text-slate-500">g/穴</span>
                   </div>
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">
+                  <span className="text-[0.9333rem] text-slate-500 dark:text-slate-400 mt-1 block">
                     整模 {currentMrp.totalShotWeightG}g ÷ 妥善 {currentMrp.activeCavities} 穴 (損耗 {(currentMrp.stdScrapRate * 100).toFixed(0)}%)
                   </span>
                 </div>
 
                 {/* 階 3 */}
                 <div className="bg-emerald-50/70 dark:bg-emerald-950/40 p-4 rounded-xl border border-emerald-300 dark:border-emerald-500/40">
-                  <span className="text-[11px] text-emerald-800 dark:text-emerald-300 font-bold block">第 3 階：建議採購量 (取整 MOQ)</span>
+                  <span className="text-[0.9333rem] text-emerald-800 dark:text-emerald-300 font-bold block">第 3 階：建議採購量 (取整 MOQ)</span>
                   <div className="text-xl font-mono font-bold text-emerald-800 dark:text-emerald-400 mt-1">
                     {currentMrp.suggestedOrderQtyKg.toLocaleString()} <span className="text-xs font-normal text-slate-500">KG</span>
                   </div>
-                  <span className="text-[11px] text-emerald-700/90 dark:text-emerald-300/80 mt-1 block font-mono">
+                  <span className="text-[0.9333rem] text-emerald-700/90 dark:text-emerald-300/80 mt-1 block font-mono">
                     淨缺口 {currentMrp.rmNetRequirementKg.toLocaleString()} KG ➜ MOQ {currentMrp.moqKg} KG 整補
                   </span>
                 </div>
@@ -342,11 +342,11 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
                       {currentMrp.activeCavities} <span className="text-xs font-normal text-slate-500">/ {currentMrp.designCavities} 穴</span>
                     </span>
                     {currentMrp.activeCavities < currentMrp.designCavities ? (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300">
+                      <span className="text-[0.8667rem] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300">
                         塞 {currentMrp.designCavities - currentMrp.activeCavities} 穴
                       </span>
                     ) : (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
+                      <span className="text-[0.8667rem] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
                         全穴妥善
                       </span>
                     )}
@@ -438,7 +438,7 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
               <div className="font-bold text-slate-800 dark:text-slate-200 text-xs mt-1 group-hover:text-emerald-700 dark:group-hover:text-emerald-400">
                 {tbl.name}
               </div>
-              <div className="text-[10px] text-slate-500 font-mono mt-0.5">
+              <div className="text-[0.8667rem] text-slate-500 font-mono mt-0.5">
                 {tbl.count} 筆記錄
               </div>
             </button>

@@ -1501,7 +1501,28 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 ---
 
-*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-26 V-20260826-43*
+### V-20260826-44 (2026-08-26) — 介面自適應縮放：根字號驅動全元素等比（WCAG 1.4.4）
+
+**執行者**： opencode (ox-alpha)
+**狀態**： ✅Complete / Verified
+**驗證結果**： `tsc --noEmit` 0 錯誤 · `vite build` 成功 · px 硬編碼殘留掃描歸零
+**遵循原則**： Karpathy Surgical Changes · WCAG 1.4.4（文字縮放 200% 不喪失功能）· Apple HIG/Material 字級標準校準
+
+#### 一、需求與標準依據
+- 需求：介面自適應不同螢幕解析度，全元素（含文字）比例可調，消除硬編碼 px 造成的非必要換行。
+- 標準校準：Apple HIG（iOS Body 17pt、Caption 11pt 絕對下限、macOS Body 13pt）、Material 3 角色制字級、WCAG 1.4.4 文字縮放、Web 16px 慣例。定案：**base 15px、縮放五級 85/100/115/130/140%**——85% 時最小字 11.05px 仍 ≥ Apple 11pt 下限；140% 時 body 21px ≈ iOS Dynamic Type 無障礙級距。
+
+#### 二、實作內容
+1. **字級系統 px→rem**（index.css）：`html/body 15px`、`text-xs 13px`、`text-sm 14.5px`、`text-base 15px` 全改 rem（÷15），line-height 本為 rem 不變；移除 `.text-\[10px\]`/`.text-\[11px\]` px 覆蓋規則（隨元件批量轉換後成為死規則）。
+2. **元件批量轉換**：16 個檔案、19 種 px 工具類（`text-[9/10/11/13px]`、`min-w/max-w/w-[80px~1720px]`）全數轉 rem 等值——寬度與文字**同步縮放**，徹底消除「放大後文字擠壓換行」。`w-[1px]` 裝飾性分隔保留 px。
+3. **Navbar 縮放控制**：`ZoomOut／百分比（點擊回 100%）／ZoomIn`，五級步進、localStorage 持久化（try/catch 防護）、驅動 `document.documentElement.style.fontSize = 15px × scale`——所有 rem 尺寸（字級、間距、轉換後寬度）等比連動。
+
+#### 三、邊界說明
+- 規格書獨立頁之 iframe 內容（文件自身）不隨宿主縮放——文件內流程圖已有獨立縮放控制；如需文件文字縮放可於後續以同一機制（postMessage → 文件根字號）擴充。
+
+---
+
+*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-26 V-20260826-44*
 
 
 

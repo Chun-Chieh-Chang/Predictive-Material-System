@@ -116,7 +116,7 @@
 
   /* Default Light Theme (QC Annual Summary color logic) */
   body {
-    font-size: 15px;
+    font-size: 1rem;
     line-height: 1.6;
     color: var(--text-primary);
     background-color: var(--bg-workbench);
@@ -157,21 +157,15 @@
  * Base: 15px (html/body), Step: ~0.5px per tier
  */
 .text-xs {
-  font-size: 13px !important;
+  font-size: 0.8667rem !important;     /* 13px @ 100% 縮放 */
   line-height: 1.4rem !important;
 }
-.text-\[10px\] {
-  font-size: 13px !important;          /* → maps to text-xs minimum */
-}
-.text-\[11px\] {
-  font-size: 14px !important;          /* → maps to text-xs standard */
-}
 .text-sm {
-  font-size: 14.5px !important;
+  font-size: 0.9667rem !important;     /* 14.5px @ 100% */
   line-height: 1.5rem !important;
 }
 .text-base {
-  font-size: 15px !important;
+  font-size: 1rem !important;          /* 15px @ 100% */
   line-height: 1.6rem !important;
 }
 

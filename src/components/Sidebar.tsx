@@ -212,7 +212,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className={['text-sm truncate font-medium', isActive ? 'text-slate-950 dark:text-white font-bold' : 'text-slate-800 dark:text-slate-300'].join(' ')}>
             {item.label}
           </div>
-          <div className="text-[11px] text-slate-500 dark:text-slate-500 truncate font-mono">
+          <div className="text-[0.9333rem] text-slate-500 dark:text-slate-500 truncate font-mono">
             {item.sub}
           </div>
         </div>
@@ -245,7 +245,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           onClick={() => toggleGroup(title)}
           className={[
             'w-full flex items-center gap-2 px-3 py-1.5 rounded-lg',
-            'text-[11px] font-bold uppercase tracking-wider transition-colors cursor-pointer',
+            'text-[0.9333rem] font-bold uppercase tracking-wider transition-colors cursor-pointer',
             accent.chipBg, accent.chipHover,
           ].join(' ')}
           title={isExpanded ? '收合' : '展開'}
@@ -296,7 +296,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
         <div>
           <span className="text-sm font-bold text-slate-900 dark:text-white block leading-none">系統功能選單</span>
-          <span className="text-[10px] text-slate-500 font-mono">Navigation Menu</span>
+          <span className="text-[0.8667rem] text-slate-500 font-mono">Navigation Menu</span>
         </div>
       </div>
       <button
@@ -323,7 +323,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {adminUnlocked && (
           <>
             <div className="my-2 border-t border-slate-200 dark:border-slate-800/60" />
-            <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+            <div className="px-3 py-1.5 text-[0.8667rem] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
               Admin 模式
             </div>
             <div className="space-y-0.5 pb-2">
@@ -349,7 +349,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 />
                 <div className="flex-1 min-w-0">
                   <div className="text-sm truncate font-medium">自動化備份</div>
-                  <div className="text-[10px] text-slate-500 font-mono">Backup System</div>
+                  <div className="text-[0.8667rem] text-slate-500 font-mono">Backup System</div>
                 </div>
                 {backupEnabled && (
                   <span className="relative flex h-2 w-2 shrink-0">
@@ -365,7 +365,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Footer */}
       <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-800 shrink-0 bg-slate-50/50 dark:bg-slate-900/50">
-        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono leading-relaxed">
+        <div className="text-[0.8667rem] text-slate-500 dark:text-slate-400 font-mono leading-relaxed">
           Developed by Wesley Chang<br />
           @Mouldex · {new Date().getFullYear()}
         </div>
