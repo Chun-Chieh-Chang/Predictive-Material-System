@@ -31,9 +31,11 @@ import {
 } from 'lucide-react';
 import { ShipScheduleClearanceView } from './ShipScheduleClearanceView';
 import { OrderTensionTrackerView } from './OrderTensionTrackerView';
+import { DataTablesView } from './DataTablesView';
 
 interface SalesWorkbenchProps {
   db: SystemDatabase;
+  setDb: React.Dispatch<React.SetStateAction<SystemDatabase>>;
   params: SystemParameters;
   onNavigateToDashboard: (sku?: string) => void;
   onNavigateToOrderTension: () => void;
@@ -43,6 +45,7 @@ interface SalesWorkbenchProps {
 
 export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
   db,
+  setDb,
   params,
   onNavigateToDashboard,
   onNavigateToOrderTension,
@@ -625,6 +628,25 @@ export const SalesWorkbenchView: React.FC<SalesWorkbenchProps> = ({
           <OrderTensionTrackerView db={db} params={params} onNavigateToMRP={() => {}} onNavigateToTables={() => {}} />
         </div>
       )}
+
+      {/* ── 業務主檔維護區（需求預估、實際訂單）────────────────────── */}
+      <div className="bg-white dark:bg-slate-900 border border-purple-200 dark:border-purple-700/40 rounded-2xl p-6 shadow-xs mt-6">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-700 mb-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-sm font-bold text-purple-700 dark:text-purple-400">業務主檔維護中心</span>
+              <span className="text-[0.75rem] px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 font-mono">銷售 · 業務</span>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400">即時維護需求預估與實際訂單，修改後立即影響缺料分析與交期推估。</p>
+          </div>
+        </div>
+        <DataTablesView
+          db={db}
+          setDb={setDb}
+          initialTable="demand_forecast_log"
+          onNotify={onNotify}
+        />
+      </div>
     </div>
   );
 };

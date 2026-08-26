@@ -458,6 +458,7 @@ export function App() {
         {activeTab === 'sales_workbench' && (
           <SalesWorkbenchView
             db={db}
+            setDb={setDb}
             params={systemParams}
             onNavigateToDashboard={(sku) => {
               if (sku) setActiveMrpSku(sku);
@@ -479,6 +480,7 @@ export function App() {
         {activeTab === 'procurement_workbench' && (
           <ProcurementWorkbenchView
             db={db}
+            setDb={setDb}
             params={systemParams}
             onNavigateToMRP={(sku) => {
               if (sku) setActiveMrpSku(sku);

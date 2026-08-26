@@ -28,9 +28,11 @@ import {
   X,
 } from 'lucide-react';
 import { MrpCalculatorView } from './MrpCalculatorView';
+import { DataTablesView } from './DataTablesView';
 
 interface ProcurementWorkbenchProps {
   db: SystemDatabase;
+  setDb: React.Dispatch<React.SetStateAction<SystemDatabase>>;
   params: SystemParameters;
   onNavigateToMRP: (sku: string) => void;
   onNavigateToTables: (tableKey: string) => void;
@@ -40,6 +42,7 @@ interface ProcurementWorkbenchProps {
 
 export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
   db,
+  setDb,
   params,
   onNavigateToMRP,
   onNavigateToTables,
@@ -470,6 +473,25 @@ export const ProcurementWorkbenchView: React.FC<ProcurementWorkbenchProps> = ({
           <MrpCalculatorView db={db} params={params} initialSku={selectedSku} />
         </div>
       )}
+
+      {/* ── 生管/採購主檔維護區（料號、庫存、在途、模具）────────── */}
+      <div className="bg-white dark:bg-slate-900 border border-emerald-200 dark:border-emerald-700/40 rounded-2xl p-6 shadow-xs mt-6">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-700 mb-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-sm font-bold text-emerald-700 dark:text-emerald-400">生管/採購主檔維護中心</span>
+              <span className="text-[0.75rem] px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-mono">資材 · 生管 · 採購</span>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400">即時維護料號、庫存快照、在途採購與模具產能，修改後自動重算 MRP 與防斷料時程。</p>
+          </div>
+        </div>
+        <DataTablesView
+          db={db}
+          setDb={setDb}
+          initialTable="item_master"
+          onNotify={onNotify}
+        />
+      </div>
     </div>
   );
 };
