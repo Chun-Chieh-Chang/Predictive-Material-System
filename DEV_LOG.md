@@ -1515,7 +1515,7 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 #### 二、實作內容
 1. **字級系統 px→rem**（index.css）：`html/body 15px`、`text-xs 13px`、`text-sm 14.5px`、`text-base 15px` 全改 rem（÷15），line-height 本為 rem 不變；移除 `.text-\[10px\]`/`.text-\[11px\]` px 覆蓋規則（隨元件批量轉換後成為死規則）。
 2. **元件批量轉換**：16 個檔案、19 種 px 工具類（`text-[9/10/11/13px]`、`min-w/max-w/w-[80px~1720px]`）全數轉 rem 等值——寬度與文字**同步縮放**，徹底消除「放大後文字擠壓換行」。`w-[1px]` 裝飾性分隔保留 px。
-3. **Navbar 縮放控制**：`ZoomOut／百分比（點擊回 100%）／ZoomIn`，五級步進、localStorage 持久化（try/catch 防護）、驅動 `document.documentElement.style.fontSize = 15px × scale`——所有 rem 尺寸（字級、間距、轉換後寬度）等比連動。
+3. **Navbar 縮放控制**：`ZoomOut／縮放值輸入框／ZoomIn`——步進五級＋**人工輸入任意百分比（50–300%，Enter／失焦套用、Esc 還原）**，localStorage 持久化（try/catch 防護）、驅動 `document.documentElement.style.fontSize = 15px × scale`——所有 rem 尺寸（字級、間距、轉換後寬度）等比連動。
 
 #### 三、邊界說明
 - 規格書獨立頁之 iframe 內容（文件自身）不隨宿主縮放——文件內流程圖已有獨立縮放控制；如需文件文字縮放可於後續以同一機制（postMessage → 文件根字號）擴充。

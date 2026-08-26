@@ -142,9 +142,21 @@ export const Navbar: React.FC<NavbarProps> = ({
     document.documentElement.style.fontSize = (UI_SCALE_BASE_PX * uiScale / 100) + 'px';
   }, [uiScale]);
   const stepUiScale = (dir: -1 | 1) => {
-    const idx = UI_SCALE_STEPS.indexOf(uiScale);
-    const next = UI_SCALE_STEPS[Math.min(UI_SCALE_STEPS.length - 1, Math.max(0, (idx === -1 ? UI_SCALE_STEPS.indexOf(100) : idx) + dir))];
-    setUiScale(next);
+    if (dir === -1) {
+      const smaller = UI_SCALE_STEPS.filter((s) => s < uiScale);
+      setUiScale(smaller.length ? smaller[smaller.length - 1] : UI_SCALE_STEPS[0]);
+    } else {
+      const larger = UI_SCALE_STEPS.filter((s) => s > uiScale);
+      setUiScale(larger.length ? larger[0] : UI_SCALE_STEPS[UI_SCALE_STEPS.length - 1]);
+    }
+  };
+  // 人工輸入縮放數值（50–300%，Enter／失焦套用、Esc 還原）
+  const [uiScaleInput, setUiScaleInput] = useState<string | null>(null);
+  const commitUiScaleInput = () => {
+    if (uiScaleInput === null) return;
+    const v = Math.round(Number(uiScaleInput));
+    if (!Number.isNaN(v) && v >= 50 && v <= 300) setUiScale(v);
+    setUiScaleInput(null);
   };
 
   // ── 5連擊 Admin 解鎖邏輯 ──────────────────────────────────────────
@@ -402,7 +414,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* UI Scale Control */}
               <div
                 className="hidden sm:flex items-center rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 shadow-xs"
-                title="介面縮放：文字與元件等比縮放（點中間百分比回復 100%）"
+                title="介面縮放：文字與元件等比縮放（可按步進按鈕或直接輸入 50–300%）"
               >
                 <button
                   onClick={() => stepUiScale(-1)}
@@ -413,14 +425,20 @@ export const Navbar: React.FC<NavbarProps> = ({
                 >
                   <ZoomOut className="w-3.5 h-3.5" />
                 </button>
-                <button
-                  onClick={() => setUiScale(100)}
-                  id="nav-ui-scale-label"
-                  title="回復 100%"
-                  className="px-1 py-1.5 min-w-[3rem] text-center text-xs font-bold font-mono text-slate-600 dark:text-slate-300 hover:text-sky-600 dark:hover:text-sky-400 cursor-pointer"
-                >
-                  {uiScale}%
-                </button>
+                <input
+                  value={uiScaleInput ?? String(uiScale)}
+                  onChange={(e) => setUiScaleInput(e.target.value)}
+                  onBlur={commitUiScaleInput}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                    if (e.key === 'Escape') setUiScaleInput(null);
+                  }}
+                  inputMode="decimal"
+                  id="nav-ui-scale-input"
+                  title="輸入縮放百分比（50–300，Enter 套用、Esc 還原）"
+                  className="w-[3.25rem] px-1 py-1.5 text-center text-xs font-bold font-mono text-slate-600 dark:text-slate-300 bg-transparent focus:outline-hidden focus:bg-sky-50 dark:focus:bg-sky-950/40 rounded"
+                />
+                <span className="pr-1 text-xs font-mono text-slate-400 select-none">%</span>
                 <button
                   onClick={() => stepUiScale(1)}
                   disabled={uiScale >= UI_SCALE_STEPS[UI_SCALE_STEPS.length - 1]}
