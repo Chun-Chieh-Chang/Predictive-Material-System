@@ -209,7 +209,6 @@
     details.sec > summary .secno { color: var(--brand); font-family: var(--font-mono); font-size: 14px; }
     .sec-hint { font-size: 12px; color: var(--text-muted); font-weight: 500; width: 100%; }
     .sec-body { padding: 6px 22px 22px; border-top: 1px solid var(--border); }
-    .toc-tools { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
 
     /* ── 入門導覽 ── */
     .stepper { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 18px; }
@@ -281,10 +280,6 @@
     <li><a href="#sec-alerts">18. 預警等級與觸發條件彙總</a></li>
     <li><a href="#sec-principles">19. 設計原則：零偽造與缺值即擋</a></li>
   </ol>
-  <div class="toc-tools">
-    <button type="button" class="fc-btn" id="toc-expand-all">全部展開</button>
-    <button type="button" class="fc-btn" id="toc-collapse-all">全部收合（保留入門導覽）</button>
-  </div>
 </nav>
 
 <section id="sec-intro">
@@ -1529,15 +1524,16 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
   window.addEventListener('hashchange', function () { openSection(window.location.hash.slice(1)); });
   if (window.location.hash) openSection(window.location.hash.slice(1));
 
-  var exp = document.getElementById('toc-expand-all');
-  var col = document.getElementById('toc-collapse-all');
-  if (exp) exp.addEventListener('click', function () {
-    document.querySelectorAll('details.sec').forEach(function (d) { d.open = true; refitInside(d); });
-  });
-  if (col) col.addEventListener('click', function () {
-    document.querySelectorAll('details.sec').forEach(function (d) { if (d.id !== 'sec-intro') d.open = false; });
-    var intro = document.getElementById('sec-intro');
-    if (intro) intro.scrollIntoView({ behavior: 'smooth' });
+  /* 章節展開／收合指令：由獨立頁浮動工具列經 postMessage 傳入 */
+  window.addEventListener('message', function (ev) {
+    var d = ev.data;
+    if (!d || d.type !== 'pms-doc-control') return;
+    if (d.action === 'expand-all') {
+      document.querySelectorAll('details.sec').forEach(function (d2) { d2.open = true; refitInside(d2); });
+    } else if (d.action === 'collapse-all') {
+      document.querySelectorAll('details.sec').forEach(function (d2) { if (d2.id !== 'sec-intro') d2.open = false; });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   });
 })();
 

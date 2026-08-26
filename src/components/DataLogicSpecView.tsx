@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, FileCode2, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, FileCode2, RefreshCw, CheckCircle2, ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
 import { SystemDatabase, SystemParameters } from '../types';
 import specHtml from '../../docs/PMS_Data_Logic_Specification.html?raw';
 
@@ -59,6 +59,10 @@ export const DataLogicSpecView: React.FC<DataLogicSpecViewProps> = ({ db, params
     if (loaded) syncLivePayload();
   }, [loaded, syncLivePayload]);
 
+  const postDocControl = (action: 'expand-all' | 'collapse-all') => {
+    frameRef.current?.contentWindow?.postMessage({ type: 'pms-doc-control', action }, '*');
+  };
+
   return (
     <div className="fixed inset-0 z-50 bg-[#ebf0f5] dark:bg-slate-950">
       {/* 全版面文件：佔滿整個可視區域（100dvh 適配行動裝置動態工具列，不支援時退回 h-screen） */}
@@ -72,14 +76,32 @@ export const DataLogicSpecView: React.FC<DataLogicSpecViewProps> = ({ db, params
         style={{ height: '100dvh' }}
       />
 
-      {/* 浮動控制列：返回系統 ＋ SSOT 同步狀態 */}
-      <div className="absolute top-3 right-3 flex items-center gap-2 max-w-[calc(100%-1.5rem)]">
+      {/* 浮動控制列：章節展開收合 ＋ SSOT 同步狀態 ＋ 返回系統（橫向排列） */}
+      <div className="absolute top-3 right-3 flex flex-wrap items-center justify-end gap-2 max-w-[calc(100%-9rem)]">
         {syncedAt && (
           <span className="hidden sm:flex items-center space-x-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-400 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-emerald-200 dark:border-emerald-800 px-3 py-2 rounded-xl shadow-xs">
             <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
             <span>SSOT 已同步 {syncedAt}</span>
           </span>
         )}
+        <button
+          onClick={() => postDocControl('expand-all')}
+          id="spec-expand-all-btn"
+          title="展開所有章節"
+          className="flex items-center space-x-1.5 px-3 py-2.5 rounded-xl text-xs font-medium bg-white/90 dark:bg-slate-900/90 backdrop-blur hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer shadow-xs"
+        >
+          <ChevronsDownUp className="w-3.5 h-3.5" />
+          <span>全部展開</span>
+        </button>
+        <button
+          onClick={() => postDocControl('collapse-all')}
+          id="spec-collapse-all-btn"
+          title="收合所有章節（保留入門導覽）"
+          className="flex items-center space-x-1.5 px-3 py-2.5 rounded-xl text-xs font-medium bg-white/90 dark:bg-slate-900/90 backdrop-blur hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer shadow-xs"
+        >
+          <ChevronsUpDown className="w-3.5 h-3.5" />
+          <span>全部收合</span>
+        </button>
         <button
           onClick={syncLivePayload}
           id="spec-resync-btn"
