@@ -1113,7 +1113,7 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
      hdown  近列：右側中段水平至目標欄中心後下行進入目標頂
      sdown  匯流：來源左側中段水平至目標頂指定入點後下行（用於多晶片匯入） */
   function routeEdge(a, b, e) {
-    var AW = a.w || NW, AH = a.h || NH, BH = b.h || NH;
+    var AW = a.w || NW, AH = a.h || NH, BW = b.w || NW, BH = b.h || NH;
     var acx = a.x + AW / 2, bcx = b.x + BW / 2;
     var aBot = a.y + AH, bTop = b.y;
     var r = e.route || 'elbow';
