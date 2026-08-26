@@ -33,10 +33,10 @@ import { PMS_VERSION } from '../utils/version';
 const ADMIN_COMBO_THRESHOLD = 5;
 const ADMIN_COMBO_WINDOW_MS = 1500;
 
-// 介面縮放範圍（WCAG 1.4.4 文字縮放；上下各 40%，最小 60%、最大 140%，每次跳 1%）
+// 介面縮放範圍（WCAG 1.4.4 文字縮放；上下各 40%，最小 60%、最大 140%，每次跳 5%）
 const UI_SCALE_MIN = 60;
 const UI_SCALE_MAX = 140;
-const UI_SCALE_STEP = 1;
+const UI_SCALE_STEP = 5;
 const UI_SCALE_STORAGE_KEY = 'PMS_UI_SCALE_V1';
 const UI_SCALE_BASE_PX = 15;
 
@@ -410,17 +410,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* UI Scale Control */}
               <div
                 className="hidden sm:flex items-center rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 shadow-xs"
-                title={`介面縮放：文字與元件等比縮放（按 ▲▼ 每格 1%，範圍 ${UI_SCALE_MIN}–${UI_SCALE_MAX}%，或直接輸入）`}
+                title={`介面縮放：文字與元件等比縮放（按 ▼▲ 每格 5%，範圍 ${UI_SCALE_MIN}–${UI_SCALE_MAX}%，或直接輸入）`}
               >
-                <button
-                  onClick={() => stepUiScale(-1)}
-                  disabled={uiScale <= UI_SCALE_MIN}
-                  id="nav-ui-scale-out-btn"
-                  title="縮小 1%"
-                  className="px-2 py-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 cursor-pointer"
-                >
-                  <ChevronDown className="w-3.5 h-3.5" />
-                </button>
                 <input
                   value={uiScaleInput ?? String(uiScale)}
                   onChange={(e) => setUiScaleInput(e.target.value)}
@@ -435,15 +426,26 @@ export const Navbar: React.FC<NavbarProps> = ({
                   className="w-[3.25rem] px-1 py-1.5 text-center text-xs font-bold font-mono text-slate-600 dark:text-slate-300 bg-transparent focus:outline-hidden focus:bg-sky-50 dark:focus:bg-sky-950/40 rounded"
                 />
                 <span className="pr-1 text-xs font-mono text-slate-400 select-none">%</span>
-                <button
-                  onClick={() => stepUiScale(1)}
-                  disabled={uiScale >= UI_SCALE_MAX}
-                  id="nav-ui-scale-in-btn"
-                  title="放大 1%"
-                  className="px-2 py-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 cursor-pointer"
-                >
-                  <ChevronUp className="w-3.5 h-3.5" />
-                </button>
+                <div className="flex flex-col">
+                  <button
+                    onClick={() => stepUiScale(1)}
+                    disabled={uiScale >= UI_SCALE_MAX}
+                    id="nav-ui-scale-in-btn"
+                    title="放大 5%"
+                    className="px-1.5 py-0.5 text-slate-500 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 cursor-pointer rounded-t hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >
+                    <ChevronUp className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => stepUiScale(-1)}
+                    disabled={uiScale <= UI_SCALE_MIN}
+                    id="nav-ui-scale-out-btn"
+                    title="縮小 5%"
+                    className="px-1.5 py-0.5 text-slate-500 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 cursor-pointer rounded-b hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >
+                    <ChevronDown className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
 
               {/* ── V2-Intranet：資料來源狀態與手動儲存 ──────────────────────── */}
