@@ -1126,14 +1126,14 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       };
     }
     if (r === 'h') {
-      var y = a.y + NH - 22;
+      var y = a.y + NH / 2;
       return {
         d: 'M' + (a.x + NW) + ' ' + y + ' L' + (b.x - 2) + ' ' + y,
         label: { x: a.x + NW + 10, y: y - 8, anchor: 'start' }
       };
     }
     if (r === 'h2') {
-      var sx = acx + 22;
+      var sx = acx;
       var yGap = Math.max(aBot, b.y + NH) + 16;
       return {
         d: 'M' + sx + ' ' + aBot + ' L' + sx + ' ' + yGap + ' L' + bcx + ' ' + yGap + ' L' + bcx + ' ' + (b.y + NH + 2),
@@ -1141,7 +1141,7 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       };
     }
     if (r === 'hdown') {
-      var sy = a.y + NH - 22;
+      var sy = a.y + NH / 2;
       var ex = bcx + (e.dx || 0);
       return {
         d: 'M' + (a.x + NW) + ' ' + sy + ' L' + ex + ' ' + sy + ' L' + ex + ' ' + (bTop - 2),
@@ -1354,7 +1354,7 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       { from: 'a6', to: 'a7', route: 'v' },
       { from: 'a7', to: 'a8', route: 'v', label: '否：純原料' },
       { from: 'a7', to: 'ax2', route: 'h', label: '是' },
-      { from: 'ax2', to: 'a8', route: 'elbow', dx: -30, cls: 'edge-info' },
+      { from: 'ax2', to: 'a8', route: 'elbow', cls: 'edge-info' },
       { from: 'a8', to: 'a9', route: 'v' },
       { from: 'a9', to: 'a10', route: 'v' },
       { from: 'a10', to: 'a11', route: 'v' },
@@ -1368,7 +1368,7 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       { from: 'a14', to: 'ax6', route: 'h2', label: '爆倉' },
       { from: 'a15', to: 'a16', route: 'v', label: '否' },
       { from: 'a15', to: 'ax7', route: 'h', label: '是' },
-      { from: 'ax7', to: 'a16', route: 'elbow', dx: -30 }
+      { from: 'ax7', to: 'a16', route: 'elbow' }
     ]
   });
 
@@ -1414,12 +1414,12 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       { from: 'b8', to: 'bc4', route: 'elbow' },
       { from: 'b8', to: 'bc5', route: 'elbow' },
       { from: 'b8', to: 'bc6', route: 'elbow' },
-      { from: 'bc1', to: 'b9', route: 'sdown', dx: -44 },
-      { from: 'bc3', to: 'b9', route: 'sdown', dx: -44 },
-      { from: 'bc5', to: 'b9', route: 'sdown', dx: -44 },
-      { from: 'bc2', to: 'b9', route: 'sdown', dx: 44 },
-      { from: 'bc4', to: 'b9', route: 'sdown', dx: 44 },
-      { from: 'bc6', to: 'b9', route: 'sdown', dx: 44 },
+      { from: 'bc1', to: 'b9', route: 'sdown' },
+      { from: 'bc3', to: 'b9', route: 'sdown' },
+      { from: 'bc5', to: 'b9', route: 'sdown' },
+      { from: 'bc2', to: 'b9', route: 'sdown' },
+      { from: 'bc4', to: 'b9', route: 'sdown' },
+      { from: 'bc6', to: 'b9', route: 'sdown' },
       { from: 'b9', to: 'b10', route: 'v' }
     ]
   });
