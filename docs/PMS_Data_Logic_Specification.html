@@ -1232,7 +1232,9 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       var tip = el('title', {}, g);
       tip.textContent = n.title + (hasLines ? '\n' + n.lines.slice(0, 3).join('\n') : '');
       function drawTitleLines() {
-        var ty = n.y + (hasLines ? 23 : 45);
+        var n2 = hasLines ? Math.min(n.lines.length, 3) : 0;
+        var total = 20 + n2 * 15;
+        var ty = n.y + (NH - total) / 2 + 15;
         var title = el('text', { x: cx, y: ty, 'text-anchor': 'middle', 'class': 'fc-title-text' }, g);
         title.textContent = n.title;
         if (hasLines) {
