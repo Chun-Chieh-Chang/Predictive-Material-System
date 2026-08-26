@@ -20,6 +20,7 @@ import {
   ChevronRight,
   Sparkles,
   Workflow,
+  Network,
   X,
 } from 'lucide-react';
 import { NavTab } from './Navbar';
@@ -115,6 +116,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'system_settings', label: '參數策略設定', sub: 'System Config', icon: SlidersHorizontal },
       { id: 'glossary', label: '名詞術語說明', sub: 'Glossary', icon: BookOpen },
       { id: 'prd_docs', label: '系統規格與驗收', sub: 'PRD & Verification', icon: FileText },
+      { id: 'data_logic_spec', label: '數據邏輯規格書', sub: 'Data Logic Spec', icon: Network },
     ],
   },
 ];

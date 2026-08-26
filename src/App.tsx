@@ -18,6 +18,7 @@ import { SystemSettingsView } from './components/SystemSettingsView';
 import { DataTablesView, TableKey } from './components/DataTablesView';
 import { DataExchangeView } from './components/DataExchangeView';
 import { PrdDocView } from './components/PrdDocView';
+import { DataLogicSpecView } from './components/DataLogicSpecView';
 import { BackupSettingsView } from './components/BackupSettingsView';
 import { MaterialClassManagementView } from './components/MaterialClassManagementView';
 import { GlossaryView } from './components/GlossaryView';
@@ -541,7 +542,11 @@ export function App() {
         )}
 
         {activeTab === 'prd_docs' && (
-          <PrdDocView onNotify={showToast} />
+          <PrdDocView onNotify={showToast} onNavigateToSpec={() => setActiveTab('data_logic_spec')} />
+        )}
+
+        {activeTab === 'data_logic_spec' && (
+          <DataLogicSpecView db={db} params={systemParams} />
         )}
 
         {activeTab === 'glossary' && <GlossaryView />}

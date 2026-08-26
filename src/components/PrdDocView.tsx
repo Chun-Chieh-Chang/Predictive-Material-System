@@ -20,9 +20,10 @@ import { PMS_VERSION } from '../utils/version';
 
 interface PrdDocViewProps {
   onNotify: (msg: string, type?: 'success' | 'error') => void;
+  onNavigateToSpec?: () => void;
 }
 
-export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
+export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify, onNavigateToSpec }) => {
   const [activeTab, setActiveTab] = useState<'matrix' | 'rich' | 'dictionary' | 'markdown'>('matrix');
   const [copied, setCopied] = useState<boolean>(false);
 
@@ -240,6 +241,16 @@ export const PrdDocView: React.FC<PrdDocViewProps> = ({ onNotify }) => {
         </div>
 
         <div className="flex items-center space-x-2">
+          {onNavigateToSpec && (
+            <button
+              onClick={onNavigateToSpec}
+              id="prd-open-spec-btn"
+              className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-xs cursor-pointer"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>數據邏輯規格書</span>
+            </button>
+          )}
           <button
             onClick={handleCopyMarkdown}
             id="prd-copy-md-btn"

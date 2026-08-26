@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>料事如神系統 (PMS) — 數據邏輯規格總覽 (Data Logic Specification) v2.0</title>
+  <title>料事如神系統 (PMS) — 數據邏輯規格總覽 (Data Logic Specification) v3.1</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -85,6 +85,7 @@
     nav.toc li { padding: 4px 0; }
     nav.toc a { color: var(--brand); text-decoration: none; font-size: 14px; font-weight: 500; }
     nav.toc a:hover { text-decoration: underline; }
+    @media (max-width: 720px) { nav.toc ol { columns: 1; } }
     section { margin-bottom: 52px; scroll-margin-top: 20px; }
     section > h2 {
       font-size: 22px; font-weight: 800; padding-bottom: 10px;
@@ -145,6 +146,97 @@
     footer { max-width: 1100px; margin: 0 auto; padding: 24px 32px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 12.5px; }
     .anchor-link { color: var(--text-muted); text-decoration: none; margin-left: 8px; font-size: 14px; opacity: 0; }
     h3:hover .anchor-link { opacity: 1; }
+
+    .fc-shell { border: 1px solid var(--border); border-radius: 14px; background: var(--bg-card); overflow: hidden; margin: 18px 0 8px; }
+    .fc-toolbar {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--bg-card-alt);
+    }
+    .fc-toolbar .fc-title { font-size: 13px; font-weight: 700; color: var(--text-main); margin-right: auto; }
+    .fc-btn {
+      min-width: 44px; min-height: 36px; padding: 4px 12px;
+      font-size: 14px; font-weight: 700; font-family: var(--font-main);
+      color: var(--text-sub); background: var(--bg-card);
+      border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
+    }
+    .fc-btn:hover { color: var(--brand); border-color: var(--brand); }
+    .fc-zoom-label { font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); min-width: 52px; text-align: center; }
+    .fc-hint { font-size: 11.5px; color: var(--text-muted); }
+    .fc-viewport {
+      position: relative; height: 680px; overflow: hidden;
+      cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none;
+      background:
+        radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0) 0 0 / 26px 26px,
+        var(--bg-base);
+    }
+    @media (max-width: 720px) { .fc-viewport { height: 480px; } }
+    .fc-viewport.fc-dragging { cursor: grabbing; }
+    .fc-viewport svg {
+      position: absolute; left: 0; top: 0;
+      transform-origin: 0 0; display: block;
+    }
+    .fc-node-start rect, .fc-node-end rect { fill: rgba(56,189,248,.12); stroke: var(--brand); stroke-width: 1.6; }
+    .fc-node-proc rect  { fill: var(--bg-card); stroke: #64748b; stroke-width: 1.4; }
+    .fc-node-gray rect  { fill: var(--bg-card-alt); stroke: #64748b; stroke-width: 1.2; }
+    .fc-node-dec rect   { fill: rgba(251,191,36,.07); stroke: var(--warning); stroke-width: 1.6; stroke-dasharray: 6 4; }
+    .fc-node-red rect     { fill: rgba(248,113,113,.10); stroke: var(--danger); stroke-width: 1.5; }
+    .fc-node-orange rect  { fill: rgba(251,146,60,.10); stroke: var(--orange); stroke-width: 1.5; }
+    .fc-node-yellow rect  { fill: rgba(251,191,36,.10); stroke: var(--warning); stroke-width: 1.5; }
+    .fc-node-purple rect  { fill: rgba(192,132,252,.10); stroke: var(--purple); stroke-width: 1.5; }
+    .fc-node-blue rect    { fill: rgba(96,165,250,.10); stroke: var(--blue); stroke-width: 1.5; }
+    .fc-node-green rect   { fill: rgba(52,211,153,.10); stroke: var(--success); stroke-width: 1.5; }
+    .fc-title-text { fill: var(--text-main); font-size: 13.5px; font-weight: 700; font-family: var(--font-main); }
+    .fc-line-text  { fill: var(--text-sub); font-size: 11px; font-family: var(--font-main); }
+    .fc-tag-text   { fill: var(--warning); font-size: 10px; font-weight: 700; font-family: var(--font-main); letter-spacing: 1px; }
+    .fc-edge { fill: none; stroke: #64748b; stroke-width: 1.6; }
+    .fc-edge.edge-warn { stroke: var(--danger); }
+    .fc-edge.edge-ok   { stroke: var(--success); }
+    .fc-edge.edge-info { stroke: var(--brand); stroke-dasharray: 5 4; }
+    .fc-elabel { fill: var(--text-muted); font-size: 10.5px; font-weight: 600; font-family: var(--font-main); paint-order: stroke; stroke: var(--bg-base); stroke-width: 3px; }
+    .legend-row { display: flex; flex-wrap: wrap; gap: 10px 18px; margin: 10px 0 20px; font-size: 12.5px; color: var(--text-sub); align-items: center; }
+    .lg { display: inline-flex; align-items: center; gap: 6px; }
+    .lg i { width: 14px; height: 14px; border-radius: 4px; display: inline-block; border: 1.5px solid; }
+    .param-table-wrap { overflow-x: auto; }
+    .param-table-wrap table { min-width: 760px; }
+      /* ── 章節摺疊（預設收合，按需展開） ── */
+    details.sec { border: 1px solid var(--border); border-radius: 14px; background: var(--bg-card); margin-bottom: 16px; overflow: hidden; }
+    details.sec > summary { list-style: none; cursor: pointer; padding: 15px 22px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; transition: background .15s; }
+    details.sec > summary::-webkit-details-marker { display: none; }
+    details.sec > summary::after { content: '＋'; margin-left: auto; color: var(--text-muted); font-weight: 700; font-size: 18px; line-height: 1; }
+    details.sec[open] > summary::after { content: '－'; }
+    details.sec > summary:hover { background: var(--bg-card-alt); }
+    details.sec > summary h2 { font-size: 17px; font-weight: 800; border: none; margin: 0; padding: 0; letter-spacing: -0.2px; display: flex; align-items: baseline; gap: 10px; }
+    details.sec > summary .secno { color: var(--brand); font-family: var(--font-mono); font-size: 14px; }
+    .sec-hint { font-size: 12px; color: var(--text-muted); font-weight: 500; width: 100%; }
+    .sec-body { padding: 6px 22px 22px; border-top: 1px solid var(--border); }
+    .toc-tools { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+
+    /* ── 入門導覽 ── */
+    .stepper { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 18px; }
+    .step-card { flex: 1 1 200px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+    .step-card .no { display: block; font-family: var(--font-mono); color: var(--brand); font-weight: 700; font-size: 12px; margin-bottom: 4px; }
+    .step-card b { font-size: 13.5px; }
+    .step-card p { font-size: 12.5px; margin: 0; }
+
+    /* ── 術語浮窗 ── */
+    .term { border-bottom: 1.5px dashed var(--brand); cursor: help; }
+    #term-pop { position: fixed; z-index: 99; max-width: 330px; background: var(--bg-surface); border: 1px solid var(--brand); border-radius: 12px; padding: 12px 16px; font-size: 13px; color: var(--text-sub); box-shadow: 0 12px 32px rgba(0,0,0,.35); display: none; line-height: 1.6; }
+    #term-pop b { color: var(--brand); display: block; margin-bottom: 4px; }
+
+    /* ── FAQ 對話框 ── */
+    dialog#faq-dialog { background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border); border-radius: 16px; padding: 22px 26px; max-width: 660px; width: calc(100% - 40px); }
+    dialog#faq-dialog::backdrop { background: rgba(0, 0, 0, .55); }
+    .faq-item { border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin-bottom: 10px; background: var(--bg-card-alt); }
+    .faq-item summary { cursor: pointer; font-weight: 700; font-size: 13.5px; }
+    .faq-item p { margin: 8px 0 2px; font-size: 13px; }
+
+    /* ── 標準流程圖符號（ISO 5807） ── */
+    .fc-node-dec polygon { fill: rgba(251, 191, 36, .08); stroke: var(--warning); stroke-width: 1.6; }
+    .fc-node-data polygon { fill: var(--bg-card-alt); stroke: var(--brand); stroke-width: 1.4; }
+    .fc-node-sub rect { fill: var(--bg-card); stroke: #64748b; stroke-width: 1.4; }
+    .fc-node-sub line { stroke: #64748b; stroke-width: 1.4; }
+
+    section { margin-bottom: 0; }
   </style>
 </head>
 <body>
@@ -154,41 +246,102 @@
   <div class="subtitle">
     本文件系統性彙整本專案全部數據運算邏輯——包含納入計算的全部因子、可調參數、運算式與預警門檻，
     做為向業務單位、生產管理（生管）單位及採購單位說明與討論調整之核心依據文件。
+    v3.1 新增兩大核心主軸之全流程互動流程圖（原物料備料補貨、產品交期估算）、五欄式參數定義表，以及兩大邏輯之統一核心鏈路整合分析。
   </div>
   <div class="meta">
-    <span class="chip brand">版本 v2.0</span>
-    <span class="chip">發行日期：2026-08-25</span>
+    <span class="chip brand">版本 v3.1</span>
+    <span class="chip">發行日期：2026-08-26</span>
     <span class="chip">適用對象：業務 / 生管 / 採購 / 品保</span>
     <span class="chip">依據原始碼：src/utils/ 各引擎 + src/types.ts 系統參數</span>
+    <span class="chip">SSOT：於系統內開啟時自動同步即時參數</span>
   </div>
 </header>
 
 <main>
-
 <nav class="toc">
   <h2>目錄 Contents</h2>
   <ol>
-    <li><a href="#sec-overview">1. 系統數據流總覽</a></li>
-    <li><a href="#sec-demand">2. 需求彙總邏輯（四種模式）</a></li>
-    <li><a href="#sec-mrp">3. 三階 MRP 核心引擎（成品 → 模具 → 原料）</a></li>
-    <li><a href="#sec-capacity">4. 射出產能與模具參數邏輯</a></li>
-    <li><a href="#sec-rm">5. 原料需求、庫存可用量與採購建議</a></li>
-    <li><a href="#sec-colorant">6. 色母／色粉配色製程拆分邏輯</a></li>
-    <li><a href="#sec-wip">7. WIP 在製品日推估引擎</a></li>
-    <li><a href="#sec-tension">8. 訂單缺料分析（訂單緊張度診斷）</a></li>
-    <li><a href="#sec-demand-compare">9. 需求三向交叉比對（預測 vs 實單）</a></li>
-    <li><a href="#sec-ship">10. 出貨排程放行（Ship Clearance）邏輯</a></li>
-    <li><a href="#sec-integrity">11. 資料完整性掃描與健康評分</a></li>
-    <li><a href="#sec-params">12. 全域系統參數總表（可調）</a></li>
-    <li><a href="#sec-presets">13. 參數情境預設檔（平衡 / 抗斷線 / 精實）</a></li>
-    <li><a href="#sec-alerts">14. 預警等級與觸發條件彙總</a></li>
-    <li><a href="#sec-principles">15. 設計原則：零偽造與缺值即擋</a></li>
+    <li><a href="#sec-intro">1. 入門導覽：三分鐘看懂這份文件</a></li>
+    <li><a href="#sec-overview">2. 系統數據流總覽</a></li>
+    <li><a href="#sec-demand">3. 需求彙總邏輯（四種模式）</a></li>
+    <li><a href="#sec-integrate">4. 兩大邏輯整合分析：統一核心鏈路</a></li>
+    <li><a href="#sec-flow-replenish">5. 核心主軸一：原物料備料補貨全流程</a></li>
+    <li><a href="#sec-flow-delivery">6. 核心主軸二：產品交期估算全流程</a></li>
+    <li><a href="#sec-mrp">7. 三階 MRP 核心引擎（成品 → 模具 → 原料）</a></li>
+    <li><a href="#sec-capacity">8. 射出產能與模具參數邏輯</a></li>
+    <li><a href="#sec-rm">9. 原料需求、庫存可用量與採購建議</a></li>
+    <li><a href="#sec-colorant">10. 色母／色粉配色製程拆分邏輯</a></li>
+    <li><a href="#sec-wip">11. WIP 在製品日推估引擎</a></li>
+    <li><a href="#sec-tension">12. 訂單缺料分析（訂單緊張度診斷）</a></li>
+    <li><a href="#sec-demand-compare">13. 需求三向交叉比對（預測 vs 實單 vs 歷史同期）</a></li>
+    <li><a href="#sec-ship">14. 出貨排程放行（Ship Clearance）邏輯</a></li>
+    <li><a href="#sec-integrity">15. 資料完整性掃描與健康評分</a></li>
+    <li><a href="#sec-params">16. 全域系統參數總表（可調）</a></li>
+    <li><a href="#sec-presets">17. 參數情境預設檔（平衡 / 抗斷線 / 精實）</a></li>
+    <li><a href="#sec-alerts">18. 預警等級與觸發條件彙總</a></li>
+    <li><a href="#sec-principles">19. 設計原則：零偽造與缺值即擋</a></li>
   </ol>
+  <div class="toc-tools">
+    <button type="button" class="fc-btn" id="toc-expand-all">全部展開</button>
+    <button type="button" class="fc-btn" id="toc-collapse-all">全部收合（保留入門導覽）</button>
+  </div>
 </nav>
 
-<!-- ════════════════════ 1 ════════════════════ -->
+<section id="sec-intro">
+  <details class="sec" open>
+    <summary><h2><span class="secno">01</span>入門導覽：三分鐘看懂這份文件</h2><span class="sec-hint">非工程背景也讀得懂：先用生活比喻建立觀念，再逐步進入專業內容；專業章節皆已收合，需要時再展開</span></summary>
+    <div class="sec-body">
+      <p><strong>這份文件在講什麼？</strong>一句話：系統如何幫工廠「把料備好、把貨準時交出去」。全文聚焦兩大主軸——<strong>備料補貨</strong>（要叫多少原料？什麼時候叫？）與<strong>交期估算</strong>（這張訂單來得及交嗎？卡在哪裡？）。所有專業章節預設收合，點標題即可展開。</p>
+
+      <h3>先用一間餐廳來想像（生活化比喻）</h3>
+      <p>把工廠想成一間餐廳，系統就像餐廳的採購管家，每天盯著三個地方：</p>
+      <div class="flow">
+        <div class="node"><b>成品良品在庫</b><span>已煮好、可出餐的菜</span></div>
+        <div class="node"><b><span class="term" data-term="wip">WIP 待驗品</span></b><span>已擺盤、待主廚檢查的菜</span></div>
+        <div class="node"><b>原料庫存</b><span>冰箱裡的食材</span></div>
+        <div class="node"><b><span class="term" data-term="transit">在途採購單</span></b><span>已叫貨、還在路上的食材</span></div>
+        <div class="node"><b><span class="term" data-term="safety">安全庫存</span></b><span>常備糧，不到關鍵時刻不動用</span></div>
+        <div class="node"><b><span class="term" data-term="deadline">最晚下單日</span></b><span>再不叫貨就來不及的死線</span></div>
+      </div>
+      <div class="note ok"><strong>白話總結：</strong>系統每天自動算出「冰箱還缺多少食材、最晚何時要叫貨、客人點的這桌來得及出餐嗎」，並在來不及之前提前示警。</div>
+
+      <h3>三種常見情境，你對應哪一個？</h3>
+      <div class="flow">
+        <div class="node"><b>我是業務</b><span>「客戶問 7/15 交得出來嗎？」<br>→ 看第 06 節 交期估算全流程</span></div>
+        <div class="node"><b>我是採購</b><span>「這週要下多少採購單？何時下？」<br>→ 看第 05 節 備料補貨全流程</span></div>
+        <div class="node"><b>我是生管</b><span>「機台排得下嗎？卡在哪個環節？」<br>→ 看第 06 節 圖 B ＋ 第 12 節</span></div>
+      </div>
+
+      <h3>建議閱讀路徑（由淺入深）</h3>
+      <div class="stepper">
+        <div class="step-card"><span class="no">Step 1</span><b>本節比喻</b><p style="margin:4px 0 0">建立「餐廳備料」的整體觀念。</p></div>
+        <div class="step-card"><span class="no">Step 2</span><b>第 02 節 資料流總覽</b><p style="margin:4px 0 0">看懂資料從訂單一路算到採購建議的完整路徑。</p></div>
+        <div class="step-card"><span class="no">Step 3</span><b>第 04 節 統一核心鏈路</b><p style="margin:4px 0 0">了解兩大流程其實共用同一條計算骨幹。</p></div>
+        <div class="step-card"><span class="no">Step 4</span><b>第 05／06 節 流程圖</b><p style="margin:4px 0 0">展開兩張可縮放的互動流程圖，滑鼠停任一節點皆有詳細說明。</p></div>
+        <div class="step-card"><span class="no">Step 5</span><b>專業章節</b><p style="margin:4px 0 0">公式、參數、預警規則——依需求展開對應章節。</p></div>
+      </div>
+
+      <div class="note"><strong>看不懂專業名詞？</strong>全文中<span class="term" data-term="wip">虛線</span><span class="term" data-term="moq">詞彙</span>點一下即可浮出白話解釋；也可以直接 <button type="button" class="fc-btn" id="faq-open-btn" style="display:inline-flex;vertical-align:middle">開啟常見問題（FAQ）</button></div>
+
+      <dialog id="faq-dialog">
+        <h3 style="margin-top:0">常見問題（FAQ）</h3>
+        <details class="faq-item"><summary>Q1：畫面出現「主檔缺值、無法計算」是壞掉了嗎？</summary><p>不是。系統的原則是「寧可不算，也不亂算」——某個品號的基本資料（良率、損耗率、採購交期等）沒有維護完整時，系統拒絕推估並明確告訴你缺什麼。請至「資料表維護」補齊後重新計算。</p></details>
+        <details class="faq-item"><summary>Q2：為什麼建議採購量比實際缺口還多？</summary><p>兩個原因：①供應商有最小起訂量（<span class="term" data-term="moq">MOQ</span>），不足一包裝倍數會自動進位；②系統會加上<span class="term" data-term="safety">安全庫存</span>當作防護水位，避免突發狀況無料可用。</p></details>
+        <details class="faq-item"><summary>Q3：「最晚下單日」已經過了（紅色預警），該怎麼辦？</summary><p>代表照正常程序已來不及。系統建議：即刻開立採購單並評估改空運、要求供應商提早到港，或與客戶協調分批／延後交貨。</p></details>
+        <details class="faq-item"><summary>Q4：系統算出來的交期，是對客戶的承諾嗎？</summary><p>不是。交期估算是一種「體檢」：以客戶要求的日期為基準，反推原料、產能、物流各環節來不来得及，提前告訴你哪裡會卡關。對客戶的承諾仍由業務依體檢結果判斷。</p></details>
+        <details class="faq-item"><summary>Q5：安全庫存是誰決定的？可以調整嗎？</summary><p>基本值由每個原料品號在主檔中個別維護；系統另提供全廠一致的「安全庫存係數」（預設 1.0 倍），可在系統設定中整體調高或調低，例如旺季調到 1.25 倍。</p></details>
+        <details class="faq-item"><summary>Q6：為什麼同一個產品，不同時候建議備料量不一樣？</summary><p>同一產品可能有多副模具，各模具的耗料與產能不同。系統依「多模備料策略」（預設採最耗料的保守原則）選模計算，策略或模具現況（如塞穴）改變，建議量就會跟著變。</p></details>
+        <button type="button" class="fc-btn" id="faq-close-btn" style="margin-top:14px">關閉</button>
+      </dialog>
+    </div>
+  </details>
+</section>
+
 <section id="sec-overview">
-  <h2><span class="secno">01</span>系統數據流總覽</h2>
+  <details class="sec">
+    <summary><h2><span class="secno">02</span>系統數據流總覽</h2><span class="sec-hint">給所有人：資料從哪裡來、算到哪裡去（一分鐘版本）</span></summary>
+    <div class="sec-body">
+  
   <p>本系統以「訂單與預測」為起點，經三階段展開至原料採購建議，並同步進行庫存折算、產能驗證與風險預警。整體資料流如下：</p>
   <div class="flow">
     <div class="node"><b>① 需求來源</b><span>demand_forecast_log<br>+ actual_order</span></div>
@@ -205,35 +358,278 @@
     <li><strong>五大資料主檔</strong>：<code>item_master</code>（品號主檔）、<code>mold_master</code>（模具主檔）、<code>product_mold_bom</code>（成型 BOM）、<code>inventory_wip_snapshot</code>（庫存/WIP 快照）、<code>po_in_transit</code>（在途採購單）。</li>
     <li><strong>兩大需求來源檔</strong>：<code>demand_forecast_log</code>（業務預估需求，含版本號 version_no）、<code>actual_order</code>（實際客戶訂單）。</li>
     <li><strong>四大運算引擎</strong>：MRP 引擎、WIP 日推估引擎、訂單缺料分析引擎、需求交叉比對引擎；另含資料完整性掃描器與端到端模擬測試套件。</li>
+    <li><strong>兩大核心主軸</strong>：「原物料備料補貨」（第  節）與「產品交期估算」（第  節）共享同一條計算脊，詳第  節整合分析。</li>
   </ul>
+
+    </div>
+  </details>
 </section>
 
-<!-- ════════════════════ 2 ════════════════════ -->
 <section id="sec-demand">
-  <h2><span class="secno">02</span>需求彙總邏輯（四種模式）</h2>
+  <details class="sec">
+    <summary><h2><span class="secno">03</span>需求彙總邏輯（四種模式）</h2><span class="sec-hint">業務預估與實際訂單如何合併計算（四種策略）</span></summary>
+    <div class="sec-body">
+  
   <p>系統將「客戶預估（Forecast）」與「實際訂單（PO）」合併為總需求時，由全域參數 <code>demandConsumptionMode</code> 決定彙總方式：</p>
   <table>
     <thead><tr><th>模式代碼</th><th>運算式</th><th>說明與適用情境</th></tr></thead>
     <tbody>
-      <tr><td><code>additive</code>（預設）</td><td class="mono">總需求 = 預估量 + 實單量</td><td>預估視為尚未下單之未來需求，與已下單量累加。保守備料，適合客戶「預示＋分批落單」型態。</td></tr>
-      <tr><td><code>po_consume</code></td><td class="mono">總需求 = Max(預估量, 實單量)</td><td>實單自預估中沖銷（消耗），取兩者較大者。適合「預估為總額上限、訂單逐筆吃掉預估」的客戶。</td></tr>
-      <tr><td><code>actual_only</code></td><td class="mono">總需求 = 實單量</td><td>完全只信賴實際訂單，忽略預估。</td></tr>
-      <tr><td><code>forecast_only</code></td><td class="mono">總需求 = 預估量</td><td>完全只信賴客戶預估，忽略實單。</td></tr>
+      <tr><td><code>additive</code>（預設）</td><td>總需求 = 預估量 + 實單量</td><td>預估視為尚未下單之未來需求，與已下單量累加。保守備料，適合客戶「預示＋分批落單」型態。</td></tr>
+      <tr><td><code>po_consume</code></td><td>總需求 = Max(預估量, 實單量)</td><td>實單自預估中沖銷（消耗），取兩者較大者。適合「預估為總額上限、訂單逐筆吃掉預估」的客戶。</td></tr>
+      <tr><td><code>actual_only</code></td><td>總需求 = 實單量</td><td>完全只信賴實際訂單，忽略預估。</td></tr>
+      <tr><td><code>forecast_only</code></td><td>總需求 = 預估量</td><td>完全只信賴客戶預估，忽略實單。</td></tr>
     </tbody>
   </table>
   <div class="note ok"><strong>補充：</strong>所有 MRP 計算均<strong>排除已取消（cancelled）狀態之訂單</strong>；在途 PO 亦<strong>排除已到達（arrived）與分批到達（partial_arrived）狀態</strong>，避免重複計入可用供給。</div>
+    </div>
+  </details>
 </section>
 
-<!-- ════════════════════ 3 ════════════════════ -->
+<section id="sec-integrate">
+  <details class="sec">
+    <summary><h2><span class="secno">04</span>兩大邏輯整合分析：統一核心鏈路</h2><span class="sec-hint">兩大流程共用同一條計算骨幹——建議先讀本章，再看兩大主軸</span></summary>
+    <div class="sec-body">
+  
+  <p>比對 <code>mrpEngine.ts</code>（備料補貨）與 <code>orderTensionEngine.ts</code>（交期估算）原始碼後確認：兩者共用約七成步驟的同一條<strong>核心計算脊（Core Spine）</strong>，差異僅在觸發主體與輸出契約。本章先呈現統一鏈路，再給出程式碼層級之整合可行性結論。</p>
+
+  <h3>4.1 統一核心鏈路圖<a class="anchor-link" href="#sec-integrate">#</a></h3>
+  <div class="fc-shell">
+    <div class="fc-toolbar">
+      <span class="fc-title">圖 C｜兩大邏輯共用的統一核心計算脊（Unified Core Spine）</span>
+      <button type="button" class="fc-btn" data-fc="spine" data-act="in" aria-label="放大">＋</button>
+      <button type="button" class="fc-btn" data-fc="spine" data-act="out" aria-label="縮小">－</button>
+      <button type="button" class="fc-btn" data-fc="spine" data-act="fit" aria-label="復位">⟲ 復位</button>
+      <span class="fc-zoom-label" id="lbl-spine">100%</span>
+    </div>
+    <div class="fc-viewport" id="vp-spine" style="height:520px">
+      <svg id="svg-spine" role="img" aria-label="統一核心計算脊流程圖"></svg>
+    </div>
+  </div>
+
+  <h3>4.2 兩引擎差異對照<a class="anchor-link" href="#sec-integrate">#</a></h3>
+  <table>
+    <thead><tr><th>面向</th><th>備料補貨引擎（mrpEngine）</th><th>交期估算引擎（orderTensionEngine）</th></tr></thead>
+    <tbody>
+      <tr><td>觸發主體</td><td>成品 SKU × 預估版本（計畫層）</td><td>單筆有效客戶訂單（執行層）</td></tr>
+      <tr><td>需求來源</td><td>預估 ± 實單，依四模式彙總</td><td>僅訂單量 order_qty</td></tr>
+      <tr><td>選模策略</td><td>multiMoldStrategy 三策略（可人工指定）</td><td>固定主模優先（is_primary_mold，無則首筆 BOM）</td></tr>
+      <tr><td>共用計算脊</td><td colspan="2">成品缺口 → 單穴克重／日產能 → 毛需求 ÷ (1−損耗) → 虛擬預扣 → 有效在庫 → 淨需求 → 最晚下單日倒推（公式一致）</td></tr>
+      <tr><td>細部容差差異</td><td>損耗分母直接用 (1 − 損耗率)；缺值直接終止計算</td><td>損耗分母帶 Max(0.01, 1 − 損耗率) 下限保護；缺值記入清單後續算並插紅色攔截項</td></tr>
+      <tr><td>輸出契約</td><td>採購建議（MOQ 進位量、下單日、分批方案）＋ 四色預警</td><td>六環節瓶頸診斷 ＋ tensionScore 緊張指數排序</td></tr>
+      <tr><td>產能裕度</td><td>含 capacityBufferDays 安全裕度</td><td>不含裕度，赤字直接判定</td></tr>
+      <tr><td>距交期天數</td><td>Max(1, ⌈⋯⌉) 下限鉗位</td><td>不做鉗位（可為負）</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.3 整合可行性結論<a class="anchor-link" href="#sec-integrate">#</a></h3>
+  <ul class="plain">
+    <li><strong>文件層級：已完成整合。</strong>第 5、6 節兩張流程圖的重疊段落均引用同一組公式與同一份參數定義表（5.3 節），認知上已是單一統一邏輯，杜絕「兩份文件兩套說法」的矛盾風險。</li>
+    <li><strong>程式碼層級：評估為「可抽共用核心，但不建議現階段強行合併」。</strong>理由：(1) 觸發主體不同（SKU×版本 vs 逐筆訂單），迭代語意不同；(2) 選模策略與容差處理存在刻意設計之差異（見上表），合併需引入大量條件分支反而提高複雜度；(3) 輸出契約不同（採購建議 vs 瓶頸診斷），硬合一將違反單一職責原則並冒穩定性風險。</li>
+    <li><strong>未來重構建議</strong>：若後續出現第三個消費端（如進階排程模組），可將計算脊抽出為純函式 <code>computeCoreRequirement(db, demandQty, targetDate, bom, params)</code>，回傳「缺口／毛需求／淨需求／建議量／最晚下單日」結構，由兩引擎各自消費並保留差異化外殼。此重構屬低風險、高報酬，惟需搭配既有端到端模擬測試套件回歸驗證後方可實施。</li>
+  </ul>
+    </div>
+  </details>
+</section>
+
+<section id="sec-flow-replenish">
+  <details class="sec">
+    <summary><h2><span class="secno">05</span>核心主軸一：原物料備料補貨全流程</h2><span class="sec-hint">採購必看：要叫多少料？何時叫？會不會爆倉？（互動流程圖＋參數表）</span></summary>
+    <div class="sec-body">
+  
+  <p>本章將 MRP 引擎（<code>mrpEngine.ts → calculateMRPForSKU</code>）之完整備料決策鏈路，以結構化流程圖呈現，涵蓋<strong>安全庫存計算、補貨觸發條件、前置期校驗、缺料預警機制、倉容調度規則</strong>五大環節。流程圖支援滾輪縮放、拖曳平移與一鍵復位，並相容手機觸控操作。</p>
+
+  <h3>5.1 全流程邏輯鏈路圖<a class="anchor-link" href="#sec-flow-replenish">#</a></h3>
+  <div class="fc-shell">
+    <div class="fc-toolbar">
+      <span class="fc-title">圖 A｜原物料備料補貨全流程（Replenishment Pipeline）</span>
+      <button type="button" class="fc-btn" data-fc="replenish" data-act="in" aria-label="放大">＋</button>
+      <button type="button" class="fc-btn" data-fc="replenish" data-act="out" aria-label="縮小">－</button>
+      <button type="button" class="fc-btn" data-fc="replenish" data-act="fit" aria-label="復位">⟲ 復位</button>
+      <span class="fc-zoom-label" id="lbl-replenish">100%</span>
+      <span class="fc-hint">滾輪縮放 · 拖曳平移 · 觸控可用</span>
+    </div>
+    <div class="fc-viewport" id="vp-replenish">
+      <svg id="svg-replenish" role="img" aria-label="原物料備料補貨全流程圖"></svg>
+    </div>
+  </div>
+  <div class="legend-row">
+    <strong style="font-size:12px;color:var(--text-muted)">符號（ISO 5807 流程圖規範）：</strong>
+    <span class="lg">膠囊＝起訖</span><span class="lg">矩形＝處理</span><span class="lg">菱形＝判斷</span><span class="lg">雙線框＝預定義子流程</span>
+    <strong style="font-size:12px;color:var(--text-muted)">色彩＝例外／預警類別：</strong>
+    <span class="lg"><i style="border-color:var(--brand);background:rgba(56,189,248,.12)"></i>起點／終點</span>
+    <span class="lg"><i style="border-color:#64748b"></i>處理步驟</span>
+    <span class="lg"><i style="border-color:var(--warning);border-style:dashed"></i>判斷分支</span>
+    <span class="lg"><i style="border-color:var(--danger);background:rgba(248,113,113,.1)"></i>紅色缺料預警</span>
+    <span class="lg"><i style="border-color:var(--orange);background:rgba(251,146,60,.1)"></i>橘色爆倉預警</span>
+    <span class="lg"><i style="border-color:var(--warning);background:rgba(251,191,36,.1)"></i>黃色超備預警</span>
+    <span class="lg"><i style="border-color:var(--success);background:rgba(52,211,153,.1)"></i>綠燈正常建議</span>
+  </div>
+
+  <h3>5.2 流程逐步說明<a class="anchor-link" href="#sec-flow-replenish">#</a></h3>
+  <ul class="plain">
+    <li><strong>① 需求彙總</strong>：取該品號最新版（或指定版本）預估與有效實單，依四種模式合併為總需求（詳第  節）。已取消訂單一律排除。</li>
+    <li><strong>② 主檔缺值校驗（缺值即擋）</strong>：成品缺 <code>std_sorting_yield</code>、BOM 缺 <code>std_mfg_scrap_rate</code>、原料品號不存在或缺「交期／MOQ／安全庫存」任一欄位時，<strong>立即終止並回傳紅色警示</strong>，禁止以全域預設值頂替（0 為合法值，不會誤判為缺值）。</li>
+    <li><strong>③ 成品淨需求</strong>：<code>Max(0, 總需求 − 成品良品在庫 − WIP待驗 × 標準良率)</code>，快照取最新結算日。</li>
+    <li><strong>④ 多模選模</strong>：一品號綁多副模具時依 <code>multiMoldStrategy</code> 三策略擇一（保守最重／最輕克重／僅主模），亦可人工指定。</li>
+    <li><strong>⑤ 單穴克重與日產能</strong>：塞穴聯動——妥善穴數減少時克重自動上升、日產能同時下降，屬數學自動聯動。</li>
+    <li><strong>⑥ 毛需求</strong>：缺口換算重量後除以 <code>(1 − 損耗率)</code> 放大，涵蓋成型損耗。</li>
+    <li><strong>⑦ 色母拆分</strong>：配比 ＞ 0 時，BOM 之 <code>rm_sku</code> 代表色母，總毛需求拆為基礎樹脂與色母兩條獨立鏈路各自計算後匯流（詳第  節）。</li>
+    <li><strong>⑧ 虛擬預扣</strong>：<code>enableVirtualBackflush</code> 開啟時，先預扣 WIP 待驗品已耗用之原料，消除 ERP 月底扣帳時序差造成的月中庫存高估。</li>
+    <li><strong>⑨ 有效供給盤點</strong>：有效在庫 = <code>Max(0, 帳面在庫 − 虛擬預扣)</code>；在途量僅計狀態非 arrived / partial_arrived 之 PO。</li>
+    <li><strong>⑩ 安全庫存水位</strong>：原料品號主檔之 <code>safety_stock_kg</code> × 全域係數 <code>safetyStockMultiplier</code>，作為淨需求的加回項。</li>
+    <li><strong>⑪ 補貨觸發判斷</strong>：淨需求 = <code>毛需求 − 有效在庫 − 在途 + 安全庫存</code>；<strong>僅當淨需求 ＞ 0 時觸發補貨</strong>，否則判定庫存充足免採購。</li>
+    <li><strong>⑫ 採購量與前置期倒推</strong>：建議量無條件進位至 MOQ 整數倍；最晚下單日 = 需求交期 − <code>lead_time_days</code>。</li>
+    <li><strong>⑬ 前置期校驗與缺料預警</strong>：距最晚下單日 ≤ <code>shortageAlertBufferDays</code>（預設 15 天）即發紅色缺料警戒；<strong>負值代表下單已逾期</strong>，需即刻開 PO 或改空運。</li>
+    <li><strong>⑭ 超備與爆倉檢查</strong>：(帳面在庫＋在途) ＞ 毛需求 × <code>overstockMultiplier</code> 且 ＞ 安全庫存 × 1.5 ➜ 黃色超備呆滯；(帳面在庫＋在途) ＞ <code>defaultWarehouseCapacityKg</code> ➜ 橘色爆倉。</li>
+    <li><strong>⑮ 大批次分批調度</strong>：建議量 ＞ 倉容 × 0.6 或 ≥ 5,000 KG 時自動拆兩批——首批 50%（進位至 MOQ）於需求交期到港，次批間隔 30 天，兼顧倉容壓力與資金積壓。</li>
+    <li><strong>⑯ 正常備料</strong>：無任何異常且有採購需求時，發出綠燈建議按標準流程於建議日前發出 PO。</li>
+  </ul>
+  <div class="note"><strong>跨倉調度現行機制（透明化聲明）</strong>：目前系統尚無跨廠區實體調撥模組。倉容壓力由「橘色爆倉預警 ＋ 分批到貨建議（首批 50% ＋ 次批 30 天後）」承擔，行動建議為協調供應商分批交貨或租借外部保稅倉。若未來導入多廠區倉別主檔，方可制定真正的跨倉調撥規則；現階段不虛構不存在的調度邏輯。</div>
+
+  <h3 id="params-replenish">5.3 備料補貨參數定義表<a class="anchor-link" href="#sec-flow-replenish">#</a></h3>
+  <p>下表匯整圖 A 涉及之全部參數與資料欄位，確保無遺漏。「全域」代表系統設定頁可調參數，「主檔」代表物料個別維護值。</p>
+  <div class="param-table-wrap">
+  <table>
+    <thead><tr><th>參數名稱（代碼）</th><th>數據類型</th><th>取值範圍</th><th>業務含義</th><th>計算公式 / 來源</th></tr></thead>
+    <tbody>
+      <tr><td><code>totalDemandQty</code> 總需求量</td><td>number（PCS）</td><td>≥ 0</td><td>彙總後之成品總需求，備料計算起點</td><td>依 demandConsumptionMode 四模式（第  節）；排除 cancelled 訂單</td></tr>
+      <tr><td><code>demandConsumptionMode</code> 需求彙總模式</td><td>enum（全域）</td><td>additive / po_consume / actual_only / forecast_only</td><td>預估與實單合併策略</td><td>系統設定頁；預設 additive</td></tr>
+      <tr><td><code>fg_ready_qty</code> 成品良品在庫</td><td>number（PCS）</td><td>≥ 0</td><td>庫房已全檢可出貨之成品量</td><td>inventory_wip_snapshot 最新日期快照</td></tr>
+      <tr><td><code>wip_pending_qty</code> WIP 待驗量</td><td>number（PCS）</td><td>≥ 0</td><td>製造完成待全檢之在製品量</td><td>inventory_wip_snapshot 最新日期快照</td></tr>
+      <tr><td><code>std_sorting_yield</code> 標準全檢良率</td><td>number（主檔）</td><td>0 ~ 1（例 0.98）；缺值即擋</td><td>WIP 折算為良品之轉換率</td><td>item_master（成品類必填）</td></tr>
+      <tr><td><code>wipEffectiveQty</code> WIP 有效量</td><td>number（PCS）</td><td>≥ 0</td><td>待驗品折算後之可信良品供給</td><td>round(wip_pending_qty × std_sorting_yield)</td></tr>
+      <tr><td><code>fgNetRequirementQty</code> 成品淨需求</td><td>number（PCS）</td><td>≥ 0</td><td>扣除現有供給後之真實成品缺口</td><td>Max(0, totalDemandQty − fg_ready_qty − wipEffectiveQty)</td></tr>
+      <tr><td><code>multiMoldStrategy</code> 多模備料原則</td><td>enum（全域）</td><td>conservative_max_weight / lowest_weight / primary_mold_only</td><td>多模具品號之選模策略</td><td>系統設定頁；預設 conservative_max_weight</td></tr>
+      <tr><td><code>active_cavities</code> 妥善穴數</td><td>integer（主檔）</td><td>≥ 1 且 ≤ design_cavities</td><td>現場實際注膠穴數（已扣塞穴）</td><td>mold_master；影響克重與產能雙向聯動</td></tr>
+      <tr><td><code>cycle_time_sec</code> 成型週期</td><td>number 秒（主檔）</td><td>＞ 0（典型 30）</td><td>一次射出成型時間</td><td>mold_master</td></tr>
+      <tr><td><code>net_mold_weight_g</code>／<code>runner_weight_g</code> 整模淨重／流道重</td><td>number 克（主檔）</td><td>＞ 0</td><td>一次射出總膠重組成</td><td>product_mold_bom</td></tr>
+      <tr><td><code>unitWeightG</code> 單穴克重</td><td>number（g，3 位小數）</td><td>＞ 0</td><td>單一成品之原料耗用克重</td><td>(net_mold_weight_g + runner_weight_g) ÷ active_cavities</td></tr>
+      <tr><td><code>dailyOperatingHours</code> 每日有效工時</td><td>number 小時（全域）</td><td>0 ~ 24（預設 24）</td><td>機台每日運轉時數</td><td>系統設定頁</td></tr>
+      <tr><td><code>dailyCapacityPcs</code> 日產能</td><td>number（PCS/日）</td><td>≥ 0</td><td>單模每日最大成型量</td><td>round((dailyOperatingHours × 3600 ÷ cycle_time_sec) × active_cavities)</td></tr>
+      <tr><td><code>std_mfg_scrap_rate</code> 成型損耗率</td><td>number（BOM 主檔）</td><td>0 ~ maxAllowedScrapRatePct（預設 0.08）；0 為合法值；缺值即擋</td><td>成型製程之標準損耗比例</td><td>product_mold_bom；上限受完整性掃描管控</td></tr>
+      <tr><td><code>rmGrossRequirementKg</code> 原料毛需求</td><td>number（KG，2 位小數）</td><td>≥ 0</td><td>含損耗放大之原料總需求</td><td>(fgNetRequirementQty × unitWeightG ÷ 1000) ÷ (1 − std_mfg_scrap_rate)</td></tr>
+      <tr><td><code>color_mixing_ratio_pct</code> 色母配比</td><td>number %（BOM 主檔）</td><td>0（純原料）或 ＞ 0 ~ 100</td><td>色母混合比例；＞0 觸發樹脂／色母拆分</td><td>product_mold_bom</td></tr>
+      <tr><td><code>enableVirtualBackflush</code> 月內虛擬預扣</td><td>boolean（全域）</td><td>true / false（預設 true）</td><td>消除 ERP 月底扣帳時序差</td><td>系統設定頁</td></tr>
+      <tr><td><code>virtualBackflushDeductedKg</code> 虛擬預扣量</td><td>number（KG）</td><td>≥ 0</td><td>WIP 已耗用但尚未扣帳之原料量</td><td>wip_pending_qty × unitWeightG ÷ 1000 ÷ Max(0.01, 1 − std_mfg_scrap_rate)　（僅開啟時計算）</td></tr>
+      <tr><td><code>rm_on_hand_kg</code> 原料帳面在庫</td><td>number（KG）</td><td>≥ 0</td><td>原料倉實體結存量</td><td>inventory_wip_snapshot 最新日期快照（RAW 類品號）</td></tr>
+      <tr><td><code>effectiveRmOnHandKg</code> 有效原料在庫</td><td>number（KG）</td><td>≥ 0</td><td>預扣後之真實可用在庫</td><td>Max(0, rm_on_hand_kg − virtualBackflushDeductedKg)</td></tr>
+      <tr><td><code>in_transit_qty_kg</code> 在途量</td><td>number（KG）</td><td>≥ 0</td><td>已下單未到廠之原料量</td><td>Σ po_in_transit.in_transit_qty_kg（狀態 ∈ ordered / shipping / customs / delayed；排除 arrived / partial_arrived）</td></tr>
+      <tr><td><code>po_status</code> 在途 PO 狀態</td><td>enum</td><td>ordered / shipping / customs / arrived / delayed / partial_arrived</td><td>海運採購單生命週期狀態；delayed 觸發船期風險</td><td>po_in_transit.status</td></tr>
+      <tr><td><code>safety_stock_kg</code> 安全庫存基準</td><td>number KG（主檔）</td><td>≥ 0；缺值即擋</td><td>原料應保持之最低防護水位</td><td>item_master（RAW 類必填）</td></tr>
+      <tr><td><code>safetyStockMultiplier</code> 安全庫存動態係數</td><td>number（全域）</td><td>＞ 0（預設 1.0×）</td><td>全系統安全庫存槓桿</td><td>系統設定頁；如 1.25 = 提高 25% 備料水位</td></tr>
+      <tr><td><code>safetyStockKg</code> 安全庫存水位</td><td>number（KG）</td><td>≥ 0</td><td>實際計入淨需求之防護量</td><td>round(safety_stock_kg × safetyStockMultiplier)</td></tr>
+      <tr><td><code>rmNetRequirementKg</code> 原料淨需求</td><td>number（KG）</td><td>≥ 0；＜ 0 取 0</td><td><strong>補貨觸發條件：＞ 0 才啟動採購建議</strong></td><td>Max(0, rmGrossRequirementKg − effectiveRmOnHandKg − inTransitQtyKg + safetyStockKg)</td></tr>
+      <tr><td><code>moq_kg</code> 最小起訂量</td><td>number KG（主檔）</td><td>＞ 0；缺值即擋</td><td>供應商最小下單包裝倍數</td><td>item_master（RAW 類必填）</td></tr>
+      <tr><td><code>suggestedOrderQtyKg</code> 建議採購量</td><td>number（KG）</td><td>0 或 ≥ moq_kg</td><td>對齊 MOQ 後之實際建議下單量</td><td>⌈rmNetRequirementKg ÷ moq_kg⌉ × moq_kg　（淨需求 ＞ 0 時）</td></tr>
+      <tr><td><code>lead_time_days</code> 採購交期</td><td>integer 天（主檔）</td><td>＞ 0（國外海運典型 90~150 天）；缺值即擋</td><td>下單至到廠之前置天數</td><td>item_master（RAW 類必填）</td></tr>
+      <tr><td><code>suggestedOrderDate</code> 最晚下單日</td><td>date（YYYY-MM-DD）</td><td>—</td><td><strong>前置期校驗基準：超過此日未下單即逾期</strong></td><td>target_date − lead_time_days</td></tr>
+      <tr><td><code>daysUntilLatestOrder</code> 距最晚下單日天數</td><td>integer 天</td><td>整數（可為負）</td><td>負值＝下單已逾期</td><td>⌈(suggestedOrderDate − 今天) ÷ 24h⌉</td></tr>
+      <tr><td><code>shortageAlertBufferDays</code> 採購緊急警戒天數</td><td>integer 天（全域）</td><td>≥ 0（預設 15）</td><td><strong>缺料預警門檻</strong>：距最晚下單日 ≤ 此值發紅色警戒</td><td>觸發式：rmNetRequirementKg ＞ 0 且 daysUntilLatestOrder ≤ 本值</td></tr>
+      <tr><td><code>overstockMultiplier</code> 超備呆滯倍數門檻</td><td>number（全域）</td><td>＞ 1（預設 1.6）</td><td><strong>黃色超備預警門檻</strong></td><td>觸發式：(rm_on_hand_kg + 在途) ＞ 毛需求 × 本值 且 ＞ safetyStockKg × 1.5</td></tr>
+      <tr><td><code>defaultWarehouseCapacityKg</code> 單項原料倉容上限</td><td>number KG（全域）</td><td>＞ 0（預設 12,000）</td><td><strong>橘色爆倉預警門檻</strong>；兼作大批次判定基準</td><td>觸發式：(rm_on_hand_kg + 在途) ＞ 本值</td></tr>
+      <tr><td><code>enablePhasedDeliveryAdvisor</code> 分批到貨建議</td><td>boolean（全域）</td><td>true / false（預設 true）</td><td>大宗採購自動拆兩批進貨</td><td>大批次判定：建議量 ＞ 倉容 × 0.6 或 ≥ 5,000 KG</td></tr>
+      <tr><td><code>phasedDeliveryPlan</code> 分批到貨方案</td><td>array（batchNo / qtyKg / orderDate / etaDate / reason）</td><td>2 批</td><td>倉容調度現行機制：平衡倉容與資金積壓</td><td>首批 = ⌈建議量 × 50% ÷ MOQ⌉ × MOQ 於需求交期到港；次批 = 建議量 − 首批，下單日 = 首批下單日 + 30 天、ETA = 交期 + 30 天</td></tr>
+      <tr><td><code>supplier_name</code> 供應商名稱</td><td>string（主檔）</td><td>去識別化（A供應商 等）；未填顯示「未填供應商」</td><td>採購建議之下單對象</td><td>item_master（RAW 類）</td></tr>
+    </tbody>
+  </table>
+  </div>
+    </div>
+  </details>
+</section>
+
+<section id="sec-flow-delivery">
+  <details class="sec">
+    <summary><h2><span class="secno">06</span>核心主軸二：產品交期估算全流程</h2><span class="sec-hint">業務／生管必看：這張訂單來得及交嗎？卡在哪個環節？（互動流程圖＋參數表）</span></summary>
+    <div class="sec-body">
+  
+  <p>本章將訂單缺料分析引擎（<code>orderTensionEngine.ts → diagnoseAllOrderTensions</code>）與 MRP 產能核算之完整交期推導鏈路，以結構化流程圖呈現，涵蓋<strong>訂單量拆解、產能負荷核算、原物料齊套時間校驗、生產週期疊加、物流配送時間核算、異常緩衝期配置</strong>六大環節。</p>
+  <div class="note ok"><strong>模型定位（透明化聲明）</strong>：本系統之交期估算為<strong>「可達性校驗」模型</strong>——以客戶約定交期（target_date）為基準，反向逐環節核算各段所需時間，判定能否如期交付並定位瓶頸環節，而非正向生成一個新的承諾交期。凡屬推估值畫面均明確標示，不偽造承諾日期。</div>
+
+  <h3>6.1 全流程邏輯鏈路圖<a class="anchor-link" href="#sec-flow-delivery">#</a></h3>
+  <div class="fc-shell">
+    <div class="fc-toolbar">
+      <span class="fc-title">圖 B｜產品交期估算全流程（Delivery Feasibility Pipeline）</span>
+      <button type="button" class="fc-btn" data-fc="delivery" data-act="in" aria-label="放大">＋</button>
+      <button type="button" class="fc-btn" data-fc="delivery" data-act="out" aria-label="縮小">－</button>
+      <button type="button" class="fc-btn" data-fc="delivery" data-act="fit" aria-label="復位">⟲ 復位</button>
+      <span class="fc-zoom-label" id="lbl-delivery">100%</span>
+      <span class="fc-hint">滾輪縮放 · 拖曳平移 · 觸控可用</span>
+    </div>
+    <div class="fc-viewport" id="vp-delivery">
+      <svg id="svg-delivery" role="img" aria-label="產品交期估算全流程圖"></svg>
+    </div>
+  </div>
+  <div class="legend-row">
+    <strong style="font-size:12px;color:var(--text-muted)">符號（ISO 5807 流程圖規範）：</strong>
+    <span class="lg">膠囊＝起訖</span><span class="lg">矩形＝處理</span><span class="lg">菱形＝判斷</span><span class="lg">雙線框＝預定義子流程</span>
+    <strong style="font-size:12px;color:var(--text-muted)">色彩＝例外／預警類別：</strong>
+    <span class="lg"><i style="border-color:var(--brand);background:rgba(56,189,248,.12)"></i>起點／終點</span>
+    <span class="lg"><i style="border-color:#64748b"></i>處理步驟</span>
+    <span class="lg"><i style="border-color:var(--warning);border-style:dashed"></i>判斷分支</span>
+    <span class="lg"><i style="border-color:var(--danger);background:rgba(248,113,113,.1)"></i>紅燈環節</span>
+    <span class="lg"><i style="border-color:var(--purple);background:rgba(192,132,252,.1)"></i>紫燈產能瓶頸</span>
+    <span class="lg"><i style="border-color:var(--orange);background:rgba(251,146,60,.1)"></i>橘燈船期延誤</span>
+    <span class="lg"><i style="border-color:var(--warning);background:rgba(251,191,36,.1)"></i>黃燈仰賴全檢</span>
+    <span class="lg"><i style="border-color:var(--blue);background:rgba(96,165,250,.1)"></i>藍燈色母缺料</span>
+  </div>
+
+  <h3>6.2 流程逐步說明<a class="anchor-link" href="#sec-flow-delivery">#</a></h3>
+  <ul class="plain">
+    <li><strong>① 訂單量拆解（三層供給剝離）</strong>：對每筆有效訂單（排除 cancelled）依序剝離「成品良品在庫 → WIP 有效量（待驗 × 標準良率）」，剩餘即成品缺口 <code>fgGap = Max(0, 訂單量 − 現貨 − WIP有效)</code>。此為後續所有時間估算的需求基準。</li>
+    <li><strong>② 主檔缺值攔截</strong>：成品缺良率、BOM 未建立或缺損耗率、原料品號不存在或缺採購三要素時，強制在診斷結果最前方插入紅色「⚠️ 主檔缺值」項目，並標明<strong>本單診斷數字不可作為決策依據</strong>。</li>
+    <li><strong>③ 產能負荷核算</strong>：以主模 BOM（<code>is_primary_mold</code> 優先）之妥善穴數與成型週期計算日產能，再得所需連續生產天數 <code>requiredProdDays = ⌈fgGap ÷ 日產能⌉</code>。</li>
+    <li><strong>④ 生產週期疊加與異常緩衝配置</strong>：MRP 層級之產能瓶頸判定含安全裕度——<code>requiredProdDays + capacityBufferDays ＞ 距交期天數</code> 即發紫色預警（buffer 預設 0 天，抗斷線情境可調至 3 天）；訂單診斷層級則以 <code>requiredProdDays ＞ daysToDeliver</code> 直接判定產能赤字，另偵測模具 maintenance 維修狀態。</li>
+    <li><strong>⑤ 原物料齊套時間校驗</strong>：沿備料計算脊（毛需求 → 虛擬預扣 → 淨需求）推導原料缺口，並以「最晚下單日 = 交期 − lead_time_days」校驗齊套可行性——<strong>淨需求 ＞ 0 且距最晚下單日 ≤ shortageAlertBufferDays 即紅燈</strong>（負值＝已逾期，原料不可能如期齊套）。</li>
+    <li><strong>⑥ 物流配送時間核算</strong>：國外海運交期（典型 90~150 天）已內化於 lead_time_days 倒推邏輯；另逐筆掃描在途 PO 狀態，存在 delayed 船期延誤時發橘燈風險提示。</li>
+    <li><strong>⑦ WIP 全檢環節</strong>：現貨不足但「現貨＋有效 WIP」足夠 ➜ 黃燈，需品保及時全檢入庫；總供給仍不足 ➜ 紅燈實質缺貨赤字，須緊急開機或協調延後交貨。</li>
+    <li><strong>⑧ 色母配色環節</strong>：配比 ＞ 0 時以快速式 <code>毛需求 × 配比 ÷ (100 + 配比)</code> 推估色母需求，大於有效樹脂在庫即藍燈缺料。</li>
+    <li><strong>⑨ 綜合緊張指數評定</strong>：六環節燈號映射為 tensionScore（0~100）：任一紅 = 95（危急）；紫或橘 = 75（高度）；黃或藍 = 50（中度）；皆無 = 10（正常）。清單按分數由高至低排序輸出行動建議。</li>
+  </ul>
+
+  <h3 id="params-delivery">6.3 交期估算參數定義表<a class="anchor-link" href="#sec-flow-delivery">#</a></h3>
+  <p>下表匯整圖 B 涉及之全部參數與資料欄位。與圖 A 共用之計算脊參數（穴數、週期、克重、損耗率、虛擬預扣等）已列於 5.3 節，此處不重複，僅列交期估算特有或語意不同者。</p>
+  <div class="param-table-wrap">
+  <table>
+    <thead><tr><th>參數名稱（代碼）</th><th>數據類型</th><th>取值範圍</th><th>業務含義</th><th>計算公式 / 來源</th></tr></thead>
+    <tbody>
+      <tr><td><code>order_qty</code> 訂單量</td><td>number PCS（主檔）</td><td>＞ 0（≤ 0 由完整性掃描攔截）</td><td>單筆客戶訂單之需求量，交期推導基準</td><td>actual_order；排除 status = cancelled</td></tr>
+      <tr><td><code>target_date</code> 約定交期</td><td>date（YYYY-MM-DD）</td><td>—</td><td>客戶要求到貨日，可達性校驗之基準點</td><td>actual_order.target_date</td></tr>
+      <tr><td><code>daysToDeliver</code> 距交期天數</td><td>integer 天</td><td>整數（可為負，負值＝已逾期）</td><td>剩餘可運用之生產與物流時間窗</td><td>⌈(target_date − 今天) ÷ 24h⌉　（MRP 層級下限鉗位為 1）</td></tr>
+      <tr><td><code>totalSupply</code> 總可用供給</td><td>number（PCS）</td><td>≥ 0</td><td>現貨＋有效 WIP 之合計可供出貨量</td><td>fg_ready_qty + wipEffectiveQty</td></tr>
+      <tr><td><code>fgGap</code> 成品缺口</td><td>number（PCS）</td><td>≥ 0</td><td>訂單量拆解後仍需生產之數量</td><td>Max(0, order_qty − fg_ready_qty − wipEffectiveQty)</td></tr>
+      <tr><td><code>is_primary_mold</code> 主模標記</td><td>boolean（BOM 主檔）</td><td>true / false</td><td>交期診斷固定採用主模參數核算產能</td><td>product_mold_bom；無主模時取第一筆 BOM</td></tr>
+      <tr><td><code>status</code> 模具狀態</td><td>enum（主檔）</td><td>active / maintenance / trial / retired</td><td>maintenance 觸發紫燈「模具維修中」風險</td><td>mold_master.status</td></tr>
+      <tr><td><code>requiredProdDays</code> 所需生產天數</td><td>integer 天</td><td>≥ 0</td><td>產能負荷核算結果：連續開機天數</td><td>fgGap ＞ 0 且日產能 ＞ 0 時 ⌈fgGap ÷ dailyCapacityPcs⌉，否則 0</td></tr>
+      <tr><td><code>capacityBufferDays</code> 產能瓶頸裕度天數</td><td>integer 天（全域）</td><td>≥ 0（預設 0；抗斷線情境 3）</td><td><strong>異常緩衝期配置</strong>：生產排程之安全餘裕</td><td>MRP 層級觸發式：requiredProdDays + 本值 ＞ daysToDeliver 發紫色預警</td></tr>
+      <tr><td><code>capacityDeficitDays</code> 產能赤字天數</td><td>integer 天</td><td>整數（負值＝有餘裕）</td><td>產能不足之量化程度</td><td>requiredProdDays − daysToDeliver</td></tr>
+      <tr><td><code>rmNetRequirementKg</code> 原料淨需求（齊套缺口）</td><td>number（KG）</td><td>≥ 0</td><td>原物料齊套校驗之缺口基準</td><td>同 5.3 節計算脊；訂單層級損耗分母帶 Max(0.01, 1−損耗率) 下限保護</td></tr>
+      <tr><td><code>suggestedOrderDate</code> 最晚下單日（齊套死線）</td><td>date（YYYY-MM-DD）</td><td>—</td><td><strong>齊套時間校驗基準</strong>：超過此日原料無法如期到廠</td><td>target_date − lead_time_days</td></tr>
+      <tr><td><code>shortageAlertBufferDays</code> 採購緊急警戒天數</td><td>integer 天（全域）</td><td>≥ 0（預設 15）</td><td>齊套紅燈門檻：距最晚下單日 ≤ 此值即危急</td><td>觸發式：rmNetRequirementKg ＞ 0 且 daysUntilLatestOrder ≤ 本值</td></tr>
+      <tr><td><code>lead_time_days</code> 海運採購交期</td><td>integer 天（主檔）</td><td>＞ 0（國外海運典型 90~150 天）</td><td><strong>物流配送時間核算核心</strong>：內化於最晚下單日倒推</td><td>item_master（RAW 類）；缺值時記入主檔缺值清單</td></tr>
+      <tr><td><code>delayedPOCount</code> 延誤在途 PO 筆數</td><td>integer</td><td>≥ 0</td><td>船期延誤風險計數</td><td>|po_in_transit : status = delayed ∧ rm_sku 符合|</td></tr>
+      <tr><td><code>colorantGrossKg</code> 色母快速需求</td><td>number（KG）</td><td>≥ 0</td><td>藍燈判定基準之色母需求量</td><td>rmGrossReqKg × mixingRatioPct ÷ (100 + mixingRatioPct)；觸發條件：effectiveRmOnHandKg ＜ 本值</td></tr>
+      <tr><td><code>tensionScore</code> 綜合緊張指數</td><td>integer</td><td>{95, 75, 50, 10}</td><td>訂單危急度評分，清單排序依據</td><td>任一紅 = 95；紫或橘 = 75；黃或藍 = 50；皆無 = 10</td></tr>
+      <tr><td><code>overallTensionLevel</code> 緊張等級</td><td>enum</td><td>critical / high / medium / normal</td><td>與 tensionScore 一對一映射之文字等級</td><td>critical↔95、high↔75、medium↔50、normal↔10</td></tr>
+      <tr><td><code>calcError</code> 主檔缺值說明</td><td>string | undefined</td><td>—</td><td>非空時表示本單數字不可作為決策依據</td><td>主檔缺值清單串接；插入紅色 data_integrity 環節至結果首位</td></tr>
+    </tbody>
+  </table>
+  </div>
+    </div>
+  </details>
+</section>
+
 <section id="sec-mrp">
-  <h2><span class="secno">03</span>三階 MRP 核心引擎（成品 → 模具 → 原料）</h2>
-  <p>MRP 引擎（<code>mrpEngine.ts → calculateMRPForSKU</code>）針對單一成品 SKU，依最新（或指定）版本之預估需求執行三階段推導：</p>
+  <details class="sec">
+    <summary><h2><span class="secno">07</span>三階 MRP 核心引擎（成品 → 模具 → 原料）</h2><span class="sec-hint">完整公式推導（工程師／顧問深度參考）</span></summary>
+    <div class="sec-body">
+  
+  <p>MRP 引擎（<code>mrpEngine.ts → calculateMRPForSKU</code>）針對單一成品 SKU，依最新（或指定）版本之預估需求執行三階段推導（即第  節圖 A 之計算脊）：</p>
 
   <h3>Phase 1｜成品淨需求（FG Net Requirement）<a class="anchor-link" href="#sec-mrp">#</a></h3>
   <div class="formula">WIP 有效量 = WIP 待驗量 × 標準全檢良率 (std_sorting_yield)
 成品淨需求 = Max( 0 , 總需求量 − 成品良品在庫 − WIP 有效量 )</div>
   <ul class="plain">
-    <li>總需求量依第 2 節之四種彙總模式決定。</li>
+    <li>總需求量依第  節之四種彙總模式決定。</li>
     <li>良品在庫與 WIP 待驗量取自<strong>最新日期</strong>之庫存快照。</li>
     <li><strong>Anti-Placebo 保護</strong>：若品號主檔缺 <code>std_sorting_yield</code>，該 SKU 直接回傳紅色「無法計算」警示，<strong>禁止靜默帶入預設值</strong>偽裝成有效運算。</li>
   </ul>
@@ -242,7 +638,7 @@
   <div class="formula">單穴克重 Unit_Weight_g = ( 整模淨重 net_mold_weight_g + 流道重 runner_weight_g ) ÷ 妥善穴數 active_cavities
 原料毛需求 KG = ( 成品淨需求 PCS × 單穴克重 g ÷ 1000 ) ÷ ( 1 − 成型損耗率 std_mfg_scrap_rate )</div>
   <ul class="plain">
-    <li>一個成品可能綁多副模具（多筆 BOM），由全域參數 <code>multiMoldStrategy</code> 決定採用哪一副（詳第 4 節）；使用者亦可手動指定模具。</li>
+    <li>一個成品可能綁多副模具（多筆 BOM），由全域參數 <code>multiMoldStrategy</code> 決定採用哪一副（詳第  節）；使用者亦可手動指定模具。</li>
     <li><strong>塞穴聯動</strong>：妥善穴數減少時，單穴克重自動上升（流道重量由更少穴數分攤），且日產能同時下降——此為數學自動聯動，非人為估算。</li>
     <li><strong>Anti-Placebo 保護</strong>：BOM 缺 <code>std_mfg_scrap_rate</code> 即擋下計算並提示補值（0 為合法值，不會誤判為缺值）。</li>
   </ul>
@@ -264,11 +660,15 @@
   <div class="formula sub">首批量 = ⌈ 建議量 × 50% ÷ MOQ ⌉ × MOQ　｜ 到港日 = 需求交期
 次批量 = 建議量 − 首批量　　　　　　　　　　 ｜ 下單日 = 首批下單日 + 30 天；到港日 = 需求交期 + 30 天
 目的：防範實體爆倉與降低資金積壓。</div>
+    </div>
+  </details>
 </section>
 
-<!-- ════════════════════ 4 ════════════════════ -->
 <section id="sec-capacity">
-  <h2><span class="secno">04</span>射出產能與模具參數邏輯</h2>
+  <details class="sec">
+    <summary><h2><span class="secno">08</span>射出產能與模具參數邏輯</h2><span class="sec-hint">產能怎麼算：穴數 × 週期 × 工時</span></summary>
+    <div class="sec-body">
+  
   <div class="formula">日產能 PCS = ( 每日運轉秒數 ÷ 成型週期 cycle_time_sec ) × 妥善穴數 active_cavities
 每日運轉秒數 = dailyOperatingHours × 3600　（預設 24h = 86,400 秒）
 所需生產天數 = ⌈ 成品淨需求 ÷ 日產能 ⌉
@@ -285,12 +685,16 @@
   </table>
 
   <h3>塞穴告警門檻（cavityAlertThresholdPercent）<a class="anchor-link" href="#sec-capacity">#</a></h3>
-  <p>當「妥善穴數 ÷ 設計穴數」低於設定百分比（預設 100%，即任一穴停用立即提醒）時，系統提示塞穴維修警告；塞穴同時會使單穴克重膨脹、日產能下降（見第 3 節聯動關係）。</p>
+  <p>當「妥善穴數 ÷ 設計穴數」低於設定百分比（預設 100%，即任一穴停用立即提醒）時，系統提示塞穴維修警告；塞穴同時會使單穴克重膨脹、日產能下降（見第  節聯動關係）。</p>
+    </div>
+  </details>
 </section>
 
-<!-- ════════════════════ 5 ════════════════════ -->
 <section id="sec-rm">
-  <h2><span class="secno">05</span>原料需求、庫存可用量與採購建議</h2>
+  <details class="sec">
+    <summary><h2><span class="secno">09</span>原料需求、庫存可用量與採購建議</h2><span class="sec-hint">庫存、在途與採購規則的計入規則</span></summary>
+    <div class="sec-body">
+  
   <table>
     <thead><tr><th>因子</th><th>來源</th><th>計入規則</th></tr></thead>
     <tbody>
@@ -303,11 +707,15 @@
     </tbody>
   </table>
   <div class="note"><strong>缺值即擋（Anti-Placebo）：</strong>原料品號不存在於主檔，或缺 lead_time_days / moq_kg / safety_stock_kg 任一欄位時，MRP 回傳紅色警示「請至資料表維護補齊」，<strong>絕不以全域預設值頂替計算</strong>。</div>
+    </div>
+  </details>
 </section>
 
-<!-- ════════════════════ 6 ════════════════════ -->
 <section id="sec-colorant">
-  <h2><span class="secno">06</span>色母／色粉配色製程拆分邏輯</h2>
+  <details class="sec">
+    <summary><h2><span class="secno">10</span>色母／色粉配色製程拆分邏輯</h2><span class="sec-hint">有加色母的產品如何拆成兩條需求</span></summary>
+    <div class="sec-body">
+  
   <p>當 BOM 之 <code>color_mixing_ratio_pct &gt; 0</code> 時，BOM 的 <code>rm_sku</code> 代表色母品號，總毛需求需拆分為「基礎樹脂」與「色母」兩條獨立的淨需求與採購建議：</p>
   <div class="formula">有效基礎樹脂毛需求 KG = 總毛需求 ÷ ( 1 + 配比 % ÷ 100 )
 色母毛需求 KG = 總毛需求 − 有效基礎樹脂毛需求
@@ -316,12 +724,16 @@
 色母淨需求 = Max( 0 , 色母毛需求 − 色母在庫 − 色母在途 + 色母安全庫存 )
 兩者各自依 MOQ 向上進位產出獨立採購建議。</div>
   <p><strong>範例</strong>：總毛需求 51.0 KG、配比 2.0% ➜ 樹脂 51.0÷1.02 = 50.0 KG、色母 = 1.0 KG。</p>
-  <div class="note"><strong>訂單缺料分析中的簡化式</strong>：在訂單緊張度診斷（第 8 節）中，色母毛需求改以 <code>總毛需求 × 配比 ÷ (100 + 配比)</code> 快速推估，並與有效樹脂在庫比較以判定藍色「色母缺料」環節。</div>
+  <div class="note"><strong>訂單缺料分析中的簡化式</strong>：在訂單緊張度診斷（第  節）中，色母毛需求改以 <code>總毛需求 × 配比 ÷ (100 + 配比)</code> 快速推估，並與有效樹脂在庫比較以判定藍色「色母缺料」環節。</div>
+    </div>
+  </details>
 </section>
 
-<!-- ════════════════════ 7 ════════════════════ -->
 <section id="sec-wip">
-  <h2><span class="secno">07</span>WIP 在製品日推估引擎</h2>
+  <details class="sec">
+    <summary><h2><span class="secno">11</span>WIP 在製品日推估引擎</h2><span class="sec-hint">每日待驗區堆存量怎麼推估</span></summary>
+    <div class="sec-body">
+  
   <p>WIP 引擎（<code>wipEngine.ts → calculateDailyWIP</code>）模擬「機台 24 小時成型 vs 白班約 12 小時人工挑選」的現場時序差，逐日推估在製品暫存區結存：</p>
   <div class="formula">當日理論產出 P(t) = 工時 × ( 3600 ÷ 成型週期秒 ) × 妥善穴數 × ( 1 − 不良率 )
 WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢完工入庫量 )
@@ -337,12 +749,16 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       <tr><td>&gt; 300 箱</td><td><span class="badge red">critical 危急</span></td><td>暫存區逼近飽和，須立即拉高挑選能量。</td></tr>
     </tbody>
   </table>
+    </div>
+  </details>
 </section>
 
-<!-- ════════════════════ 8 ════════════════════ -->
 <section id="sec-tension">
-  <h2><span class="secno">08</span>訂單缺料分析（訂單緊張度診斷）</h2>
-  <p>缺料分析引擎（<code>orderTensionEngine.ts → diagnoseAllOrderTensions</code>）對<strong>每一筆有效訂單</strong>逐一檢查六大瓶頸環節，並綜合評定緊張等級。清單預設按緊張度由高至低排序。</p>
+  <details class="sec">
+    <summary><h2><span class="secno">12</span>訂單缺料分析（訂單緊張度診斷）</h2><span class="sec-hint">逐單體檢：六大環節燈號與緊張指數</span></summary>
+    <div class="sec-body">
+  
+  <p>缺料分析引擎（<code>orderTensionEngine.ts → diagnoseAllOrderTensions</code>）對<strong>每一筆有效訂單</strong>逐一檢查六大瓶頸環節（完整鏈路見第  節圖 B），並綜合評定緊張等級。清單預設按緊張度由高至低排序。</p>
 
   <h3>六大環節與觸發條件<a class="anchor-link" href="#sec-tension">#</a></h3>
   <table>
@@ -356,7 +772,7 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       <tr><td>⑤ 色母配色缺料</td><td><span class="badge blue">blue 藍</span></td><td>配比 &gt; 0 且 色母需求量 ＞ 有效樹脂在庫</td></tr>
     </tbody>
   </table>
-  <div class="note"><strong>補充</strong>：「實體倉容超載」不屬於逐單診斷環節，由 MRP 引擎在原料品號層級監控——(在庫＋在途) ＞ <code>defaultWarehouseCapacityKg</code>（預設 12,000 KG）時發出橘色爆倉預警（詳第 14 節）。</div>
+  <div class="note"><strong>補充</strong>：「實體倉容超載」不屬於逐單診斷環節，由 MRP 引擎在原料品號層級監控——(在庫＋在途) ＞ <code>defaultWarehouseCapacityKg</code>（預設 12,000 KG）時發出橘色爆倉預警（詳第  節）。</div>
 
   <h3>綜合緊張指數評定（tensionScore, 0~100）<a class="anchor-link" href="#sec-tension">#</a></h3>
   <div class="formula">任一環節為 紅(red)　　　　　　 ➜ critical 危急　score = 95
@@ -364,11 +780,15 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
 否則有 黃(yellow) 或 藍(blue)　➜ medium 中度　score = 50
 皆無　　　　　　　　　　　　　 ➜ normal 正常　score = 10</div>
   <div class="note"><strong>主檔缺值優先攔截</strong>：若訂單品號缺「標準全檢良率」、BOM 缺損耗率或原料缺採購規則，系統強制在診斷結果最前方插入「⚠️ 主檔缺值」紅色項目，並標明<strong>本單診斷數字不可作為決策依據</strong>。</div>
+    </div>
+  </details>
 </section>
 
-<!-- ════════════════════ 9 ════════════════════ -->
 <section id="sec-demand-compare">
-  <h2><span class="secno">09</span>需求三向交叉比對（預測 vs 實單 vs 歷史同期）</h2>
+  <details class="sec">
+    <summary><h2><span class="secno">13</span>需求三向交叉比對（預測 vs 實單 vs 歷史同期）</h2><span class="sec-hint">預估 vs 實單偏差警示</span></summary>
+    <div class="sec-body">
+  
   <p>需求比對引擎（<code>demandAnalysisEngine.ts → analyzeDemandCrossComparison</code>）針對有客戶需求之品號（PART / COMP / SET 類），按需求交期逐期比對三方數量：</p>
   <div class="formula">差值 = 實際訂單量 − 客戶預估量
 偏差率 bias% = ( 實單 − 預估 ) ÷ 預估 × 100%　（無預估卻有實單 ➜ 插單，bias = +100%）</div>
@@ -387,11 +807,15 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
     <li>任一期別出現紅色警戒 ➜ <code>volatile</code> 劇烈波動；其餘 ➜ <code>stable</code> 平穩。</li>
   </ul>
   <div class="note"><strong>歷史同期參考量的透明化說明</strong>：目前系統尚無歷史銷售實績表，畫面上的「歷年同期參考量」係以預估量 × 0.92 生成之<strong>推估基準軌跡</strong>，僅供相對比較，非真實歷史數據。此為已知待討論項，建議與業務單位確認是否導入真實歷史資料源。</div>
+    </div>
+  </details>
 </section>
 
-<!-- ════════════════════ 10 ════════════════════ -->
 <section id="sec-ship">
-  <h2><span class="secno">10</span>出貨排程放行（Ship Clearance）邏輯</h2>
+  <details class="sec">
+    <summary><h2><span class="secno">14</span>出貨排程放行（Ship Clearance）邏輯</h2><span class="sec-hint">未來兩週出貨放行判定</span></summary>
+    <div class="sec-body">
+  
   <p>出貨排程清理檢視（<code>ShipScheduleClearanceView.tsx</code>）以未來 14 天為窗期，逐品號判定能否如期放行出貨：</p>
   <div class="formula">排程量 = 未來 14 天內有效訂單總量；
 　　　　 若 2 週內查無訂單 ➜ 取最新版預估量 × 50%（月度預估換算雙週基準）。
@@ -410,11 +834,15 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
     <li>KPI「放行率」= (可放行 + 仰賴WIP 品項數) ÷ 總品項數 × 100%。</li>
     <li>業務工作台之「週二放行概況」採同一折算邏輯（覆蓋率 = (在庫覆蓋+WIP需求) ÷ 訂單總量），惟其良率預設顯示基準為 0.95。</li>
   </ul>
+    </div>
+  </details>
 </section>
 
-<!-- ════════════════════ 11 ════════════════════ -->
 <section id="sec-integrity">
-  <h2><span class="secno">11</span>資料完整性掃描與健康評分</h2>
+  <details class="sec">
+    <summary><h2><span class="secno">15</span>資料完整性掃描與健康評分</h2><span class="sec-hint">資料品質體檢與健康評分</span></summary>
+    <div class="sec-body">
+  
   <p>掃描器（<code>dataIntegrityScanner.ts</code>）依 MECE 原則檢核十大資料表的關聯完整性與數值合理性：</p>
   <h3>檢核項目<a class="anchor-link" href="#sec-integrity">#</a></h3>
   <table>
@@ -431,11 +859,15 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
   <div class="formula">健康分數 = 100 − 斷鏈錯誤數 × 15 − 一般警告數 × 2 − 未通過引擎數 × 20
 鏈路健康 isChainHealthy = (斷鏈錯誤數 = 0 且 四大引擎流水線全部貫通)</div>
   <p>引擎流水線貫通測試包含：MRP 引擎、WIP 引擎、訂單缺料分析引擎、出貨清理模組共四項。</p>
+    </div>
+  </details>
 </section>
 
-<!-- ════════════════════ 12 ════════════════════ -->
 <section id="sec-params">
-  <h2><span class="secno">12</span>全域系統參數總表（可調）</h2>
+  <details class="sec">
+    <summary><h2><span class="secno">16</span>全域系統參數總表（可調）</h2><span class="sec-hint">12 個可調參數總表</span></summary>
+    <div class="sec-body">
+  
   <p>以下參數集中於「系統設定」頁管理，即時影響所有運算結果。物料屬性一律以主檔個別值為準，<strong>全域參數絕不頂替缺失的主檔欄位</strong>。</p>
   <table>
     <thead><tr><th>參數</th><th>預設值</th><th>影響範圍與說明</th></tr></thead>
@@ -445,8 +877,8 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       <tr><td><code>defaultWarehouseCapacityKg</code> 單項原料倉容上限</td><td>12,000 KG</td><td>(在庫+在途) 超過此值 ➜ 發橘色爆倉預警；亦作為分批到貨之大批次判定基準之一。</td></tr>
       <tr><td><code>capacityBufferDays</code> 產能瓶頸裕度天數</td><td>0 天</td><td>所需生產天數 + 此裕度 &gt; 距交期天數 ➜ 發紫色產能瓶頸預警。</td></tr>
       <tr><td><code>cavityAlertThresholdPercent</code> 塞穴告警門檻</td><td>100%</td><td>妥善穴數/設計穴數 低於此百分比 ➜ 提示塞穴維修警告。</td></tr>
-      <tr><td><code>multiMoldStrategy</code> 多模備料原則</td><td>conservative_max_weight</td><td>多模具品號之選模策略（詳第 4 節）。</td></tr>
-      <tr><td><code>demandConsumptionMode</code> 需求彙總模式</td><td>additive</td><td>預估與實單之合併邏輯（詳第 2 節）。</td></tr>
+      <tr><td><code>multiMoldStrategy</code> 多模備料原則</td><td>conservative_max_weight</td><td>多模具品號之選模策略（詳第  節）。</td></tr>
+      <tr><td><code>demandConsumptionMode</code> 需求彙總模式</td><td>additive</td><td>預估與實單之合併邏輯（詳第  節）。</td></tr>
       <tr><td><code>dailyOperatingHours</code> 每日有效工時</td><td>24.0 小時</td><td>直接決定日產能與 WIP 日產出推估。</td></tr>
       <tr><td><code>safetyStockMultiplier</code> 安全庫存動態係數</td><td>1.0×</td><td>全系統安全庫存槓桿（如 1.25 = 提高 25% 備料水位）。</td></tr>
       <tr><td><code>maxAllowedScrapRatePct</code> 損耗率合理上限</td><td>8%</td><td>BOM 損耗率超出此值 ➜ 完整性掃描發警告（計價成本天花板防呆）。</td></tr>
@@ -454,11 +886,15 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       <tr><td><code>enablePhasedDeliveryAdvisor</code> 分批到貨建議</td><td>開啟</td><td>大宗採購自動拆兩批進貨排程（間隔 30 天）。</td></tr>
     </tbody>
   </table>
+    </div>
+  </details>
 </section>
 
-<!-- ════════════════════ 13 ════════════════════ -->
 <section id="sec-presets">
-  <h2><span class="secno">13</span>參數情境預設檔（平衡 / 抗斷線 / 精實）</h2>
+  <details class="sec">
+    <summary><h2><span class="secno">17</span>參數情境預設檔（平衡 / 抗斷線 / 精實）</h2><span class="sec-hint">平衡／抗斷線／精實三種情境</span></summary>
+    <div class="sec-body">
+  
   <p>系統設定頁提供三種一鍵情境，方便不同營運策略快速切換：</p>
   <table>
     <thead><tr><th>參數</th><th>PRD 標準平衡模式</th><th>高安全抗斷線模式</th><th>精實低庫存模式</th></tr></thead>
@@ -474,11 +910,15 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
     </tbody>
   </table>
   <p>參數亦可匯出為 JSON 檔備份，或還原 PRD 原廠標準值。</p>
+    </div>
+  </details>
 </section>
 
-<!-- ════════════════════ 14 ════════════════════ -->
 <section id="sec-alerts">
-  <h2><span class="secno">14</span>預警等級與觸發條件彙總</h2>
+  <details class="sec">
+    <summary><h2><span class="secno">18</span>預警等級與觸發條件彙總</h2><span class="sec-hint">全系統預警燈號總整理</span></summary>
+    <div class="sec-body">
+  
   <table>
     <thead><tr><th>燈號</th><th>預警名稱</th><th>觸發運算式（摘要）</th><th>建議行動</th></tr></thead>
     <tbody>
@@ -491,27 +931,598 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       <tr><td><span class="badge red">⚠️ data_integrity</span></td><td>主檔缺值無法計算</td><td>std_sorting_yield / scrap_rate / 採購三要素任一缺值</td><td>至資料表維護補齊欄位後重新計算；缺值期間數字不可作為決策依據。</td></tr>
     </tbody>
   </table>
+    </div>
+  </details>
 </section>
 
-<!-- ════════════════════ 15 ════════════════════ -->
 <section id="sec-principles">
-  <h2><span class="secno">15</span>設計原則：零偽造與缺值即擋</h2>
+  <details class="sec">
+    <summary><h2><span class="secno">19</span>設計原則：零偽造與缺值即擋</h2><span class="sec-hint">系統的誠信設計原則</span></summary>
+    <div class="sec-body">
+  
   <ul class="plain">
     <li><strong>缺值即擋，禁止靜默預設</strong>：主檔關鍵欄位（良率、損耗率、交期、MOQ、安全庫存）缺值時，引擎拒絕計算並明確指出缺哪些欄位，絕不偷偷代入預設值讓數字看起來正常。</li>
     <li><strong>空值呈現真實空狀態</strong>：查無資料時顯示 0 筆／無資料，不偽造數值。</li>
-    <li><strong>推估值必須標示</strong>：凡屬模擬推估（如未下單品號之推估交期、歷史同期參考軌跡），畫面明確標示其性質，不誤導使用者。</li>
+    <li><strong>推估值必須標示</strong>：凡屬模擬推估（如未下單品號之推估交期、歷史同期參考軌跡），畫面明確標示其性質，不誤導使用者。交期模型定位為「可達性校驗」而非憑空生成承諾日（見第  節）。</li>
+    <li><strong>不虛構未實作機制</strong>：如跨廠區實體調撥尚無模組，文件即如實聲明現行替代機制（見第  節），不以假規則充數。</li>
     <li><strong>資料去識別化</strong>：演練與種子資料一律使用 A客戶/B客戶/C客戶、A供應商/B供應商/C供應商 及去識別化單號格式，不含任何真實往來對象名稱。</li>
     <li><strong>術語標準化</strong>：介面與本文件統一使用「原料倉庫／在製品待驗區／成品倉庫」等通用供應鏈術語，聚焦物料流與狀態流。</li>
   </ul>
+
+    </div>
+  </details>
 </section>
 
 </main>
 
 <footer>
-  料事如神系統 Predictive Material System (PMS) — 數據邏輯規格總覽 v2.0 ｜ 本文件由原始碼邏輯直接彙整產出，
+  料事如神系統 Predictive Material System (PMS) — 數據邏輯規格總覽 v3.1 ｜ 本文件由原始碼邏輯直接彙整產出，
   內容與 src/utils/mrpEngine.ts · orderTensionEngine.ts · wipEngine.ts · demandAnalysisEngine.ts · dataIntegrityScanner.ts 及 src/types.ts 系統參數一致。
   如業務流程調整，請連同本文件更新，確保跨單位認知一致。
 </footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ═══ SSOT 即時同步面板：於系統內以 iframe 開啟時接收 postMessage 呈現即時參數；單獨開啟則顯示靜態文件模式 ═══ */
+  (function initLivePanel() {
+    var style = document.createElement('style');
+    style.textContent =
+      '#pms-live-panel{margin-top:20px;border:1px solid var(--border);border-radius:14px;padding:16px 20px;background:var(--bg-surface);font-size:13px}' +
+      '.plp-badge{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:12.5px;padding:4px 12px;border-radius:999px;border:1px solid var(--success);color:var(--success);background:rgba(52,211,153,.1)}' +
+      '.plp-badge.static{border-color:var(--text-muted);color:var(--text-muted);background:transparent}' +
+      '.plp-title{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin:14px 0 6px;font-weight:700}' +
+      '.plp-grid{display:flex;flex-wrap:wrap;gap:8px}' +
+      '.plp-chip{font-size:12px;padding:4px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card-alt);color:var(--text-sub);font-family:var(--font-mono)}' +
+      '.plp-chip b{color:var(--brand);font-weight:700}';
+    document.head.appendChild(style);
+    var header = document.querySelector('header');
+    if (!header) return;
+    var panel = document.createElement('div');
+    panel.id = 'pms-live-panel';
+    header.appendChild(panel);
+    panel.innerHTML = '<span class="plp-badge static">⏳ 正在偵測系統連線…</span>';
+    var connected = false;
+
+    var PARAMS = [
+      ['shortageAlertBufferDays', '採購警戒', '天'],
+      ['overstockMultiplier', '超備門檻', '×'],
+      ['defaultWarehouseCapacityKg', '倉容上限', 'KG'],
+      ['capacityBufferDays', '產能裕度', '天'],
+      ['cavityAlertThresholdPercent', '塞穴門檻', '%'],
+      ['multiMoldStrategy', '多模策略', ''],
+      ['demandConsumptionMode', '需求彙總', ''],
+      ['dailyOperatingHours', '每日工時', 'h'],
+      ['safetyStockMultiplier', '安全庫存係數', '×'],
+      ['maxAllowedScrapRatePct', '損耗上限', ''],
+      ['enableVirtualBackflush', '虛擬預扣', ''],
+      ['enablePhasedDeliveryAdvisor', '分批到貨', '']
+    ];
+    var TABLES = [
+      ['item_master', '品號主檔'],
+      ['mold_master', '模具主檔'],
+      ['product_mold_bom', '成型 BOM'],
+      ['demand_forecast_log', '預估需求'],
+      ['actual_order', '實際訂單'],
+      ['inventory_wip_snapshot', '庫存/WIP 快照'],
+      ['po_in_transit', '在途 PO']
+    ];
+
+    function fmtVal(key, v) {
+      if (typeof v === 'boolean') return v ? '開啟' : '關閉';
+      if (key === 'maxAllowedScrapRatePct') return Math.round(v * 100) + '%';
+      return String(v);
+    }
+    function chip(label, val) {
+      var s = document.createElement('span');
+      s.className = 'plp-chip';
+      s.textContent = label + ' ';
+      var b = document.createElement('b');
+      b.textContent = val;
+      s.appendChild(b);
+      return s;
+    }
+    function render(p) {
+      connected = true;
+      panel.innerHTML = '';
+      var t = new Date(p.syncedAt).toLocaleTimeString('zh-TW', { hour12: false });
+      var badge = document.createElement('span');
+      badge.className = 'plp-badge';
+      badge.textContent = '🟢 已連線 PMS 系統 · SSOT 即時同步 · ' + t;
+      panel.appendChild(badge);
+
+      var t1 = document.createElement('div');
+      t1.className = 'plp-title';
+      t1.textContent = '全域系統參數（系統設定即時值）';
+      panel.appendChild(t1);
+      var g1 = document.createElement('div');
+      g1.className = 'plp-grid';
+      PARAMS.forEach(function (row) {
+        var v = p.params ? p.params[row[0]] : undefined;
+        if (v === undefined) return;
+        var unit = (row[2] && typeof v !== 'boolean' && row[0] !== 'maxAllowedScrapRatePct') ? ' ' + row[2] : '';
+        g1.appendChild(chip(row[1], fmtVal(row[0], v) + unit));
+      });
+      panel.appendChild(g1);
+
+      var t2 = document.createElement('div');
+      t2.className = 'plp-title';
+      t2.textContent = '核心資料表筆數（單一真相來源）';
+      panel.appendChild(t2);
+      var g2 = document.createElement('div');
+      g2.className = 'plp-grid';
+      TABLES.forEach(function (row) {
+        var v = p.stats ? p.stats[row[0]] : undefined;
+        if (v === undefined) return;
+        g2.appendChild(chip(row[1], Number(v).toLocaleString() + ' 筆'));
+      });
+      if (p.stats && p.stats.latestSnapshotDate) {
+        g2.appendChild(chip('最新快照日', p.stats.latestSnapshotDate));
+      }
+      panel.appendChild(g2);
+    }
+    window.addEventListener('message', function (ev) {
+      var d = ev.data;
+      if (!d || d.type !== 'pms-live-sync' || !d.payload) return;
+      render(d.payload);
+    });
+    setTimeout(function () {
+      if (!connected) {
+        panel.innerHTML = '';
+        var b = document.createElement('span');
+        b.className = 'plp-badge static';
+        b.textContent = '📄 靜態文件模式 · 於系統「數據邏輯規格書」分頁開啟時，自動同步即時參數與資料筆數（SSOT）';
+        panel.appendChild(b);
+      }
+    }, 1500);
+  })();
+
+  /* ═══ 互動式流程圖：節點/邊資料驅動佈局，邊線依指定路由繪製，避免穿越節點與文字 ═══ */
+  var NW = 212, NH = 78, RG = 44, CGAP = 92, PAD = 36;
+  var SVGNS = 'http://www.w3.org/2000/svg';
+
+  function el(name, attrs, parent) {
+    var n = document.createElementNS(SVGNS, name);
+    for (var k in attrs) { if (attrs.hasOwnProperty(k)) n.setAttribute(k, attrs[k]); }
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+
+  /* 路由類型：
+     v      同欄垂直直線（標籤置於線左側，遠離右向分支）
+     h      同列水平直線：來源右側中段 → 目標左側（不繞行、不穿箱）
+     h2     同列跨多欄：由來源底部右偏下行，自目標下方迂迴向上進入（避開中間節點）
+     elbow  異欄異列：底部下行 → 列間水平 → 進入目標頂（可指定 dx 入點偏移）
+     hdown  近列：右側中段水平至目標欄中心後下行進入目標頂
+     sdown  匯流：來源左側中段水平至目標頂指定入點後下行（用於多晶片匯入） */
+  function routeEdge(a, b, e) {
+    var acx = a.x + NW / 2, bcx = b.x + NW / 2;
+    var aBot = a.y + NH, bTop = b.y;
+    var r = e.route || 'elbow';
+    if (r === 'v') {
+      return {
+        d: 'M' + acx + ' ' + aBot + ' L' + acx + ' ' + (bTop - 2),
+        label: { x: acx - 8, y: aBot + 18, anchor: 'end' }
+      };
+    }
+    if (r === 'h') {
+      var y = a.y + NH - 22;
+      return {
+        d: 'M' + (a.x + NW) + ' ' + y + ' L' + (b.x - 2) + ' ' + y,
+        label: { x: a.x + NW + 10, y: y - 8, anchor: 'start' }
+      };
+    }
+    if (r === 'h2') {
+      var sx = acx + 22;
+      var yGap = Math.max(aBot, b.y + NH) + 16;
+      return {
+        d: 'M' + sx + ' ' + aBot + ' L' + sx + ' ' + yGap + ' L' + bcx + ' ' + yGap + ' L' + bcx + ' ' + (b.y + NH + 2),
+        label: { x: (sx + bcx) / 2, y: yGap + 15, anchor: 'middle' }
+      };
+    }
+    if (r === 'hdown') {
+      var sy = a.y + NH - 22;
+      var ex = bcx + (e.dx || 0);
+      return {
+        d: 'M' + (a.x + NW) + ' ' + sy + ' L' + ex + ' ' + sy + ' L' + ex + ' ' + (bTop - 2),
+        label: { x: a.x + NW + 10, y: sy - 8, anchor: 'start' }
+      };
+    }
+    if (r === 'sdown') {
+      var sy2 = a.y + NH / 2;
+      var ex2 = bcx + (e.dx || 0);
+      return { d: 'M' + a.x + ' ' + sy2 + ' L' + ex2 + ' ' + sy2 + ' L' + ex2 + ' ' + (bTop - 2) };
+    }
+    var yy = Math.max(bTop - 18, aBot + 14);
+    var ex3 = bcx + (e.dx || 0);
+    return {
+      d: 'M' + acx + ' ' + aBot + ' L' + acx + ' ' + yy + ' L' + ex3 + ' ' + yy + ' L' + ex3 + ' ' + (bTop - 2),
+      label: { x: (acx + ex3) / 2, y: yy - 6, anchor: 'middle' }
+    };
+  }
+
+  function renderChart(svgId, chart) {
+    var svg = document.getElementById(svgId);
+    if (!svg) return;
+    var nodes = chart.nodes, byId = {};
+    nodes.forEach(function (n) {
+      n.x = PAD + n.col * (NW + CGAP);
+      n.y = PAD + n.row * (NH + RG);
+      byId[n.id] = n;
+    });
+    var maxCol = 0, maxRow = 0;
+    nodes.forEach(function (n) {
+      if (n.col > maxCol) maxCol = n.col;
+      if (n.row > maxRow) maxRow = n.row;
+    });
+    var W = PAD * 2 + maxCol * (NW + CGAP) + NW;
+    var H = PAD * 2 + maxRow * (NH + RG) + NH;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.setAttribute('width', String(W));
+    svg.setAttribute('height', String(H));
+
+    var defs = el('defs', {}, svg);
+    defs.innerHTML =
+      '<marker id="arr-' + svgId + '" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+      '<path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"></path></marker>' +
+      '<marker id="arrw-' + svgId + '" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+      '<path d="M 0 0 L 10 5 L 0 10 z" fill="#f87171"></path></marker>';
+
+    (chart.edges || []).forEach(function (e) {
+      var a = byId[e.from], b = byId[e.to];
+      if (!a || !b) return;
+      var routed = routeEdge(a, b, e);
+      var marker = e.cls === 'edge-warn' ? 'url(#arrw-' + svgId + ')' : 'url(#arr-' + svgId + ')';
+      el('path', { d: routed.d, 'class': 'fc-edge' + (e.cls ? ' ' + e.cls : ''), 'marker-end': marker }, svg);
+      if (e.label && routed.label) {
+        var t = el('text', {
+          x: routed.label.x, y: routed.label.y,
+          'text-anchor': routed.label.anchor, 'class': 'fc-elabel'
+        }, svg);
+        t.textContent = e.label;
+      }
+    });
+
+    nodes.forEach(function (n) {
+      var g = el('g', { 'class': 'fc-node fc-node-' + n.type }, svg);
+      var hasLines = !!(n.lines && n.lines.length);
+      var cx = n.x + NW / 2, cy = n.y + NH / 2;
+      var tip = el('title', {}, g);
+      tip.textContent = n.title + (hasLines ? '\n' + n.lines.slice(0, 3).join('\n') : '');
+      function drawTitleLines() {
+        var ty = n.y + (hasLines ? 23 : 45);
+        var title = el('text', { x: cx, y: ty, 'text-anchor': 'middle', 'class': 'fc-title-text' }, g);
+        title.textContent = n.title;
+        if (hasLines) {
+          n.lines.slice(0, 3).forEach(function (ln, i) {
+            var lt = el('text', { x: cx, y: ty + 17 + i * 15, 'text-anchor': 'middle', 'class': 'fc-line-text' }, svg);
+            lt.textContent = ln;
+          });
+        }
+      }
+      if (n.type === 'dec') {
+        el('polygon', { points: cx + ',' + n.y + ' ' + (n.x + NW) + ',' + cy + ' ' + cx + ',' + (n.y + NH) + ' ' + n.x + ',' + cy }, g);
+        var parts = n.title.length > 8
+          ? [n.title.slice(0, Math.ceil(n.title.length / 2)), n.title.slice(Math.ceil(n.title.length / 2))]
+          : [n.title];
+        parts.forEach(function (pt, i) {
+          var dt = el('text', { x: cx, y: cy + 5 + (i - (parts.length - 1) / 2) * 18, 'text-anchor': 'middle', 'class': 'fc-title-text' }, g);
+          dt.textContent = pt;
+        });
+      } else if (n.type === 'data') {
+        var sk = 16;
+        el('polygon', { points: (n.x + sk) + ',' + n.y + ' ' + (n.x + NW) + ',' + n.y + ' ' + (n.x + NW - sk) + ',' + (n.y + NH) + ' ' + n.x + ',' + (n.y + NH) }, g);
+        drawTitleLines();
+      } else if (n.type === 'sub') {
+        el('rect', { x: n.x, y: n.y, width: NW, height: NH, rx: 6 }, g);
+        el('line', { x1: n.x + 9, y1: n.y, x2: n.x + 9, y2: n.y + NH, 'class': 'fc-subbar' }, g);
+        el('line', { x1: n.x + NW - 9, y1: n.y, x2: n.x + NW - 9, y2: n.y + NH, 'class': 'fc-subbar' }, g);
+        drawTitleLines();
+      } else {
+        var rx = (n.type === 'start' || n.type === 'end') ? NH / 2 : 10;
+        el('rect', { x: n.x, y: n.y, width: NW, height: NH, rx: rx }, g);
+        drawTitleLines();
+      }
+    });
+  }
+
+  function makeInteractive(key) {
+    var vp = document.getElementById('vp-' + key);
+    var svg = document.getElementById('svg-' + key);
+    var lbl = document.getElementById('lbl-' + key);
+    if (!vp || !svg || !svg.getAttribute('viewBox')) return;
+    var vb = svg.getAttribute('viewBox').split(' ');
+    var W = parseFloat(vb[2]), H = parseFloat(vb[3]);
+    var scale = 1, tx = 0, ty = 0, fitScale = 1;
+
+    function apply() {
+      svg.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+      if (lbl) lbl.textContent = Math.round(scale * 100) + '%';
+    }
+    function fit() {
+      var vw = vp.clientWidth, vh = vp.clientHeight;
+      fitScale = Math.min(Math.max(vw / W, 0.2), 1.15);
+      scale = fitScale;
+      tx = Math.max((vw - W * scale) / 2, 8);
+      ty = 12;
+      apply();
+    }
+    function zoomAt(cx, cy, factor) {
+      var ns = Math.min(Math.max(scale * factor, fitScale * 0.4), 3);
+      tx = cx - (cx - tx) * (ns / scale);
+      ty = cy - (cy - ty) * (ns / scale);
+      scale = ns;
+      apply();
+    }
+
+    vp.addEventListener('wheel', function (ev) {
+      ev.preventDefault();
+      var r = vp.getBoundingClientRect();
+      zoomAt(ev.clientX - r.left, ev.clientY - r.top, ev.deltaY < 0 ? 1.12 : 1 / 1.12);
+    }, { passive: false });
+
+    var dragging = false, px = 0, py = 0;
+    vp.addEventListener('pointerdown', function (ev) {
+      dragging = true; px = ev.clientX; py = ev.clientY;
+      vp.classList.add('fc-dragging');
+      if (vp.setPointerCapture) { try { vp.setPointerCapture(ev.pointerId); } catch (err) {} }
+    });
+    vp.addEventListener('pointermove', function (ev) {
+      if (!dragging) return;
+      tx += ev.clientX - px; ty += ev.clientY - py;
+      px = ev.clientX; py = ev.clientY;
+      apply();
+    });
+    ['pointerup', 'pointercancel'].forEach(function (evtName) {
+      vp.addEventListener(evtName, function () {
+        dragging = false;
+        vp.classList.remove('fc-dragging');
+      });
+    });
+    vp.addEventListener('dblclick', fit);
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-fc="' + key + '"]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var act = btn.getAttribute('data-act');
+        var r = vp.getBoundingClientRect();
+        if (act === 'in') zoomAt(r.width / 2, r.height / 2, 1.25);
+        else if (act === 'out') zoomAt(r.width / 2, r.height / 2, 1 / 1.25);
+        else fit();
+      });
+    });
+    window.addEventListener('resize', fit);
+    (window.__fcFit = window.__fcFit || {})[key] = fit;
+    fit();
+  }
+
+  /* ── 圖 A：原物料備料補貨全流程 ── */
+  renderChart('svg-replenish', {
+    nodes: [
+      { id: 'a0', col: 0, row: 0, type: 'start', title: '開始', lines: ['輸入：最新庫存快照 · 預估', '有效訂單 · 系統參數'] },
+      { id: 'a1', col: 0, row: 1, type: 'proc', title: '① 需求彙總', lines: ['四模式：累加／沖銷／實單／預估', '排除 cancelled 訂單'] },
+      { id: 'a2', col: 0, row: 2, type: 'dec', title: '② 主檔缺值？', lines: ['良率 · 損耗率 · 採購三要素'] },
+      { id: 'a3', col: 0, row: 3, type: 'proc', title: '③ 成品淨需求', lines: ['Max(0, 需求−在庫−WIP×良率)'] },
+      { id: 'a4', col: 0, row: 4, type: 'proc', title: '④ 多模選擇', lines: ['保守最重／最輕／僅主模'] },
+      { id: 'a5', col: 0, row: 5, type: 'proc', title: '⑤ 單穴克重＋日產能', lines: ['克重=(淨重+流道)÷穴數', '產能=工時÷週期×穴數'] },
+      { id: 'a6', col: 0, row: 6, type: 'proc', title: '⑥ 原料毛需求 KG', lines: ['缺口×克重÷1000÷(1−損耗率)'] },
+      { id: 'a7', col: 0, row: 7, type: 'dec', title: '⑦ 色母配比＞0？', lines: ['color_mixing_ratio_pct'] },
+      { id: 'a8', col: 0, row: 8, type: 'proc', title: '⑧ 虛擬預扣（可開關）', lines: ['WIP×克重÷1000÷(1−損耗率)', '消除 ERP 月底扣帳時序差'] },
+      { id: 'a9', col: 0, row: 9, type: 'proc', title: '⑨ 有效供給盤點', lines: ['有效在庫=Max(0,帳面−預扣)', '在途排除 arrived/partial'] },
+      { id: 'a10', col: 0, row: 10, type: 'proc', title: '⑩ 安全庫存水位', lines: ['safety_stock_kg × 係數', '（預設 1.0×）'] },
+      { id: 'a11', col: 0, row: 11, type: 'dec', title: '⑪ 補貨觸發？', lines: ['淨需求=毛−有效在庫−在途', '＋安全庫存 ＞ 0 ？'] },
+      { id: 'a12', col: 0, row: 12, type: 'proc', title: '⑫ 採購量＋前置期倒推', lines: ['MOQ 無條件進位', '最晚下單日=交期−lead_time'] },
+      { id: 'a13', col: 0, row: 13, type: 'dec', title: '⑬ 前置期校驗', lines: ['距最晚下單日 ≤ 15 天？', '（負值＝已逾期）'] },
+      { id: 'a14', col: 0, row: 15, type: 'dec', title: '⑭ 超備／爆倉檢查', lines: ['(在庫+在途) vs 需求×1.6', '(在庫+在途) vs 12,000 KG'] },
+      { id: 'a15', col: 0, row: 16, type: 'dec', title: '⑮ 大批次？', lines: ['＞倉容×0.6 或 ≥5,000 KG'] },
+      { id: 'a16', col: 0, row: 17, type: 'end', title: '🟢 正常備料建議', lines: ['按標準流程發出 PO'] },
+      { id: 'ax1', col: 1, row: 2, type: 'red', title: '⛔ 缺值即擋', lines: ['紅色警示並指明缺欄', '請至資料表維護補齊'] },
+      { id: 'ax2', col: 1, row: 7, type: 'proc', title: '樹脂／色母拆分', lines: ['樹脂=毛÷(1+配比%)', '色母=毛−樹脂', '兩鏈各自淨需求後匯流'] },
+      { id: 'ax3', col: 1, row: 11, type: 'gray', title: '庫存充足', lines: ['淨需求 = 0', '免採購，流程結束'] },
+      { id: 'ax4', col: 1, row: 13, type: 'red', title: '🔴 缺料預警', lines: ['即刻開 PO（符合 MOQ）', '或評估空運／提早到港'] },
+      { id: 'ax5', col: 1, row: 15, type: 'yellow', title: '🟡 超備呆滯預警', lines: ['在途踩煞車、延後 ETA', '降低資金積壓'] },
+      { id: 'ax6', col: 2, row: 15, type: 'orange', title: '🟠 爆倉預警', lines: ['超出實體倉容上限', '分批交貨／外部保稅倉'] },
+      { id: 'ax7', col: 1, row: 16, type: 'proc', title: '分批到貨調度', lines: ['首批 50% 於交期到港', '次批間隔 30 天', '平衡倉容與資金'] }
+    ],
+    edges: [
+      { from: 'a0', to: 'a1', route: 'v' },
+      { from: 'a1', to: 'a2', route: 'v' },
+      { from: 'a2', to: 'a3', route: 'v', label: '否：主檔完整' },
+      { from: 'a2', to: 'ax1', route: 'h', label: '是', cls: 'edge-warn' },
+      { from: 'a3', to: 'a4', route: 'v' },
+      { from: 'a4', to: 'a5', route: 'v' },
+      { from: 'a5', to: 'a6', route: 'v' },
+      { from: 'a6', to: 'a7', route: 'v' },
+      { from: 'a7', to: 'a8', route: 'v', label: '否：純原料' },
+      { from: 'a7', to: 'ax2', route: 'h', label: '是' },
+      { from: 'ax2', to: 'a8', route: 'elbow', dx: -30, cls: 'edge-info' },
+      { from: 'a8', to: 'a9', route: 'v' },
+      { from: 'a9', to: 'a10', route: 'v' },
+      { from: 'a10', to: 'a11', route: 'v' },
+      { from: 'a11', to: 'a12', route: 'v', label: '是：觸發補貨' },
+      { from: 'a11', to: 'ax3', route: 'h', label: '否', cls: 'edge-ok' },
+      { from: 'a12', to: 'a13', route: 'v' },
+      { from: 'a13', to: 'a14', route: 'v', label: '否：期程充裕' },
+      { from: 'a13', to: 'ax4', route: 'h', label: '是', cls: 'edge-warn' },
+      { from: 'a14', to: 'a15', route: 'v', label: '皆正常' },
+      { from: 'a14', to: 'ax5', route: 'h', label: '超備' },
+      { from: 'a14', to: 'ax6', route: 'h2', label: '爆倉' },
+      { from: 'a15', to: 'a16', route: 'v', label: '否' },
+      { from: 'a15', to: 'ax7', route: 'h', label: '是' },
+      { from: 'ax7', to: 'a16', route: 'elbow', dx: -30 }
+    ]
+  });
+
+  /* ── 圖 B：產品交期估算全流程（六瓶頸晶片雙欄交錯排列，匯流不交叉） ── */
+  renderChart('svg-delivery', {
+    nodes: [
+      { id: 'b0', col: 0, row: 0, type: 'start', title: '開始：有效訂單', lines: ['輸入：實際客戶訂單', '排除 cancelled'] },
+      { id: 'b1', col: 0, row: 1, type: 'proc', title: '距交期天數', lines: ['daysToDeliver=⌈交期−今天⌉', '（負值＝客戶交期已過）'] },
+      { id: 'b2', col: 0, row: 2, type: 'proc', title: '① 訂單量拆解', lines: ['現貨 → WIP有效(×良率)', '→ 成品缺口 fgGap'] },
+      { id: 'b3', col: 0, row: 3, type: 'dec', title: '② 主檔缺值？', lines: ['良率 · BOM · 採購規則'] },
+      { id: 'b4', col: 0, row: 4, type: 'proc', title: '③ 產能負荷核算', lines: ['主模穴數×週期→日產能', '所需生產天數=⌈缺口÷產能⌉'] },
+      { id: 'b5', col: 0, row: 5, type: 'dec', title: '④ 生產週期可達？', lines: ['所需天數 vs 距交期天數', '模具是否維修中？'] },
+      { id: 'b6', col: 0, row: 6, type: 'sub', title: '⑤ 原物料齊套校驗', lines: ['毛需求→虛擬預扣→淨需求', '最晚下單日=交期−海運交期'] },
+      { id: 'b7', col: 0, row: 7, type: 'dec', title: '⑥ 齊套可行？', lines: ['淨需求=0 或距下單日＞15天'] },
+      { id: 'b8', col: 0, row: 8, type: 'dec', title: '⑦ 六環節瓶頸掃描', lines: ['原料 · 產能 · WIP 全檢', '船期 · 色母配色'] },
+      { id: 'bx1', col: 1, row: 3, type: 'red', title: '⚠️ 主檔缺值攔截', lines: ['插入診斷首位', '本單數字不可作決策依據'] },
+      { id: 'bx2', col: 1, row: 5, type: 'purple', title: '🟣 產能瓶頸', lines: ['赤字天數＝需−剩餘', '或模具維修中', '提早投產／加班／備用模'] },
+      { id: 'bx3', col: 1, row: 7, type: 'red', title: '🔴 齊套危機', lines: ['原料無法如期到廠', '改空運或協調延後交期'] },
+      { id: 'bc1', col: 1, row: 8.6, type: 'red', title: '① 原料採購交期', lines: ['淨需求＞0 且吃緊', '即刻下單搶救'] },
+      { id: 'bc2', col: 2, row: 9.5, type: 'purple', title: '② 射出產能', lines: ['連續開機天數不足', '或模具 maintenance'] },
+      { id: 'bc3', col: 1, row: 10.4, type: 'yellow', title: '③ WIP 待驗品', lines: ['現貨不足仰賴全檢', '（總供給不足轉紅燈）'] },
+      { id: 'bc4', col: 2, row: 11.3, type: 'orange', title: '④ 在途海運船期', lines: ['存在 delayed PO', '追蹤清關與實際到廠'] },
+      { id: 'bc5', col: 1, row: 12.2, type: 'blue', title: '⑤ 色母配色缺料', lines: ['配比＞0 且庫存不足', '提早 Pre-mix 準備'] },
+      { id: 'bc6', col: 3, row: 13.1, type: 'red', title: "③′ 實質缺貨赤字", lines: ['現貨+WIP 仍不足', '緊急開機或延後交付'] },
+      { id: 'b9', col: 0, row: 14.8, type: 'proc', title: '⑧ 生產週期疊加評分', lines: ['＋異常緩衝（裕度天數）', '緊張指數：紅95紫橘75', '黃藍50／無異常10'] },
+      { id: 'b10', col: 0, row: 15.8, type: 'end', title: '輸出診斷清單', lines: ['依緊張度高→低排序', '附各環節行動建議'] }
+    ],
+    edges: [
+      { from: 'b0', to: 'b1', route: 'v' },
+      { from: 'b1', to: 'b2', route: 'v' },
+      { from: 'b2', to: 'b3', route: 'v' },
+      { from: 'b3', to: 'b4', route: 'v', label: '否' },
+      { from: 'b3', to: 'bx1', route: 'h', label: '是', cls: 'edge-warn' },
+      { from: 'b4', to: 'b5', route: 'v' },
+      { from: 'b5', to: 'b6', route: 'v', label: '可達' },
+      { from: 'b5', to: 'bx2', route: 'h', label: '不可達／維修中', cls: 'edge-warn' },
+      { from: 'b6', to: 'b7', route: 'v' },
+      { from: 'b7', to: 'b8', route: 'v', label: '可行' },
+      { from: 'b7', to: 'bx3', route: 'h', label: '不可行', cls: 'edge-warn' },
+      { from: 'b8', to: 'bc1', route: 'hdown' },
+      { from: 'b8', to: 'bc2', route: 'elbow' },
+      { from: 'b8', to: 'bc3', route: 'elbow' },
+      { from: 'b8', to: 'bc4', route: 'elbow' },
+      { from: 'b8', to: 'bc5', route: 'elbow' },
+      { from: 'b8', to: 'bc6', route: 'elbow' },
+      { from: 'bc1', to: 'b9', route: 'sdown', dx: -44 },
+      { from: 'bc3', to: 'b9', route: 'sdown', dx: -44 },
+      { from: 'bc5', to: 'b9', route: 'sdown', dx: -44 },
+      { from: 'bc2', to: 'b9', route: 'sdown', dx: 44 },
+      { from: 'bc4', to: 'b9', route: 'sdown', dx: 44 },
+      { from: 'bc6', to: 'b9', route: 'sdown', dx: 44 },
+      { from: 'b9', to: 'b10', route: 'v' }
+    ]
+  });
+
+  /* ── 圖 C：兩大邏輯共用的統一核心計算脊 ── */
+  renderChart('svg-spine', {
+    nodes: [
+      { id: 's0', col: 0, row: 0, type: 'start', title: '輸入：需求量 ＋ 約定交期', lines: ['MRP：預估±實單（SKU×版本）', 'Tension：單筆訂單量'] },
+      { id: 's1', col: 0, row: 1, type: 'proc', title: '成品缺口', lines: ['Max(0, 需求 − 在庫 − WIP×良率)'] },
+      { id: 's2', col: 0, row: 2, type: 'proc', title: 'BOM 展開 → 毛需求', lines: ['克重換算 ÷(1−損耗率)'] },
+      { id: 's3', col: 0, row: 3, type: 'proc', title: '虛擬預扣 → 有效在庫', lines: ['消除 ERP 月底扣帳時序差'] },
+      { id: 's4', col: 0, row: 4, type: 'proc', title: '淨需求（補貨觸發）', lines: ['毛 − 有效在庫 − 在途 ＋ 安全庫存'] },
+      { id: 's5', col: 0, row: 5, type: 'proc', title: 'MOQ 進位 → 建議量', lines: ['⌈淨需求 ÷ MOQ⌉ × MOQ'] },
+      { id: 's6', col: 0, row: 6, type: 'proc', title: '最晚下單日倒推', lines: ['交期 − lead_time_days', '前置期／齊套時間校驗基準'] },
+      { id: 's7', col: 0, row: 7, type: 'end', title: '分流輸出', lines: ['備料引擎 → 採購建議＋四色預警', '交期引擎 → 瓶頸診斷＋緊張指數'] }
+    ],
+    edges: [
+      { from: 's0', to: 's1', route: 'v' },
+      { from: 's1', to: 's2', route: 'v' },
+      { from: 's2', to: 's3', route: 'v' },
+      { from: 's3', to: 's4', route: 'v' },
+      { from: 's4', to: 's5', route: 'v' },
+      { from: 's5', to: 's6', route: 'v' },
+      { from: 's6', to: 's7', route: 'v' }
+    ]
+  });
+
+  makeInteractive('replenish');
+  makeInteractive('delivery');
+  makeInteractive('spine');
+})();
+</script>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── 術語字典浮窗 ── */
+  var TERMS = {
+    fg: { t: '成品良品在庫', d: '已經生產完成、通過全檢、隨時可以出貨給客戶的成品數量。好比餐廳裡「已煮好可出餐的菜」。' },
+    wip: { t: 'WIP 待驗品（在製品待驗區）', d: '已經生產完成、但還沒做完最後檢查的半成品。檢查通過後就會變成可出貨的成品；若有不良品則會被剔除，所以系統只按「良率」折算一部分為可信供給。' },
+    yield: { t: '標準全檢良率', d: '100 檢查後平均能通過的比例，例如 0.98 代表 100 個約有 98 個合格。系統用它把待驗品折算成「可信的良品數量」。' },
+    rm: { t: '原料庫存', d: '倉庫裡實際存在的塑膠原料（公斤）。好比冰箱裡的食材，是生產的源頭。' },
+    transit: { t: '在途採購單', d: '已經向供應商下單、但還沒到廠的原料。像「已叫貨還在路上的食材」。系統只計算還沒到貨的部分，避免重複計算。' },
+    safety: { t: '安全庫存', d: '為了應付突發狀況（供應商延遲、臨時加單）而常備的防護存量，不到關鍵時刻不動用。基本值由每個原料個別設定，系統再乘以全域係數。' },
+    moq: { t: '最小起訂量（MOQ）', d: '供應商規定一次至少要下單的數量（例如一次 500 公斤）。所以系統的建議採購量會自動進位到這個倍數，看起來會比實際缺口多一點。' },
+    leadtime: { t: '採購交期（Lead Time）', d: '從下單到貨品送達工廠所需的天數。國外海運通常要 90～150 天，這也是「最晚下單日」必須提前那麼久的原因。' },
+    deadline: { t: '最晚下單日', d: '「需求日 − 採購交期」算出的死線。超過這一天才下單，原料就趕不上生產，系統會發紅色預警。' },
+    backflush: { t: '虛擬預扣', d: '工廠月內已經用掉的原料，帳面上常到月底才扣。系統開啟此功能會先把「已用未扣」的部分預先扣掉，避免庫存被高估。' },
+    mrp: { t: 'MRP（物料需求規劃）', d: '從「要出多少貨」反推「要生產多少、要買多少料」的標準計算方法。本系統的三階 MRP：成品缺口 → 模具展開 → 原料需求。' },
+    tension: { t: '緊張指數', d: '系統給每張訂單的「體檢分數」：95 分危急（有紅燈）、75 高度、50 中度、10 正常。分數越高越需要優先處理。' }
+  };
+  var pop = document.createElement('div');
+  pop.id = 'term-pop';
+  document.body.appendChild(pop);
+
+  function showPop(target) {
+    var d = TERMS[target.getAttribute('data-term')];
+    if (!d) return;
+    pop.textContent = '';
+    var b = document.createElement('b');
+    b.textContent = d.t;
+    pop.appendChild(b);
+    pop.appendChild(document.createTextNode(d.d));
+    pop.style.display = 'block';
+    var r = target.getBoundingClientRect();
+    var top = r.bottom + 8;
+    if (top + 160 > window.innerHeight) top = Math.max(8, r.top - 160);
+    var left = Math.max(8, Math.min(r.left, window.innerWidth - 350));
+    pop.style.top = top + 'px';
+    pop.style.left = left + 'px';
+  }
+  document.addEventListener('click', function (ev) {
+    var t = ev.target.closest ? ev.target.closest('.term') : null;
+    if (t) { showPop(t); ev.stopPropagation(); return; }
+    pop.style.display = 'none';
+  });
+  window.addEventListener('scroll', function () { pop.style.display = 'none'; }, true);
+  window.addEventListener('resize', function () { pop.style.display = 'none'; });
+
+  /* ── FAQ 對話框 ── */
+  var dlg = document.getElementById('faq-dialog');
+  var openBtn = document.getElementById('faq-open-btn');
+  var closeBtn = document.getElementById('faq-close-btn');
+  if (openBtn && dlg && dlg.showModal) openBtn.addEventListener('click', function () { dlg.showModal(); });
+  if (closeBtn && dlg) closeBtn.addEventListener('click', function () { dlg.close(); });
+
+  /* ── 章節摺疊：錨點跳轉自動展開 ＋ 展開時重算流程圖縮放 ── */
+  function refitInside(root) {
+    if (!window.__fcFit) return;
+    root.querySelectorAll('.fc-viewport').forEach(function (vp) {
+      var m = vp.id.match(/^vp-(.+)$/);
+      if (m && window.__fcFit[m[1]]) window.__fcFit[m[1]]();
+    });
+  }
+  function openSection(id) {
+    if (!id) return;
+    var sec = document.getElementById(id);
+    if (!sec) return;
+    var d = sec.querySelector('details.sec');
+    if (d && !d.open) d.open = true;
+    refitInside(sec);
+  }
+  document.querySelectorAll('details.sec').forEach(function (d) {
+    d.addEventListener('toggle', function () { if (d.open) refitInside(d); });
+  });
+  window.addEventListener('hashchange', function () { openSection(window.location.hash.slice(1)); });
+  if (window.location.hash) openSection(window.location.hash.slice(1));
+
+  var exp = document.getElementById('toc-expand-all');
+  var col = document.getElementById('toc-collapse-all');
+  if (exp) exp.addEventListener('click', function () {
+    document.querySelectorAll('details.sec').forEach(function (d) { d.open = true; refitInside(d); });
+  });
+  if (col) col.addEventListener('click', function () {
+    document.querySelectorAll('details.sec').forEach(function (d) { if (d.id !== 'sec-intro') d.open = false; });
+    var intro = document.getElementById('sec-intro');
+    if (intro) intro.scrollIntoView({ behavior: 'smooth' });
+  });
+})();
+
+</script>
 
 </body>
 </html>

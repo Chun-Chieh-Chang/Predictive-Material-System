@@ -23,6 +23,7 @@ import {
   X,
   Workflow,
   Save,
+  Network,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { PMS_VERSION } from '../utils/version';
@@ -46,6 +47,7 @@ export type NavTab =
   | 'data_tables'
   | 'data_exchange'
   | 'prd_docs'
+  | 'data_logic_spec'
   | 'glossary'
   | 'backup_settings';
 
@@ -217,6 +219,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           { id: 'system_settings', label: '參數策略配置', subLabel: 'System Config', icon: SlidersHorizontal },
           { id: 'glossary', label: '專業術語辭典', subLabel: 'Glossary', icon: BookOpen },
           { id: 'prd_docs', label: 'PRD 規格與驗收總表', subLabel: 'PRD & Verification', icon: FileText },
+          { id: 'data_logic_spec', label: '數據邏輯規格書', subLabel: 'Data Logic Spec', icon: Network },
           ...(adminUnlocked
             ? [
                 {
