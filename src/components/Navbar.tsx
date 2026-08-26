@@ -24,8 +24,8 @@ import {
   Workflow,
   Save,
   Network,
-  ZoomIn,
-  ZoomOut,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { PMS_VERSION } from '../utils/version';
@@ -33,8 +33,10 @@ import { PMS_VERSION } from '../utils/version';
 const ADMIN_COMBO_THRESHOLD = 5;
 const ADMIN_COMBO_WINDOW_MS = 1500;
 
-// 介面縮放級距（WCAG 1.4.4 文字縮放；85% 時最小字 13px→11.05px 仍 ≥ Apple 11pt 下限）
-const UI_SCALE_STEPS = [85, 100, 115, 130, 140];
+// 介面縮放範圍（WCAG 1.4.4 文字縮放；上下各 40%，最小 60%、最大 140%，每次跳 1%）
+const UI_SCALE_MIN = 60;
+const UI_SCALE_MAX = 140;
+const UI_SCALE_STEP = 1;
 const UI_SCALE_STORAGE_KEY = 'PMS_UI_SCALE_V1';
 const UI_SCALE_BASE_PX = 15;
 
@@ -133,7 +135,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [uiScale, setUiScale] = useState<number>(() => {
     try {
       const v = Number(localStorage.getItem(UI_SCALE_STORAGE_KEY));
-      if (UI_SCALE_STEPS.includes(v)) return v;
+      if (Number.isFinite(v) && v >= UI_SCALE_MIN && v <= UI_SCALE_MAX) return v;
     } catch { /* storage unavailable */ }
     return 100;
   });
@@ -142,20 +144,14 @@ export const Navbar: React.FC<NavbarProps> = ({
     document.documentElement.style.fontSize = (UI_SCALE_BASE_PX * uiScale / 100) + 'px';
   }, [uiScale]);
   const stepUiScale = (dir: -1 | 1) => {
-    if (dir === -1) {
-      const smaller = UI_SCALE_STEPS.filter((s) => s < uiScale);
-      setUiScale(smaller.length ? smaller[smaller.length - 1] : UI_SCALE_STEPS[0]);
-    } else {
-      const larger = UI_SCALE_STEPS.filter((s) => s > uiScale);
-      setUiScale(larger.length ? larger[0] : UI_SCALE_STEPS[UI_SCALE_STEPS.length - 1]);
-    }
+    setUiScale(prev => Math.max(UI_SCALE_MIN, Math.min(UI_SCALE_MAX, prev + dir * UI_SCALE_STEP)));
   };
-  // 人工輸入縮放數值（50–300%，Enter／失焦套用、Esc 還原）
+  // 人工輸入縮放數值（60–140%，Enter／失焦套用、Esc 還原）
   const [uiScaleInput, setUiScaleInput] = useState<string | null>(null);
   const commitUiScaleInput = () => {
     if (uiScaleInput === null) return;
     const v = Math.round(Number(uiScaleInput));
-    if (!Number.isNaN(v) && v >= 50 && v <= 300) setUiScale(v);
+    if (!Number.isNaN(v) && v >= UI_SCALE_MIN && v <= UI_SCALE_MAX) setUiScale(v);
     setUiScaleInput(null);
   };
 
@@ -414,16 +410,16 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* UI Scale Control */}
               <div
                 className="hidden sm:flex items-center rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 shadow-xs"
-                title="介面縮放：文字與元件等比縮放（可按步進按鈕或直接輸入 50–300%）"
+                title={`介面縮放：文字與元件等比縮放（按 ▲▼ 每格 1%，範圍 ${UI_SCALE_MIN}–${UI_SCALE_MAX}%，或直接輸入）`}
               >
                 <button
                   onClick={() => stepUiScale(-1)}
-                  disabled={uiScale <= UI_SCALE_STEPS[0]}
+                  disabled={uiScale <= UI_SCALE_MIN}
                   id="nav-ui-scale-out-btn"
-                  title="縮小介面"
+                  title="縮小 1%"
                   className="px-2 py-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 cursor-pointer"
                 >
-                  <ZoomOut className="w-3.5 h-3.5" />
+                  <ChevronDown className="w-3.5 h-3.5" />
                 </button>
                 <input
                   value={uiScaleInput ?? String(uiScale)}
@@ -435,18 +431,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                   }}
                   inputMode="decimal"
                   id="nav-ui-scale-input"
-                  title="輸入縮放百分比（50–300，Enter 套用、Esc 還原）"
+                  title={`輸入縮放百分比（${UI_SCALE_MIN}–${UI_SCALE_MAX}，Enter 套用、Esc 還原）`}
                   className="w-[3.25rem] px-1 py-1.5 text-center text-xs font-bold font-mono text-slate-600 dark:text-slate-300 bg-transparent focus:outline-hidden focus:bg-sky-50 dark:focus:bg-sky-950/40 rounded"
                 />
                 <span className="pr-1 text-xs font-mono text-slate-400 select-none">%</span>
                 <button
                   onClick={() => stepUiScale(1)}
-                  disabled={uiScale >= UI_SCALE_STEPS[UI_SCALE_STEPS.length - 1]}
+                  disabled={uiScale >= UI_SCALE_MAX}
                   id="nav-ui-scale-in-btn"
-                  title="放大介面"
+                  title="放大 1%"
                   className="px-2 py-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 cursor-pointer"
                 >
-                  <ZoomIn className="w-3.5 h-3.5" />
+                  <ChevronUp className="w-3.5 h-3.5" />
                 </button>
               </div>
 
