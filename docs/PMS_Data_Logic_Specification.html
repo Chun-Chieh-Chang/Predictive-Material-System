@@ -185,6 +185,8 @@
     .fc-node-purple rect  { fill: rgba(192,132,252,.10); stroke: var(--purple); stroke-width: 1.5; }
     .fc-node-blue rect    { fill: rgba(96,165,250,.10); stroke: var(--blue); stroke-width: 1.5; }
     .fc-node-green rect   { fill: rgba(52,211,153,.10); stroke: var(--success); stroke-width: 1.5; }
+    .fc-group rect { fill: rgba(56,189,248,.04); stroke: var(--brand); stroke-width: 1.4; stroke-dasharray: 8 5; }
+    .fc-group-title { fill: var(--brand); font-size: 12.5px; font-weight: 700; font-family: var(--font-main); }
     .fc-title-text { fill: var(--text-main); font-size: 13.5px; font-weight: 700; font-family: var(--font-main); }
     .fc-line-text  { fill: var(--text-sub); font-size: 11px; font-family: var(--font-main); }
     .fc-tag-text   { fill: var(--warning); font-size: 10px; font-weight: 700; font-family: var(--font-main); letter-spacing: 1px; }
@@ -1111,8 +1113,9 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
      hdown  近列：右側中段水平至目標欄中心後下行進入目標頂
      sdown  匯流：來源左側中段水平至目標頂指定入點後下行（用於多晶片匯入） */
   function routeEdge(a, b, e) {
-    var acx = a.x + NW / 2, bcx = b.x + NW / 2;
-    var aBot = a.y + NH, bTop = b.y;
+    var AW = a.w || NW, AH = a.h || NH, BH = b.h || NH;
+    var acx = a.x + AW / 2, bcx = b.x + BW / 2;
+    var aBot = a.y + AH, bTop = b.y;
     var r = e.route || 'elbow';
     if (r === 'v') {
       return {
@@ -1121,7 +1124,7 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       };
     }
     if (r === 'h') {
-      var y = a.y + NH / 2;
+      var y = a.y + AH / 2;
       return {
         d: 'M' + (a.x + NW) + ' ' + y + ' L' + (b.x - 2) + ' ' + y,
         label: { x: a.x + NW + 10, y: y - 8, anchor: 'start' }
@@ -1129,14 +1132,14 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
     }
     if (r === 'h2') {
       var sx = acx;
-      var yGap = Math.max(aBot, b.y + NH) + 16;
+      var yGap = Math.max(aBot, b.y + BH) + 16;
       return {
-        d: 'M' + sx + ' ' + aBot + ' L' + sx + ' ' + yGap + ' L' + bcx + ' ' + yGap + ' L' + bcx + ' ' + (b.y + NH + 2),
+        d: 'M' + sx + ' ' + aBot + ' L' + sx + ' ' + yGap + ' L' + bcx + ' ' + yGap + ' L' + bcx + ' ' + (b.y + BH + 2),
         label: { x: (sx + bcx) / 2, y: yGap + 15, anchor: 'middle' }
       };
     }
     if (r === 'hdown') {
-      var sy = a.y + NH / 2;
+      var sy = a.y + AH / 2;
       var ex = bcx + (e.dx || 0);
       return {
         d: 'M' + (a.x + NW) + ' ' + sy + ' L' + ex + ' ' + sy + ' L' + ex + ' ' + (bTop - 2),
@@ -1144,9 +1147,15 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       };
     }
     if (r === 'sdown') {
-      var sy2 = a.y + NH / 2;
+      var sy2 = a.y + AH / 2;
       var ex2 = bcx + (e.dx || 0);
       return { d: 'M' + a.x + ' ' + sy2 + ' L' + ex2 + ' ' + sy2 + ' L' + ex2 + ' ' + (bTop - 2) };
+    }
+    if (r === 'gdown') {
+      var gyb = aBot;
+      return {
+        d: 'M' + acx + ' ' + gyb + ' L' + acx + ' ' + (gyb + 20) + ' L' + bcx + ' ' + (gyb + 20) + ' L' + bcx + ' ' + (bTop - 2)
+      };
     }
     var yy = Math.max(bTop - 18, aBot + 14);
     var ex3 = bcx + (e.dx || 0);
@@ -1165,6 +1174,16 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       n.y = PAD + n.row * (NH + RG);
       byId[n.id] = n;
     });
+    (chart.groups || []).forEach(function (g) {
+      var ms = g.members.map(function (id) { return byId[id]; }).filter(Boolean);
+      if (!ms.length) return;
+      var x0 = Math.min.apply(null, ms.map(function (n) { return n.x; })) - 20;
+      var y0 = Math.min.apply(null, ms.map(function (n) { return n.y; })) - 34;
+      var x1 = Math.max.apply(null, ms.map(function (n) { return n.x + NW; })) + 20;
+      var y1 = Math.max.apply(null, ms.map(function (n) { return n.y + NH; })) + 20;
+      g.x = x0; g.y = y0; g.w = x1 - x0; g.h = y1 - y0;
+      byId[g.id] = g;
+    });
     var maxCol = 0, maxRow = 0;
     nodes.forEach(function (n) {
       if (n.col > maxCol) maxCol = n.col;
@@ -1182,6 +1201,14 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       '<path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"></path></marker>' +
       '<marker id="arrw-' + svgId + '" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
       '<path d="M 0 0 L 10 5 L 0 10 z" fill="#f87171"></path></marker>';
+
+    (chart.groups || []).forEach(function (g) {
+      if (g.w === undefined) return;
+      var gg = el('g', { 'class': 'fc-group' }, svg);
+      el('rect', { x: g.x, y: g.y, width: g.w, height: g.h, rx: 14 }, gg);
+      var gt = el('text', { x: g.x + 16, y: g.y + 26, 'class': 'fc-group-title' }, gg);
+      gt.textContent = g.title;
+    });
 
     (chart.edges || []).forEach(function (e) {
       var a = byId[e.from], b = byId[e.to];
@@ -1377,16 +1404,15 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       { id: 'b4', col: 0, row: 4, type: 'proc', title: '③ 產能負荷核算', lines: ['主模穴數×週期→日產能', '所需生產天數=⌈缺口÷產能⌉'] },
       { id: 'b5', col: 0, row: 5, type: 'dec', title: '④ 生產週期可達？', lines: ['所需天數 vs 距交期天數', '模具是否維修中？'] },
       { id: 'b6', col: 0, row: 6, type: 'sub', title: '⑤ 原物料齊套校驗', lines: ['毛需求→虛擬預扣→淨需求', '最晚下單日=交期−海運交期'] },
-      { id: 'b8', col: 0, row: 8, type: 'proc', title: '⑥ 六環節平行檢核', lines: ['原料 · 產能 · WIP · 船期 · 色母', '各項獨立檢核、可同時成立'] },
       { id: 'bx1', col: 1, row: 3, type: 'red', title: '⚠️ 主檔缺值攔截', lines: ['插入診斷首位', '本單數字不可作決策依據'] },
       { id: 'bx2', col: 1, row: 5, type: 'purple', title: '🟣 產能瓶頸', lines: ['赤字天數＝需−剩餘', '或模具維修中', '提早投產／加班／備用模'] },
-      { id: 'bc1', col: 1, row: 8.6, type: 'red', title: '① 原料採購交期', lines: ['淨需求＞0 且距下單日≤15天', '負值＝逾期，改空運搶救'] },
-      { id: 'bc2', col: 2, row: 9.5, type: 'purple', title: '② 射出產能', lines: ['連續開機天數不足', '或模具 maintenance'] },
-      { id: 'bc3', col: 1, row: 10.4, type: 'yellow', title: '③ WIP 待驗品（含③′）', lines: ['現貨不足仰賴全檢→黃燈', '總供給仍不足→紅燈③′', '緊急開機或延後交付'] },
-      { id: 'bc4', col: 2, row: 11.3, type: 'orange', title: '④ 在途海運船期', lines: ['存在 delayed PO', '追蹤清關與實際到廠'] },
-      { id: 'bc5', col: 1, row: 12.2, type: 'blue', title: '⑤ 色母配色缺料', lines: ['配比＞0 且庫存不足', '提早 Pre-mix 準備'] },
-      { id: 'b9', col: 0, row: 13.8, type: 'proc', title: '⑦ 生產週期疊加評分', lines: ['＋異常緩衝（裕度天數）', '緊張指數：紅95紫橘75', '黃藍50／無異常10'] },
-      { id: 'b10', col: 0, row: 14.8, type: 'end', title: '輸出診斷清單', lines: ['依緊張度高→低排序', '附各環節行動建議'] },
+      { id: 'bc1', col: 1, row: 7.4, type: 'red', title: '① 原料採購交期', lines: ['淨需求＞0 且距下單日≤15天', '負值＝逾期，改空運搶救'] },
+      { id: 'bc2', col: 2, row: 8.3, type: 'purple', title: '② 射出產能', lines: ['連續開機天數不足', '或模具 maintenance'] },
+      { id: 'bc3', col: 1, row: 9.2, type: 'yellow', title: '③ WIP 待驗品（含③′）', lines: ['現貨不足仰賴全檢→黃燈', '總供給仍不足→紅燈③′', '緊急開機或延後交付'] },
+      { id: 'bc4', col: 2, row: 10.1, type: 'orange', title: '④ 在途海運船期', lines: ['存在 delayed PO', '追蹤清關與實際到廠'] },
+      { id: 'bc5', col: 1, row: 11.0, type: 'blue', title: '⑤ 色母配色缺料', lines: ['配比＞0 且庫存不足', '提早 Pre-mix 準備'] },
+      { id: 'b9', col: 0, row: 13.0, type: 'proc', title: '⑦ 生產週期疊加評分', lines: ['＋異常緩衝（裕度天數）', '緊張指數：紅95紫橘75', '黃藍50／無異常10'] },
+      { id: 'b10', col: 0, row: 14.0, type: 'end', title: '輸出診斷清單', lines: ['依緊張度高→低排序', '附各環節行動建議'] },
     ],
     edges: [
       { from: 'b0', to: 'b1', route: 'v' },
@@ -1397,19 +1423,11 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       { from: 'b4', to: 'b5', route: 'v' },
       { from: 'b5', to: 'b6', route: 'v', label: '可達' },
       { from: 'b5', to: 'bx2', route: 'h', label: '不可達／維修中', cls: 'edge-warn' },
-      { from: 'b6', to: 'b8', route: 'v' },
-      { from: 'b8', to: 'bc1', route: 'hdown' },
-      { from: 'b8', to: 'bc2', route: 'elbow' },
-      { from: 'b8', to: 'bc3', route: 'elbow' },
-      { from: 'b8', to: 'bc4', route: 'elbow' },
-      { from: 'b8', to: 'bc5', route: 'elbow' },
-      { from: 'bc1', to: 'b9', route: 'sdown' },
-      { from: 'bc3', to: 'b9', route: 'sdown' },
-      { from: 'bc5', to: 'b9', route: 'sdown' },
-      { from: 'bc2', to: 'b9', route: 'sdown' },
-      { from: 'bc4', to: 'b9', route: 'sdown' },
+      { from: 'b6', to: 'g1', route: 'hdown' },
+      { from: 'g1', to: 'b9', route: 'gdown' },
       { from: 'b9', to: 'b10', route: 'v' }
-    ]
+    ],
+    groups: [{ id: 'g1', title: '⑥ 六環節平行檢核（各項獨立檢核、可同時成立）', members: ['bc1', 'bc2', 'bc3', 'bc4', 'bc5'] }]
   });
 
   /* ── 圖 C：兩大邏輯共用的統一核心計算脊 ── */
