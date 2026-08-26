@@ -51,6 +51,31 @@
 
 ---
 
+### V-20260826 (2026-08-26) — 介面自適應縮放、xlsx 動態載入、主檔拖動捲動、工作台功能整合版
+
+**狀態：** ✅ 穩定發布
+**驗證：** `npm run lint` 0 錯誤、`npm run build` 通過
+
+#### 本作業完成清單
+
+**[介面縮放升級]**
+- `f843841` feat(ux)：Navbar 五級縮放控制（85~140%）驅動根字號，全專案 16 檔 px 硬編碼轉 rem，文字與寬度等比縮放。
+- `842fc95` feat(ux)：支援人工輸入任意百分比（50–300%），Enter／失焦套用、Esc 還原，步進按鈕自動導向相鄰級距。
+- `15c8c56` fix(ux)：修復縮放時 Navbar 文字換行根因——Tailwind 斷點隨 rem 根字號變化而偏移，改為鎖定 px 斷點＋Navbar 強制 nowrap / 水平滾動 / shrink-0。
+- `7c1e3c9` feat(ux)：縮放控制改 ▲▼ 箭頭按鈕（ChevronUp/ChevronDown），每格 1% 連續跳檔，範圍收斂至 60–140%（上下各 40%）。
+
+**[效能優化]**
+- `283ba20` perf(data)：`src/utils/dataExchange.ts` 改動態 import xlsx（`await import('xlsx')`），首屏 JS 傳輸量 −143 kB gzip（−33%），僅在觸發 Excel 匯入/匯出時按需載入。
+
+**[UX 交互強化]**
+- `7f27333` feat(ux)：主檔寬表長按左鍵 300ms 啟動拖動捲動模式，含 60 fps rAF 節流慣性滾動；防誤觸（6px 死區、可交互元素排除）、防 scrollbar 閃爍（`drag-scrolling` class）、三瀏覽器 Pointer Events 相容。
+
+**[工作台整合（消除跨頁導航）]**
+- `09aa893` feat(workbench)：業務工作台卡片 2/3 嵌入完整 ShipScheduleClearanceView / OrderTensionTrackerView（展開/收合模式）；生管/採購工作台 3 階 MRP 區嵌入完整 MrpCalculatorView，保留次要「前往完整版獨頁」連結。
+- `fa3db2b` feat(workbench)：兩工作台底部新增角色專屬主檔維護區——業務工作台嵌入 demand_forecast_log，生管/採購工作台嵌入 item_master，`App.tsx` 透傳 `setDb` prop。
+
+---
+
 ### V-20260825-12 (2026-08-25) — Anti-Placebo 數據鏈誠實化：全域預設備胎全數拔除、主檔缺值即拒算並警示、多模具策略假選項修復版
 
 **狀態：** ✅ 穩定發布  
