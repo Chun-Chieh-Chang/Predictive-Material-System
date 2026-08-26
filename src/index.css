@@ -3,6 +3,13 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  /* 斷點鎖定 px：介面縮放（根字號）不改變響應式斷點行為 */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
   /* ── PMS Brand Core Colors ─────────────────────────────────────── */
   --color-pms-cobalt: var(--med-cobalt);
   --color-pms-cobalt-hover: var(--med-cobalt-hover);

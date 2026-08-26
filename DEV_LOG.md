@@ -1516,6 +1516,7 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 1. **字級系統 px→rem**（index.css）：`html/body 15px`、`text-xs 13px`、`text-sm 14.5px`、`text-base 15px` 全改 rem（÷15），line-height 本為 rem 不變；移除 `.text-\[10px\]`/`.text-\[11px\]` px 覆蓋規則（隨元件批量轉換後成為死規則）。
 2. **元件批量轉換**：16 個檔案、19 種 px 工具類（`text-[9/10/11/13px]`、`min-w/max-w/w-[80px~1720px]`）全數轉 rem 等值——寬度與文字**同步縮放**，徹底消除「放大後文字擠壓換行」。`w-[1px]` 裝飾性分隔保留 px。
 3. **Navbar 縮放控制**：`ZoomOut／縮放值輸入框／ZoomIn`——步進五級＋**人工輸入任意百分比（50–300%，Enter／失焦套用、Esc 還原）**，localStorage 持久化（try/catch 防護）、驅動 `document.documentElement.style.fontSize = 15px × scale`——所有 rem 尺寸（字級、間距、轉換後寬度）等比連動。
+4. **縮放換行缺陷修復（RCA/CAPA）**：**RCA** — Tailwind v4 斷點為 rem 基準（sm=40rem），根字號放大 140% 時有效像素門檻同步放大（40rem=840px），響應式類（`hidden sm:inline` 等）提前失效、Navbar 容器擠壓導致「深色模式／離線本機模式／選單」等文字換行。**CAPA** — ① `@theme` 將五級斷點鎖定 px（640/768/1024/1280/1536），縮放不再改變響應式行為（建置產物驗證 `min-width:640px` ✓）；② Navbar 兩排容器加 `whitespace-nowrap + overflow-x-auto + scrollbar-none`（超出改水平滾動、不換行）與 `shrink-0`（品牌區／角色膠囊／快捷列不被壓縮）。
 
 #### 三、邊界說明
 - 規格書獨立頁之 iframe 內容（文件自身）不隨宿主縮放——文件內流程圖已有獨立縮放控制；如需文件文字縮放可於後續以同一機制（postMessage → 文件根字號）擴充。

@@ -286,9 +286,9 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="bg-white/95 dark:bg-slate-950/90 backdrop-blur-md border-b border-slate-300 dark:border-slate-800/80 sticky top-0 z-40 transition-colors shadow-xs">
       <div className="max-w-[114.6667rem] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
         {/* Top Status & Brand Row */}
-        <div className="flex items-center justify-between py-3 border-b border-slate-200 dark:border-slate-800/50">
+        <div className="flex items-center justify-between gap-4 py-3 border-b border-slate-200 dark:border-slate-800/50 overflow-x-auto scrollbar-none whitespace-nowrap">
           {/* Brand & Version */}
-          <div className="flex items-center space-x-3.5">
+          <div className="flex items-center space-x-3.5 shrink-0">
             <div className="w-10 h-10 bg-pms-cobalt rounded-xl flex items-center justify-center font-bold text-white text-xl shadow-md shadow-sky-600/25 shrink-0">
               料
             </div>
@@ -322,7 +322,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Role Switcher Capsule (頂部角色切換膠囊) */}
-          <div className="hidden md:flex items-center p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-inner">
+          <div className="hidden md:flex items-center p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-inner shrink-0">
             <button
               onClick={() => {
                 setRoleMode('sales');
@@ -390,7 +390,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-800 hidden sm:block"></div>
 
             {/* Quick Action Buttons */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 shrink-0">
               {/* Theme Toggle Button */}
               <button
                 onClick={toggleTheme}
@@ -517,9 +517,9 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* ── 4 大 MECE 核心領域導航與二級子視圖切換列 ──────────────────────── */}
-        <div className="hidden lg:flex items-center justify-between py-2 gap-4">
+        <div className="hidden lg:flex items-center justify-between gap-4 py-2 overflow-x-auto scrollbar-none whitespace-nowrap">
           {/* 4 大核心領域切換鈕 (Primary Domains) */}
-          <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800/80 shadow-inner">
+          <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800/80 shadow-inner shrink-0">
             {domains.map((domain) => {
               const isDomainActive = activeDomain === domain.id;
               const Icon = domain.icon;
