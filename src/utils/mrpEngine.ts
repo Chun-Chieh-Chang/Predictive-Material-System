@@ -5,11 +5,27 @@
 
 import {
   SystemDatabase,
+  DemandForecastLog,
   MRPCalculationResult,
   SystemAlert,
   SystemParameters,
   DEFAULT_SYSTEM_PARAMETERS
 } from '../types';
+
+/**
+ * 判定最新版本預估：優先以建立時間 (created_at) 降序，次以版本號 (version_no) 降序。
+ * 不依賴陣列插入順序，避免資料維護順序不當造成「最新版」誤判。
+ */
+export function pickLatestForecast(forecasts: DemandForecastLog[]): DemandForecastLog | undefined {
+  if (forecasts.length === 0) return undefined;
+  return [...forecasts].sort((a, b) => {
+    const ta = a.created_at || '';
+    const tb = b.created_at || '';
+    if (ta !== tb) return tb > ta ? 1 : -1;
+    if (a.version_no !== b.version_no) return b.version_no > a.version_no ? 1 : -1;
+    return 0;
+  })[0];
+}
 
 /**
  * Anti-Placebo: 主檔關鍵欄位缺值時，回傳帶 calcError 的明確錯誤結果，
@@ -18,7 +34,7 @@ import {
 function buildCalcErrorResult(db: SystemDatabase, sku: string, message: string): MRPCalculationResult {
   const item = db.item_master.find((i) => i.sku === sku);
   const forecasts = db.demand_forecast_log.filter((f) => f.sku === sku);
-  const latestForecast = forecasts[forecasts.length - 1];
+  const latestForecast = pickLatestForecast(forecasts);
   return {
     sku,
     productName: item?.category ?? sku,
@@ -84,10 +100,10 @@ export function calculateMRPForSKU(
   const forecasts = db.demand_forecast_log.filter((f) => f.sku === sku);
   if (forecasts.length === 0) return null;
 
-  // Select specific version or latest version
+  // Select specific version or latest version (created_at → version_no 降序判定)
   const activeForecast = selectedVersionNo
-    ? forecasts.find((f) => f.version_no === selectedVersionNo) || forecasts[forecasts.length - 1]
-    : forecasts[forecasts.length - 1];
+    ? forecasts.find((f) => f.version_no === selectedVersionNo) || pickLatestForecast(forecasts)
+    : pickLatestForecast(forecasts);
 
   // Actual orders for this SKU (exclude cancelled orders per spec)
   const actualOrders = db.actual_order.filter((o) => o.sku === sku && o.status !== 'cancelled');

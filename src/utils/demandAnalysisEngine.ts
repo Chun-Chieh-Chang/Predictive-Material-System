@@ -4,6 +4,7 @@
  */
 
 import { SystemDatabase, DemandForecastLog, ActualOrder } from '../types';
+import { pickLatestForecast } from './mrpEngine';
 
 interface DemandComparisonPoint {
   periodKey: string;            // 週別或日期 (e.g. '2026-W34' or '2026-08-24')
@@ -64,11 +65,19 @@ export function analyzeDemandCrossComparison(
     // 收集所有時間節點 (按週或日期歸納)
     const periodMap = new Map<string, { forecast: number; actual: number; historical: number }>();
 
-    // 填入預測
+    // 填入預測（多版本防護：同品號同期別存在多個版本時，僅採計最新版本，禁止新舊版本重複累加）
+    const forecastsByPeriod = new Map<string, DemandForecastLog[]>();
     for (const f of forecasts) {
       const key = f.target_date || '未排期';
+      const group = forecastsByPeriod.get(key) || [];
+      group.push(f);
+      forecastsByPeriod.set(key, group);
+    }
+    for (const [key, group] of forecastsByPeriod.entries()) {
+      const latest = pickLatestForecast(group);
+      if (!latest) continue;
       const existing = periodMap.get(key) || { forecast: 0, actual: 0, historical: 0 };
-      existing.forecast += f.demand_qty;
+      existing.forecast += latest.demand_qty;
       periodMap.set(key, existing);
     }
 

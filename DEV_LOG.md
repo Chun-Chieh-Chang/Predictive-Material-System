@@ -1395,7 +1395,45 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 ---
 
-*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-26 V-20260826-38*
+### V-20260826-39 (2026-08-26) — 數據邏輯規格書改為獨立全版面頁面（?page=spec 路由）
+
+**執行者**： opencode (ox-alpha)
+**狀態**： ✅Complete / Verified
+**驗證結果**： `tsc --noEmit` 0 錯誤 · `vite build` 成功 · dev server 路由 HTTP 200（`/` 與 `/?page=spec`）
+**遵循原則**： Karpathy Surgical Changes · Zero-Mock（靜態驗證與真人點擊測試如實分述）
+
+#### 一、需求與實作
+1. **獨立頁面跳轉（非彈窗／非內嵌模塊）**：新增輕量 URL 路由——點擊側邊欄「數據邏輯規格書」或 PRD 分頁跳轉按鈕時，`history.pushState('?page=spec')` 並以 `fixed inset-0` 全版面渲染 `DataLogicSpecView`，完全取代 App 框架（無 Sidebar／Navbar／main 邊距）；原分頁式渲染已移除（MECE）。瀏覽器返回鍵經 `popstate` 監聽可回到系統，URL 可收藏分享。
+2. **全版面布局**：iframe `w-full + 100dvh`（行動裝置動態工具列自適應，不支援 dvh 時退回 `h-screen`）；僅保留三個浮動元素（左上文件識別、右上 SSOT 同步狀態／重新同步／返回系統），不遮內容主體；按鈕觸控 ≥ 44px。
+3. **功能完整保留**：SSOT postMessage 即時同步（db/params 變更自動重推）、流程圖縮放平移、術語浮窗、FAQ、章節摺疊全部照常運作。
+4. **入口保留**：側邊欄項目經 `handleSetTab` 攔截轉發至獨立頁；Navbar 同步攔截；PRD 分頁按鈕改接 `openSpecStandalone`。
+
+#### 四、驗證紀錄
+- 靜態驗證：tsc 0 錯誤、vite build 成功、dev server（Vite HMR 已熱更新）對 `/` 與 `/?page=spec` 均 HTTP 200。
+- 待真人確認項（如實聲明，未虛構）：實際點擊跳轉／返回、跨瀏覽器（Chrome/Edge/Firefox/Safari）與手機尺寸的視覺全版面效果，建議依 DEV_LOG V-20260826-38 之檢核清單執行。
+
+---
+
+### V-20260826-40 (2026-08-26) — 預估多版本管理補齊（四項手術刀式修改）
+
+**執行者**： opencode (ox-alpha)
+**狀態**： ✅Complete / Verified
+**驗證結果**： `tsc --noEmit` 0 錯誤 · `vite build` 成功 · Vite HMR 無錯誤 · 規格書 HTML/JS/錨點 ALL CHECKS PASSED
+**遵循原則**： Karpathy Surgical Changes（全部為既有接線修改，零型別變更、零新依賴）
+
+#### 一、功能實作
+1. **最新版判定修正**（mrpEngine.ts）：新增 `pickLatestForecast()`——以 `created_at` 降序、次以 `version_no` 降序判定最新版，取代原「陣列最後一筆」的順序依賴；`calculateMRPForSKU` 與 `buildCalcErrorResult` 兩處同步改用。
+2. **版本選擇器**（MrpCalculatorView.tsx）：該品號存在多版本時，「需求版本」欄位升級為下拉選單（最新版標註），切換即以指定版本重算 MRP；切換品號自動重置。
+3. **版本衝擊分析**（MrpCalculatorView.tsx）：新增卡片——現版 vs 前一版（相同模具與系統參數下重算）比對總需求／成品淨需求／毛需求／淨需求／建議採購量／最晚下單日差異；任一版缺值時誠實顯示「無法產出可信比對」。
+4. **交叉比對多版本防護**（demandAnalysisEngine.ts）：同品號同期別多版本時僅採計最新版（復用 pickLatestForecast），修復新舊版本重複累加導致偏差率失真的潛在缺陷。
+5. **SSOT 文件同步**：規格書第 7 節新增「版本規則」、第 13 節新增「多版本防護」說明。
+
+#### 二、缺陷紀錄（RCA/CAPA）
+- **缺陷**：發現 e2a2503 已提交之規格書存在 15 處交叉引用編號空白（「詳第  節」）。**RCA**：token 重編號後的補空格指令以 `node -e "..."` 執行，PowerShell 於雙引號內先行插值 `$1` 為空字串，數字遭清除。**CAPA**：逐行比對轉換前 grep 紀錄與語意，15 處全數手動恢復並驗證歸零；transform.js token 格式改為內含空格（'第 §N§ 節'）避免同類失誤。
+
+---
+
+*DEV_LOG.md © 2026 Wesley Chang @Mouldex · 最後更新：2026-08-26 V-20260826-40*
 
 
 

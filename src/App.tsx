@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Navbar, NavTab, RoleMode } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { PMS_VERSION } from './utils/version';
@@ -376,12 +376,47 @@ export function App() {
     setActiveTab('backup_settings');
   };
 
+  // ── 獨立頁面路由：?page=spec 以全版面獨立頁開啟數據邏輯規格書（不入 App 框架、無導航干擾） ──
+  const [specStandalone, setSpecStandalone] = useState<boolean>(
+    () => new URLSearchParams(window.location.search).get('page') === 'spec'
+  );
+  const openSpecStandalone = useCallback(() => {
+    window.history.pushState({}, '', '?page=spec');
+    setSpecStandalone(true);
+  }, []);
+  const closeSpecStandalone = useCallback(() => {
+    window.history.pushState({}, '', window.location.pathname);
+    setSpecStandalone(false);
+  }, []);
+  useEffect(() => {
+    const onPop = () =>
+      setSpecStandalone(new URLSearchParams(window.location.search).get('page') === 'spec');
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
+  // 側邊欄／導航欄點擊「數據邏輯規格書」時改為跳轉獨立頁，而非切換內嵌分頁
+  const handleSetTab = useCallback(
+    (tab: NavTab) => {
+      if (tab === 'data_logic_spec') {
+        openSpecStandalone();
+        return;
+      }
+      setActiveTab(tab);
+    },
+    [openSpecStandalone]
+  );
+
+  if (specStandalone) {
+    return <DataLogicSpecView db={db} params={systemParams} onBack={closeSpecStandalone} />;
+  }
+
   return (
     <div className="min-h-screen bg-[#ebf0f5] dark:bg-slate-950 text-slate-900 dark:text-slate-200 flex flex-col font-sans antialiased selection:bg-[#0284c7] selection:text-white transition-colors duration-200">
       {/* Left Sidebar (desktop fixed, mobile overlay drawer) */}
       <Sidebar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleSetTab}
         alertCount={totalAlerts}
         adminUnlocked={adminUnlocked}
         backupEnabled={backupConfig.enabled}
@@ -396,7 +431,7 @@ export function App() {
       {/* Top Navbar */}
       <Navbar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleSetTab}
         roleMode={roleMode}
         setRoleMode={setRoleMode}
         alertCount={totalAlerts}
@@ -542,11 +577,7 @@ export function App() {
         )}
 
         {activeTab === 'prd_docs' && (
-          <PrdDocView onNotify={showToast} onNavigateToSpec={() => setActiveTab('data_logic_spec')} />
-        )}
-
-        {activeTab === 'data_logic_spec' && (
-          <DataLogicSpecView db={db} params={systemParams} />
+          <PrdDocView onNotify={showToast} onNavigateToSpec={openSpecStandalone} />
         )}
 
         {activeTab === 'glossary' && <GlossaryView />}

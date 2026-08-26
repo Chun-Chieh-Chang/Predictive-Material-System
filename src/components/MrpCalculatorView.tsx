@@ -46,6 +46,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
 }) => {
   const [selectedSku, setSelectedSku] = useState<string>(initialSku || 'A01-200-131');
   const [activeMoldId, setActiveMoldId] = useState<string | null>(null);
+  const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
   const [collapsedStages, setCollapsedStages] = useState<Set<string>>(new Set());
   const [expandedMathStage, setExpandedMathStage] = useState<'stage1' | 'stage2' | 'stage3' | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -70,6 +71,7 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
   const handleSelectSku = (sku: string) => {
     setSelectedSku(sku);
     setActiveMoldId(null);
+    setSelectedVersion(null);
     setIsDropdownOpen(false);
     setSearchTerm('');
   };
@@ -117,14 +119,32 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
   const relatedBoms = db.product_mold_bom.filter((b) => b.sku === selectedSku);
   const currentMoldId = activeMoldId || relatedBoms.find((b) => b.is_primary_mold)?.mold_id || relatedBoms[0]?.mold_id;
 
+  // 版本管理：該 SKU 全部版本（依最新→最舊排序），null = 最新版
+  const skuForecasts = db.demand_forecast_log.filter((f) => f.sku === selectedSku);
+  const versionOptions = Array.from(new Set(skuForecasts.map((f) => f.version_no))).sort((a, b) => {
+    const la = skuForecasts.filter((f) => f.version_no === a).reduce((m, f) => (f.created_at > m ? f.created_at : m), '');
+    const lb = skuForecasts.filter((f) => f.version_no === b).reduce((m, f) => (f.created_at > m ? f.created_at : m), '');
+    return lb > la ? 1 : -1;
+  });
+  const latestVersionNo = versionOptions[0] || null;
+  const activeVersionNo = selectedVersion && versionOptions.includes(selectedVersion) ? selectedVersion : latestVersionNo;
+
   // Run MRP Calculation with System Parameters
   const result: MRPCalculationResult | null = calculateMRPForSKU(
     db,
     selectedSku,
     currentMoldId,
-    undefined,
+    activeVersionNo ?? undefined,
     params
   );
+
+  // 版本衝擊分析：以前一版（相同模具與系統參數）重算，比對需求與採購建議差異
+  const prevVersionNo = activeVersionNo && versionOptions.indexOf(activeVersionNo) >= 0
+    ? versionOptions[versionOptions.indexOf(activeVersionNo) + 1] || null
+    : null;
+  const prevResult: MRPCalculationResult | null = prevVersionNo
+    ? calculateMRPForSKU(db, selectedSku, currentMoldId, prevVersionNo, params)
+    : null;
 
   if (!result) {
     return (
@@ -311,7 +331,25 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
           </div>
           <div className="bg-slate-50 dark:bg-slate-950/60 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800/60">
             <span className="text-slate-500 dark:text-slate-400 uppercase block font-medium">需求版本 / 交期</span>
-            <span className="font-mono font-bold text-sky-700 dark:text-cyan-400 mt-1 block text-sm">{result.versionNo} ({result.targetDate})</span>
+            {versionOptions.length > 1 ? (
+              <div className="mt-1 flex items-center gap-2 flex-wrap">
+                <select
+                  value={activeVersionNo || ''}
+                  onChange={(e) => setSelectedVersion(e.target.value === latestVersionNo ? null : e.target.value)}
+                  id="mrp-version-select"
+                  className="font-mono font-bold text-sm text-sky-700 dark:text-cyan-400 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg px-2 py-1 cursor-pointer focus:outline-hidden"
+                >
+                  {versionOptions.map((v) => (
+                    <option key={v} value={v}>
+                      {v}{v === latestVersionNo ? '（最新）' : ''}
+                    </option>
+                  ))}
+                </select>
+                <span className="font-mono text-xs text-slate-500 dark:text-slate-400">({result.targetDate})</span>
+              </div>
+            ) : (
+              <span className="font-mono font-bold text-sky-700 dark:text-cyan-400 mt-1 block text-sm">{result.versionNo} ({result.targetDate})</span>
+            )}
           </div>
           <div className="bg-slate-50 dark:bg-slate-950/60 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800/60">
             <span className="text-slate-500 dark:text-slate-400 uppercase block font-medium">指定塑料 (RM SKU)</span>
@@ -361,6 +399,72 @@ export const MrpCalculatorView: React.FC<MrpCalculatorViewProps> = ({
           </div>
         )}
       </div>
+
+      {/* Version Impact Analysis: 現版 vs 前一版（相同模具與系統參數下重算） */}
+      {versionOptions.length > 1 && prevVersionNo && (
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
+            <div>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                版本衝擊分析：{result.versionNo} vs 前一版 {prevVersionNo}
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                相同模具與系統參數下分別重算，比對預估版本更新對需求與採購建議的衝擊
+              </p>
+            </div>
+            <span className="text-xs font-mono text-slate-400 shrink-0">
+              {result.calcError || (prevResult && prevResult.calcError) ? '⚠️ 含缺值版本，比對數字僅供參考' : '✔ 兩版主檔完整'}
+            </span>
+          </div>
+          {prevResult && !result.calcError && !prevResult.calcError ? (
+            <div className="overflow-x-auto mt-3">
+              <table className="w-full text-left text-sm" id="mrp-version-diff-table">
+                <thead className="bg-slate-50 dark:bg-slate-950/60 text-slate-500 dark:text-slate-400 uppercase text-xs border-b border-slate-200 dark:border-slate-800">
+                  <tr>
+                    <th className="px-3 py-2.5">指標</th>
+                    <th className="px-3 py-2.5 text-right">前版 {prevVersionNo}</th>
+                    <th className="px-3 py-2.5 text-right">現版 {result.versionNo}</th>
+                    <th className="px-3 py-2.5 text-right">差異</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs">
+                  {([
+                    { label: '總需求量 (PCS)', cur: result.totalDemandQty, prev: prevResult.totalDemandQty },
+                    { label: '成品淨需求 (PCS)', cur: result.fgNetRequirementQty, prev: prevResult.fgNetRequirementQty },
+                    { label: '原料毛需求 (KG)', cur: result.rmGrossRequirementKg, prev: prevResult.rmGrossRequirementKg },
+                    { label: '原料淨需求 (KG)', cur: result.rmNetRequirementKg, prev: prevResult.rmNetRequirementKg },
+                    { label: '建議採購量 (KG)', cur: result.suggestedOrderQtyKg, prev: prevResult.suggestedOrderQtyKg }
+                  ]).map((row) => {
+                    const delta = Number((row.cur - row.prev).toFixed(2));
+                    return (
+                      <tr key={row.label}>
+                        <td className="px-3 py-2.5 font-medium text-slate-700 dark:text-slate-300">{row.label}</td>
+                        <td className="px-3 py-2.5 text-right font-mono text-slate-500 dark:text-slate-400">{row.prev.toLocaleString()}</td>
+                        <td className="px-3 py-2.5 text-right font-mono font-bold text-slate-900 dark:text-white">{row.cur.toLocaleString()}</td>
+                        <td className={`px-3 py-2.5 text-right font-mono font-bold ${delta > 0 ? 'text-red-600 dark:text-red-400' : delta < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>
+                          {delta > 0 ? `▲ +${delta.toLocaleString()}` : delta < 0 ? `▼ ${delta.toLocaleString()}` : '—'}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  <tr>
+                    <td className="px-3 py-2.5 font-medium text-slate-700 dark:text-slate-300">最晚下單日</td>
+                    <td className="px-3 py-2.5 text-right font-mono text-slate-500 dark:text-slate-400">{prevResult.suggestedOrderDate}</td>
+                    <td className="px-3 py-2.5 text-right font-mono font-bold text-slate-900 dark:text-white">{result.suggestedOrderDate}</td>
+                    <td className="px-3 py-2.5 text-right font-mono font-bold text-slate-500 dark:text-slate-400">
+                      {result.suggestedOrderDate === prevResult.suggestedOrderDate ? '—' : `${Math.round((new Date(result.suggestedOrderDate).getTime() - new Date(prevResult.suggestedOrderDate).getTime()) / 86400000)} 天`}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="mt-3 text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl px-4 py-3">
+              ⚠️ 前一版或現版存在主檔缺值（{result.calcError || prevResult?.calcError}），無法產出可信比對，請先至資料表維護補齊。
+            </p>
+          )}
+        </div>
+      )}
 
       {/* ========================================================================= */}
       {/* STAGE 1: Finished Goods (FG) Net Requirement */}

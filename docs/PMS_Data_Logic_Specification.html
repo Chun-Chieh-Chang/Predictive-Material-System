@@ -358,7 +358,7 @@
     <li><strong>五大資料主檔</strong>：<code>item_master</code>（品號主檔）、<code>mold_master</code>（模具主檔）、<code>product_mold_bom</code>（成型 BOM）、<code>inventory_wip_snapshot</code>（庫存/WIP 快照）、<code>po_in_transit</code>（在途採購單）。</li>
     <li><strong>兩大需求來源檔</strong>：<code>demand_forecast_log</code>（業務預估需求，含版本號 version_no）、<code>actual_order</code>（實際客戶訂單）。</li>
     <li><strong>四大運算引擎</strong>：MRP 引擎、WIP 日推估引擎、訂單缺料分析引擎、需求交叉比對引擎；另含資料完整性掃描器與端到端模擬測試套件。</li>
-    <li><strong>兩大核心主軸</strong>：「原物料備料補貨」（第  節）與「產品交期估算」（第  節）共享同一條計算脊，詳第  節整合分析。</li>
+    <li><strong>兩大核心主軸</strong>：「原物料備料補貨」（第 5 節）與「產品交期估算」（第 6 節）共享同一條計算脊，詳第 4 節整合分析。</li>
   </ul>
 
     </div>
@@ -467,13 +467,13 @@
 
   <h3>5.2 流程逐步說明<a class="anchor-link" href="#sec-flow-replenish">#</a></h3>
   <ul class="plain">
-    <li><strong>① 需求彙總</strong>：取該品號最新版（或指定版本）預估與有效實單，依四種模式合併為總需求（詳第  節）。已取消訂單一律排除。</li>
+    <li><strong>① 需求彙總</strong>：取該品號最新版（或指定版本）預估與有效實單，依四種模式合併為總需求（詳第 3 節）。已取消訂單一律排除。</li>
     <li><strong>② 主檔缺值校驗（缺值即擋）</strong>：成品缺 <code>std_sorting_yield</code>、BOM 缺 <code>std_mfg_scrap_rate</code>、原料品號不存在或缺「交期／MOQ／安全庫存」任一欄位時，<strong>立即終止並回傳紅色警示</strong>，禁止以全域預設值頂替（0 為合法值，不會誤判為缺值）。</li>
     <li><strong>③ 成品淨需求</strong>：<code>Max(0, 總需求 − 成品良品在庫 − WIP待驗 × 標準良率)</code>，快照取最新結算日。</li>
     <li><strong>④ 多模選模</strong>：一品號綁多副模具時依 <code>multiMoldStrategy</code> 三策略擇一（保守最重／最輕克重／僅主模），亦可人工指定。</li>
     <li><strong>⑤ 單穴克重與日產能</strong>：塞穴聯動——妥善穴數減少時克重自動上升、日產能同時下降，屬數學自動聯動。</li>
     <li><strong>⑥ 毛需求</strong>：缺口換算重量後除以 <code>(1 − 損耗率)</code> 放大，涵蓋成型損耗。</li>
-    <li><strong>⑦ 色母拆分</strong>：配比 ＞ 0 時，BOM 之 <code>rm_sku</code> 代表色母，總毛需求拆為基礎樹脂與色母兩條獨立鏈路各自計算後匯流（詳第  節）。</li>
+    <li><strong>⑦ 色母拆分</strong>：配比 ＞ 0 時，BOM 之 <code>rm_sku</code> 代表色母，總毛需求拆為基礎樹脂與色母兩條獨立鏈路各自計算後匯流（詳第 10 節）。</li>
     <li><strong>⑧ 虛擬預扣</strong>：<code>enableVirtualBackflush</code> 開啟時，先預扣 WIP 待驗品已耗用之原料，消除 ERP 月底扣帳時序差造成的月中庫存高估。</li>
     <li><strong>⑨ 有效供給盤點</strong>：有效在庫 = <code>Max(0, 帳面在庫 − 虛擬預扣)</code>；在途量僅計狀態非 arrived / partial_arrived 之 PO。</li>
     <li><strong>⑩ 安全庫存水位</strong>：原料品號主檔之 <code>safety_stock_kg</code> × 全域係數 <code>safetyStockMultiplier</code>，作為淨需求的加回項。</li>
@@ -492,7 +492,7 @@
   <table>
     <thead><tr><th>參數名稱（代碼）</th><th>數據類型</th><th>取值範圍</th><th>業務含義</th><th>計算公式 / 來源</th></tr></thead>
     <tbody>
-      <tr><td><code>totalDemandQty</code> 總需求量</td><td>number（PCS）</td><td>≥ 0</td><td>彙總後之成品總需求，備料計算起點</td><td>依 demandConsumptionMode 四模式（第  節）；排除 cancelled 訂單</td></tr>
+      <tr><td><code>totalDemandQty</code> 總需求量</td><td>number（PCS）</td><td>≥ 0</td><td>彙總後之成品總需求，備料計算起點</td><td>依 demandConsumptionMode 四模式（第 3 節）；排除 cancelled 訂單</td></tr>
       <tr><td><code>demandConsumptionMode</code> 需求彙總模式</td><td>enum（全域）</td><td>additive / po_consume / actual_only / forecast_only</td><td>預估與實單合併策略</td><td>系統設定頁；預設 additive</td></tr>
       <tr><td><code>fg_ready_qty</code> 成品良品在庫</td><td>number（PCS）</td><td>≥ 0</td><td>庫房已全檢可出貨之成品量</td><td>inventory_wip_snapshot 最新日期快照</td></tr>
       <tr><td><code>wip_pending_qty</code> WIP 待驗量</td><td>number（PCS）</td><td>≥ 0</td><td>製造完成待全檢之在製品量</td><td>inventory_wip_snapshot 最新日期快照</td></tr>
@@ -623,13 +623,14 @@
     <summary><h2><span class="secno">07</span>三階 MRP 核心引擎（成品 → 模具 → 原料）</h2><span class="sec-hint">完整公式推導（工程師／顧問深度參考）</span></summary>
     <div class="sec-body">
   
-  <p>MRP 引擎（<code>mrpEngine.ts → calculateMRPForSKU</code>）針對單一成品 SKU，依最新（或指定）版本之預估需求執行三階段推導（即第  節圖 A 之計算脊）：</p>
+  <p>MRP 引擎（<code>mrpEngine.ts → calculateMRPForSKU</code>）針對單一成品 SKU，依最新（或指定）版本之預估需求執行三階段推導（即第 5 節圖 A 之計算脊）：</p>
 
   <h3>Phase 1｜成品淨需求（FG Net Requirement）<a class="anchor-link" href="#sec-mrp">#</a></h3>
   <div class="formula">WIP 有效量 = WIP 待驗量 × 標準全檢良率 (std_sorting_yield)
 成品淨需求 = Max( 0 , 總需求量 − 成品良品在庫 − WIP 有效量 )</div>
   <ul class="plain">
-    <li>總需求量依第  節之四種彙總模式決定。</li>
+    <li>總需求量依第 3 節之四種彙總模式決定。</li>
+    <li><strong>版本規則（多版本支援）</strong>：同一品號之預估可存在多個版本（version_no）。未指定版本時取<strong>最新版</strong>——以 <code>created_at</code> 降序、次以 <code>version_no</code> 降序判定，不依賴資料列插入順序；MRP 計算機提供版本下拉切換，並附「版本衝擊分析」（現版 vs 前一版之需求與採購建議差異，相同模具與系統參數下重算）。</li>
     <li>良品在庫與 WIP 待驗量取自<strong>最新日期</strong>之庫存快照。</li>
     <li><strong>Anti-Placebo 保護</strong>：若品號主檔缺 <code>std_sorting_yield</code>，該 SKU 直接回傳紅色「無法計算」警示，<strong>禁止靜默帶入預設值</strong>偽裝成有效運算。</li>
   </ul>
@@ -638,7 +639,7 @@
   <div class="formula">單穴克重 Unit_Weight_g = ( 整模淨重 net_mold_weight_g + 流道重 runner_weight_g ) ÷ 妥善穴數 active_cavities
 原料毛需求 KG = ( 成品淨需求 PCS × 單穴克重 g ÷ 1000 ) ÷ ( 1 − 成型損耗率 std_mfg_scrap_rate )</div>
   <ul class="plain">
-    <li>一個成品可能綁多副模具（多筆 BOM），由全域參數 <code>multiMoldStrategy</code> 決定採用哪一副（詳第  節）；使用者亦可手動指定模具。</li>
+    <li>一個成品可能綁多副模具（多筆 BOM），由全域參數 <code>multiMoldStrategy</code> 決定採用哪一副（詳第 8 節）；使用者亦可手動指定模具。</li>
     <li><strong>塞穴聯動</strong>：妥善穴數減少時，單穴克重自動上升（流道重量由更少穴數分攤），且日產能同時下降——此為數學自動聯動，非人為估算。</li>
     <li><strong>Anti-Placebo 保護</strong>：BOM 缺 <code>std_mfg_scrap_rate</code> 即擋下計算並提示補值（0 為合法值，不會誤判為缺值）。</li>
   </ul>
@@ -685,7 +686,7 @@
   </table>
 
   <h3>塞穴告警門檻（cavityAlertThresholdPercent）<a class="anchor-link" href="#sec-capacity">#</a></h3>
-  <p>當「妥善穴數 ÷ 設計穴數」低於設定百分比（預設 100%，即任一穴停用立即提醒）時，系統提示塞穴維修警告；塞穴同時會使單穴克重膨脹、日產能下降（見第  節聯動關係）。</p>
+  <p>當「妥善穴數 ÷ 設計穴數」低於設定百分比（預設 100%，即任一穴停用立即提醒）時，系統提示塞穴維修警告；塞穴同時會使單穴克重膨脹、日產能下降（見第 7 節聯動關係）。</p>
     </div>
   </details>
 </section>
@@ -724,7 +725,7 @@
 色母淨需求 = Max( 0 , 色母毛需求 − 色母在庫 − 色母在途 + 色母安全庫存 )
 兩者各自依 MOQ 向上進位產出獨立採購建議。</div>
   <p><strong>範例</strong>：總毛需求 51.0 KG、配比 2.0% ➜ 樹脂 51.0÷1.02 = 50.0 KG、色母 = 1.0 KG。</p>
-  <div class="note"><strong>訂單缺料分析中的簡化式</strong>：在訂單緊張度診斷（第  節）中，色母毛需求改以 <code>總毛需求 × 配比 ÷ (100 + 配比)</code> 快速推估，並與有效樹脂在庫比較以判定藍色「色母缺料」環節。</div>
+  <div class="note"><strong>訂單缺料分析中的簡化式</strong>：在訂單緊張度診斷（第 12 節）中，色母毛需求改以 <code>總毛需求 × 配比 ÷ (100 + 配比)</code> 快速推估，並與有效樹脂在庫比較以判定藍色「色母缺料」環節。</div>
     </div>
   </details>
 </section>
@@ -758,7 +759,7 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
     <summary><h2><span class="secno">12</span>訂單缺料分析（訂單緊張度診斷）</h2><span class="sec-hint">逐單體檢：六大環節燈號與緊張指數</span></summary>
     <div class="sec-body">
   
-  <p>缺料分析引擎（<code>orderTensionEngine.ts → diagnoseAllOrderTensions</code>）對<strong>每一筆有效訂單</strong>逐一檢查六大瓶頸環節（完整鏈路見第  節圖 B），並綜合評定緊張等級。清單預設按緊張度由高至低排序。</p>
+  <p>缺料分析引擎（<code>orderTensionEngine.ts → diagnoseAllOrderTensions</code>）對<strong>每一筆有效訂單</strong>逐一檢查六大瓶頸環節（完整鏈路見第 6 節圖 B），並綜合評定緊張等級。清單預設按緊張度由高至低排序。</p>
 
   <h3>六大環節與觸發條件<a class="anchor-link" href="#sec-tension">#</a></h3>
   <table>
@@ -772,7 +773,7 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       <tr><td>⑤ 色母配色缺料</td><td><span class="badge blue">blue 藍</span></td><td>配比 &gt; 0 且 色母需求量 ＞ 有效樹脂在庫</td></tr>
     </tbody>
   </table>
-  <div class="note"><strong>補充</strong>：「實體倉容超載」不屬於逐單診斷環節，由 MRP 引擎在原料品號層級監控——(在庫＋在途) ＞ <code>defaultWarehouseCapacityKg</code>（預設 12,000 KG）時發出橘色爆倉預警（詳第  節）。</div>
+  <div class="note"><strong>補充</strong>：「實體倉容超載」不屬於逐單診斷環節，由 MRP 引擎在原料品號層級監控——(在庫＋在途) ＞ <code>defaultWarehouseCapacityKg</code>（預設 12,000 KG）時發出橘色爆倉預警（詳第 18 節）。</div>
 
   <h3>綜合緊張指數評定（tensionScore, 0~100）<a class="anchor-link" href="#sec-tension">#</a></h3>
   <div class="formula">任一環節為 紅(red)　　　　　　 ➜ critical 危急　score = 95
@@ -792,6 +793,7 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
   <p>需求比對引擎（<code>demandAnalysisEngine.ts → analyzeDemandCrossComparison</code>）針對有客戶需求之品號（PART / COMP / SET 類），按需求交期逐期比對三方數量：</p>
   <div class="formula">差值 = 實際訂單量 − 客戶預估量
 偏差率 bias% = ( 實單 − 預估 ) ÷ 預估 × 100%　（無預估卻有實單 ➜ 插單，bias = +100%）</div>
+  <div class="note ok"><strong>多版本防護</strong>：同品號同期別存在多個預估版本時，僅採計<strong>最新版本</strong>（created_at → version_no 降序判定），新舊版本不重複累加，確保偏差率不失真。</div>
   <h3>警戒門檻<a class="anchor-link" href="#sec-demand-compare">#</a></h3>
   <table>
     <thead><tr><th>|偏差率|</th><th>燈號</th><th>意涵</th></tr></thead>
@@ -877,8 +879,8 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
       <tr><td><code>defaultWarehouseCapacityKg</code> 單項原料倉容上限</td><td>12,000 KG</td><td>(在庫+在途) 超過此值 ➜ 發橘色爆倉預警；亦作為分批到貨之大批次判定基準之一。</td></tr>
       <tr><td><code>capacityBufferDays</code> 產能瓶頸裕度天數</td><td>0 天</td><td>所需生產天數 + 此裕度 &gt; 距交期天數 ➜ 發紫色產能瓶頸預警。</td></tr>
       <tr><td><code>cavityAlertThresholdPercent</code> 塞穴告警門檻</td><td>100%</td><td>妥善穴數/設計穴數 低於此百分比 ➜ 提示塞穴維修警告。</td></tr>
-      <tr><td><code>multiMoldStrategy</code> 多模備料原則</td><td>conservative_max_weight</td><td>多模具品號之選模策略（詳第  節）。</td></tr>
-      <tr><td><code>demandConsumptionMode</code> 需求彙總模式</td><td>additive</td><td>預估與實單之合併邏輯（詳第  節）。</td></tr>
+      <tr><td><code>multiMoldStrategy</code> 多模備料原則</td><td>conservative_max_weight</td><td>多模具品號之選模策略（詳第 8 節）。</td></tr>
+      <tr><td><code>demandConsumptionMode</code> 需求彙總模式</td><td>additive</td><td>預估與實單之合併邏輯（詳第 3 節）。</td></tr>
       <tr><td><code>dailyOperatingHours</code> 每日有效工時</td><td>24.0 小時</td><td>直接決定日產能與 WIP 日產出推估。</td></tr>
       <tr><td><code>safetyStockMultiplier</code> 安全庫存動態係數</td><td>1.0×</td><td>全系統安全庫存槓桿（如 1.25 = 提高 25% 備料水位）。</td></tr>
       <tr><td><code>maxAllowedScrapRatePct</code> 損耗率合理上限</td><td>8%</td><td>BOM 損耗率超出此值 ➜ 完整性掃描發警告（計價成本天花板防呆）。</td></tr>
@@ -943,8 +945,8 @@ WIP(t) 結存量 = Max( 0 , WIP(t−1) 前日結存 + P(t) − S(t) 當日全檢
   <ul class="plain">
     <li><strong>缺值即擋，禁止靜默預設</strong>：主檔關鍵欄位（良率、損耗率、交期、MOQ、安全庫存）缺值時，引擎拒絕計算並明確指出缺哪些欄位，絕不偷偷代入預設值讓數字看起來正常。</li>
     <li><strong>空值呈現真實空狀態</strong>：查無資料時顯示 0 筆／無資料，不偽造數值。</li>
-    <li><strong>推估值必須標示</strong>：凡屬模擬推估（如未下單品號之推估交期、歷史同期參考軌跡），畫面明確標示其性質，不誤導使用者。交期模型定位為「可達性校驗」而非憑空生成承諾日（見第  節）。</li>
-    <li><strong>不虛構未實作機制</strong>：如跨廠區實體調撥尚無模組，文件即如實聲明現行替代機制（見第  節），不以假規則充數。</li>
+    <li><strong>推估值必須標示</strong>：凡屬模擬推估（如未下單品號之推估交期、歷史同期參考軌跡），畫面明確標示其性質，不誤導使用者。交期模型定位為「可達性校驗」而非憑空生成承諾日（見第 6 節）。</li>
+    <li><strong>不虛構未實作機制</strong>：如跨廠區實體調撥尚無模組，文件即如實聲明現行替代機制（見第 5 節），不以假規則充數。</li>
     <li><strong>資料去識別化</strong>：演練與種子資料一律使用 A客戶/B客戶/C客戶、A供應商/B供應商/C供應商 及去識別化單號格式，不含任何真實往來對象名稱。</li>
     <li><strong>術語標準化</strong>：介面與本文件統一使用「原料倉庫／在製品待驗區／成品倉庫」等通用供應鏈術語，聚焦物料流與狀態流。</li>
   </ul>
