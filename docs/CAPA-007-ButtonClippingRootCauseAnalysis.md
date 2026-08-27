@@ -106,7 +106,7 @@ A:  CI 執行 npm run mec:check:all（全量掃描），
 
 1. `git push` exit code = 0（程式碼已上傳）
 2. GitHub Actions Run 的 `conclusion = success`（API 驗證）
-3. 網頁實際可訪問：`https://chun-chieh-chang.github.io/Predictive-Material-System/`
+3. 網頁實際可訪問：`https://chun-chieh-chang.github.io/PMS-Visualization/`
 
 **驗證方式**：
 - 本地：`git log --oneline origin/master..HEAD` 必須為空（完全同步）

@@ -25,7 +25,6 @@ import {
   RotateCcw,
   ChevronDown,
   ChevronUp,
-  Tv,
   BarChart3,
   Calendar,
   Search,

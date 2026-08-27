@@ -299,7 +299,7 @@ if (alt_sku) {
 1. **數據完整性掃描**：`dataIntegrityScanner.ts` 執行 10 大主檔外鍵與邊界掃描，健康度 100/100 分。
 2. **端到端穿透模擬**：`dataPipelineSimulation.ts` 4 大極限場景與 `scratch/verify_phase1_engine.py` 5/5 單元測試 100% 通過。
 3. **編譯校驗**：TypeScript / Vite Build (`npm run build`) **0 錯誤 / 0 警告** 穩定通過。
-4. **驗收基準對齊**：全項成果已對齊 [docs/PMS_Core_Development_Objectives.md](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/docs/PMS_Core_Development_Objectives.md) (OBJ-01 ~ OBJ-15)，達成 100% 驗收 (DoD Passed)。
+4. **驗收基準對齊**：全項成果已對齊 [docs/PMS_Core_Development_Objectives.md](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/PMS_Core_Development_Objectives.md) (OBJ-01 ~ OBJ-15)，達成 100% 驗收 (DoD Passed)。
 
 ---
 

@@ -15,7 +15,7 @@ import {
   Database, Search, Trash2, X, Layers, Cpu, ShieldCheck, Truck,
   PackageCheck, Boxes, FileSpreadsheet, Upload, Plus, Pencil,
   CheckCircle2, AlertTriangle, AlertCircle, History, Lock, XCircle,
-  ClipboardList, Beaker,
+  ClipboardList,
 } from 'lucide-react';
 import { SystemDatabase, ChangeAuditEntry } from '../types';
 import { exportToExcel } from '../utils/dataExchange';

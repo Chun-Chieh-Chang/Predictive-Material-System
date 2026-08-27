@@ -79,7 +79,7 @@
 
 ### 3.1 已實施修復
 
-**檔案：[src/components/GlossaryPanel.tsx](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/GlossaryPanel.tsx)**
+**檔案：[src/components/GlossaryView.tsx](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/GlossaryView.tsx)**
 
 ```diff
   {/* Category Tabs */}
@@ -99,7 +99,7 @@
 | `min-w-max` | 強制 flex 行保持其自然寬度，觸發 parent `overflow-x-auto` 滾動而非壓縮 |
 | `py-1.,` → `py-1.5` | 修復無效 Tailwind class，確保按鈕高度一致 |
 
-**檔案：[src/index.css](file:///d:/Self-developed_Apps/Predictive-Material-System/src/index.css)**
+**檔案：[src/index.css](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/index.css)**
 
 新增 `.scrollbar-none` class 定義：
 ```css
@@ -131,7 +131,7 @@
 
 ### 4.1 全局 UI Layout 檢核規範
 
-新增至 [docs/UI-Contrast-Standards.md](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/UI-Contrast-Standards.md)（待擴充）：
+新增至 [docs/UI-Contrast-Standards.md](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/UI-Contrast-Standards.md)（待擴充）：
 
 ```markdown
 ## UI Layout 完整性規範
@@ -178,7 +178,7 @@
 
 ### 4.4 開發階段必檢清單
 
-在 [docs/DevelopmentStatus.md](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/DevelopmentStatus.md) 新增「上線前檢查清單」：
+在 [docs/DevelopmentStatus.md](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/DevelopmentStatus.md) 新增「上線前檢查清單」：
 
 ```markdown
 ## UI Layout 檢查（每版本必檢）

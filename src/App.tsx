@@ -517,6 +517,8 @@ export function App() {
             database={db}
             systemParameters={systemParams}
             onNavigateToTab={(tab) => setActiveTab(tab)}
+            onDatabaseChange={(newDb) => setDb(newDb)}
+            onSystemParametersChange={(newParams) => setSystemParams(newParams)}
           />
         )}
 

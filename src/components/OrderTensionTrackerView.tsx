@@ -11,19 +11,14 @@ import {
   CheckCircle2,
   Clock,
   Cpu,
-  Truck,
-  Layers,
   ChevronDown,
   ChevronUp,
   ArrowRight,
   Filter,
   Flame,
   ShieldCheck,
-  Zap,
   Activity,
-  Boxes,
   RotateCcw,
-  SlidersHorizontal,
   Info
 } from 'lucide-react';
 import { SystemDatabase, SystemParameters } from '../types';

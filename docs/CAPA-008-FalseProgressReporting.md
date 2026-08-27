@@ -87,7 +87,7 @@ A:  驗證標準未前置定義：未先確認「在哪個 DOM 層級放置 over
 | # | 措施 | 檔案 | commit |
 |---|------|------|--------|
 | CA-01 | `mec-check-all.mjs` 改警告模式 | `.impeccable/scripts/mec-check-all.mjs` | `037c98c` |
-| CA-02 | GlossaryPanel overflow 正確層級修復 | `src/components/GlossaryPanel.tsx` | `6e78dd8` |
+| CA-02 | GlossaryPanel overflow 正確層級修復 | `src/components/GlossaryView.tsx` | `6e78dd8` |
 | PA-01 | UI 驗證標準前置檢查 | `.impeccable/scripts/pre-task-checklist.mjs` | `65e6081` |
 | PA-02 | GitHub Actions 部署後 URL 驗證 | `.github/workflows/deploy.yml` | `65e6081` |
 
@@ -357,10 +357,10 @@ A:  沒有建立「確認 → 回覆」與「快速回覆 → 可能不準確」
 
 ## 8. 附件
 
-- [CAPA-007-ButtonClippingRootCauseAnalysis.md](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/CAPA-007-ButtonClippingRootCauseAnalysis.md) — 上一輪技術根因分析
-- [pre-task-checklist.mjs](file:///d:/Self-developed_Apps/Predictive-Material-System/.impeccable/scripts/pre-task-checklist.mjs) — PA-01 實作（UI 驗證標準前置檢查）
-- [deploy.yml](file:///d:/Self-developed_Apps/Predictive-Material-System/.github/workflows/deploy.yml) — PA-02 實作（deploy.yml verify-deploy job）
-- [mec-check-all.mjs](file:///d:/Self-developed_Apps/Predictive-Material-System/.impeccable/scripts/mec-check-all.mjs) — CA-01 實作（CI MEC 警告模式）
+- [CAPA-007-ButtonClippingRootCauseAnalysis.md](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/CAPA-007-ButtonClippingRootCauseAnalysis.md) — 上一輪技術根因分析
+- [pre-task-checklist.mjs](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/.impeccable/scripts/pre-task-checklist.mjs) — PA-01 實作（UI 驗證標準前置檢查）
+- [deploy.yml](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/.github/workflows/deploy.yml) — PA-02 實作（deploy.yml verify-deploy job）
+- [mec-check-all.mjs](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/.impeccable/scripts/mec-check-all.mjs) — CA-01 實作（CI MEC 警告模式）
 
 ---
 

@@ -15,12 +15,10 @@ import {
   Upload,
   Info,
   ArrowRight,
-  TrendingDown,
   TrendingUp,
   Cpu,
   Boxes,
   Percent,
-  SlidersHorizontal
 } from 'lucide-react';
 import {
   SystemDatabase,

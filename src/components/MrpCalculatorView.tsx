@@ -6,7 +6,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Layers,
-  ArrowDown,
   ArrowRight,
   ShieldCheck,
   Cpu,
@@ -25,8 +24,6 @@ import {
   X,
   Check,
   Calculator,
-  HelpCircle,
-  Clock3,
 } from 'lucide-react';
 import { SystemDatabase, MRPCalculationResult, SystemParameters, isShippableMaterialClass } from '../types';
 import { calculateMRPForSKU } from '../utils/mrpEngine';

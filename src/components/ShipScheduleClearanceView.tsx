@@ -13,13 +13,9 @@ import {
   Truck,
   ArrowRight,
   Filter,
-  Layers,
-  Sparkles,
   Printer,
   ChevronRight,
-  TrendingUp,
   Clock,
-  ShieldCheck,
   Users,
   Search,
   X

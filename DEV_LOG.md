@@ -135,7 +135,7 @@
   7. `po_in_transit` (在途採購訂單檔)
   8. `sorting_actual_yield_log` (Sorting 實際良率紀錄檔)
 - `DataTablesView.tsx`、`Navbar.tsx`、`ProcurementWorkbenchView.tsx` 與 `PrdDocView.tsx` 消除所有硬編碼數字，全數改為動態取值 `{tablesMeta.length}`。
-- 重新編譯生成獨立字典手冊 [`docs/PMS_Master_Field_Data_Dictionary.html`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/PMS_Master_Field_Data_Dictionary.html) 與規格書 [`docs/PMS_Data_Dictionary.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/PMS_Data_Dictionary.md)。
+- 重新編譯生成獨立字典手冊 [`docs/PMS_Master_Field_Data_Dictionary.html`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/PMS_Master_Field_Data_Dictionary.html) 與規格書 [`docs/PMS_Data_Dictionary.md`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/PMS_Data_Dictionary.md)。
 
 **[階段二：LocalStorage 自動去識別化清洗器 (Auto-Sanitizer on Hydration)]**
 - **根因分析 (RCA)**：純前端 LocalStorage 持久化導致先前載入過的舊版快取資料（含 `MDX`、`ICU`、`GEN`）持續覆蓋程式碼中的最新 seedData。
@@ -166,7 +166,7 @@
 
 **[階段二：業務核心訴求 15 大具體目標與可驗證標準 (DoD) 確立]**
 - 依據業務單位 5 大核心訴求（掌握度與防斷料、資訊集中、算式透明、全員同台協同、保留 ERP 擴充性），拆解為 15 項量化可驗收目標 (OBJ-01 ~ OBJ-15)。
-- 發布 [PMS_Core_Development_Objectives.md](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/docs/PMS_Core_Development_Objectives.md) 與 [PMS_Business_Requirements_Document.md](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/docs/PMS_Business_Requirements_Document.md)。
+- 發布 [PMS_Core_Development_Objectives.md](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/PMS_Core_Development_Objectives.md) 與 [PMS_Business_Requirements_Document.md](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/PMS_Business_Requirements_Document.md)。
 - 建立四階段敏捷落地計畫與自動化/人工驗收標準。
 
 **[階段三：Phase 1 落地實作與減法設計 (Subtraction & High-Signal Optimization)]**
@@ -181,19 +181,19 @@
   - 審查全系統 11 張主檔表，清理非正規化冗餘欄位 `ItemMaster.material_class_label`，統一回歸五層分類樹與 3NF 關係約束。
 - **主檔全欄位名稱定義表全量建置 (Master Table Field Dictionary)**：
   - 建立 `src/data/masterFieldDictionary.ts`，逐一為 7 大核心主表 (3NF) 共 90+ 個欄位建立標準定義（中文名稱、英文代碼、型別/約束、業務定義、業務價值、實務範例、MRP 運算關聯）。
-  - 無縫植入「專業術語辭典」[GlossaryView.tsx](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/components/GlossaryView.tsx)，新增 `📊 主檔案欄位名稱定義表` 專屬分類。
-  - 發布規格書 [docs/PMS_Data_Dictionary.md](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/docs/PMS_Data_Dictionary.md)。
+  - 無縫植入「專業術語辭典」[GlossaryView.tsx](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/GlossaryView.tsx)，新增 `📊 主檔案欄位名稱定義表` 專屬分類。
+  - 發布規格書 [docs/PMS_Data_Dictionary.md](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/PMS_Data_Dictionary.md)。
 
 **[階段五：PRD 需求規格書與 15 大核心目標核查驗收總表發布]**
-- 更新 [PMS_Core_Development_Objectives.md](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/docs/PMS_Core_Development_Objectives.md) 升級為 `V1.3.0`，正式整合並取代先前所有 PRD 設計草案，作為本專案唯一驗收基準。
+- 更新 [PMS_Core_Development_Objectives.md](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/PMS_Core_Development_Objectives.md) 升級為 `V1.3.0`，正式整合並取代先前所有 PRD 設計草案，作為本專案唯一驗收基準。
 - 完整增補「15 大核心目標落地實施與客觀核查驗收總表」，清晰列出每一項目標之對應業務訴求、交付檔案路徑、實施功能特點、DoD 衡量標準與客觀驗證核查結果（15/15 全數 100% 驗收通過）。
 
 **[階段六：主檔案 11 表縮減至 7 表 3NF 閉環與數據交換鏈路無損適配]**
 - **主檔架構收斂 (3NF Plan B)**：依據 Karpathy 簡潔至上原則，將原本碎片化的 11 張主檔精簡合併為 7 大核心營運主檔（良率標準與採購規則直合於品號主檔，色料配比直合於成型 BOM）。
-- **數據鏈路與交互介面無損適配 ([dataExchange.ts](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/src/utils/dataExchange.ts))**：
+- **數據鏈路與交互介面無損適配 ([dataExchange.ts](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/utils/dataExchange.ts))**：
   - 空白匯入範本升級為 `料事如神系統_正式空白匯入範本_v2.0.xlsx`（包含填報規範字典 + 7 大核心主檔 + Sorting實際良率紀錄）。
   - Excel/JSON 匯入解析器支援直讀合併欄位 (`std_sorting_yield`, `supplier_name`, `lead_time_days`, `moq_kg`, `safety_stock_kg`)，並保持向下相容舊版分表備份。
-  - 完成 [docs/PMS-INV-20260822-02-MasterFileAudit.md](file:///c:/Users/USER/Downloads/Project/Predictive-Material-System/docs/PMS-INV-20260822-02-MasterFileAudit.md) 第七章閉環驗收總結。
+  - 完成 [docs/PMS-INV-20260822-02-MasterFileAudit.md](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/PMS-INV-20260822-02-MasterFileAudit.md) 第七章閉環驗收總結。
 
 ---
 
@@ -231,7 +231,7 @@
 - `index.css` — **精確收斂實心按鈕白色文字規則，根除淺色卡片泛白**
   - 根因分析 (RCA)：`[class*="from-blue-"] *` 屬性通配選擇器意外匹配了卡片上的 `dark:from-blue-950` class，導致在 Light Mode 下將整個卡片內部所有深藍色文字（如 `text-sky-900`）強制覆蓋為純白 `#ffffff !important`。
   - 矯正措施 (CAPA)：將按鈕白字規則精確限定於 `button.bg-*` 與 `.btn-primary`，徹底刪除 `[class*="from-*"] *`。
-  - 產出 [CAPA-011 報告](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/CAPA-011-WildcardSelectorCardContamination.md) 通過 MECE 100/100 滿分校驗，並升級 `contrast-check.mjs` 靜態語法禁令防呆。
+  - 產出 [CAPA-011 報告](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/CAPA-011-WildcardSelectorCardContamination.md) 通過 MECE 100/100 滿分校驗，並升級 `contrast-check.mjs` 靜態語法禁令防呆。
 
 ---
 
@@ -606,7 +606,7 @@ SystemDatabase {
 ## V-20260821-23 — GitHub Pages 部署上線
 
 **狀態：** ✅ 穩定發布
-**部署網址：** https://chun-chieh-chang.github.io/Predictive-Material-System/
+**部署網址：** https://chun-chieh-chang.github.io/PMS-Visualization/
 
 #### 本次完成
 
@@ -1092,7 +1092,7 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 #### 二、矯正措施 (CAPA)
 1. **依據 YAGNI 精簡原則移除虛假元件**：
-   - 移除 [`Navbar.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/Navbar.tsx) 中的「內網伺服器連線中」卡片。
+   - 移除 [`Navbar.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/Navbar.tsx) 中的「內網伺服器連線中」卡片。
    - 同步清理僅供該卡片使用的 `formatTaiwanDate` 函式與 `TaiwanDate` 元件，避免殘留無效死碼。
 2. **UI 佈局優化**：
    - 維持「示範演練模式 (DEMO) / 正式生產模式 (PROD)」資料庫模式標籤。
@@ -1113,12 +1113,12 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 #### 二、矯正措施 (CAPA-015)
 1. **SalesWorkbenchView 假數據 Fallback 修正**：
-   - 將 [`SalesWorkbenchView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/SalesWorkbenchView.tsx) 中查無品號時的寫死假數據（`10000`/`8500`/`-15%`）替換為真實空狀態（`0`/`0`/`0%`/提示無資料）。
+   - 將 [`SalesWorkbenchView.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/SalesWorkbenchView.tsx) 中查無品號時的寫死假數據（`10000`/`8500`/`-15%`）替換為真實空狀態（`0`/`0`/`0%`/提示無資料）。
 2. **ProcurementWorkbenchView 標籤透明化**：
    - 區分「客戶交期:」與「預設交期 (無PO):」，消除生管排程理解歧義。
 3. **完成專案級防禦規則自進化沉澱**：
-   - 於 [`AGENTS.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/AGENTS.md) 與 [`GEMINI.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/GEMINI.md) 第 5 條永久寫入「零偽造與嚴禁虛假 UI 擺設 (Zero-Mock & Anti-Placebo UI)」條款，強制後續所有開發絕對禁止加入無實質資料流或後端心跳支持的裝飾性擺設。
-   - 建立完整 CAPA 報告：[`docs/CAPA-015-AntiPlaceboUIRule.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/CAPA-015-AntiPlaceboUIRule.md)。
+   - 於 [`AGENTS.md`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/AGENTS.md) 與 [`GEMINI.md`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/GEMINI.md) 第 5 條永久寫入「零偽造與嚴禁虛假 UI 擺設 (Zero-Mock & Anti-Placebo UI)」條款，強制後續所有開發絕對禁止加入無實質資料流或後端心跳支持的裝飾性擺設。
+   - 建立完整 CAPA 報告：[`docs/CAPA-015-AntiPlaceboUIRule.md`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/CAPA-015-AntiPlaceboUIRule.md)。
 
 ---
 
@@ -1135,16 +1135,16 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 #### 二、矯正措施 (CAPA)
 1. **全專案組件與引擎術語標準化**：
-   - [`src/components/SalesWorkbenchView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/SalesWorkbenchView.tsx)：`4F 良品在庫` ➔ `成品良品在庫`；`3F WIP 檢驗` ➔ `在製品 WIP 檢驗`。
-   - [`src/components/OrderTensionTrackerView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/OrderTensionTrackerView.tsx)：`3樓 WIP 全檢環節` ➔ `WIP 檢驗驗收環節`。
-   - [`src/components/ShipScheduleClearanceView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/ShipScheduleClearanceView.tsx)：移除 `3樓/三樓` 字眼，全面統一為 `在製品待驗區` / `WIP 待驗品`。
-   - [`src/components/MrpCalculatorView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/MrpCalculatorView.tsx)：`3樓 WIP` ➔ `在製品 (WIP) 待驗量`。
-   - [`src/utils/orderTensionEngine.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/utils/orderTensionEngine.ts)：`3F WIP 待檢` ➔ `WIP 待驗品`。
-   - [`src/utils/wipEngine.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/utils/wipEngine.ts)：`三樓暫存區` ➔ `在製品暫存區`。
-   - [`src/utils/dataExchange.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/utils/dataExchange.ts)：`3F WIP` ➔ `在製品 (WIP) 待驗品`。
-   - [`src/data/masterFieldDictionary.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/data/masterFieldDictionary.ts) & [`docs/PMS_Data_Dictionary.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/PMS_Data_Dictionary.md)：全量清除 1樓/3樓/4樓，統一為 `原料倉庫`、`在製品待驗區`、`成品倉庫`。
+   - [`src/components/SalesWorkbenchView.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/SalesWorkbenchView.tsx)：`4F 良品在庫` ➔ `成品良品在庫`；`3F WIP 檢驗` ➔ `在製品 WIP 檢驗`。
+   - [`src/components/OrderTensionTrackerView.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/OrderTensionTrackerView.tsx)：`3樓 WIP 全檢環節` ➔ `WIP 檢驗驗收環節`。
+   - [`src/components/ShipScheduleClearanceView.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/ShipScheduleClearanceView.tsx)：移除 `3樓/三樓` 字眼，全面統一為 `在製品待驗區` / `WIP 待驗品`。
+   - [`src/components/MrpCalculatorView.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/MrpCalculatorView.tsx)：`3樓 WIP` ➔ `在製品 (WIP) 待驗量`。
+   - [`src/utils/orderTensionEngine.ts`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/utils/orderTensionEngine.ts)：`3F WIP 待檢` ➔ `WIP 待驗品`。
+   - [`src/utils/wipEngine.ts`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/utils/wipEngine.ts)：`三樓暫存區` ➔ `在製品暫存區`。
+   - [`src/utils/dataExchange.ts`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/utils/dataExchange.ts)：`3F WIP` ➔ `在製品 (WIP) 待驗品`。
+   - [`src/data/masterFieldDictionary.ts`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/data/masterFieldDictionary.ts) & [`docs/PMS_Data_Dictionary.md`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/PMS_Data_Dictionary.md)：全量清除 1樓/3樓/4樓，統一為 `原料倉庫`、`在製品待驗區`、`成品倉庫`。
 2. **沉澱防禦規則**：
-   - 於 [`AGENTS.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/AGENTS.md) 與 [`GEMINI.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/GEMINI.md) 寫入第 6 條「專業領域概念與嚴禁特定實體樓層術語 (Domain Purity & Anti-Floor Jargon)」，永久禁止在系統概念中混入特定建物樓層俗稱。
+   - 於 [`AGENTS.md`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/AGENTS.md) 與 [`GEMINI.md`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/GEMINI.md) 寫入第 6 條「專業領域概念與嚴禁特定實體樓層術語 (Domain Purity & Anti-Floor Jargon)」，永久禁止在系統概念中混入特定建物樓層俗稱。
 
 ---
 
@@ -1169,7 +1169,7 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
    - 「三向快查中心」 ➔ **「快速查詢 (客戶 / 品號 / 訂單)」**
    - 「前瞻防斷料 30 天時程軸」 ➔ **「最晚採購下單日倒數 (30 天時程軸)」**
 2. **沉澱防禦規則**：
-   - 於 [`AGENTS.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/AGENTS.md) 與 [`GEMINI.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/GEMINI.md) 寫入第 7 條「務實平實之日常工作用語與嚴禁浮誇行銷詞彙 (Plain & Approachable Business Terminology)」。
+   - 於 [`AGENTS.md`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/AGENTS.md) 與 [`GEMINI.md`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/GEMINI.md) 寫入第 7 條「務實平實之日常工作用語與嚴禁浮誇行銷詞彙 (Plain & Approachable Business Terminology)」。
 
 ## V-20260824-30 — 主檔案欄位名稱定義與數據鏈位置權威手冊發布暨辭典介面主表分組重構
 
@@ -1180,14 +1180,14 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 #### 一、需求與目的
 1. **名詞定義與數據鏈位置全量盤點**：逐一條列全系統 8 大核心主表所有欄位之名稱、代碼、型別約束、數據鏈與介面中的位置 (uiLocation)、白話解說、業務價值、MRP 運算衝擊、填寫規範與實務示範。
-2. **獨立 HTML 手冊發布**：發布精美響應式獨立 HTML 手冊 [`docs/PMS_Master_Field_Data_Dictionary.html`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/PMS_Master_Field_Data_Dictionary.html)，具備快速搜尋與主表分組導覽。
-3. **系統內部辭典介面重構**：重構 [`src/components/GlossaryView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/GlossaryView.tsx)，在「主檔案欄位名稱定義表」分類下新增「主檔案切換」分組頁籤與主表分區標題，並於每張欄位卡片中直觀渲染「📍 在數據鏈或介面中的位置」區塊。
+2. **獨立 HTML 手冊發布**：發布精美響應式獨立 HTML 手冊 [`docs/PMS_Master_Field_Data_Dictionary.html`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/PMS_Master_Field_Data_Dictionary.html)，具備快速搜尋與主表分組導覽。
+3. **系統內部辭典介面重構**：重構 [`src/components/GlossaryView.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/GlossaryView.tsx)，在「主檔案欄位名稱定義表」分類下新增「主檔案切換」分組頁籤與主表分區標題，並於每張欄位卡片中直觀渲染「📍 在數據鏈或介面中的位置」區塊。
 
 #### 二、成果與交付清單
-- **手冊檔案**：[`docs/PMS_Master_Field_Data_Dictionary.html`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/PMS_Master_Field_Data_Dictionary.html)
-- **型別與資料集更新**：[`src/data/glossaryData.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/data/glossaryData.ts)、[`src/data/masterFieldDictionary.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/data/masterFieldDictionary.ts)
-- **UI 元件更新**：[`src/components/GlossaryView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/GlossaryView.tsx)
-- **自動化維護腳本**：[`scripts/generate_html_dictionary.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/scripts/generate_html_dictionary.ts)
+- **手冊檔案**：[`docs/PMS_Master_Field_Data_Dictionary.html`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/PMS_Master_Field_Data_Dictionary.html)
+- **型別與資料集更新**：[`src/data/glossaryData.ts`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/data/glossaryData.ts)、[`src/data/masterFieldDictionary.ts`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/data/masterFieldDictionary.ts)
+- **UI 元件更新**：[`src/components/GlossaryView.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/GlossaryView.tsx)
+- **自動化維護腳本**：[`scripts/generate_html_dictionary.ts`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/scripts/generate_html_dictionary.ts)
 
 ## V-20260824-31 — 全系統資料表格 Excel 雙向凍結視窗 (2D Freeze Panes) 與即時懸浮數據屬性檢查器 (Live Data Inspector) 升級
 
@@ -1203,16 +1203,16 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
   2. 最佳解決方案為 **Excel 雙向凍結視窗 (2D Freeze Panes: Top Row + Left Column + Top-Left Corner Intersection)**，並輔以 **懸浮即時數據屬性氣泡 (Live Attribute Tooltip)** 與 **一鍵凍結開關 (Freeze Toggle)**。
 
 #### 二、架構設計與具體改動 (CAPA)
-1. **全域凍結樣式系統 ([`src/index.css`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/index.css))**：
+1. **全域凍結樣式系統 ([`src/index.css`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/index.css))**：
    - 封裝 `.freeze-header` (Top `sticky top-0 z-20`)、`.freeze-col-left` (Left `sticky left-0 z-10`) 與 `.freeze-corner` (Corner `sticky top-0 left-0 z-30`)。
    - 新增向右立體分割陰影 `.freeze-shadow-right`，營造如同 Excel 凍結線之高級視覺分割。
-2. **總覽儀表板需求比對表 ([`src/components/DashboardView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/DashboardView.tsx))**：
+2. **總覽儀表板需求比對表 ([`src/components/DashboardView.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/DashboardView.tsx))**：
    - 導入 2D 凍結視窗：表頭永遠置頂，最左側「成品料號 / 客戶」橫向捲動時永遠釘在最左側。
    - 加入「❄️ 凍結窗格: 開啟 / 關閉」一鍵開關按鈕。
    - 每一格數值加入即時懸浮屬性提示（如 `[A01-200-131 / MDX] 預示量: 100,000 PCS`）。
-3. **7 大核心資料表維護 ([`src/components/DataTablesView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/DataTablesView.tsx))**：
+3. **7 大核心資料表維護 ([`src/components/DataTablesView.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/DataTablesView.tsx))**：
    - 凍結首列與首欄主鍵（PK / SKU），右側「操作」欄同步凍結 (`sticky right-0`)，捲動 50+ 筆資料時操作列永遠在手邊。
-4. **出貨排程審查看板 ([`src/components/ShipScheduleClearanceView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/ShipScheduleClearanceView.tsx))**：
+4. **出貨排程審查看板 ([`src/components/ShipScheduleClearanceView.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/ShipScheduleClearanceView.tsx))**：
    - 首欄「客戶 / 成品料號」與表頭雙向凍結，修正「3F WIP」為標準專業術語「在製品 WIP (折算良品)」。
 
 ## V-20260824-32 — 演練模式與模擬數據全面去識別化規範落實 (Data Privacy & Anonymization)
@@ -1228,17 +1228,17 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
 
 #### 二、架構設計與具體改動 (CAPA)
 1. **沉澱防禦規則**：
-   - 於 [`AGENTS.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/AGENTS.md) 與 [`GEMINI.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/GEMINI.md) 寫入第 8 條「演練模式與模擬數據去識別化規範 (Data Privacy & Anonymization Rule)」。
-2. **種子數據全面去識別化 ([`src/data/seedData.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/data/seedData.ts))**：
+   - 於 [`AGENTS.md`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/AGENTS.md) 與 [`GEMINI.md`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/GEMINI.md) 寫入第 8 條「演練模式與模擬數據去識別化規範 (Data Privacy & Anonymization Rule)」。
+2. **種子數據全面去識別化 ([`src/data/seedData.ts`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/data/seedData.ts))**：
    - 客戶代碼：`MDX` ➔ `A客戶`、`ICU` ➔ `B客戶`、`MED` ➔ `C客戶`、`OEM` ➔ `D客戶`、`GEN` ➔ `通用客戶`。
    - 供應商名稱：全面替換為 `A供應商 (國內陸運)`、`B供應商 (國外海運進口)`、`C供應商 (國內陸運)`、`D供應商 (國外海運進口)`、`E供應商 (國外海運進口)`、`F供應商 (國外海運進口)`、`G供應商 (廠內常備)`、`H供應商 (國內陸運)`。
    - 訂單號與標籤：`PO-A-202608-01`、`PO-B-202608-01`、`MAT-LABEL-A`、`MAT-LABEL-B`。
 3. **UI 元件與資料交換樣板去識別化**：
-   - [`src/components/SalesWorkbenchView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/SalesWorkbenchView.tsx)：預設檢索關鍵字與客戶快速選單改為 `A客戶`、`B客戶`、`C客戶`。
-   - [`src/components/OrderTensionTrackerView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/OrderTensionTrackerView.tsx)：搜尋框提示改為 `A客戶 / B客戶`。
-   - [`src/utils/fieldMeta.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/utils/fieldMeta.ts) & [`src/utils/dataExchange.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/utils/dataExchange.ts)：匯入樣板與防呆規則之範例全面改為 `A客戶`、`B客戶`、`通用客戶`。
+   - [`src/components/SalesWorkbenchView.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/SalesWorkbenchView.tsx)：預設檢索關鍵字與客戶快速選單改為 `A客戶`、`B客戶`、`C客戶`。
+   - [`src/components/OrderTensionTrackerView.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/OrderTensionTrackerView.tsx)：搜尋框提示改為 `A客戶 / B客戶`。
+   - [`src/utils/fieldMeta.ts`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/utils/fieldMeta.ts) & [`src/utils/dataExchange.ts`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/utils/dataExchange.ts)：匯入樣板與防呆規則之範例全面改為 `A客戶`、`B客戶`、`通用客戶`。
 4. **主檔案字典手冊全面同步**：
-   - 更新 [`src/data/masterFieldDictionary.ts`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/data/masterFieldDictionary.ts) 並重新編譯獨立手冊 [`docs/PMS_Master_Field_Data_Dictionary.html`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/PMS_Master_Field_Data_Dictionary.html)。
+   - 更新 [`src/data/masterFieldDictionary.ts`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/data/masterFieldDictionary.ts) 並重新編譯獨立手冊 [`docs/PMS_Master_Field_Data_Dictionary.html`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/PMS_Master_Field_Data_Dictionary.html)。
 
 ---
 
@@ -1267,14 +1267,14 @@ GlossaryPanel 分類標籤列最右側按鈕（系統功能...）被面板右邊
    - 7. 在途採購訂單檔 (`po_in_transit`)
    - 8. Sorting 實際良率紀錄檔 (`sorting_actual_yield_log`)
 2. **全面消除靜態數字硬編碼 (Zero Hardcoding)**：
-   - [`src/components/DataTablesView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/DataTablesView.tsx)：標題改為 `{tablesMeta.length} 大核心資料庫即時維護中心`。
-   - [`src/components/Navbar.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/Navbar.tsx)：選單標籤標準化為 `資料表維護 (8 大主檔)`。
-   - [`src/components/DataExchangeView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/DataExchangeView.tsx)：所有提示與模擬文字修正為 `8 大主檔`。
-   - [`src/components/ProcurementWorkbenchView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/ProcurementWorkbenchView.tsx)：快捷按鈕網格補齊為完整的 8 大主表（加入 `sorting_actual_yield_log`）。
-   - [`src/components/PrdDocView.tsx`](file:///d:/Self-developed_Apps/Predictive-Material-System/src/components/PrdDocView.tsx)：OBJ-04 與 OBJ-15 驗收條款同步更新為 `8 大核心營運主檔`。
+   - [`src/components/DataTablesView.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/DataTablesView.tsx)：標題改為 `{tablesMeta.length} 大核心資料庫即時維護中心`。
+   - [`src/components/Navbar.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/Navbar.tsx)：選單標籤標準化為 `資料表維護 (8 大主檔)`。
+   - [`src/components/DataExchangeView.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/DataExchangeView.tsx)：所有提示與模擬文字修正為 `8 大主檔`。
+   - [`src/components/ProcurementWorkbenchView.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/ProcurementWorkbenchView.tsx)：快捷按鈕網格補齊為完整的 8 大主表（加入 `sorting_actual_yield_log`）。
+   - [`src/components/PrdDocView.tsx`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/src/components/PrdDocView.tsx)：OBJ-04 與 OBJ-15 驗收條款同步更新為 `8 大核心營運主檔`。
 3. **全量手冊與文件 100% 同步**：
-   - 重新編譯發布獨立手冊 [`docs/PMS_Master_Field_Data_Dictionary.html`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/PMS_Master_Field_Data_Dictionary.html)，精準呈現 8 大主檔與 72 個運算欄位。
-   - 同步修正 [`docs/PMS_Data_Dictionary.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/docs/PMS_Data_Dictionary.md) 與 [`README.md`](file:///d:/Self-developed_Apps/Predictive-Material-System/README.md)。
+   - 重新編譯發布獨立手冊 [`docs/PMS_Master_Field_Data_Dictionary.html`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/PMS_Master_Field_Data_Dictionary.html)，精準呈現 8 大主檔與 72 個運算欄位。
+   - 同步修正 [`docs/PMS_Data_Dictionary.md`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/docs/PMS_Data_Dictionary.md) 與 [`README.md`](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/README.md)。
 
 ---
 

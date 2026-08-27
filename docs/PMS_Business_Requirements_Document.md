@@ -189,8 +189,8 @@ graph TD
 | **OBJ-10** | 全員開放式無門檻操作介面 | 全員同台協同/無權限阻礙 | 全系統 UI/UX (Dual-Theme) | **Must Have** |
 | **OBJ-11** | 開會統一投影協同視圖 | 全員同台協同/消除對帳內耗 | `DashboardView`, `ShipSchedule` | **Must Have** |
 | **OBJ-12** | 自動化變更審計軌跡 | 全員同台協同/變更留痕 | `audit_log`, `DataTablesView` | **Must Have** |
-| **OBJ-13** | 工業標準 3NF 與五層分類 | 保留擴充性/ERP 就緒 | `schema.ts`, `materialClasses` | **Must Have** |
-| **OBJ-14** | 資料適配層解耦架構 | 保留擴充性/無痛升級 | `dataAdapter.ts`, `store.ts` | **Must Have** |
+| **OBJ-13** | 工業標準 3NF 與五層分類 | 保留擴充性/ERP 就緒 | `types.ts`, `materialClasses` | **Must Have** |
+| **OBJ-14** | 資料適配層解耦架構 | 保留擴充性/無痛升級 | `dataStoreAdapter.ts` | **Must Have** |
 | **OBJ-15** | 開放資料契約與 ETL 字典 | 保留擴充性/系統銜接準備 | `docs/`, `DataExchangeView` | **Should Have** |
 
 ---

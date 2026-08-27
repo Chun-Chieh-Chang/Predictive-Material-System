@@ -40,8 +40,8 @@
 {
   "timestamp": "2026-08-22T13:09:44.675Z",
   "commit_sha": "abc1234",
-  "staged_files": ["src/components/GlossaryPanel.tsx"],
-  "ui_files": ["src/components/GlossaryPanel.tsx"],
+  "staged_files": ["src/components/GlossaryView.tsx"],
+  "ui_files": ["src/components/GlossaryView.tsx"],
   "reason": "pass | no_staged_files | no_ui_change | fail_no_verification_standard",
   "has_standard": true | false | null,
   "matched_reports": ["CAPA-007-*.md"],
@@ -81,7 +81,7 @@
   "commit_sha": "abc1234",
   "run_id": 12345678,
   "workflow": "Deploy to GitHub Pages",
-  "url": "https://chun-chieh-chang.github.io/Predictive-Material-System/",
+  "url": "https://chun-chieh-chang.github.io/PMS-Visualization/",
   "http_code": "200",
   "content_match": "true | false",
   "status": "success | failure"
@@ -183,7 +183,7 @@ process.exit(code);
 **結構化日誌範例：**
 ```jsonl
 {"timestamp":"2026-08-22T13:09:44.675Z","commit_sha":"","staged_files":[],"ui_files":[],"reason":"no_staged_files","has_standard":null,"matched_reports":[],"exit_code":0}
-{"timestamp":"2026-08-22T13:10:00.000Z","commit_sha":"abc1234","staged_files":["src/components/GlossaryPanel.tsx"],"ui_files":["src/components/GlossaryPanel.tsx"],"reason":"pass","has_standard":true,"matched_reports":["CAPA-007-ButtonClippingRootCauseAnalysis.md"],"exit_code":0}
+{"timestamp":"2026-08-22T13:10:00.000Z","commit_sha":"abc1234","staged_files":["src/components/GlossaryView.tsx"],"ui_files":["src/components/GlossaryView.tsx"],"reason":"pass","has_standard":true,"matched_reports":["CAPA-007-ButtonClippingRootCauseAnalysis.md"],"exit_code":0}
 {"timestamp":"2026-08-22T13:11:00.000Z","commit_sha":"def5678","staged_files":["src/components/DashboardView.tsx"],"ui_files":["src/components/DashboardView.tsx"],"reason":"fail_no_verification_standard","has_standard":false,"matched_reports":[],"exit_code":1}
 ```
 

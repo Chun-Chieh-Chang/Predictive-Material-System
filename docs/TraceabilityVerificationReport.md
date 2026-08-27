@@ -140,7 +140,7 @@
 | 交付物件 | 檔案位置 | 狀態 |
 |---------|---------|------|
 | GitHub Actions CI/CD | `/.github/workflows/deploy.yml` | ✅ Node.js 22 + deploy-pages@v5 |
-| GitHub Pages 部署 | https://chun-chieh-chang.github.io/Predictive-Material-System/ | ✅ Run #5 成功 |
+| GitHub Pages 部署 | https://chun-chieh-chang.github.io/PMS-Visualization/ | ✅ Run #5 成功 |
 | 版本號內嵌 | `import.meta.env.VITE_PMS_VERSION` | ✅ Footer + PRD 顯示 |
 
 **缺口分析：**
@@ -645,7 +645,7 @@ Commit b398ec6 (feat: 色母/色粉管理系統)
 Commit 0bbb10d (docs: ColorMaterialProcessSpec)
     └── docs/ColorMaterialProcessSpec.md (+338 行)
 
-GitHub Pages Deploy #5 → Status: Success → URL: https://chun-chieh-chang.github.io/Predictive-Material-System/
+GitHub Pages Deploy #5 → Status: Success → URL: https://chun-chieh-chang.github.io/PMS-Visualization/
 ```
 
 ---

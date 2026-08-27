@@ -249,7 +249,7 @@
 }
 ```
 
-> **完整模板庫內容已保存至**：[.impeccable/mec-template-library.json](file:///d:/Self-developed_Apps/Predictive-Material-System/.impeccable/mec-template-library.json)
+> **完整模板庫內容已保存至**：[.impeccable/mec-template-library.json](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/.impeccable/mec-template-library.json)
 
 ### 2.2 六維 MECE 完整性檢查矩陣
 
@@ -365,7 +365,7 @@
 MECE 驗證結果: 互斥 ✅ | 窮盡 ✅
 ```
 
-> **完整 Pre-Injection 提示詞與示例庫已保存至**：[.impeccable/mec-pre-injection-prompt.md](file:///d:/Self-developed_Apps/Predictive-Material-System/.impeccable/mec-pre-injection-prompt.md)
+> **完整 Pre-Injection 提示詞與示例庫已保存至**：[.impeccable/mec-pre-injection-prompt.md](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/.impeccable/mec-pre-injection-prompt.md)
 
 ---
 
@@ -739,7 +739,7 @@ Phase 5: 持續優化（第 13 週起）
 ### 8.1 MECE 校驗腳本（contrast-check.mjs 擴展版）
 
 完整的 MECE 完整性校驗腳本已保存至：
-→ [.impeccable/scripts/mec-validator.mjs](file:///d:/Self-developed_Apps/Predictive-Material-System/.impeccable/scripts/mec-validator.mjs)
+→ [.impeccable/scripts/mec-validator.mjs](file:///c:/Users/USER/Downloads/Project/PMS-Visualization/.impeccable/scripts/mec-validator.mjs)
 
 ### 8.2 相關文件索引
 
