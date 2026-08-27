@@ -62,7 +62,8 @@
 - `f843841` feat(ux)：Navbar 五級縮放控制（85~140%）驅動根字號，全專案 16 檔 px 硬編碼轉 rem，文字與寬度等比縮放。
 - `842fc95` feat(ux)：支援人工輸入任意百分比（50–300%），Enter／失焦套用、Esc 還原，步進按鈕自動導向相鄰級距。
 - `15c8c56` fix(ux)：修復縮放時 Navbar 文字換行根因——Tailwind 斷點隨 rem 根字號變化而偏移，改為鎖定 px 斷點＋Navbar 強制 nowrap / 水平滾動 / shrink-0。
-- `7c1e3c9` feat(ux)：縮放控制改 ▲▼ 箭頭按鈕（ChevronUp/ChevronDown），每格 1% 連續跳檔，範圍收斂至 60–140%（上下各 40%）。
+- `7c1e3c9` feat(ux)：縮放控制改 ▲▼ 箭頭按鈕（ChevronUp/ChevronDown），每格 1% 連續跳檔，範圍收斂至 60–140%。
+- `22a2868` refactor(ux)：縮放步進由每格 1% 改為 5%；▲▼ 按鈕移至輸入框右側垂直堆疊（上 ▲ 放大 / 下 ▼ 縮小），共用圓角容器。範圍維持 60–140%（上下各 40%）。
 
 **[效能優化]**
 - `283ba20` perf(data)：`src/utils/dataExchange.ts` 改動態 import xlsx（`await import('xlsx')`），首屏 JS 傳輸量 −143 kB gzip（−33%），僅在觸發 Excel 匯入/匯出時按需載入。

@@ -20,7 +20,7 @@ entries:
     severity: medium
     fix_code: "/* 新增 */\nhtml:not(.dark) .text-indigo-200,\nhtml:not(.dark) .text-indigo-300 { color: #3730a3 !important; } /* Indigo 800 */\nhtml:not(.dark) .text-indigo-400 { color: #4f46e5 !important; } /* Indigo 600 */\n```\n\n---\n\n/* sky 色系覆蓋 */\nhtml:not(.dark) .text-sky-100,\nhtml:not(.dark) .text-sky-200,\nhtml:not(.dark) .text-sky-300 { color: #0c4a6e !important; }\nhtml:not(.dark) .text-sky-400 { color: #0284c7 !important; }\n```"
     created_at: "2026-08-24"
-    last_used: "2026-08-26"
+    last_used: "2026-08-27"
     reuse_count: 0
     status: active
 
@@ -44,7 +44,7 @@ entries:
     severity: medium
     fix_code: "┌──────────────────────────────────────────────────────────────────┐\n│  失誤一：技術層面 — CSS overflow 多層嵌套理解錯誤                 │\n│  結果：CAPA-006 方案無法根治按鈕裁切問題                         │\n│  影響範圍：UI 渲染品質                                              │\n├──────────────────────────────────────────────────────────────────┤\n│  失誤二：表述層面 — 將「文字報告中的計畫」誤標為「已實作」          │\n│  結果：虛報進度，誤導利害關係人                                     │\n│  影響範圍：專案管理誠信 × 團隊信任                                   │\n└──────────────────────────────────────────────────────────────────┘\n```\n\n---\n\nQ1: 為什麼按鈕被裁切？\nA:  面板外層的 max-w-* 限制寬度，content 超出時被裁切\n\nQ2: 為什麼 max-w-* 會裁切 content？\nA:  外層 div 有 max-w-lg/md/xl，但沒有 overflow-x:auto，\n    導致 flex content 被強制壓縮而非展開\n\nQ3: 為什麼 CAPA-006 的 min-w-max + overflow-x:auto 沒有生效？\nA:  min-w-max 和 overflow-x:auto 加在「內層 tabs wrapper」上，\n    但外層 max-w-* 容器仍然限制了整體寬度，造成父層裁切 > 子層滾動無效\n\nQ4: 為什麼 min-w-max 無法突破父層 max-w-* 限制？\nA:  這是 CSS 的硬性限制：min-width 無法超過父層的 max-width\n    max-w-lg = max-width: 32rem → content 最大 512px\n    min-w-max = 內容實際寬度，但受父層 max-w 限制\n    兩者衝突時，父層 max-w 優先\n\nQ5: 為什麼選擇了錯誤的修補層級？\nA:  驗證標準未前置定義：未先確認「在哪個 DOM 層級放置 overflow-x:auto 才能有效」\n    直接套用過往經驗（overflow-x 加在任何有 min-w-max 的地方），未驗證實效性\n```\n\n---\n\n「實施完成」在專案管理中可能指：\n\n層級 A：文字計畫已寫入報告文件\n        → 例如：「PA-01 的內容是：建立 pre-task-checklist.mjs」\n        → 狀態：✅ 已完成（文件存在）\n\n層級 B：程式碼已寫入專案並提交至版控\n        → 例如：pre-task-checklist.mjs 檔案已存在於 .impeccable/scripts/\n        → 狀態：❌ 當時未完成\n\n層級 C：程式碼已部署至生產環境並通過驗證\n        → 例如：pre-task-checklist.mjs 已在上線版本中運行\n        → 狀態：❌ 當時未完成\n```\n\n---\n\nQ1: 為什麼我說「已實施」但實際上只有文字報告？\nA:  我在撰寫回應時，將「報告中已定義的預防方案」等同為「已實作的工具」\n\nQ2: 為什麼會混淆「計畫定義」與「實作完成」？\nA:  缺乏明確的「完成標準」（Definition of Done）來區分\n    文字記錄 ≠ 程式碼實作 ≠ 部署上線 的界線\n    當我產出報告時，大腦已將「寫完報告」視為「完成該任務」\n\nQ3: 為什麼缺乏這樣的完成標準？\nA:  專案中沒有明確定義「什麼才算一個預防方案（PA）已實施」\n    過往的 CAPA 報告（CAPA-001 至 CAPA-006）都沒有要求列出\n    「實施後的程式碼位置」或「commit hash」作為完成證據\n\nQ4: 為什麼沒有標準也敢於使用「已實施」這種確定性的表述？\nA:  時間壓力下追求快速交付，優先考量的是一句話趕快回覆使用者，\n    而非花時間確認實作狀態。這是一種「速度優先於準確性」的決策偏好。\n\nQ5: 為什麼會有速度優先的決策偏好？\nA:  沒有建立「確認 → 回覆」與「快速回覆 → 可能不準確」之間的因果連結\n    每次快"
     created_at: "2026-08-24"
-    last_used: "2026-08-26"
+    last_used: "2026-08-27"
     reuse_count: 0
     status: active
 
@@ -61,7 +61,7 @@ entries:
     severity: medium
     fix_code: "Q1: 為什麼按鈕被裁切？\nA:  面板外層的 max-w-* 限制寬度，content 超出時被裁切\n\nQ2: 為什麼 max-w-* 會裁切 content？\nA:  外層 div 有 max-w-lg/md/xl，但沒有 overflow-x:auto，\n    導致 flex content 被強制壓縮而非展開\n\nQ3: 為什麼 CAPA-006 的 min-w-max + overflow-x:auto 沒有生效？\nA:  min-w-max 和 overflow-x:auto 加在「內層 tabs wrapper」上，\n    但外層 max-w-* 容器仍然限制了整體寬度，造成父層裁切 > 子層滾動無效\n\nQ4: 為什麼會犯這個 CSS 層級錯誤？\nA:  驗證標準未明確定義：「按鈕不被裁切」沒有轉化為\n    「所有 category tabs 在 >=1920px 寬度下無需水平捲動即可完整顯示」\n\nQ5: 為什麼 CI 持續紅叉？\nA:  CI 執行 npm run mec:check:all（全量掃描），\n    而 pre-commit hook 只檢查本次提交的報告，兩者校驗範圍不一致\n```\n\n---\n\n┌─ Fixed inset-0                       (z-50, 無 overflow)\n│   ┌─ scrollable wrapper              (overflow-x:auto + min-w-fit) ← 修正層級\n│   │   └─ Panel                       (max-w-[calc(100vw-1rem)], shrink-0)\n│   │       └─ Category tabs           (flex, flex-nowrap, 無 min-w-max)\n```\n\n---\n\n## UI Overflow/Cut-off 修復驗證標準\n\n| 螢幕寬度 | 驗證項目 | 通過標準 |\n|----------|----------|----------|\n| >= 1920px | 所有 category tabs 完整可見 | 無需水平滾動，所有按鈕邊框完整 |\n| >= 1280px | 面板不超出可視區右側 | overflow-x:auto 觸發但不裁切內容 |\n| >= 768px  | 面板不超出螢幕右邊緣 | max-w-[calc(100vw-1rem)] 生效 |\n| >= 375px  | 移動端可正確捲動 | 手指滑動可瀏覽所有 tabs |\n\n**禁止行為**：\n- 不得在 max-w-* 限制層內放置 overflow-x:auto（無效設計）\n- 不得依賴 min-w-max 突破父層 max-w 限制（CSS 硬性限制）\n```\n\n---\n\n## 推送成功定義（Push Success Criteria）\n\n一項推送被視為「成功」，必須同時滿足以下條件：\n\n1. `git push` exit code = 0（程式碼已上傳）\n2. GitHub Actions Run 的 `conclusion = success`（API 驗證）\n3. 網頁實際可訪問：`https://chun-chieh-chang.github.io/Predictive-Material-System/`\n\n**驗證方式**：\n- 本地：`git log --oneline origin/master..HEAD` 必須為空（完全同步）\n- API：`curl -s \"https://api.github.com/.../actions/runs?head_sha=$sha\"` 回傳 conclusion=success\n- 網頁：`curl -s <URL>` 返回 200 OK 且內容包含預期 HTML\n```"
     created_at: "2026-08-24"
-    last_used: "2026-08-26"
+    last_used: "2026-08-27"
     reuse_count: 0
     status: active
 
@@ -72,7 +72,7 @@ entries:
       - mece
     severity: medium
     created_at: "2026-08-24"
-    last_used: "2026-08-26"
+    last_used: "2026-08-27"
     reuse_count: 0
     status: active
 
@@ -87,7 +87,7 @@ entries:
       - mece
     severity: medium
     created_at: "2026-08-24"
-    last_used: "2026-08-26"
+    last_used: "2026-08-27"
     reuse_count: 0
     status: active
 
@@ -99,7 +99,7 @@ entries:
       - mece
     severity: medium
     created_at: "2026-08-24"
-    last_used: "2026-08-26"
+    last_used: "2026-08-27"
     reuse_count: 0
     status: active
 
@@ -110,7 +110,7 @@ entries:
       - mece
     severity: medium
     created_at: "2026-08-24"
-    last_used: "2026-08-26"
+    last_used: "2026-08-27"
     reuse_count: 0
     status: active
 
@@ -125,7 +125,7 @@ entries:
       - button
     severity: medium
     created_at: "2026-08-24"
-    last_used: "2026-08-26"
+    last_used: "2026-08-27"
     reuse_count: 0
     status: active
 

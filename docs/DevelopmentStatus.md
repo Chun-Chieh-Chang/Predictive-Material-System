@@ -158,6 +158,8 @@
 
 | Commit | 說明 |
 |--------|------|
+| `22a2868` | refactor(ux): 縮放步進改為每格 5%，▲▼ 按鈕移至右側垂直排列 |
+| `c1dcb96` | fix(docs): README 版本記錄表移除多餘「＋」號 |
 | `7c1e3c9` | feat(ux): 縮放控制改為 ▲▼ 箭頭按鈕，每格 1% 連續跳檔，範圍 60–140% |
 | `fa3db2b` | feat(workbench): 兩工作台底部嵌入對應主檔維護區，消除資料表孤島 |
 | `09aa893` | feat(workbench): 兩工作台嵌入完整功能檢視（展開/收合模式），消除跨頁導航 |
@@ -166,8 +168,6 @@
 | `15c8c56` | fix(ux): 修復縮放時 Navbar 文字換行 — Tailwind 斷點鎖定 px |
 | `842fc95` | feat(ux): 介面縮放支援人工輸入任意百分比（50–300%） |
 | `f843841` | feat(ux): 介面自適應縮放 — Navbar 五級縮放驅動根字號，px→rem 遷移 |
-| `70e3e53` | chore(cleanup): 文件全面同步＋死碼重掃零新增、資安盤點通過 |
-| `7cb475c` | docs(skill): 新增 interactive-flowchart-spec 技能檔（專案內可攜副本） |
 
 ---
 
@@ -181,7 +181,7 @@
 | 流程圖精煉系列 | 箭頭全面對齊邊線中點（程式化審計）；六環節檢核改群組容器畫法＋2+2+1 緊湊排列；節點文字動態置中；執行期渲染煙霧測試 |
 | 韌性修復 | sandbox 受限環境 SecurityError 崩潰修復＋main.tsx 沙盒防護 |
 | 技能沉澱 | `interactive-flowchart-spec` skill（使用者層級＋專案可攜副本） |
-| 介面自適應縮放 | Navbar 五級縮放驅動根字號，全專案 px→rem 遷移；支援人工輸入 50–300%；縮放時 Navbar 換行修復（px 斷點鎖定）；▲▼ 箭頭按鈕每格 1% 連續跳檔（範圍 60–140%） |
+| 介面自適應縮放 | Navbar 五級縮放驅動根字號，全專案 px→rem 遷移；支援人工輸入 50–300%；縮放時 Navbar 換行修復（px 斷點鎖定）；▲▼ 箭頭按鈕每格 1% 連續跳檔（範圍 60–140%）；步進改為每格 5% 右側垂直排列 |
 | xlsx 動態載入 | dataExchange.ts 改 `await import('xlsx')`，首屏 JS 減少 143 kB gzip（−33%），僅在觸發匯入/匯出時按需載入 |
 | 主檔拖動捲動 | useLongPressDragScroll hook：長按 300ms 啟動、60 fps rAF 節流、慣性滾動、防誤觸（6px 死區＋可交互元素排除）、三瀏覽器相容 |
 | 工作台功能整合 | 兩工作台嵌入完整功能檢視（ShipScheduleClearanceView、OrderTensionTrackerView、MrpCalculatorView）＋底部嵌入角色專屬主檔維護區，同一頁面完成全部工作，消除跨頁導航 |
